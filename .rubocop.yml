@@ -1,0 +1,11 @@
+AllCops:
+  Include:
+    - Gemfile
+    - Guardfile
+    - Rakefile
+
+Documentation:
+  Enabled: false
+
+Encoding:
+  Enabled: false
