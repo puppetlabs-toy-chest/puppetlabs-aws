@@ -25,7 +25,7 @@ describe provider_class do
       @provider.should be_an_instance_of Puppet::Type::Ec2_securitygroup::ProviderV2
     end
 
-     context 'exists?' do
+    context 'exists?' do
       it 'should correctly report non-existent group' do
         VCR.use_cassette('no-group-named-test') do
           @provider.exists?.should be false

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-type_class = Puppet::Type.type(:ec2_securitygroup) 
+type_class = Puppet::Type.type(:ec2_securitygroup)
 
 describe type_class do
 
@@ -20,7 +20,7 @@ describe type_class do
 
   it 'should have expected properties' do
     properties.each do |property|
-      type_class.properties.map { |p| p.name }.should be_include(property)
+      type_class.properties.map(&:name).should be_include(property)
     end
   end
 

@@ -11,14 +11,12 @@ module Puppet
       end
 
       def exists?
-        begin
-          @client.describe_security_groups(group_names: [name])
-          Puppet.info("Security group #{name} exists")
-          true
-        rescue Aws::EC2::Errors::InvalidGroupNotFound
-          Puppet.info("Security group #{name} doesn't exist")
-          false
-        end
+        @client.describe_security_groups(group_names: [name])
+        Puppet.info("Security group #{name} exists")
+        true
+      rescue Aws::EC2::Errors::InvalidGroupNotFound
+        Puppet.info("Security group #{name} doesn't exist")
+        false
       end
 
       def create
@@ -38,16 +36,17 @@ module Puppet
               source_security_group_name: rule[:source].title
             )
           else
-          @client.authorize_security_group_ingress(
-            group_name: name,
-            ip_permissions: [{
-              ip_protocol: rule[:protocol],
-              to_port: rule[:port].to_i,
-              from_port: rule[:port].to_i,
-              ip_ranges: [{
-                cidr_ip: rule[:cidr]
+            @client.authorize_security_group_ingress(
+              group_name: name,
+              ip_permissions: [{
+                ip_protocol: rule[:protocol],
+                to_port: rule[:port].to_i,
+                from_port: rule[:port].to_i,
+                ip_ranges: [{
+                  cidr_ip: rule[:cidr]
+                }]
               }]
-            }])
+            )
           end
         end
       end
@@ -62,8 +61,9 @@ module Puppet
   end
 end
 
-Puppet::Type.type(:ec2_securitygroup).provide(:v2,
+Puppet::Type.type(:ec2_securitygroup).provide(
+  :v2,
   parent: Puppet::Provider::Ec2Securitygroup) do
     confine feature: :aws
     confine feature: :retries
-end
+  end
