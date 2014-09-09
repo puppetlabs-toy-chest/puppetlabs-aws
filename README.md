@@ -17,3 +17,25 @@ Running the sample code with Puppet apply:
 ```bash
 puppet apply tests/init.pp --modulepath ../ --test
 ```
+
+
+## Tesiting
+
+First you'll need to install the dependencies:
+
+```bash
+bundle install
+```
+
+The running the tests once is as simple as:
+
+```bash
+bundle exec rake spec
+```
+
+If you're working on the module you may find having the tests run
+whenever you change any code useful, in which case run:
+
+```bash
+bundle exec guard
+```
