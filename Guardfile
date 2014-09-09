@@ -1,6 +1,6 @@
 notification :off
 
 guard 'rake', :task => 'spec' do
-  watch(%r{^manifests\/.+\.pp$})
+  watch(%r{^lib\/.+\.rb$})
   watch(%r{^spec\/.+\.rb$})
 end
