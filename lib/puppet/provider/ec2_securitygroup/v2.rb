@@ -14,6 +14,7 @@ module Puppet
         begin
           @client.describe_security_groups(group_names: [name])
           Puppet.info("Security group #{name} exists")
+          true
         rescue Aws::EC2::Errors::InvalidGroupNotFound
           Puppet.info("Security group #{name} doesn't exist")
           false
@@ -30,33 +31,24 @@ module Puppet
         rules = resource[:ingress]
         rules = [rules] unless rules.is_a?(Array)
 
-        permissions = []
-        source = false
         rules.each do |rule|
           if rule.key? 'source'
-            source = rule['source'].title
+            @client.authorize_security_group_ingress(
+              group_name: name,
+              source_security_group_name: rule[:source].title
+            )
           else
-            permissions << {
-              ip_protocol: rule['protocol'],
-              to_port: rule['port'].to_i,
-              from_port: rule['port'].to_i,
+          @client.authorize_security_group_ingress(
+            group_name: name,
+            ip_permissions: [{
+              ip_protocol: rule[:protocol],
+              to_port: rule[:port].to_i,
+              from_port: rule[:port].to_i,
               ip_ranges: [{
-                cidr_ip: rule['cidr']
+                cidr_ip: rule[:cidr]
               }]
-            }
+            }])
           end
-        end
-
-        if source
-          @client.authorize_security_group_ingress(
-            group_name: name,
-            source_security_group_name: source
-          )
-        elsif permissions
-          @client.authorize_security_group_ingress(
-            group_name: name,
-            ip_permissions: permissions
-          )
         end
       end
 

@@ -1,0 +1,77 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://ec2.us-west-2.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=redacted&Action=DescribeSecurityGroups&GroupName.1=test&Signature=redacted&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-09-09T17%3A08%3A18Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.0.rc15 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "242"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 09 Sep 2014 17:08:18 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>01179dbb-d68e-4f73-8d4c-7dfc7ea8d549</requestId>
+                <securityGroupInfo>
+                    <item>
+                        <ownerId>812641999351</ownerId>
+                        <groupId>sg-2f820a4a</groupId>
+                        <groupName>test</groupName>
+                        <groupDescription>Security group for testing</groupDescription>
+                        <vpcId>vpc-812aece4</vpcId>
+                        <ipPermissions>
+                            <item>
+                                <ipProtocol>tcp</ipProtocol>
+                                <fromPort>80</fromPort>
+                                <toPort>80</toPort>
+                                <groups/>
+                                <ipRanges>
+                                    <item>
+                                        <cidrIp>0.0.0.0/0</cidrIp>
+                                    </item>
+                                </ipRanges>
+                            </item>
+                        </ipPermissions>
+                        <ipPermissionsEgress>
+                            <item>
+                                <ipProtocol>-1</ipProtocol>
+                                <groups/>
+                                <ipRanges>
+                                    <item>
+                                        <cidrIp>0.0.0.0/0</cidrIp>
+                                    </item>
+                                </ipRanges>
+                            </item>
+                        </ipPermissionsEgress>
+                    </item>
+                </securityGroupInfo>
+            </DescribeSecurityGroupsResponse>
+        http_version: 
+      recorded_at: "Tue, 09 Sep 2014 17:08:18 GMT"
+  recorded_with: "VCR 2.9.3"

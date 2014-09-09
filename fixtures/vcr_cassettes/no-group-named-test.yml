@@ -1,0 +1,40 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://ec2.us-west-2.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=redacted&Action=DescribeSecurityGroups&GroupName.1=test&Signature=redacted&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-09-09T17%3A03%3A14Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.0.rc15 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "241"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 400
+          message: "Bad Request"
+        headers: 
+          Transfer-Encoding: 
+            - chunked
+          Date: 
+            - "Tue, 09 Sep 2014 17:03:14 GMT"
+          Cneonction: 
+            - close
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <Response><Errors><Error><Code>InvalidGroup.NotFound</Code><Message>The security group 'test' does not exist in default VPC 'vpc-812aece4'</Message></Error></Errors><RequestID>1ee62d81-26d0-4449-8dcd-2023050ca534</RequestID></Response>
+        http_version: 
+      recorded_at: "Tue, 09 Sep 2014 17:03:14 GMT"
+  recorded_with: "VCR 2.9.3"
