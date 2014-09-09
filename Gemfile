@@ -8,6 +8,7 @@ group :test do
   gem 'puppet', ENV['PUPPET_VERSION'] || '~> 3.7.0'
   gem 'puppetlabs_spec_helper'
   gem 'webmock'
+  gem 'vcr'
 end
 
 group :development do
