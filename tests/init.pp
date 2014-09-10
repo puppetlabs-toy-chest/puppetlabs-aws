@@ -40,12 +40,14 @@ ec2_instance { ['web-1', 'web-2']:
   ensure          => present,
   image_id        => 'ami-2d9add1d',
   security_groups => [Ec2_securitygroup['web-sg']],
+  instance_type   => 't1.micro',
 }
 
 ec2_instance { 'db':
   ensure          => present,
   image_id        => 'ami-2d9add1d',
   security_groups => [Ec2_securitygroup['db-sg']],
+  instance_type   => 't1.micro',
 }
 
 elb_loadbalancer { 'lb-1':
