@@ -1,6 +1,5 @@
 require 'aws-sdk-core'
 require 'retries'
-require 'pry'
 
 module Puppet
   class Provider
