@@ -15,6 +15,10 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     desc 'the security groups to associate the load balancer'
   end
 
+  newparam(:availability_zones) do
+    desc 'the availability zones in which to launch the load balancer'
+  end
+
   newparam(:instances) do
     desc 'the instances to associate with the load balancer'
   end
