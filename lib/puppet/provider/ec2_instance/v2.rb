@@ -22,10 +22,13 @@ module Puppet
 
       def create
         Puppet.info("Creating instance #{name}")
+        groups = resource[:security_groups]
+        groups = [groups] unless groups.is_a?(Array)
         response = @client.run_instances(
           image_id: resource[:image_id],
           min_count: 1,
           max_count: 1,
+          security_groups: groups.map(&:title),
           instance_type: resource[:instance_type],
         )
         @client.create_tags(
