@@ -53,7 +53,7 @@ ec2_instance { 'db':
 elb_loadbalancer { 'lb-1':
   ensure             => present,
   security_groups    => [Ec2_securitygroup['lb-sg']],
-  availability_zones => ['us-west-2b'],
+  availability_zones => ['us-west-2a'],
   instances          => [
     Ec2_instance['web-1'],
     Ec2_instance['web-2'],
