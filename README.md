@@ -3,6 +3,42 @@ Puppet module for managing AWS resources to build out full stacks
 > Note that this repository contains a work-in-progress proof of
 > concept.
 
+## Intention
+
+Use the Puppet DSL to provision resources in AWS. The begin with we're
+targetting the following simple stack.
+
+```
+                          WWW
+                           +
+                           |
+          +----------------|-----------------+
+          |                |                 |
+          |     +----------v-----------+     |
+    lb-sg |     |         lb-1         |     |
+          |     +----+------------+----+     |
+          |          |            |          |
+          +----------|------------|----------+
+          +----------|------------|----------+
+          |     +----v----+  +----v----+     |
+          |     |         |  |         |     |
+          |     |         |  |         |     |
+   web-sg |     |  web-1  |  |  web-2  |     |
+          |     |         |  |         |     |
+          |     |         |  |         |     |
+          |     +----+----+  +----+----+     |
+          +----------|------------|----------+
+          +----------|------------|----------+
+          |     +----v----+       |          |
+          |     |         |       |          |
+          |     |         |       |          |
+    db-sg |     |  db-1   <-------+          |
+          |     |         |                  |
+          |     |         |                  |
+          |     +---------+                  |
+          +----------------------------------+
+```
+
 ## Usage
 
 First, set a couple of environment variables with your AWS credentials.
@@ -21,6 +57,17 @@ puppet apply tests/init.pp --modulepath ../ --test
 
 Note the manifest ordering is a short term approach while we sort out
 autorequire.
+
+To destroy the resources run the following:
+
+```bash
+puppet apply tests/delete.pp --modulepath ../ --test
+--ordering=manifest
+```
+
+Mote that due to dependencies between resources and the time taken to
+transition state this currently requires multiple runs to complete.
+
 
 ## Tesiting
 
