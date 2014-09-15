@@ -38,9 +38,19 @@ describe provider_class do
     end
 
     context 'create' do
+      it 'should send a request to the ELB API to create the load balancer' do
+        VCR.use_cassette('create-elb-test') do
+          @provider.create
+        end
+      end
     end
 
     context 'destroy' do
+      it 'should send a request to the ELB API to destroy the load balancer' do
+        VCR.use_cassette('destroy-elb-test') do
+          @provider.destroy
+        end
+      end
     end
 
   end

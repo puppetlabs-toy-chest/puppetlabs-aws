@@ -1,0 +1,48 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://elasticloadbalancing.us-west-2.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeLoadBalancers&LoadBalancerNames.member.1=test&Version=2012-06-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.0.rc15 ruby/2.1.1 x86_64-darwin13.0"
+          X-Amz-Date: 
+            - "20140915T155351Z"
+          Host: 
+            - elasticloadbalancing.us-west-2.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "24441062112d57cd22b1f7e3adedc4e0c553405a23de54404422b5e143b2990c"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20140915/us-west-2/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=redacted"
+          Content-Length: 
+            - "79"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 400
+          message: "Bad Request"
+        headers: 
+          X-Amzn-Requestid: 
+            - "7e0127bd-3cf0-11e4-8a66-51a685fc05c4"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "298"
+          Date: 
+            - "Mon, 15 Sep 2014 15:53:52 GMT"
+          Nncoection: 
+            - close
+        body: 
+          encoding: UTF-8
+          string: "<ErrorResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <Error>\n    <Type>Sender</Type>\n    <Code>LoadBalancerNotFound</Code>\n    <Message>Cannot find Load Balancer test</Message>\n  </Error>\n  <RequestId>7e0127bd-3cf0-11e4-8a66-51a685fc05c4</RequestId>\n</ErrorResponse>\n"
+        http_version: 
+      recorded_at: "Mon, 15 Sep 2014 15:53:53 GMT"
+  recorded_with: "VCR 2.9.3"
