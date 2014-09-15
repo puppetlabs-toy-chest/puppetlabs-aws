@@ -1,12 +1,14 @@
 require 'aws-sdk-core'
 require 'pry'
 
+require_relative '../../../puppet_x/puppetlabs/aws.rb'
+
 module Puppet
   class Provider
     class ElbLoadbalancer < Puppet::Provider
       def initialize(*args)
-        @elb_client = Aws::ElasticLoadBalancing::Client.new(region: 'us-west-2')
-        @ec2_client = Aws::EC2::Client.new(region: 'us-west-2')
+        @elb_client = PuppetX::Puppetlabs::Aws.elb_client
+        @ec2_client = PuppetX::Puppetlabs::Aws.ec2_client
         super(*args)
       end
 

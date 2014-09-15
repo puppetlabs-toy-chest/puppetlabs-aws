@@ -1,10 +1,10 @@
-require 'aws-sdk-core'
+require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
 module Puppet
   class Provider
     class Ec2Instance < Puppet::Provider
       def initialize(*args)
-        @client = Aws::EC2::Client.new(region: 'us-west-2')
+        @client = PuppetX::Puppetlabs::Aws.ec2_client
         super(*args)
       end
 
