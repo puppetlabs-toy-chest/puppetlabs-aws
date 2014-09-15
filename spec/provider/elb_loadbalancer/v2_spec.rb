@@ -25,9 +25,15 @@ describe provider_class do
 
     context 'exists?' do
       it 'should correctly report non-existent load balancers' do
+        VCR.use_cassette('no-elb-named-test') do
+          @provider.exists?.should be false
+        end
       end
 
       it 'should correctly find existing load balancers' do
+        VCR.use_cassette('elb-named-test') do
+          @provider.exists?.should be true
+        end
       end
     end
 
