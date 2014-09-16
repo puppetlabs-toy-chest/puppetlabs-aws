@@ -1,5 +1,4 @@
 require 'aws-sdk-core'
-require 'pry'
 
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
