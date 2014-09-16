@@ -3,17 +3,20 @@ require 'aws-sdk-core'
 module PuppetX
   module Puppetlabs
     class Aws
-      def self.ec2_client
+      def self.logger
+        Logger.new('logfile.log')
+      end
+      def self.ec2_client(region: 'us-west-1')
         ::Aws::EC2::Client.new(
-          region: 'us-west-2',
-          logger: Logger.new('logfile.log'),
+          region: region,
+          logger: self.logger,
           http_wire_trace: true
         )
       end
-      def self.elb_client
+      def self.elb_client(region: 'us-west-1')
         ::Aws::ElasticLoadBalancing::Client.new(
-          region: 'us-west-2',
-          logger: Logger.new('logfile.log'),
+          region: region,
+          logger: self.logger,
           http_wire_trace: true
         )
       end
