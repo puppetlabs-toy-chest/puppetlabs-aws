@@ -34,7 +34,7 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     rules = self[:ingress]
     rules = [rules] unless rules.is_a?(Array)
     rules.each do |rule|
-      groups << rule['source'] if rule.key? 'source'
+      groups << rule['security_group'] if !rule.nil? and rule.key? 'security_group'
     end
     groups
   end

@@ -33,5 +33,3 @@ elb_loadbalancer { 'lb-1':
 ec2_securitygroup { ['lb-sg', 'web-sg', 'db-sg']:
   ensure => absent,
 }
-
-

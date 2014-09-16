@@ -11,7 +11,7 @@ Puppet::Type.newtype(:ec2_instance) do
     end
   end
 
-  newparam(:security_groups) do
+  newparam(:security_groups, :array_matching => :all) do
     desc 'the security groups to associate the instance'
   end
 
@@ -45,4 +45,10 @@ Puppet::Type.newtype(:ec2_instance) do
       fail Puppet::Error, 'Empty values are not allowed' if value == ''
     end
   end
+
+  autorequire(:ec2_securitygroup) do
+    groups = self[:security_groups]
+    groups.is_a?(Array) ? groups : [groups]
+  end
+
 end

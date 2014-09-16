@@ -33,11 +33,14 @@ module Puppet
           description: resource[:description]
         )
 
-        resource[:ingress].each do |rule|
-          if rule.key? 'source'
+        rules = resource[:ingress]
+        rules = [rules] unless rules.is_a?(Array)
+
+        rules.each do |rule|
+          if rule.key? 'security_group'
             @client.authorize_security_group_ingress(
               group_name: name,
-              source_security_group_name: rule['source']
+              source_security_group_name: rule['security_group']
             )
           else
             @client.authorize_security_group_ingress(

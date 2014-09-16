@@ -56,7 +56,7 @@ module Puppet
 
         response = @ec2_client.describe_instances(
           filters: [
-            {name: 'tag:Name', values: instances.map(&:title)},
+            {name: 'tag:Name', values: instances},
             {name: 'instance-state-name', values: ['pending', 'running']}
           ]
         )

@@ -37,7 +37,7 @@ ec2_securitygroup { 'web-sg':
   ensure      => present,
   description => 'Security group for web servers',
   ingress     => [{
-    source => 'lb-sg',
+    security_group => 'lb-sg',
   }],
 }
 
@@ -45,31 +45,28 @@ ec2_securitygroup { 'db-sg':
   ensure      => present,
   description => 'Security group for database servers',
   ingress     => [{
-    source => 'web-sg',
+    security_group => 'web-sg',
   }],
 }
 
 ec2_instance { ['web-1', 'web-2']:
   ensure          => present,
   image_id        => 'ami-b8c41ccf',
-  security_groups => [Ec2_securitygroup['web-sg']],
+  security_groups => ['web-sg'],
   instance_type   => 't1.micro',
 }
 
 ec2_instance { 'db':
   ensure          => present,
   image_id        => 'ami-b8c41ccf',
-  security_groups => [Ec2_securitygroup['db-sg']],
+  security_groups => ['db-sg'],
   instance_type   => 't1.micro',
 }
 
 elb_loadbalancer { 'lb-1':
   ensure             => present,
   availability_zones => ['eu-west-1b'],
-  instances          => [
-    Ec2_instance['web-1'],
-    Ec2_instance['web-2'],
-  ],
+  instances          => ['web-1', 'web-2'],
   listeners          => [{
     protocol => 'tcp',
     port     => 80,

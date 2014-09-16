@@ -29,7 +29,7 @@ module Puppet
           image_id: resource[:image_id],
           min_count: 1,
           max_count: 1,
-          security_groups: groups.map(&:title),
+          security_groups: groups,
           instance_type: resource[:instance_type],
           placement: {
             availability_zone: resource[:availability_zone]

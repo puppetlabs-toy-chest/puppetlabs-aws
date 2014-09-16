@@ -18,20 +18,30 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     end
   end
 
-  newparam(:security_groups) do
+  newparam(:security_groups, :array_matching => :all) do
     desc 'the security groups to associate the load balancer'
   end
 
-  newparam(:availability_zones) do
+  newparam(:availability_zones, :array_matching => :all) do
     desc 'the availability zones in which to launch the load balancer'
   end
 
-  newparam(:instances) do
+  newparam(:instances, :array_matching => :all) do
     desc 'the instances to associate with the load balancer'
   end
 
-  newparam(:listeners) do
+  newparam(:listeners, :array_matching => :all) do
     desc 'the ports and protocols the load balancer listens to'
+  end
+
+  autorequire(:ec2_instance) do
+    instances = self[:instances]
+    instances.is_a?(Array) ? instances : [instances]
+  end
+
+  autorequire(:ec2_securitygroup) do
+    groups = self[:security_groups]
+    groups.is_a?(Array) ? groups : [groups]
   end
 
 end
