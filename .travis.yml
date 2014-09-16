@@ -1,6 +1,7 @@
 ---
 language: ruby
 bundler_args: --without development
+cache: bundler
 before_install: rm Gemfile.lock || true
 rvm:
   - 2.1.1
