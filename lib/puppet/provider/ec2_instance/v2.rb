@@ -31,6 +31,9 @@ module Puppet
           max_count: 1,
           security_groups: groups.map(&:title),
           instance_type: resource[:instance_type],
+          placement: {
+            availability_zone: resource[:availability_zone]
+          }
         )
         @client.create_tags(
           resources: response.instances.map(&:instance_id),

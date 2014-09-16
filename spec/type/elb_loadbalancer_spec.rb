@@ -10,7 +10,8 @@ describe type_class do
       :availability_zones,
       :security_groups,
       :instances,
-      :listeners
+      :listeners,
+      :region
     ]
   end
 

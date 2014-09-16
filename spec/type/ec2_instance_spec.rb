@@ -9,7 +9,9 @@ describe type_class do
       :name,
       :image_id,
       :security_groups,
-      :instance_type
+      :instance_type,
+      :region,
+      :availability_zone
     ]
   end
 

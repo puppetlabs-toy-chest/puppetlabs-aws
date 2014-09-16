@@ -8,7 +8,8 @@ describe type_class do
     [
       :name,
       :ingress,
-      :description
+      :description,
+      :region
     ]
   end
 

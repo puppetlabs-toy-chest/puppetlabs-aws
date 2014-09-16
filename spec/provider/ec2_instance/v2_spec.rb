@@ -13,6 +13,8 @@ describe provider_class do
         name: 'test',
         image_id: '123',
         instance_type: 'x1.gigantic',
+        availability_zone: 'us-west-2a',
+        region: 'us-west-2'
       )
       @provider = provider_class.new(@resource)
     end

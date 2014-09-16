@@ -10,11 +10,11 @@ describe provider_class do
   context 'with the minimum params' do
     before(:each) do
       @resource = Puppet::Type.type(:elb_loadbalancer).new(
-        name: 'test',
+        name: 'lb-1',
         instances: [],
         listeners: [],
-        security_groups: [],
-        availability_zones: []
+        availability_zones: ['us-west-2a'],
+        region: 'us-west-2',
       )
       @provider = provider_class.new(@resource)
     end

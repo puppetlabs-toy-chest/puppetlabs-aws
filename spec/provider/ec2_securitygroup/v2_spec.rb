@@ -12,6 +12,7 @@ describe provider_class do
       @resource = Puppet::Type.type(:ec2_securitygroup).new(
         name: 'test',
         description: 'Security group for testing',
+        region: 'us-west-2',
         ingress: [{
           protocol: 'tcp',
           port: 80,

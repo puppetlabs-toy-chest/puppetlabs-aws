@@ -1,0 +1,420 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://elasticloadbalancing.us-west-2.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=CreateLoadBalancer&AvailabilityZones.member.1=us-west-2a&Listeners.member.1.InstancePort=80&Listeners.member.1.InstanceProtocol=tcp&Listeners.member.1.LoadBalancerPort=80&Listeners.member.1.Protocol=tcp&LoadBalancerName=lb-1&SecurityGroups=&Version=2012-06-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.0.rc15 ruby/2.1.1 x86_64-darwin13.0"
+          X-Amz-Date: 
+            - "20140916T135337Z"
+          Host: 
+            - elasticloadbalancing.us-west-2.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "3c534dd90f774ee629e14e8672d1193978dcf04fa91475f7d109121ac750b1b6"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20140916/us-west-2/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=redacted"
+          Content-Length: 
+            - "266"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - db61b0e9-3da8-11e4-899c-7377ed2d6870
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "357"
+          Date: 
+            - "Tue, 16 Sep 2014 13:53:36 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<CreateLoadBalancerResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <CreateLoadBalancerResult>\n    <DNSName>lb-1-423416225.us-west-2.elb.amazonaws.com</DNSName>\n  </CreateLoadBalancerResult>\n  <ResponseMetadata>\n    <RequestId>db61b0e9-3da8-11e4-899c-7377ed2d6870</RequestId>\n  </ResponseMetadata>\n</CreateLoadBalancerResponse>\n"
+        http_version: 
+      recorded_at: "Tue, 16 Sep 2014 13:53:38 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.us-west-2.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=AKIAIKSNSYRS375VD3DA&Action=DescribeInstances&Filter.1.Name=tag%3AName&Filter.1.Value=&Filter.2.Name=instance-state-name&Filter.2.Value.1=pending&Filter.2.Value.2=running&Signature=redacted%2BIDFcIynGn50sjBp0%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-09-16T13%3A53%3A38Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.0.rc15 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "344"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 16 Sep 2014 13:53:37 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>27f6396c-5cd8-4017-a217-949f0d3562f5</requestId>
+                <reservationSet>
+                    <item>
+                        <reservationId>r-1226f919</reservationId>
+                        <ownerId>482693910459</ownerId>
+                        <groupSet>
+                            <item>
+                                <groupId>sg-9994c5a9</groupId>
+                                <groupName>zacharyalexstern</groupName>
+                            </item>
+                        </groupSet>
+                        <instancesSet>
+                            <item>
+                                <instanceId>i-5aa63451</instanceId>
+                                <imageId>ami-49c9b679</imageId>
+                                <instanceState>
+                                    <code>16</code>
+                                    <name>running</name>
+                                </instanceState>
+                                <privateDnsName>ip-10-252-194-157.us-west-2.compute.internal</privateDnsName>
+                                <dnsName>ec2-54-190-27-121.us-west-2.compute.amazonaws.com</dnsName>
+                                <reason/>
+                                <keyName>zacharyalexstern-2014-04-27</keyName>
+                                <amiLaunchIndex>0</amiLaunchIndex>
+                                <productCodes/>
+                                <instanceType>t1.micro</instanceType>
+                                <launchTime>2014-07-14T20:39:49.000Z</launchTime>
+                                <placement>
+                                    <availabilityZone>us-west-2a</availabilityZone>
+                                    <groupName/>
+                                    <tenancy>default</tenancy>
+                                </placement>
+                                <kernelId>aki-fc8f11cc</kernelId>
+                                <monitoring>
+                                    <state>disabled</state>
+                                </monitoring>
+                                <privateIpAddress>10.252.194.157</privateIpAddress>
+                                <ipAddress>54.190.27.121</ipAddress>
+                                <groupSet>
+                                    <item>
+                                        <groupId>sg-9994c5a9</groupId>
+                                        <groupName>zacharyalexstern</groupName>
+                                    </item>
+                                </groupSet>
+                                <architecture>x86_64</architecture>
+                                <rootDeviceType>ebs</rootDeviceType>
+                                <rootDeviceName>/dev/sda1</rootDeviceName>
+                                <blockDeviceMapping>
+                                    <item>
+                                        <deviceName>/dev/sda1</deviceName>
+                                        <ebs>
+                                            <volumeId>vol-9f45c09e</volumeId>
+                                            <status>attached</status>
+                                            <attachTime>2014-07-14T20:39:52.000Z</attachTime>
+                                            <deleteOnTermination>true</deleteOnTermination>
+                                        </ebs>
+                                    </item>
+                                </blockDeviceMapping>
+                                <virtualizationType>paravirtual</virtualizationType>
+                                <clientToken>VMMpd1405370389000</clientToken>
+                                <tagSet>
+                                    <item>
+                                        <key>Name</key>
+                                        <value/>
+                                    </item>
+                                </tagSet>
+                                <hypervisor>xen</hypervisor>
+                                <networkInterfaceSet/>
+                                <ebsOptimized>false</ebsOptimized>
+                            </item>
+                        </instancesSet>
+                    </item>
+                    <item>
+                        <reservationId>r-d07017dd</reservationId>
+                        <ownerId>482693910459</ownerId>
+                        <groupSet>
+                            <item>
+                                <groupId>sg-9994c5a9</groupId>
+                                <groupName>zacharyalexstern</groupName>
+                            </item>
+                        </groupSet>
+                        <instancesSet>
+                            <item>
+                                <instanceId>i-636d3c6e</instanceId>
+                                <imageId>ami-857c06b5</imageId>
+                                <instanceState>
+                                    <code>16</code>
+                                    <name>running</name>
+                                </instanceState>
+                                <privateDnsName>ip-10-36-137-103.us-west-2.compute.internal</privateDnsName>
+                                <dnsName>ec2-54-189-137-88.us-west-2.compute.amazonaws.com</dnsName>
+                                <reason/>
+                                <keyName>zacharyalexstern-2014-04-27</keyName>
+                                <amiLaunchIndex>0</amiLaunchIndex>
+                                <productCodes>
+                                    <item>
+                                        <productCode>e3042pxoz39dci6lbujh2j48u</productCode>
+                                        <type>marketplace</type>
+                                    </item>
+                                </productCodes>
+                                <instanceType>c3.8xlarge</instanceType>
+                                <launchTime>2014-08-26T18:57:39.000Z</launchTime>
+                                <placement>
+                                    <availabilityZone>us-west-2b</availabilityZone>
+                                    <groupName/>
+                                    <tenancy>default</tenancy>
+                                </placement>
+                                <monitoring>
+                                    <state>disabled</state>
+                                </monitoring>
+                                <privateIpAddress>10.36.137.103</privateIpAddress>
+                                <ipAddress>54.189.137.88</ipAddress>
+                                <groupSet>
+                                    <item>
+                                        <groupId>sg-9994c5a9</groupId>
+                                        <groupName>zacharyalexstern</groupName>
+                                    </item>
+                                </groupSet>
+                                <architecture>x86_64</architecture>
+                                <rootDeviceType>ebs</rootDeviceType>
+                                <rootDeviceName>/dev/sda1</rootDeviceName>
+                                <blockDeviceMapping>
+                                    <item>
+                                        <deviceName>/dev/sda1</deviceName>
+                                        <ebs>
+                                            <volumeId>vol-4ef9944b</volumeId>
+                                            <status>attached</status>
+                                            <attachTime>2014-08-26T18:57:42.000Z</attachTime>
+                                            <deleteOnTermination>true</deleteOnTermination>
+                                        </ebs>
+                                    </item>
+                                </blockDeviceMapping>
+                                <virtualizationType>hvm</virtualizationType>
+                                <clientToken>140907941319766239</clientToken>
+                                <tagSet>
+                                    <item>
+                                        <key>Name</key>
+                                        <value/>
+                                    </item>
+                                </tagSet>
+                                <hypervisor>xen</hypervisor>
+                                <networkInterfaceSet/>
+                                <ebsOptimized>false</ebsOptimized>
+                            </item>
+                        </instancesSet>
+                    </item>
+                    <item>
+                        <reservationId>r-adc9f4a5</reservationId>
+                        <ownerId>482693910459</ownerId>
+                        <groupSet>
+                            <item>
+                                <groupId>sg-9994c5a9</groupId>
+                                <groupName>zacharyalexstern</groupName>
+                            </item>
+                        </groupSet>
+                        <instancesSet>
+                            <item>
+                                <instanceId>i-49879141</instanceId>
+                                <imageId>ami-49c9b679</imageId>
+                                <instanceState>
+                                    <code>16</code>
+                                    <name>running</name>
+                                </instanceState>
+                                <privateDnsName>ip-10-220-146-77.us-west-2.compute.internal</privateDnsName>
+                                <dnsName>ec2-54-203-204-73.us-west-2.compute.amazonaws.com</dnsName>
+                                <reason/>
+                                <keyName>zacharyalexstern-2014-04-27</keyName>
+                                <amiLaunchIndex>0</amiLaunchIndex>
+                                <productCodes/>
+                                <instanceType>m3.medium</instanceType>
+                                <launchTime>2014-07-14T20:36:57.000Z</launchTime>
+                                <placement>
+                                    <availabilityZone>us-west-2c</availabilityZone>
+                                    <groupName/>
+                                    <tenancy>default</tenancy>
+                                </placement>
+                                <kernelId>aki-fc8f11cc</kernelId>
+                                <monitoring>
+                                    <state>disabled</state>
+                                </monitoring>
+                                <privateIpAddress>10.220.146.77</privateIpAddress>
+                                <ipAddress>54.203.204.73</ipAddress>
+                                <groupSet>
+                                    <item>
+                                        <groupId>sg-9994c5a9</groupId>
+                                        <groupName>zacharyalexstern</groupName>
+                                    </item>
+                                </groupSet>
+                                <architecture>x86_64</architecture>
+                                <rootDeviceType>ebs</rootDeviceType>
+                                <rootDeviceName>/dev/sda1</rootDeviceName>
+                                <blockDeviceMapping>
+                                    <item>
+                                        <deviceName>/dev/sda1</deviceName>
+                                        <ebs>
+                                            <volumeId>vol-2fa6ea23</volumeId>
+                                            <status>attached</status>
+                                            <attachTime>2014-07-14T20:37:00.000Z</attachTime>
+                                            <deleteOnTermination>true</deleteOnTermination>
+                                        </ebs>
+                                    </item>
+                                </blockDeviceMapping>
+                                <virtualizationType>paravirtual</virtualizationType>
+                                <clientToken>dLQcD1405370217303</clientToken>
+                                <tagSet>
+                                    <item>
+                                        <key>Name</key>
+                                        <value/>
+                                    </item>
+                                </tagSet>
+                                <hypervisor>xen</hypervisor>
+                                <networkInterfaceSet/>
+                                <ebsOptimized>false</ebsOptimized>
+                            </item>
+                        </instancesSet>
+                    </item>
+                    <item>
+                        <reservationId>r-3647ff02</reservationId>
+                        <ownerId>482693910459</ownerId>
+                        <groupSet>
+                            <item>
+                                <groupId>sg-d21d90e2</groupId>
+                                <groupName>default</groupName>
+                            </item>
+                        </groupSet>
+                        <instancesSet>
+                            <item>
+                                <instanceId>i-9eacf2aa</instanceId>
+                                <imageId>ami-4d83107d</imageId>
+                                <instanceState>
+                                    <code>16</code>
+                                    <name>running</name>
+                                </instanceState>
+                                <privateDnsName>ip-10-252-77-93.us-west-2.compute.internal</privateDnsName>
+                                <dnsName>ec2-54-212-47-23.us-west-2.compute.amazonaws.com</dnsName>
+                                <reason/>
+                                <keyName>jrod</keyName>
+                                <amiLaunchIndex>0</amiLaunchIndex>
+                                <productCodes/>
+                                <instanceType>t1.micro</instanceType>
+                                <launchTime>2013-08-07T16:24:06.000Z</launchTime>
+                                <placement>
+                                    <availabilityZone>us-west-2a</availabilityZone>
+                                    <groupName/>
+                                    <tenancy>default</tenancy>
+                                </placement>
+                                <kernelId>aki-fc37bacc</kernelId>
+                                <monitoring>
+                                    <state>disabled</state>
+                                </monitoring>
+                                <privateIpAddress>10.252.77.93</privateIpAddress>
+                                <ipAddress>54.212.47.23</ipAddress>
+                                <groupSet>
+                                    <item>
+                                        <groupId>sg-d21d90e2</groupId>
+                                        <groupName>default</groupName>
+                                    </item>
+                                </groupSet>
+                                <architecture>x86_64</architecture>
+                                <rootDeviceType>ebs</rootDeviceType>
+                                <rootDeviceName>/dev/sda1</rootDeviceName>
+                                <blockDeviceMapping>
+                                    <item>
+                                        <deviceName>/dev/sda1</deviceName>
+                                        <ebs>
+                                            <volumeId>vol-801195e9</volumeId>
+                                            <status>attached</status>
+                                            <attachTime>2013-08-07T16:24:10.000Z</attachTime>
+                                            <deleteOnTermination>true</deleteOnTermination>
+                                        </ebs>
+                                    </item>
+                                </blockDeviceMapping>
+                                <virtualizationType>paravirtual</virtualizationType>
+                                <clientToken>JPmuw1375892646349</clientToken>
+                                <tagSet>
+                                    <item>
+                                        <key>Ops Testing Instance</key>
+                                        <value/>
+                                    </item>
+                                    <item>
+                                        <key>Name</key>
+                                        <value/>
+                                    </item>
+                                </tagSet>
+                                <hypervisor>xen</hypervisor>
+                                <networkInterfaceSet/>
+                                <ebsOptimized>false</ebsOptimized>
+                            </item>
+                        </instancesSet>
+                    </item>
+                </reservationSet>
+            </DescribeInstancesResponse>
+        http_version: 
+      recorded_at: "Tue, 16 Sep 2014 13:53:39 GMT"
+    - request: 
+        method: post
+        uri: "https://elasticloadbalancing.us-west-2.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=RegisterInstancesWithLoadBalancer&Instances.member.1.InstanceId=i-5aa63451&Instances.member.2.InstanceId=i-636d3c6e&Instances.member.3.InstanceId=i-49879141&Instances.member.4.InstanceId=i-9eacf2aa&LoadBalancerName=lb-1&Version=2012-06-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.0.rc15 ruby/2.1.1 x86_64-darwin13.0"
+          X-Amz-Date: 
+            - "20140916T135339Z"
+          Host: 
+            - elasticloadbalancing.us-west-2.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - d3d788fa11ec50878c10dd612492d20c48bb4e77a1894fb5fd10e7cddc2d8247
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20140916/us-west-2/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=redacted"
+          Content-Length: 
+            - "245"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - dc562365-3da8-11e4-8a66-51a685fc05c4
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "684"
+          Date: 
+            - "Tue, 16 Sep 2014 13:53:38 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<RegisterInstancesWithLoadBalancerResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <RegisterInstancesWithLoadBalancerResult>\n    <Instances>\n      <member>\n        <InstanceId>i-636d3c6e</InstanceId>\n      </member>\n      <member>\n        <InstanceId>i-49879141</InstanceId>\n      </member>\n      <member>\n        <InstanceId>i-9eacf2aa</InstanceId>\n      </member>\n      <member>\n        <InstanceId>i-5aa63451</InstanceId>\n      </member>\n    </Instances>\n  </RegisterInstancesWithLoadBalancerResult>\n  <ResponseMetadata>\n    <RequestId>dc562365-3da8-11e4-8a66-51a685fc05c4</RequestId>\n  </ResponseMetadata>\n</RegisterInstancesWithLoadBalancerResponse>\n"
+        http_version: 
+      recorded_at: "Tue, 16 Sep 2014 13:53:40 GMT"
+  recorded_with: "VCR 2.9.3"
