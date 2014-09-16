@@ -15,6 +15,13 @@ Puppet::Type.newtype(:ec2_instance) do
     desc 'the security groups to associate the instance'
   end
 
+  newparam(:region) do
+    desc 'the region in which to launch the instance'
+    validate do |value|
+      fail Puppet::Error, 'Should not contains spaces' if value =~ /\s/
+    end
+  end
+
   newparam(:image_id) do
     desc 'the image id to use for the instance'
     validate do |value|

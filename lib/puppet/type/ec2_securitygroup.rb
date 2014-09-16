@@ -11,6 +11,13 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
+  newparam(:region) do
+    desc 'the region in which to launch the security group'
+    validate do |value|
+      fail Puppet::Error, 'Should not contains spaces' if value =~ /\s/
+    end
+  end
+
   newparam(:ingress) do
     desc 'rules for ingress traffic'
   end

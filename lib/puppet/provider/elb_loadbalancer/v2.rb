@@ -7,8 +7,9 @@ module Puppet
   class Provider
     class ElbLoadbalancer < Puppet::Provider
       def initialize(*args)
-        @elb_client = PuppetX::Puppetlabs::Aws.elb_client
-        @ec2_client = PuppetX::Puppetlabs::Aws.ec2_client
+        region = args.first.original_parameters[:region]
+        @elb_client = PuppetX::Puppetlabs::Aws.elb_client(region: region)
+        @ec2_client = PuppetX::Puppetlabs::Aws.ec2_client(region: region)
         super(*args)
       end
 
@@ -25,9 +26,14 @@ module Puppet
       def create
         Puppet.info("Creating load balancer #{name}")
         groups = resource[:security_groups]
-        groups = [groups] unless groups.is_a?(Array)
 
-        response = @ec2_client.describe_security_groups(group_names: groups.map(&:title))
+        if groups.nil?
+          security_groups = []
+        else
+          groups = [groups] unless groups.is_a?(Array)
+          response = @ec2_client.describe_security_groups(group_names: groups.map(&:title))
+          security_groups = response.data.security_groups.map(&:group_id)
+        end
 
         zones = resource[:availability_zones]
         zones = [zones] unless zones.is_a?(Array)
@@ -43,11 +49,11 @@ module Puppet
             },
           ],
           availability_zones: zones,
-          security_groups: response.data.security_groups.map(&:group_id)
+          security_groups: security_groups
         )
 
         instances = resource[:instances]
-        instances = [instances] unless groups.is_a?(Array)
+        instances = [instances] unless instances.is_a?(Array)
 
         response = @ec2_client.describe_instances(
           filters: [

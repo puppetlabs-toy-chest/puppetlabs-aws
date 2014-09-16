@@ -7,7 +7,8 @@ module Puppet
   class Provider
     class Ec2Securitygroup < Puppet::Provider
       def initialize(*args)
-        @client = PuppetX::Puppetlabs::Aws.ec2_client
+        region = args.first.original_parameters[:region]
+        @client = PuppetX::Puppetlabs::Aws.ec2_client(region: region)
         super(*args)
       end
 
