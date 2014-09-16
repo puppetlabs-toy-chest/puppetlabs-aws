@@ -18,7 +18,7 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
-  newparam(:ingress) do
+  newparam(:ingress, :array_mathching => :all) do
     desc 'rules for ingress traffic'
   end
 

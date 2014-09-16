@@ -28,10 +28,7 @@ module Puppet
           description: resource[:description]
         )
 
-        rules = resource[:ingress]
-        rules = [rules] unless rules.is_a?(Array)
-
-        rules.each do |rule|
+        resource[:ingress].each do |rule|
           if rule.key? 'source'
             @client.authorize_security_group_ingress(
               group_name: name,
