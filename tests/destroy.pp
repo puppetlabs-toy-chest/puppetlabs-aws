@@ -10,6 +10,18 @@
 # http://docs.puppetlabs.com/guides/tests_smoke.html
 #
 
+Ec2_securitygroup {
+  region => 'eu-west-1',
+}
+
+Ec2_instance {
+  region => 'eu-west-1',
+}
+
+Elb_loadbalancer {
+  region => 'eu-west-1',
+}
+
 ec2_instance { ['web-1', 'web-2', 'db']:
   ensure => absent,
 }
@@ -21,3 +33,5 @@ elb_loadbalancer { 'lb-1':
 ec2_securitygroup { ['lb-sg', 'web-sg', 'db-sg']:
   ensure => absent,
 }
+
+

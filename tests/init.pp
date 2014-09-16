@@ -10,6 +10,18 @@
 # http://docs.puppetlabs.com/guides/tests_smoke.html
 #
 
+Ec2_securitygroup {
+  region => 'eu-west-1',
+}
+
+Ec2_instance {
+  region => 'eu-west-1',
+}
+
+Elb_loadbalancer {
+  region => 'eu-west-1',
+}
+
 ec2_securitygroup { 'lb-sg':
   ensure      => present,
   description => 'Security group for load balancer',
@@ -38,22 +50,21 @@ ec2_securitygroup { 'db-sg':
 
 ec2_instance { ['web-1', 'web-2']:
   ensure          => present,
-  image_id        => 'ami-2d9add1d',
+  image_id        => 'ami-b8c41ccf',
   security_groups => [Ec2_securitygroup['web-sg']],
   instance_type   => 't1.micro',
 }
 
 ec2_instance { 'db':
   ensure          => present,
-  image_id        => 'ami-2d9add1d',
+  image_id        => 'ami-b8c41ccf',
   security_groups => [Ec2_securitygroup['db-sg']],
   instance_type   => 't1.micro',
 }
 
 elb_loadbalancer { 'lb-1':
   ensure             => present,
-  security_groups    => [Ec2_securitygroup['lb-sg']],
-  availability_zones => ['us-west-2a'],
+  availability_zones => ['eu-west-1b'],
   instances          => [
     Ec2_instance['web-1'],
     Ec2_instance['web-2'],
