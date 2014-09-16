@@ -1,7 +1,10 @@
-Puppet module for managing AWS resources to build out full stacks
+Puppet module for managing AWS resources to build out infrastructure.
 
 > Note that this repository contains a work-in-progress proof of
 > concept.
+
+[![Build
+Status](https://magnum.travis-ci.com/puppetlabs/puppetlabs-aws.svg?token=RqtxRv25TsPVz69Qso5L&branch=master)](https://magnum.travis-ci.com/puppetlabs/puppetlabs-aws)
 
 ## Intention
 
