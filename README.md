@@ -55,17 +55,12 @@ Running the sample code with Puppet apply:
 
 ```bash
 puppet apply tests/init.pp --modulepath ../ --test
---ordering=manifest
 ```
-
-Note the manifest ordering is a short term approach while we sort out
-autorequire.
 
 To destroy the resources run the following:
 
 ```bash
 puppet apply tests/delete.pp --modulepath ../ --test
---ordering=manifest
 ```
 
 Mote that due to dependencies between resources and the time taken to
