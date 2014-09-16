@@ -28,4 +28,14 @@ Puppet::Type.newtype(:ec2_securitygroup) do
       fail Puppet::Error, 'Empty values are not allowed' if value == ''
     end
   end
+
+  autorequire(:ec2_securitygroup) do
+    groups = []
+    rules = self[:ingress]
+    rules = [rules] unless rules.is_a?(Array)
+    rules.each do |rule|
+      groups << rule['source'] if rule.key? 'source'
+    end
+    groups
+  end
 end

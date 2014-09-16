@@ -6,6 +6,11 @@ require_relative '../../../puppet_x/puppetlabs/aws.rb'
 module Puppet
   class Provider
     class Ec2Securitygroup < Puppet::Provider
+
+      def self.instances
+        # puppet resource support, return a list of all security groups
+      end
+
       def initialize(*args)
         region = args.first.original_parameters[:region]
         @client = PuppetX::Puppetlabs::Aws.ec2_client(region: region)
@@ -32,7 +37,7 @@ module Puppet
           if rule.key? 'source'
             @client.authorize_security_group_ingress(
               group_name: name,
-              source_security_group_name: rule['source'].title
+              source_security_group_name: rule['source']
             )
           else
             @client.authorize_security_group_ingress(

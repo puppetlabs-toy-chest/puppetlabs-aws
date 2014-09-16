@@ -37,7 +37,7 @@ ec2_securitygroup { 'web-sg':
   ensure      => present,
   description => 'Security group for web servers',
   ingress     => [{
-    source => Ec2_securitygroup['lb-sg'],
+    source => 'lb-sg',
   }],
 }
 
@@ -45,7 +45,7 @@ ec2_securitygroup { 'db-sg':
   ensure      => present,
   description => 'Security group for database servers',
   ingress     => [{
-    source => Ec2_securitygroup['web-sg'],
+    source => 'web-sg',
   }],
 }
 
