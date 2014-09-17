@@ -7,17 +7,17 @@ describe type_class do
   let :params do
     [
       :name,
-      :image_id,
-      :security_groups,
-      :instance_type,
-      :region,
-      :availability_zone
+      :security_groups
     ]
   end
 
   let :properties do
     [
-      :ensure
+      :ensure,
+      :image_id,
+      :instance_type,
+      :region,
+      :availability_zone
     ]
   end
 
