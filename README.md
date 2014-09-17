@@ -44,11 +44,12 @@ targetting the following simple stack.
 
 ## Usage
 
-First, set a couple of environment variables with your AWS credentials.
+First, set a few environment variables with your AWS credentials.
 
 ```
 export AWS_ACCESS_KEY_ID=your_access_key_id
 export AWS_SECRET_ACCESS_KEY=your_secret_access_key
+export AWS_REGION=your_chosen_region
 ```
 
 Running the sample code with Puppet apply:
@@ -63,11 +64,33 @@ To destroy the resources run the following:
 puppet apply tests/delete.pp --modulepath ../ --test
 ```
 
-Mote that due to dependencies between resources and the time taken to
+Note that due to dependencies between resources and the time taken to
 transition state this currently requires multiple runs to complete.
 
+## Puppet resource support
 
-## Tesiting
+The module also has basic `puppet resource` support, so for instance the
+following will list all the security groups:
+
+```bash
+puppet resource ec2_securitygroup
+```
+
+We can also create new resources:
+
+```bash
+puppet resource ec2_securitygroup test-group ensure=present
+description="test description" region=sa-east-1
+```
+
+and then destroy them, all from the command line:
+
+```bash
+puppet resource ec2_securitygroup test-group ensure=absent
+region=sa-east-1
+```
+
+## Testing
 
 First you'll need to install the dependencies:
 
