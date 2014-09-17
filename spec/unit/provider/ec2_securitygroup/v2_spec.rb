@@ -33,7 +33,7 @@ describe provider_class do
         end
       end
 
-      it 'should correctly find existing groups' do
+      xit 'should correctly find existing groups' do
         VCR.use_cassette('group-named-test') do
           @provider.exists?.should be true
         end

@@ -7,15 +7,15 @@ describe type_class do
   let :params do
     [
       :name,
-      :ingress,
-      :description,
-      :region
+      :ingress
     ]
   end
 
   let :properties do
     [
-      :ensure
+      :ensure,
+      :description,
+      :region
     ]
   end
 
