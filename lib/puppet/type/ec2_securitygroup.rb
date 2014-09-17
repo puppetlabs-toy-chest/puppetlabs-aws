@@ -11,7 +11,7 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
-  newparam(:region) do
+  newproperty(:region) do
     desc 'the region in which to launch the security group'
     validate do |value|
       fail Puppet::Error, 'Should not contains spaces' if value =~ /\s/
@@ -22,7 +22,7 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     desc 'rules for ingress traffic'
   end
 
-  newparam(:description) do
+  newproperty(:description) do
     desc 'a short description of the group'
     validate do |value|
       fail Puppet::Error, 'Empty values are not allowed' if value == ''
@@ -30,12 +30,10 @@ Puppet::Type.newtype(:ec2_securitygroup) do
   end
 
   autorequire(:ec2_securitygroup) do
-    groups = []
     rules = self[:ingress]
     rules = [rules] unless rules.is_a?(Array)
-    rules.each do |rule|
-      groups << rule['security_group'] if !rule.nil? and rule.key? 'security_group'
+    rules.collect do |rule|
+      rule['security_group'] if !rule.nil? and rule.key? 'security_group'
     end
-    groups
   end
 end

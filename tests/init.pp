@@ -11,16 +11,16 @@
 #
 
 Ec2_securitygroup {
-  region => 'eu-west-1',
+  region => 'sa-east-1',
 }
 
 Ec2_instance {
-  region            => 'eu-west-1',
-  availability_zone => 'eu-west-1b',
+  region            => 'sa-east-1',
+  availability_zone => 'sa-east-1a',
 }
 
 Elb_loadbalancer {
-  region => 'eu-west-1',
+  region => 'sa-east-1',
 }
 
 ec2_securitygroup { 'lb-sg':
@@ -51,21 +51,21 @@ ec2_securitygroup { 'db-sg':
 
 ec2_instance { ['web-1', 'web-2']:
   ensure          => present,
-  image_id        => 'ami-b8c41ccf',
+  image_id        => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
   security_groups => ['web-sg'],
   instance_type   => 't1.micro',
 }
 
 ec2_instance { 'db':
   ensure          => present,
-  image_id        => 'ami-b8c41ccf',
+  image_id        => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
   security_groups => ['db-sg'],
   instance_type   => 't1.micro',
 }
 
 elb_loadbalancer { 'lb-1':
   ensure             => present,
-  availability_zones => ['eu-west-1b'],
+  availability_zones => ['sa-east-1a'],
   instances          => ['web-1', 'web-2'],
   listeners          => [{
     protocol => 'tcp',

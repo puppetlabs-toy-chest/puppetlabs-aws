@@ -3,74 +3,80 @@ require 'retries'
 
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
-module Puppet
-  class Provider
-    class Ec2Securitygroup < Puppet::Provider
+Puppet::Type.type(:ec2_securitygroup).provide(:v2) do
+  confine feature: :aws
 
-      def self.instances
-        # puppet resource support, return a list of all security groups
+  mk_resource_methods
+
+  def self.instances
+    region = ENV['AWS_REGION']
+    client = PuppetX::Puppetlabs::Aws.ec2_client(region: region)
+    response = client.describe_security_groups
+    response.data.security_groups.collect do |group|
+      new({
+        name: group[:group_name],
+        description: group[:description],
+        ensure: :present,
+        region: region,
+      })
+    end
+  end
+
+  def self.prefetch(resources)
+    instances.each do |prov|
+      if resource = resources[prov.name]
+        resource.provider = prov
       end
+    end
+  end
 
-      def initialize(*args)
-        region = args.first.original_parameters[:region]
-        @client = PuppetX::Puppetlabs::Aws.ec2_client(region: region)
-        super(*args)
-      end
+  def client
+    region = resource[:region] || ENV['AWS_REGION']
+    PuppetX::Puppetlabs::Aws.ec2_client(region: region)
+  end
 
-      def exists?
-        @client.describe_security_groups(group_names: [name])
-        Puppet.info("Security group #{name} exists")
-        true
-      rescue Aws::EC2::Errors::InvalidGroupNotFound
-        Puppet.info("Security group #{name} doesn't exist")
-        false
-      end
+  def exists?
+    Puppet.info("Checking if security group #{name} exists")
+    @property_hash[:ensure] == :present
+  end
 
-      def create
-        Puppet.info("Creating security group #{name}")
-        @client.create_security_group(
+  def create
+    Puppet.info("Creating security group #{name}")
+    client.create_security_group(
+      group_name: name,
+      description: resource[:description]
+    )
+
+    rules = resource[:ingress]
+    rules = [rules] unless rules.is_a?(Array)
+
+    rules.each do |rule|
+      if rule.key? 'security_group'
+        client.authorize_security_group_ingress(
           group_name: name,
-          description: resource[:description]
+          source_security_group_name: rule['security_group']
         )
-
-        rules = resource[:ingress]
-        rules = [rules] unless rules.is_a?(Array)
-
-        rules.each do |rule|
-          if rule.key? 'security_group'
-            @client.authorize_security_group_ingress(
-              group_name: name,
-              source_security_group_name: rule['security_group']
-            )
-          else
-            @client.authorize_security_group_ingress(
-              group_name: name,
-              ip_permissions: [{
-                ip_protocol: rule['protocol'],
-                to_port: rule['port'].to_i,
-                from_port: rule['port'].to_i,
-                ip_ranges: [{
-                  cidr_ip: rule['cidr']
-                }]
-              }]
-            )
-          end
-        end
-      end
-
-      def destroy
-        Puppet.info("Deleting security group #{name}")
-        @client.delete_security_group(
-          group_name: name
+      else
+        client.authorize_security_group_ingress(
+          group_name: name,
+          ip_permissions: [{
+            ip_protocol: rule['protocol'],
+            to_port: rule['port'].to_i,
+            from_port: rule['port'].to_i,
+            ip_ranges: [{
+              cidr_ip: rule['cidr']
+            }]
+          }]
         )
       end
     end
   end
-end
 
-Puppet::Type.type(:ec2_securitygroup).provide(
-  :v2,
-  parent: Puppet::Provider::Ec2Securitygroup) do
-    confine feature: :aws
-    confine feature: :retries
+  def destroy
+    Puppet.info("Deleting security group #{name}")
+    client.delete_security_group(
+      group_name: name
+    )
+    @property_hash[:ensure] = :absent
   end
+end
