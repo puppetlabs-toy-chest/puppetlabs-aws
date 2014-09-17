@@ -9,7 +9,7 @@
   [seq elm]
   (some #(= elm %) seq))
 
-(def region {:endpoint "us-west-2"})
+(def region {:endpoint "sa-east-1"})
 
 (def groups (:security-groups
   (describe-security-groups region)))
