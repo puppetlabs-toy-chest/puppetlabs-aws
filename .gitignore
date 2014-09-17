@@ -35,3 +35,6 @@ build/
 
 # log files
 *.log
+
+# generated fixtures
+spec/fixtures
