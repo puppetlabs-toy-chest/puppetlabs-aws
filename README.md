@@ -79,15 +79,13 @@ puppet resource ec2_securitygroup
 We can also create new resources:
 
 ```bash
-puppet resource ec2_securitygroup test-group ensure=present
-description="test description" region=sa-east-1
+puppet resource ec2_securitygroup test-group ensure=present description="test description" region=sa-east-1
 ```
 
 and then destroy them, all from the command line:
 
 ```bash
-puppet resource ec2_securitygroup test-group ensure=absent
-region=sa-east-1
+puppet resource ec2_securitygroup test-group ensure=absent region=sa-east-1
 ```
 
 ## Testing
