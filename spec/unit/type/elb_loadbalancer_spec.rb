@@ -10,14 +10,14 @@ describe type_class do
       :availability_zones,
       :security_groups,
       :instances,
-      :listeners,
-      :region
+      :listeners
     ]
   end
 
   let :properties do
     [
-      :ensure
+      :ensure,
+      :region
     ]
   end
 

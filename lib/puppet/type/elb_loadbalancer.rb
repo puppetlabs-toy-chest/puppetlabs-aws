@@ -11,7 +11,7 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     end
   end
 
-  newparam(:region) do
+  newproperty(:region) do
     desc 'the region in which to launch the load balancer'
     validate do |value|
       fail Puppet::Error, 'Should not contains spaces' if value =~ /\s/

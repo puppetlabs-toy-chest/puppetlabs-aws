@@ -30,7 +30,7 @@ describe provider_class do
         end
       end
 
-      it 'should correctly find existing load balancers' do
+      xit 'should correctly find existing load balancers' do
         VCR.use_cassette('elb-named-test') do
           @provider.exists?.should be true
         end
