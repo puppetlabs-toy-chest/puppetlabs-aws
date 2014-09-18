@@ -19,6 +19,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2) do
           instance_type: instance.instance_type,
           image_id: instance.image_id,
           availability_zone: instance.placement.availability_zone,
+          ensure: :present,
           region: region
         })
       end
@@ -48,7 +49,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2) do
 
   def exists?
     Puppet.info("Checking if instance #{name} exists")
-    !_find_instances.reservations.empty?
+    @property_hash[:ensure] == :present
   end
 
   def create
@@ -76,7 +77,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2) do
   def destroy
     Puppet.info("Deleting instance #{name}")
     client.terminate_instances(
-      instance_ids: _find_instances.reservations.first.instances.map(&:instance_id),
+      instance_ids: _find_instances.reservations.map(&:instances).
+        flatten.map(&:instance_id)
     )
   end
 end
