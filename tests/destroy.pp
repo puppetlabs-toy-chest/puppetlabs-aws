@@ -11,15 +11,15 @@
 #
 
 Ec2_securitygroup {
-  region => 'eu-west-1',
+  region => 'sa-east-1',
 }
 
 Ec2_instance {
-  region => 'eu-west-1',
+  region => 'sa-east-1',
 }
 
 Elb_loadbalancer {
-  region => 'eu-west-1',
+  region => 'sa-east-1',
 }
 
 ec2_instance { ['web-1', 'web-2', 'db']:
