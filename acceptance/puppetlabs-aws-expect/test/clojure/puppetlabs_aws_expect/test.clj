@@ -24,6 +24,13 @@
 (def loadbalancers (:load-balancer-descriptions
   (describe-load-balancers region)))
 
+(def instances (flatten
+  (map :instances
+    (:reservations (describe-instances region)))))
+
+(def instance-names (map :value
+  (filter #(= (:key %) "Name") (flatten (map :tags instances)))))
+
 (def loadbalancer-names (map :load-balancer-name loadbalancers))
 
 (expect 4 (count groups))
@@ -35,3 +42,9 @@
 (expect 1 (count loadbalancers))
 
 (expect (in? loadbalancer-names "lb-1"))
+
+(expect 3 (count instances))
+
+(expect (in? instance-names "web-1"))
+(expect (in? instance-names "web-2"))
+(expect (in? instance-names "db"))
