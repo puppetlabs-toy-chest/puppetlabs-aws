@@ -55,17 +55,17 @@ export AWS_REGION=your_chosen_region
 Running the sample code with Puppet apply:
 
 ```bash
-puppet apply tests/init.pp --modulepath ../ --test
+puppet apply tests/create.pp --modulepath ../ --test
 ```
 
-To destroy the resources run the following:
+To destroy the resources created by the above you can run the following:
 
 ```bash
 puppet apply tests/delete.pp --modulepath ../ --test
 ```
 
-Note that due to dependencies between resources and the time taken to
-transition state this currently requires multiple runs to complete.
+The tests directory contains other examples as well which should give an
+idea of what's possible.
 
 ## Puppet resource support
 
@@ -107,4 +107,16 @@ whenever you change any code useful, in which case run:
 
 ```bash
 bundle exec guard
+```
+
+## Acceptance tests
+
+Given the nature of this project a small acceptance testing framework is
+included in the `acceptance` directory. This is a small clojure
+application which makes assertions agains the AWS API that the resources
+we think we're creating are really there. Running this requires the
+above mentioned environment variables and should work with:
+
+```bash
+lein test
 ```
