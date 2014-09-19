@@ -67,7 +67,7 @@ puppet apply tests/delete.pp --modulepath ../ --test
 The tests directory contains other examples as well which should give an
 idea of what's possible.
 
-## Puppet resource support
+### Puppet resource support
 
 The module also has basic `puppet resource` support, so for instance the
 following will list all the security groups:
@@ -87,6 +87,11 @@ and then destroy them, all from the command line:
 ```bash
 puppet resource ec2_securitygroup test-group ensure=absent region=sa-east-1
 ```
+
+### Pegasus support
+
+See the contrib folder for an example EC2 inventory script for pegasus.
+
 
 ## Testing
 
@@ -109,7 +114,7 @@ whenever you change any code useful, in which case run:
 bundle exec guard
 ```
 
-## Acceptance tests
+### Acceptance tests
 
 Given the nature of this project a small acceptance testing framework is
 included in the `acceptance` directory. This is a small clojure
