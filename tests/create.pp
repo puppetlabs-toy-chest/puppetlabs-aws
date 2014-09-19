@@ -29,6 +29,10 @@ ec2_securitygroup { 'web-sg':
   description => 'Security group for web servers',
   ingress     => [{
     security_group => 'lb-sg',
+  },{
+    protocol => 'tcp',
+    port     => 22,
+    cidr     => '0.0.0.0/0'
   }],
 }
 
@@ -37,19 +41,23 @@ ec2_securitygroup { 'db-sg':
   description => 'Security group for database servers',
   ingress     => [{
     security_group => 'web-sg',
+  },{
+    protocol => 'tcp',
+    port     => 22,
+    cidr     => '0.0.0.0/0'
   }],
 }
 
 ec2_instance { ['web-1', 'web-2']:
   ensure          => present,
-  image_id        => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
+  image_id        => 'ami-1579d308', # SA 'ami-67a60d7a', # EU 'ami-b8c41ccf',
   security_groups => ['web-sg'],
   instance_type   => 't1.micro',
 }
 
-ec2_instance { 'db':
+ec2_instance { 'db-1':
   ensure          => present,
-  image_id        => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
+  image_id        => 'ami-1579d308', # SA 'ami-67a60d7a', # EU 'ami-b8c41ccf',
   security_groups => ['db-sg'],
   instance_type   => 't1.micro',
 }
