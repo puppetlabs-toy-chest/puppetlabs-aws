@@ -8,8 +8,9 @@ Status](https://magnum.travis-ci.com/puppetlabs/puppetlabs-aws.svg?token=RqtxRv2
 
 ## Intention
 
-Use the Puppet DSL to provision resources in AWS. The begin with we're
-targetting the following simple stack.
+Use the Puppet DSL to provision resources in AWS. To begin with we're
+targetting the following simple stack comprising EC2 instances, EC2
+security groups and ELB load balancers.
 
 ```
                           WWW
