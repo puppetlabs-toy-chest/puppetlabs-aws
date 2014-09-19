@@ -1,0 +1,10 @@
+---
+classes:
+  - locales
+  - motd
+  - timezone
+  - ntp
+  - sudo
+  - ssh
+timezone:timezone: 'UTC'
+ntp:ensure: latest

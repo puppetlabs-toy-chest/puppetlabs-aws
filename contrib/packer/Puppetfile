@@ -1,0 +1,9 @@
+forge "https://forgeapi.puppetlabs.com"
+
+mod 'saz/locales'
+mod 'saz/sudo'
+mod 'saz/motd'
+mod 'saz/timezone', '3.0.1'
+mod 'saz/ssh'
+
+mod 'puppetlabs/ntp'

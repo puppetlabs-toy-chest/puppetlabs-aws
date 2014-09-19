@@ -1,0 +1,6 @@
+:hierarchy:
+  - common
+:backends:
+  - yaml
+:yaml:
+  :datadir: '/tmp/hieradata'
