@@ -18,4 +18,6 @@ group :development do
   gem 'guard-rake'
   gem 'rubocop', require: false
   gem 'pry'
+  gem 'librarian-puppet'
+  gem 'clamp'
 end
