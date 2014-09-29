@@ -1,4 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
+require "base64"
 
 Puppet::Type.type(:ec2_instance).provide(:v2) do
   confine feature: :aws
@@ -56,12 +57,14 @@ Puppet::Type.type(:ec2_instance).provide(:v2) do
     Puppet.info("Creating instance #{name}")
     groups = resource[:security_groups]
     groups = [groups] unless groups.is_a?(Array)
+
     response = client.run_instances(
       image_id: resource[:image_id],
       min_count: 1,
       max_count: 1,
       security_groups: groups,
       instance_type: resource[:instance_type],
+      user_data: Base64.encode64(resource[:user_data]),
       placement: {
         availability_zone: resource[:availability_zone]
       }

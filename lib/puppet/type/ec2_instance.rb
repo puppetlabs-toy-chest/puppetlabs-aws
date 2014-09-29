@@ -19,6 +19,10 @@ Puppet::Type.newtype(:ec2_instance) do
     desc 'the tags for the instance'
   end
 
+  newparam(:user_data) do
+    desc 'user data script to execute on new instance'
+  end
+
   newproperty(:region) do
     desc 'the region in which to launch the instance'
     validate do |value|
