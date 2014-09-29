@@ -8,16 +8,20 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2) do
   mk_resource_methods
 
   def self.instances
-    region = ENV['AWS_REGION']
-    client = PuppetX::Puppetlabs::Aws.elb_client(region: region)
-    response = client.describe_load_balancers
-    response.data.load_balancer_descriptions.collect do |lb|
-      new({
-        name: lb.load_balancer_name,
-        ensure: :present,
-        region: region
-      })
-    end
+    client = PuppetX::Puppetlabs::Aws.ec2_client
+    regions = client.describe_regions.data.regions.map(&:region_name)
+
+    regions.collect do |region|
+      region_client = PuppetX::Puppetlabs::Aws.elb_client(region: region)
+      response = region_client.describe_load_balancers
+      response.data.load_balancer_descriptions.collect do |lb|
+        new({
+          name: lb.load_balancer_name,
+          ensure: :present,
+          region: region
+        })
+      end
+    end.flatten
   end
 
   def self.prefetch(resources)
