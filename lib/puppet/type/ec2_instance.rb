@@ -15,6 +15,10 @@ Puppet::Type.newtype(:ec2_instance) do
     desc 'the security groups to associate the instance'
   end
 
+  newparam(:tags, :array_matching => :all) do
+    desc 'the tags for the instance'
+  end
+
   newproperty(:region) do
     desc 'the region in which to launch the instance'
     validate do |value|
