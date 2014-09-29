@@ -9,17 +9,21 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2) do
   mk_resource_methods
 
   def self.instances
-    region = ENV['AWS_REGION']
-    client = PuppetX::Puppetlabs::Aws.ec2_client(region: region)
-    response = client.describe_security_groups
-    response.data.security_groups.collect do |group|
-      new({
-        name: group[:group_name],
-        description: group[:description],
-        ensure: :present,
-        region: region,
-      })
-    end
+    client = PuppetX::Puppetlabs::Aws.ec2_client
+    regions = client.describe_regions.data.regions.map(&:region_name)
+
+    regions.collect do |region|
+      region_client = PuppetX::Puppetlabs::Aws.ec2_client(region: region)
+      response = region_client.describe_security_groups
+      response.data.security_groups.collect do |group|
+        new({
+          name: group[:group_name],
+          description: group[:description],
+          ensure: :present,
+          region: region,
+        })
+      end
+    end.flatten
   end
 
   def self.prefetch(resources)
