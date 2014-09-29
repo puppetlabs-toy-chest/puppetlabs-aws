@@ -9,7 +9,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "region": "{{user `aws_region`}}",
-    "source_ami": "ami-67a60d7a",
+    "source_ami": "ami-611bb17c",
     "instance_type": "t1.micro",
     "ssh_username": "ubuntu",
     "ami_name": "puppet-aws-{{timestamp}}"
