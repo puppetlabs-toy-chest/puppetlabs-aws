@@ -66,11 +66,11 @@ Puppet::Type.type(:ec2_instance).provide(:v2) do
         availability_zone: resource[:availability_zone]
       }
     )
+    tags = resource[:tags].map { |k,v| {key: k, value: v} }
+    tags << {key: 'Name', value: name}
     client.create_tags(
       resources: response.instances.map(&:instance_id),
-      tags: [
-        {key: 'Name', value: name}
-      ]
+      tags: tags
     )
   end
 
