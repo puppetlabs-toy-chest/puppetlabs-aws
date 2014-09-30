@@ -1,0 +1,31 @@
+#!/bin/bash
+
+apt-get update
+
+puppet resource package puppetmaster-passenger ensure=installed
+puppet resource package ruby-fog ensure=installed
+
+# Download a temporary module from GitHub for the moment
+puppet module install puppetlabs/inifile
+wget -O /tmp/minimal.tar.gz https://github.com/garethr/mrzarquon-certsigner/archive/minimal.tar.gz
+tar -zxvf /tmp/minimal.tar.gz -C /tmp
+mv /tmp/mrzarquon-certsigner-minimal /etc/puppet/modules/certsigner
+
+cat > /etc/puppet/autosignfog.yaml <<CONFIG
+:default:
+  :aws_access_key_id: <%= scope.function_hiera(['aws_access_key_id']) %>
+  :aws_secret_access_key: <%= scope.function_hiera(['aws_secret_access_key']) %>
+  :region: <%= scope.function_hiera(['region']) %>
+CONFIG
+
+puppet apply -e "include 'certsigner::aws' \
+include 'certsigner::awsfacts'"
+
+puppet config set dns_alt_names puppet,$(facter fqdn) --section main
+puppet config set certname $(curl -s http://169.254.169.254/latest/meta-data/instance-id) --section agent
+
+sed -i /etc/default/puppet -e 's/START=no/START=yes/'
+
+service apache2 restart
+
+puppet resource service puppet ensure=running enable=true

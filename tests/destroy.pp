@@ -15,7 +15,7 @@ Elb_loadbalancer {
   region => 'sa-east-1',
 }
 
-ec2_instance { ['web-1', 'web-2', 'db']:
+ec2_instance { ['web-1', 'web-2', 'db-1', 'puppet-1']:
   ensure => absent,
 }
 
@@ -23,6 +23,6 @@ elb_loadbalancer { 'lb-1':
   ensure => absent,
 }
 
-ec2_securitygroup { ['lb-sg', 'web-sg', 'db-sg']:
+ec2_securitygroup { ['lb-sg', 'web-sg', 'db-sg', 'puppet-sg']:
   ensure => absent,
 }
