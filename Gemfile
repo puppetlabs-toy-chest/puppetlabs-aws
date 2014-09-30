@@ -20,4 +20,5 @@ group :development do
   gem 'pry'
   gem 'librarian-puppet'
   gem 'clamp'
+  gem "hiera-eyaml"
 end

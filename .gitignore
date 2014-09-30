@@ -38,3 +38,7 @@ build/
 
 # generated fixtures
 spec/fixtures
+
+# keys for eyaml
+keys
+hieradata/*.eyaml

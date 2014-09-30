@@ -1,17 +1,18 @@
-# This will create a set of instances, load balancers and security groups in the specified
-# AWS region.
+# This will create a set of instances, load balancers and security groups in
+# the specified AWS region which then connect to the master created in
+# master.pp AND then autosign.
 
 Ec2_securitygroup {
-  region => 'sa-east-1',
+  region => hiera('region'),
 }
 
 Ec2_instance {
-  region            => 'sa-east-1',
-  availability_zone => 'sa-east-1a',
+  region => hiera('region'),
+  availability_zone => hiera('availability_zone'),
 }
 
 Elb_loadbalancer {
-  region => 'sa-east-1',
+  region => hiera('region'),
 }
 
 ec2_securitygroup { 'lb-sg':
@@ -65,8 +66,9 @@ ec2_securitygroup { 'puppet-sg':
 
 ec2_instance { ['web-1', 'web-2']:
   ensure          => present,
-  image_id        => 'ami-41e85d5c', # SA 'ami-67a60d7a', # EU 'ami-b8c41ccf',
+  image_id        => hiera('ami'), # SA 'ami-67a60d7a', # EU 'ami-b8c41ccf',
   security_groups => ['web-sg'],
+  user_data       => template('puppetlabs-aws/agent-userdata.sh.erb'),
   instance_type   => 't1.micro',
   tags            => {
     department => 'engineering',
@@ -77,8 +79,9 @@ ec2_instance { ['web-1', 'web-2']:
 
 ec2_instance { 'db-1':
   ensure          => present,
-  image_id        => 'ami-41e85d5c', # SA 'ami-67a60d7a', # EU 'ami-b8c41ccf',
+  image_id        => hiera('ami'), # SA 'ami-67a60d7a', # EU 'ami-b8c41ccf',
   security_groups => ['db-sg'],
+  user_data       => template('puppetlabs-aws/agent-userdata.sh.erb'),
   instance_type   => 't1.micro',
   tags            => {
     department => 'engineering',
