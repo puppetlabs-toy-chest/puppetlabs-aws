@@ -44,7 +44,6 @@ First, set a few environment variables with your AWS credentials.
 ```
 export AWS_ACCESS_KEY_ID=your_access_key_id
 export AWS_SECRET_ACCESS_KEY=your_secret_access_key
-export AWS_REGION=your_chosen_region
 ```
 
 Running the sample code with Puppet apply:
@@ -60,7 +59,8 @@ puppet apply tests/delete.pp --modulepath ../ --test
 ```
 
 The tests directory contains other examples as well which should give an
-idea of what's possible.
+idea of what's possible. Note in particular the master/agent setup with
+EC2 API based autosigning.
 
 ### Puppet resource support
 
