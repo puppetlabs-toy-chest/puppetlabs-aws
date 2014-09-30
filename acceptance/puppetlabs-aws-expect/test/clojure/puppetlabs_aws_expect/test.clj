@@ -33,18 +33,16 @@
 
 (def loadbalancer-names (map :load-balancer-name loadbalancers))
 
-(expect 4 (count groups))
-
 (expect (in? group-names "web-sg"))
 (expect (in? group-names "lb-sg"))
 (expect (in? group-names "db-sg"))
+(expect (in? group-names "puppet-sg"))
 
 (expect 1 (count loadbalancers))
 
 (expect (in? loadbalancer-names "lb-1"))
 
-(expect 3 (count instances))
-
 (expect (in? instance-names "web-1"))
 (expect (in? instance-names "web-2"))
-(expect (in? instance-names "db"))
+(expect (in? instance-names "db-1"))
+(expect (in? instance-names "puppet-1"))
