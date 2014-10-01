@@ -1,18 +1,14 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 require "base64"
 
-Puppet::Type.type(:ec2_instance).provide(:v2) do
+Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
 
   mk_resource_methods
 
   def self.instances
-    client = PuppetX::Puppetlabs::Aws.ec2_client
-    regions = client.describe_regions.data.regions.map(&:region_name)
-
     regions.collect do |region|
-      region_client = PuppetX::Puppetlabs::Aws.ec2_client(region: region)
-      response = region_client.describe_instances(filters: [
+      response = ec2_client(region: region).describe_instances(filters: [
         {name: 'instance-state-name', values: ['pending', 'running']}
       ])
       instances = []
@@ -43,18 +39,6 @@ Puppet::Type.type(:ec2_instance).provide(:v2) do
     end
   end
 
-  def client
-    region = resource[:region] || ENV['AWS_REGION']
-    PuppetX::Puppetlabs::Aws.ec2_client(region: region)
-  end
-
-  def _find_instances
-    client.describe_instances(filters: [
-      {name: 'tag:Name', values: [name]},
-      {name: 'instance-state-name', values: ['pending', 'running']}
-    ])
-  end
-
   def exists?
     Puppet.info("Checking if instance #{name} exists")
     @property_hash[:ensure] == :present
@@ -65,7 +49,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2) do
     groups = resource[:security_groups]
     groups = [groups] unless groups.is_a?(Array)
 
-    response = client.run_instances(
+    response = ec2_client(region: resource[:region]).run_instances(
       image_id: resource[:image_id],
       min_count: 1,
       max_count: 1,
@@ -78,7 +62,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2) do
     )
     tags = resource[:tags].map { |k,v| {key: k, value: v} }
     tags << {key: 'Name', value: name}
-    client.create_tags(
+    ec2_client(region[:region]).create_tags(
       resources: response.instances.map(&:instance_id),
       tags: tags
     )
@@ -86,8 +70,12 @@ Puppet::Type.type(:ec2_instance).provide(:v2) do
 
   def destroy
     Puppet.info("Deleting instance #{name}")
-    client.terminate_instances(
-      instance_ids: _find_instances.reservations.map(&:instances).
+    instances = ec2_client(region: resource[:region]).describe_instances(filters: [
+      {name: 'tag:Name', values: [name]},
+      {name: 'instance-state-name', values: ['pending', 'running']}
+    ])
+    ec2_client(region: resource[:region]).terminate_instances(
+      instance_ids: instances.reservations.map(&:instances).
         flatten.map(&:instance_id)
     )
   end

@@ -2,17 +2,14 @@ require 'aws-sdk-core'
 
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
-Puppet::Type.type(:elb_loadbalancer).provide(:v2) do
+Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
 
   mk_resource_methods
 
   def self.instances
-    client = PuppetX::Puppetlabs::Aws.ec2_client
-    regions = client.describe_regions.data.regions.map(&:region_name)
-
     regions.collect do |region|
-      region_client = PuppetX::Puppetlabs::Aws.elb_client(region: region)
+      region_client = elb_client(region: region)
       response = region_client.describe_load_balancers
       response.data.load_balancer_descriptions.collect do |lb|
         new({
@@ -32,16 +29,6 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2) do
     end
   end
 
-  def elb_client
-    region = resource[:region] || ENV['AWS_REGION']
-    PuppetX::Puppetlabs::Aws.elb_client(region: region)
-  end
-
-  def ec2_client
-    region = resource[:region] || ENV['AWS_REGION']
-    PuppetX::Puppetlabs::Aws.ec2_client(region: region)
-  end
-
   def exists?
     Puppet.info("Checking if load balancer #{name} exists")
     @property_hash[:ensure] == :present
@@ -55,14 +42,14 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2) do
       security_groups = []
     else
       groups = [groups] unless groups.is_a?(Array)
-      response = ec2_client.describe_security_groups(group_names: groups.map(&:title))
+      response = ec2_client(region: resource[:region]).describe_security_groups(group_names: groups.map(&:title))
       security_groups = response.data.security_groups.map(&:group_id)
     end
 
     zones = resource[:availability_zones]
     zones = [zones] unless zones.is_a?(Array)
 
-    elb_client.create_load_balancer(
+    elb_client(region: resource[:region]).create_load_balancer(
       load_balancer_name: name,
       listeners: [
         {
@@ -94,7 +81,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2) do
       instance_input << { instance_id: id }
     end
 
-    elb_client.register_instances_with_load_balancer(
+    elb_client(region: resource[:region]).register_instances_with_load_balancer(
       load_balancer_name: name,
       instances: instance_input
     )
@@ -102,7 +89,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2) do
 
   def destroy
     Puppet.info("Destroying load balancer #{name}")
-    elb_client.delete_load_balancer(
+    elb_client(region: resource[:region]).delete_load_balancer(
       load_balancer_name: name,
     )
     @property_hash[:ensure] = :absent

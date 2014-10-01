@@ -3,18 +3,14 @@ require 'retries'
 
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
-Puppet::Type.type(:ec2_securitygroup).provide(:v2) do
+Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
 
   mk_resource_methods
 
   def self.instances
-    client = PuppetX::Puppetlabs::Aws.ec2_client
-    regions = client.describe_regions.data.regions.map(&:region_name)
-
     regions.collect do |region|
-      region_client = PuppetX::Puppetlabs::Aws.ec2_client(region: region)
-      response = region_client.describe_security_groups
+      response = ec2_client(region: region).describe_security_groups
       response.data.security_groups.collect do |group|
         new({
           name: group[:group_name],
@@ -34,11 +30,6 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2) do
     end
   end
 
-  def client
-    region = resource[:region] || ENV['AWS_REGION']
-    PuppetX::Puppetlabs::Aws.ec2_client(region: region)
-  end
-
   def exists?
     Puppet.info("Checking if security group #{name} exists")
     @property_hash[:ensure] == :present
@@ -46,7 +37,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2) do
 
   def create
     Puppet.info("Creating security group #{name}")
-    client.create_security_group(
+    ec2_client(region: resource[:region]).create_security_group(
       group_name: name,
       description: resource[:description]
     )
@@ -56,12 +47,12 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2) do
 
     rules.each do |rule|
       if rule.key? 'security_group'
-        client.authorize_security_group_ingress(
+        ec2_client(region: resource[:region]).authorize_security_group_ingress(
           group_name: name,
           source_security_group_name: rule['security_group']
         )
       else
-        client.authorize_security_group_ingress(
+        ec2_client(region: resource[:region]).authorize_security_group_ingress(
           group_name: name,
           ip_permissions: [{
             ip_protocol: rule['protocol'],
@@ -78,7 +69,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2) do
 
   def destroy
     Puppet.info("Deleting security group #{name}")
-    client.delete_security_group(
+    ec2_client(region: resource[:region]).delete_security_group(
       group_name: name
     )
     @property_hash[:ensure] = :absent
