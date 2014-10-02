@@ -1,11 +1,22 @@
 source 'https://rubygems.org'
 
+def location_for(place, fake_version = nil)
+  if place =~ /^(git:[^#]*)#(.*)/
+    [fake_version, { :git => $1, :branch => $2, :require => false }].compact
+  elsif place =~ /^file:\/\/(.*)/
+    ['>= 0', { :path => File.expand_path($1), :require => false }]
+  else
+    [place, { :require => false }]
+  end
+end
+
 gem 'retries'
 gem 'aws-sdk-core', '~> 2.0.0.rc'
 
+beaker_version = ENV['BEAKER_VERSION']
 group :test do
   gem 'rake'
-  gem 'puppet', ENV['PUPPET_VERSION'] || '~> 3.7.0'
+  gem "puppet", *location_for(ENV['PUPPET_LOCATION'] || '~> 3.7.0')
   gem 'puppetlabs_spec_helper'
   gem 'webmock'
   gem 'vcr'
@@ -21,4 +32,8 @@ group :development do
   gem 'librarian-puppet'
   gem 'clamp'
   gem "hiera-eyaml"
+end
+
+if File.exists? "#{__FILE__}.local"
+  eval(File.read("#{__FILE__}.local"), binding)
 end
