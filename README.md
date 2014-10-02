@@ -55,7 +55,7 @@ puppet apply tests/create.pp --modulepath ../ --test
 To destroy the resources created by the above you can run the following:
 
 ```bash
-puppet apply tests/delete.pp --modulepath ../ --test
+puppet apply tests/destroy.pp --modulepath ../ --test
 ```
 
 The tests directory contains other examples as well which should give an
