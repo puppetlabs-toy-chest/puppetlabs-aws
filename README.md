@@ -104,7 +104,7 @@ See the contrib folder for an example EC2 inventory script for pegasus.
 First you'll need to install the dependencies:
 
 ```bash
-bundle install
+bundle install --path .bundle/gems
 ```
 
 The running the tests once is as simple as:
