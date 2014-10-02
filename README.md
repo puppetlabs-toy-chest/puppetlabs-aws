@@ -99,7 +99,7 @@ puppet resource ec2_securitygroup test-group ensure=absent region=sa-east-1
 First you'll need to install the dependencies:
 
 ```bash
-bundle install
+bundle install --path .bundle/gems
 ```
 
 The running the tests once is as simple as:
