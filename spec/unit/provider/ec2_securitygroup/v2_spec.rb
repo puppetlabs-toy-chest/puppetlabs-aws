@@ -2,22 +2,22 @@ require 'spec_helper'
 
 provider_class = Puppet::Type.type(:ec2_securitygroup).provider(:v2)
 
-#ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-#ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
+ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
+ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
 ENV['AWS_REGION'] = 'sa-east-1'
 
 describe provider_class do
 
   context 'with the minimum params' do
-     let(:resource) { Puppet::Type.type(:ec2_securitygroup).new(
-      name: 'web-sg',
+    let(:resource) { Puppet::Type.type(:ec2_securitygroup).new(
+      name: 'test-web-sg',
       description: 'Security group for testing',
       region: 'sa-east-1',
     )}
 
-     let(:provider) { resource.provider }
+    let(:provider) { resource.provider }
 
-     let(:instance) { provider.class.instances.first }
+    let(:instance) { provider.class.instances.first }
 
     it 'should be an instance of the ProviderV2' do
       expect(provider).to be_an_instance_of Puppet::Type::Ec2_securitygroup::ProviderV2
