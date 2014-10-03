@@ -2,27 +2,27 @@
   http_interactions: 
     - request: 
         method: post
-        uri: "https://elasticloadbalancing.us-west-2.amazonaws.com/"
+        uri: "https://elasticloadbalancing.sa-east-1.amazonaws.com/"
         body: 
           encoding: UTF-8
-          string: "Action=DescribeLoadBalancers&LoadBalancerNames.member.1=test&Version=2012-06-01"
+          string: "Action=DescribeLoadBalancers&Version=2012-06-01"
         headers: 
           Content-Type: 
             - "application/x-www-form-urlencoded; charset=utf-8"
           Accept-Encoding: 
             - ""
           User-Agent: 
-            - "aws-sdk-ruby2/2.0.0.rc15 ruby/2.1.1 x86_64-darwin13.0"
+            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
           X-Amz-Date: 
-            - "20140915T160010Z"
+            - "20141003T114706Z"
           Host: 
-            - elasticloadbalancing.us-west-2.amazonaws.com
+            - elasticloadbalancing.sa-east-1.amazonaws.com
           X-Amz-Content-Sha256: 
-            - "redacted"
+            - "236069f72bf74f0c7ddff0a34b0defa8a21d1d6a897e588764e1b2ff6319f94a"
           Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20140915/us-west-2/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=redacted"
+            - "AWS4-HMAC-SHA256 Credential=redacted/20141003/sa-east-1/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=redacted"
           Content-Length: 
-            - "79"
+            - "47"
           Accept: 
             - "*/*"
       response: 
@@ -31,18 +31,18 @@
           message: OK
         headers: 
           X-Amzn-Requestid: 
-            - "5fb5c46e-3cf1-11e4-8522-bd1eb39d3c44"
+            - "01f3f1e4-4af3-11e4-be4f-573146f317fa"
           Content-Type: 
             - text/xml
           Content-Length: 
-            - "2265"
+            - "2110"
           Vary: 
             - Accept-Encoding
           Date: 
-            - "Mon, 15 Sep 2014 16:00:11 GMT"
+            - "Fri, 03 Oct 2014 11:47:09 GMT"
         body: 
           encoding: UTF-8
-          string: "<DescribeLoadBalancersResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <DescribeLoadBalancersResult>\n    <LoadBalancerDescriptions>\n      <member>\n        <SecurityGroups>\n          <member>sg-f0029695</member>\n        </SecurityGroups>\n        <CreatedTime>2014-09-15T15:58:42.730Z</CreatedTime>\n        <LoadBalancerName>test</LoadBalancerName>\n        <HealthCheck>\n          <Interval>30</Interval>\n          <Target>TCP:80</Target>\n          <HealthyThreshold>10</HealthyThreshold>\n          <Timeout>5</Timeout>\n          <UnhealthyThreshold>2</UnhealthyThreshold>\n        </HealthCheck>\n        <VPCId>vpc-812aece4</VPCId>\n        <ListenerDescriptions>\n          <member>\n            <PolicyNames/>\n            <Listener>\n              <Protocol>TCP</Protocol>\n              <LoadBalancerPort>80</LoadBalancerPort>\n              <InstanceProtocol>TCP</InstanceProtocol>\n              <InstancePort>80</InstancePort>\n            </Listener>\n          </member>\n        </ListenerDescriptions>\n        <Instances>\n          <member>\n            <InstanceId>i-f08e3cff</InstanceId>\n          </member>\n          <member>\n            <InstanceId>i-f38e3cfc</InstanceId>\n          </member>\n        </Instances>\n        <Policies>\n          <AppCookieStickinessPolicies/>\n          <OtherPolicies/>\n          <LBCookieStickinessPolicies/>\n        </Policies>\n        <AvailabilityZones>\n          <member>us-west-2a</member>\n        </AvailabilityZones>\n        <CanonicalHostedZoneNameID>Z33MTJ483KN6FU</CanonicalHostedZoneNameID>\n        <CanonicalHostedZoneName>test-1248760505.us-west-2.elb.amazonaws.com</CanonicalHostedZoneName>\n        <Scheme>internet-facing</Scheme>\n        <SourceSecurityGroup>\n          <OwnerAlias>812641999351</OwnerAlias>\n          <GroupName>lb-sg</GroupName>\n        </SourceSecurityGroup>\n        <DNSName>test-1248760505.us-west-2.elb.amazonaws.com</DNSName>\n        <BackendServerDescriptions/>\n        <Subnets>\n          <member>subnet-c00cfcb7</member>\n        </Subnets>\n      </member>\n    </LoadBalancerDescriptions>\n  </DescribeLoadBalancersResult>\n  <ResponseMetadata>\n    <RequestId>5fb5c46e-3cf1-11e4-8522-bd1eb39d3c44</RequestId>\n  </ResponseMetadata>\n</DescribeLoadBalancersResponse>\n"
+          string: "<DescribeLoadBalancersResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <DescribeLoadBalancersResult>\n    <LoadBalancerDescriptions>\n      <member>\n        <SecurityGroups/>\n        <CreatedTime>2014-10-01T12:06:59.550Z</CreatedTime>\n        <LoadBalancerName>lb-1</LoadBalancerName>\n        <HealthCheck>\n          <Interval>30</Interval>\n          <Target>TCP:80</Target>\n          <HealthyThreshold>10</HealthyThreshold>\n          <Timeout>5</Timeout>\n          <UnhealthyThreshold>2</UnhealthyThreshold>\n        </HealthCheck>\n        <ListenerDescriptions>\n          <member>\n            <PolicyNames/>\n            <Listener>\n              <Protocol>TCP</Protocol>\n              <LoadBalancerPort>80</LoadBalancerPort>\n              <InstanceProtocol>TCP</InstanceProtocol>\n              <InstancePort>80</InstancePort>\n            </Listener>\n          </member>\n        </ListenerDescriptions>\n        <Instances>\n          <member>\n            <InstanceId>i-3171f124</InstanceId>\n          </member>\n          <member>\n            <InstanceId>i-1774f402</InstanceId>\n          </member>\n        </Instances>\n        <Policies>\n          <AppCookieStickinessPolicies/>\n          <OtherPolicies/>\n          <LBCookieStickinessPolicies/>\n        </Policies>\n        <AvailabilityZones>\n          <member>sa-east-1a</member>\n        </AvailabilityZones>\n        <CanonicalHostedZoneNameID>Z2ES78Y61JGQKS</CanonicalHostedZoneNameID>\n        <CanonicalHostedZoneName>lb-1-1058535709.sa-east-1.elb.amazonaws.com</CanonicalHostedZoneName>\n        <Scheme>internet-facing</Scheme>\n        <SourceSecurityGroup>\n          <OwnerAlias>amazon-elb</OwnerAlias>\n          <GroupName>amazon-elb-sg</GroupName>\n        </SourceSecurityGroup>\n        <DNSName>lb-1-1058535709.sa-east-1.elb.amazonaws.com</DNSName>\n        <BackendServerDescriptions/>\n        <Subnets/>\n      </member>\n    </LoadBalancerDescriptions>\n  </DescribeLoadBalancersResult>\n  <ResponseMetadata>\n    <RequestId>01f3f1e4-4af3-11e4-be4f-573146f317fa</RequestId>\n  </ResponseMetadata>\n</DescribeLoadBalancersResponse>\n"
         http_version: 
-      recorded_at: "Mon, 15 Sep 2014 16:00:11 GMT"
+      recorded_at: "Fri, 03 Oct 2014 11:47:10 GMT"
   recorded_with: "VCR 2.9.3"

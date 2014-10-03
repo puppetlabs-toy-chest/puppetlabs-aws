@@ -2,19 +2,19 @@
   http_interactions: 
     - request: 
         method: post
-        uri: "https://ec2.us-west-2.amazonaws.com/"
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
         body: 
           encoding: UTF-8
-          string: "AWSAccessKeyId=redacted&Action=DeleteSecurityGroup&GroupName=test&Signature=redacted&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-09-09T17%3A21%3A31Z&Version=2014-06-15"
+          string: "AWSAccessKeyId=redacted&Action=DeleteSecurityGroup&GroupName=test-web-sg&Signature=redacted&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-03T13%3A09%3A03Z&Version=2014-06-15"
         headers: 
           Content-Type: 
             - "application/x-www-form-urlencoded; charset=utf-8"
           Accept-Encoding: 
             - ""
           User-Agent: 
-            - "aws-sdk-ruby2/2.0.0.rc15 ruby/2.1.1 x86_64-darwin13.0"
+            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
           Content-Length: 
-            - "235"
+            - "245"
           Accept: 
             - "*/*"
       response: 
@@ -29,7 +29,7 @@
           Vary: 
             - Accept-Encoding
           Date: 
-            - "Tue, 09 Sep 2014 17:21:31 GMT"
+            - "Fri, 03 Oct 2014 13:09:04 GMT"
           Server: 
             - AmazonEC2
         body: 
@@ -37,9 +37,9 @@
           string: |-
             <?xml version="1.0" encoding="UTF-8"?>
             <DeleteSecurityGroupResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
-                <requestId>85cfa6bc-6041-40c0-b943-d9e09101a99f</requestId>
+                <requestId>f1bf6eac-a06a-4be9-83a5-87c0d4696853</requestId>
                 <return>true</return>
             </DeleteSecurityGroupResponse>
         http_version: 
-      recorded_at: "Tue, 09 Sep 2014 17:21:31 GMT"
+      recorded_at: "Fri, 03 Oct 2014 13:09:05 GMT"
   recorded_with: "VCR 2.9.3"

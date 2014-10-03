@@ -2,57 +2,62 @@ require 'spec_helper'
 
 provider_class = Puppet::Type.type(:ec2_securitygroup).provider(:v2)
 
-ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-ENV['AWS_REGION'] = 'us-west-2'
+#ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
+#ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
+ENV['AWS_REGION'] = 'sa-east-1'
 
 describe provider_class do
 
   context 'with the minimum params' do
-    before(:each) do
-      @resource = Puppet::Type.type(:ec2_securitygroup).new(
-        name: 'test',
-        description: 'Security group for testing',
-        region: 'us-west-2',
-        ingress: [{
-          protocol: 'tcp',
-          port: 80,
-          cidr: '0.0.0.0/0'
-        }]
-      )
-      @provider = provider_class.new(@resource)
-    end
+     let(:resource) { Puppet::Type.type(:ec2_securitygroup).new(
+      name: 'web-sg',
+      description: 'Security group for testing',
+      region: 'sa-east-1',
+    )}
+
+     let(:provider) { resource.provider }
+
+     let(:instance) { provider.class.instances.first }
 
     it 'should be an instance of the ProviderV2' do
-      expect(@provider).to be_an_instance_of Puppet::Type::Ec2_securitygroup::ProviderV2
+      expect(provider).to be_an_instance_of Puppet::Type::Ec2_securitygroup::ProviderV2
     end
 
-    context 'exists?' do
+    describe 'self.prefetch' do
+      it 'exists' do
+        VCR.use_cassette('group-setup') do
+          provider.class.instances
+          provider.class.prefetch({})
+        end
+      end
+    end
+
+    describe 'exists?' do
       it 'should correctly report non-existent group' do
         VCR.use_cassette('no-group-named-test') do
-          expect(@provider.exists?).to be false
+          expect(provider.exists?).to be_falsy
         end
       end
 
-      xit 'should correctly find existing groups' do
+      it 'should correctly find existing groups' do
         VCR.use_cassette('group-named-test') do
-          expect(@provider.exists?).to be true
+          expect(instance.exists?).to be_truthy
         end
       end
     end
 
-    context 'create' do
+    describe 'create' do
       it 'should send a request to the EC2 API to create the group' do
-        VCR.use_cassette('create-test') do
-          @provider.create
+        VCR.use_cassette('create-group') do
+          expect(provider.create).to be_truthy
         end
       end
     end
 
-    context 'destroy' do
+    describe 'destroy' do
       it 'should send a request to the EC2 API to destroy the group' do
-        VCR.use_cassette('destroy-test') do
-          @provider.destroy
+        VCR.use_cassette('destroy-group') do
+          expect(provider.destroy).to be_truthy
         end
       end
     end

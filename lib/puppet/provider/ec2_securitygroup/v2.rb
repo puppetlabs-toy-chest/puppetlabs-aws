@@ -45,7 +45,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     rules = resource[:ingress]
     rules = [rules] unless rules.is_a?(Array)
 
-    rules.each do |rule|
+    rules.reject(&:nil?).each do |rule|
       if rule.key? 'security_group'
         ec2_client(region: resource[:region]).authorize_security_group_ingress(
           group_name: name,
