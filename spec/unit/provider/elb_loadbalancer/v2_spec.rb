@@ -20,19 +20,19 @@ describe provider_class do
     end
 
     it 'should be an instance of the ProviderV2' do
-      @provider.should be_an_instance_of Puppet::Type::Elb_loadbalancer::ProviderV2
+      expect(@provider).to be_an_instance_of Puppet::Type::Elb_loadbalancer::ProviderV2
     end
 
     context 'exists?' do
       it 'should correctly report non-existent load balancers' do
         VCR.use_cassette('no-elb-named-test') do
-          @provider.exists?.should be false
+          expect(@provider.exists?).to be false
         end
       end
 
       xit 'should correctly find existing load balancers' do
         VCR.use_cassette('elb-named-test') do
-          @provider.exists?.should be true
+          expect(@provider.exists?).to be true
         end
       end
     end

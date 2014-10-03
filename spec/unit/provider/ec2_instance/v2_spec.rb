@@ -20,7 +20,7 @@ describe provider_class do
     end
 
     it 'should be an instance of the ProviderV2' do
-      @provider.should be_an_instance_of Puppet::Type::Ec2_instance::ProviderV2
+      expect(@provider).to be_an_instance_of Puppet::Type::Ec2_instance::ProviderV2
     end
 
     context 'exists?' do
