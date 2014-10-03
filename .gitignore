@@ -42,3 +42,5 @@ spec/fixtures
 # keys for eyaml
 keys
 hieradata/*.eyaml
+
+Gemfile.lock
