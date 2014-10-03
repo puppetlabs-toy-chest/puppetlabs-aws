@@ -66,7 +66,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     instances = resource[:instances]
     instances = [instances] unless instances.is_a?(Array)
 
-    response = ec2_client.describe_instances(
+    response = ec2_client(region: resource[:region]).describe_instances(
       filters: [
         {name: 'tag:Name', values: instances},
         {name: 'instance-state-name', values: ['pending', 'running']}

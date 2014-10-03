@@ -28,7 +28,7 @@ module PuppetX
       end
 
       def ec2_client(region: default_region)
-        self.class.ec2_client
+        self.class.ec2_client(region: region)
       end
 
       def self.elb_client(region: default_region)
@@ -36,7 +36,7 @@ module PuppetX
       end
 
       def elb_client(region: default_region)
-        self.class.elb_client
+        self.class.elb_client(region: region)
       end
     end
   end
