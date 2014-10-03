@@ -49,20 +49,22 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     groups = resource[:security_groups]
     groups = [groups] unless groups.is_a?(Array)
 
+    data = resource[:user_data].nil? ? nil : Base64.encode64(resource[:user_data])
+
     response = ec2_client(region: resource[:region]).run_instances(
       image_id: resource[:image_id],
       min_count: 1,
       max_count: 1,
       security_groups: groups,
       instance_type: resource[:instance_type],
-      user_data: Base64.encode64(resource[:user_data]),
+      user_data: data,
       placement: {
         availability_zone: resource[:availability_zone]
       }
     )
     tags = resource[:tags].map { |k,v| {key: k, value: v} }
     tags << {key: 'Name', value: name}
-    ec2_client(region[:region]).create_tags(
+    ec2_client(region: resource[:region]).create_tags(
       resources: response.instances.map(&:instance_id),
       tags: tags
     )
