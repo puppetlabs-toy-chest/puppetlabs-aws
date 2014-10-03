@@ -4,6 +4,7 @@ provider_class = Puppet::Type.type(:elb_loadbalancer).provider(:v2)
 
 ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
 ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
+ENV['AWS_REGION'] = 'us-west-2'
 
 describe provider_class do
 
