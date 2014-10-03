@@ -1,0 +1,83 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=redacted&Action=CreateSecurityGroup&GroupDescription=Security%20group%20for%20testing&GroupName=test-web-sg&Signature=redacted%2B96sfiEs%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-03T13%3A05%3A24Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "293"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 03 Oct 2014 13:05:26 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <CreateSecurityGroupResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>061d2946-b709-466f-a5d4-65758be624ca</requestId>
+                <return>true</return>
+                <groupId>sg-734c6b6e</groupId>
+            </CreateSecurityGroupResponse>
+        http_version: 
+      recorded_at: "Fri, 03 Oct 2014 13:05:26 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=redacted&Action=AuthorizeSecurityGroupIngress&GroupName=test-web-sg&IpPermissions.1.FromPort=0&IpPermissions.1.IpProtocol=&IpPermissions.1.IpRanges.1.CidrIp=&IpPermissions.1.ToPort=0&Signature=reedacted&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-03T13%3A05%3A26Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "368"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 400
+          message: "Bad Request"
+        headers: 
+          Transfer-Encoding: 
+            - chunked
+          Date: 
+            - "Fri, 03 Oct 2014 13:05:26 GMT"
+          Cneonction: 
+            - close
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <Response><Errors><Error><Code>InvalidPermission.Malformed</Code><Message>Unsupported IP protocol ""  - supported: [tcp, udp, icmp]</Message></Error></Errors><RequestID>6ca4f2b5-13d4-4981-ba9d-c4db40583148</RequestID></Response>
+        http_version: 
+      recorded_at: "Fri, 03 Oct 2014 13:05:27 GMT"
+  recorded_with: "VCR 2.9.3"

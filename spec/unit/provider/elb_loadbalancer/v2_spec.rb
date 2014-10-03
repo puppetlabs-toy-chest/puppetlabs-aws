@@ -4,52 +4,62 @@ provider_class = Puppet::Type.type(:elb_loadbalancer).provider(:v2)
 
 ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
 ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-ENV['AWS_REGION'] = 'us-west-2'
+ENV['AWS_REGION'] = 'sa-east-1'
 
 describe provider_class do
 
   context 'with the minimum params' do
-    before(:each) do
-      @resource = Puppet::Type.type(:elb_loadbalancer).new(
-        name: 'lb-1',
-        instances: [],
-        listeners: [],
-        availability_zones: ['us-west-2a'],
-        region: 'us-west-2',
-      )
-      @provider = provider_class.new(@resource)
-    end
+    let(:resource) { Puppet::Type.type(:elb_loadbalancer).new(
+      name: 'lb-1',
+      instances: ['web-1'],
+      listeners: [],
+      availability_zones: ['sa-east-1a'],
+      region: 'sa-east-1',
+    )}
+
+    let(:provider) { resource.provider }
+
+    let(:instance) { provider.class.instances.first }
 
     it 'should be an instance of the ProviderV2' do
-      expect(@provider).to be_an_instance_of Puppet::Type::Elb_loadbalancer::ProviderV2
+      expect(provider).to be_an_instance_of Puppet::Type::Elb_loadbalancer::ProviderV2
     end
 
-    context 'exists?' do
+    describe 'self.prefetch' do
+      it 'exists' do
+        VCR.use_cassette('elb-setup') do
+          provider.class.instances
+          provider.class.prefetch({})
+        end
+      end
+    end
+
+    describe 'exists?' do
       it 'should correctly report non-existent load balancers' do
         VCR.use_cassette('no-elb-named-test') do
-          expect(@provider.exists?).to be false
+          expect(provider.exists?).to be_falsy
         end
       end
 
-      xit 'should correctly find existing load balancers' do
+      it 'should correctly find existing load balancers' do
         VCR.use_cassette('elb-named-test') do
-          expect(@provider.exists?).to be true
+          expect(instance.exists?).to be_truthy
         end
       end
     end
 
-    context 'create' do
+    describe 'create' do
       it 'should send a request to the ELB API to create the load balancer' do
         VCR.use_cassette('create-elb-test') do
-          @provider.create
+          expect(provider.create).to be_truthy
         end
       end
     end
 
-    context 'destroy' do
+    describe 'destroy' do
       it 'should send a request to the ELB API to destroy the load balancer' do
         VCR.use_cassette('destroy-elb-test') do
-          @provider.destroy
+          expect(provider.destroy).to be_truthy
         end
       end
     end
