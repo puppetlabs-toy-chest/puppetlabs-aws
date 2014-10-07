@@ -36,6 +36,7 @@ Puppet::Type.type(:route53_zone).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       name: name,
       caller_reference: reference,
     )
+    @property_hash[:ensure] = :present
   end
 
   def destroy
@@ -46,5 +47,6 @@ Puppet::Type.type(:route53_zone).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
         route53_client.delete_hosted_zone(id: zone.id)
       end
     end
+    @property_hash[:ensure] = :absent
   end
 end
