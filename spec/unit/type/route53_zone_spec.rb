@@ -13,6 +13,7 @@ describe type_class do
   let :properties do
     [
       :ensure,
+      :id,
     ]
   end
 

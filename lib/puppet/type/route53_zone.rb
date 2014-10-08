@@ -12,4 +12,8 @@ Puppet::Type.newtype(:route53_zone) do
     end
   end
 
+  newproperty(:id) do
+    desc 'The AWS unique id for the zone'
+  end
+
 end

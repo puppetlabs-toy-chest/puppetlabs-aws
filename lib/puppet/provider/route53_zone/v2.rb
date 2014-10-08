@@ -11,6 +11,7 @@ Puppet::Type.type(:route53_zone).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     response.data.hosted_zones.collect do |zone|
       new({
         name: zone.name,
+        id: zone.id,
         ensure: :present,
       })
     end
