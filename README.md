@@ -98,6 +98,32 @@ puppet resource ec2_securitygroup test-group ensure=absent region=sa-east-1
 
 See the contrib folder for an example EC2 inventory script for pegasus.
 
+### Puppet Cloud command
+
+As an experiment we currently have an extention of the `puppet` command,
+called puppet cloud, that exposes the typical actions. For instance you
+can list all your ec2_instances (or other types):
+
+```bash
+puppet cloud list ec2_instance
+```
+
+Produce the dot files describing the resouces and relationships for a
+given manifest.
+
+```bash
+puppet cloud graph tests/create.pp
+```
+
+An apply a given manifest.
+
+```bash
+puppet cloud apply tests/create.pp
+```
+
+Note that this currently only works when run from the root of this
+project, but is included as a way of helping design the eventual user
+interface.
 
 ## Testing
 

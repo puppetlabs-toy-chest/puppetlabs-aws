@@ -46,6 +46,10 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
       group_name: name,
       description: resource[:description]
     )
+    ec2_client(region: resource[:region]).create_tags(
+      resources: [response.group_id],
+      tags: tags
+    ) unless tags.empty?
 
     ec2_client(region: resource[:region]).create_tags(
       resources: [response.group_id],
