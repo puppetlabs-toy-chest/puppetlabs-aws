@@ -13,6 +13,7 @@ describe provider_class do
       name: 'test-web-sg',
       description: 'Security group for testing',
       region: 'sa-east-1',
+      tags: [],
     )}
 
     let(:provider) { resource.provider }
