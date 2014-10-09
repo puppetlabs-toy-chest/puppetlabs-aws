@@ -44,3 +44,5 @@ keys
 hieradata/*.eyaml
 
 Gemfile.lock
+
+/graphs
