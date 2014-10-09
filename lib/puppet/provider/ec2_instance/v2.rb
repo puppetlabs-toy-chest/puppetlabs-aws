@@ -44,7 +44,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def exists?
-    Puppet.info("Checking if instance #{name} exists in region #{resource[:region]}")
+    Puppet.info("Checking if instance #{name} exists in region #{region}")
     @property_hash[:ensure] == :present
   end
 
