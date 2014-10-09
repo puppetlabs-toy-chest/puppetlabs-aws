@@ -21,6 +21,10 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     desc 'rules for ingress traffic'
   end
 
+  newparam(:tags, :array_matching => :all) do
+    desc 'the tags for the securitygroup'
+  end
+
   newproperty(:description) do
     desc 'a short description of the group'
     validate do |value|
