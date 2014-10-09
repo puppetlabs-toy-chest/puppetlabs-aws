@@ -1,6 +1,3 @@
-require 'aws-sdk-core'
-require 'retries'
-
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
 Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
