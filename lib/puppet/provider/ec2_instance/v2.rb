@@ -14,7 +14,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       instances = []
       response.data.reservations.each do |reservation|
         reservation.instances.each do |instance|
-          new(instance_to_hash(region, instance))
+          hash = instance_to_hash(region, instance)
+          instances << new(hash) if hash[:name]
         end
       end
       instances
@@ -30,20 +31,16 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def self.instance_to_hash(region, instance)
-    hash = {}
-    name = instance.tags.detect { |tag| tag.key == 'Name' }
-    if name
-      hash = {
-        name: name.value,
-        instance_type: instance.instance_type,
-        image_id: instance.image_id,
-        availability_zone: instance.placement.availability_zone,
-        ensure: :present,
-        region: region
-      }
-    end
+    name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
 
-    hash
+    {
+      name: name_tag ? name_tag.value : nil,
+      instance_type: instance.instance_type,
+      image_id: instance.image_id,
+      availability_zone: instance.placement.availability_zone,
+      ensure: :present,
+      region: region
+    }
   end
 
   def exists?
