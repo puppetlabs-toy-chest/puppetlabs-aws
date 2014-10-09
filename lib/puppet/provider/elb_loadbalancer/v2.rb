@@ -53,7 +53,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     zones = resource[:availability_zones]
     zones = [zones] unless zones.is_a?(Array)
 
-    tags = resource[:tags].map { |k,v| {key: k, value: v} }
+    tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
     elb_client(region: resource[:region]).create_load_balancer(
       load_balancer_name: name,
       listeners: [

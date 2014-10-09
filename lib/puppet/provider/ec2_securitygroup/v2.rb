@@ -38,7 +38,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
   def create
     Puppet.info("Creating security group #{name} in region #{resource[:region]}")
-    tags = resource[:tags].map { |k,v| {key: k, value: v} }
+    tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
     response = ec2_client(region: resource[:region]).create_security_group(
       group_name: name,
       description: resource[:description]
