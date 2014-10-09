@@ -12,11 +12,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       region_client = elb_client(region: region)
       response = region_client.describe_load_balancers
       response.data.load_balancer_descriptions.collect do |lb|
-        new({
-          name: lb.load_balancer_name,
-          ensure: :present,
-          region: region
-        })
+        new(load_balancer_to_hash(region, lb))
       end
     end.flatten
   end
@@ -27,6 +23,14 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         resource.provider = prov
       end
     end
+  end
+
+  def self.load_balancer_to_hash(region, load_balancer)
+    {
+      name: load_balancer.load_balancer_name,
+      ensure: :present,
+      region: region
+    }
   end
 
   def exists?
