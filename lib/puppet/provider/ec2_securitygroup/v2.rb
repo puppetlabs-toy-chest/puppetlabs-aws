@@ -12,12 +12,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     regions.collect do |region|
       response = ec2_client(region: region).describe_security_groups
       response.data.security_groups.collect do |group|
-        new({
-          name: group[:group_name],
-          description: group[:description],
-          ensure: :present,
-          region: region,
-        })
+        new(security_group_to_hash(region, group))
       end
     end.flatten
   end
@@ -28,6 +23,15 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
         resource.provider = prov
       end
     end
+  end
+
+  def self.security_group_to_hash(region, group)
+    {
+      name: group[:group_name],
+      description: group[:description],
+      ensure: :present,
+      region: region,
+    }
   end
 
   def exists?
