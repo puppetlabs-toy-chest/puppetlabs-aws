@@ -47,12 +47,12 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def exists?
-    Puppet.info("Checking if instance #{name} exists")
+    Puppet.info("Checking if instance #{name} exists in region #{resource[:region]}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating instance #{name}")
+    Puppet.info("Creating instance #{name} in region #{resource[:region]}")
     groups = resource[:security_groups]
     groups = [groups] unless groups.is_a?(Array)
 
@@ -78,7 +78,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def destroy
-    Puppet.info("Deleting instance #{name}")
+    Puppet.info("Deleting instance #{name} in region #{resource[:region]}")
     instances = ec2_client(region: resource[:region]).describe_instances(filters: [
       {name: 'tag:Name', values: [name]},
       {name: 'instance-state-name', values: ['pending', 'running']}
