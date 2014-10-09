@@ -35,12 +35,12 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def exists?
-    Puppet.info("Checking if security group #{name} exists")
+    Puppet.info("Checking if security group #{name} exists in region #{resource[:region]}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating security group #{name}")
+    Puppet.info("Creating security group #{name} in region #{resource[:region]}")
     ec2_client(region: resource[:region]).create_security_group(
       group_name: name,
       description: resource[:description]
@@ -72,7 +72,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def destroy
-    Puppet.info("Deleting security group #{name}")
+    Puppet.info("Deleting security group #{name} in region #{resource[:region]}")
     ec2_client(region: resource[:region]).delete_security_group(
       group_name: name
     )

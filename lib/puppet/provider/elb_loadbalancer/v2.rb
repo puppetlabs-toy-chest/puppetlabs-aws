@@ -34,12 +34,12 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def exists?
-    Puppet.info("Checking if load balancer #{name} exists")
+    Puppet.info("Checking if load balancer #{name} exists in region #{resource[:region]}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating load balancer #{name}")
+    Puppet.info("Creating load balancer #{name} in region #{resource[:region]}")
     groups = resource[:security_groups]
 
     if groups.nil?
@@ -92,7 +92,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def destroy
-    Puppet.info("Destroying load balancer #{name}")
+    Puppet.info("Destroying load balancer #{name} in region #{resource[:region]}")
     elb_client(region: resource[:region]).delete_load_balancer(
       load_balancer_name: name,
     )
