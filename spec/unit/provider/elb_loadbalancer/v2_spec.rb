@@ -15,7 +15,6 @@ describe provider_class do
       listeners: [],
       availability_zones: ['sa-east-1a'],
       region: 'sa-east-1',
-      tags: [],
     )}
 
     let(:provider) { resource.provider }
