@@ -7,18 +7,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   mk_resource_methods
 
   def self.instances
-    regions.collect do |region|
-      response = ec2_client(region: region).describe_instances(filters: [
-        {name: 'instance-state-name', values: ['pending', 'running']}
-      ])
-      instances = []
-      response.data.reservations.each do |reservation|
-        reservation.instances.each do |instance|
-          new(instance_to_hash(region, instance))
-        end
-      end
-      instances
-    end.flatten
+    []
   end
 
   def self.prefetch(resources)
@@ -48,7 +37,24 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def exists?
     Puppet.info("Checking if instance #{name} exists in region #{resource[:region]}")
-    @property_hash[:ensure] == :present
+
+    if self.provider == :absent
+      response = ec2_client(region: resource[:region]).describe_instances(filters: [
+        {name: 'instance-state-name', values: ['pending', 'running']},
+        {name: 'tag:Name', values: [resource[:name]]}
+      ])
+
+      instances = response.reservations.map(&:instances).flatten
+      if ! instances.empty?
+        instance = instances.first
+        @property_hash = self.class.instance_to_hash(resource[:region], instance)
+        provider = self.class.new(@property_hash)
+      end
+    end
+
+    found = @property_hash[:ensure] == :present
+    Puppet.info("Instance #{name} already exists in region #{resource[:region]}") if found
+    found
   end
 
   def create

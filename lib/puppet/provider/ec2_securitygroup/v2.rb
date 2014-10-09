@@ -6,12 +6,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   mk_resource_methods
 
   def self.instances
-    regions.collect do |region|
-      response = ec2_client(region: region).describe_security_groups
-      response.data.security_groups.collect do |group|
-        new(security_group_to_hash(region, group))
-      end
-    end.flatten
+    []
   end
 
   def self.prefetch(resources)
@@ -33,7 +28,22 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
   def exists?
     Puppet.info("Checking if security group #{name} exists in region #{resource[:region]}")
-    @property_hash[:ensure] == :present
+
+    if self.provider == :absent
+      response = ec2_client(region: resource[:region]).describe_security_groups(filters: [
+        {name: 'group-name', values: [name]},
+      ])
+
+      if ! response.security_groups.empty?
+        group = response.security_groups.first
+        @property_hash = self.class.security_group_to_hash(resource[:region], group)
+        provider = self.class.new(@property_hash)
+      end
+    end
+
+    found = @property_hash[:ensure] == :present
+    Puppet.info("Security Group #{name} already exists in region #{resource[:region]}") if found
+    found
   end
 
   def create
