@@ -10,8 +10,7 @@ def location_for(place, fake_version = nil)
   end
 end
 
-gem 'retries'
-gem 'aws-sdk-core', '~> 2.0.0.rc'
+gem 'aws-sdk-core', '2.0.2'
 
 beaker_version = ENV['BEAKER_VERSION']
 group :test do
