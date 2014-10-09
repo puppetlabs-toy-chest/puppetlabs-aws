@@ -47,7 +47,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     ec2_client(region: resource[:region]).create_tags(
       resources: [response.group_id],
       tags: tags
-    )
+    ) unless tags.empty?
 
     rules = resource[:ingress]
     rules = [rules] unless rules.is_a?(Array)
