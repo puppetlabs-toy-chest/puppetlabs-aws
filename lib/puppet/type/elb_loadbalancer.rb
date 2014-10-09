@@ -33,6 +33,10 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     desc 'the ports and protocols the load balancer listens to'
   end
 
+  newparam(:tags, :array_matching => :all) do
+    desc 'the tags for the securitygroup'
+  end
+
   autorequire(:ec2_instance) do
     instances = self[:instances]
     instances.is_a?(Array) ? instances : [instances]
