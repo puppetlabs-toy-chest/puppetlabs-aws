@@ -66,7 +66,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
         availability_zone: resource[:availability_zone]
       }
     )
-    tags = resource[:tags].map { |k,v| {key: k, value: v} }
+    tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
     tags << {key: 'Name', value: name}
     ec2_client(region: resource[:region]).create_tags(
       resources: response.instances.map(&:instance_id),
