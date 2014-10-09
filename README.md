@@ -62,17 +62,6 @@ The tests directory contains other examples as well which should give an
 idea of what's possible. Note in particular the master/agent setup with
 EC2 API based autosigning.
 
-### A note on regions
-
-By default the module will look through all regions in AWS when
-determining if something is available. This can be a little slow. If you
-know what you're doing you can speed things up by targetting a single
-region using an environment variable.
-
-```bash
-export AWS_REGION=eu-west-1
-```
-
 ### Puppet resource support
 
 The module also has basic `puppet resource` support, so for instance the
