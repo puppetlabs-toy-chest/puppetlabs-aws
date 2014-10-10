@@ -23,6 +23,14 @@ module PuppetX
         self.class.default_region
       end
 
+      def self.read_only(*methods)
+        methods.each do |method|
+          define_method("#{method}=") do |v|
+            fail "#{method} property is read-only once #{resource.type} created."
+          end
+        end
+      end
+
       def self.ec2_client(region: default_region)
         ::Aws::EC2::Client.new(region: region)
       end

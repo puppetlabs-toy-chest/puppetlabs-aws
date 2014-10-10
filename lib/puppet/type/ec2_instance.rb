@@ -22,6 +22,10 @@ Puppet::Type.newtype(:ec2_instance) do
     desc 'user data script to execute on new instance'
   end
 
+  newproperty(:instance_id) do
+    desc 'the AWS generated id for the instance'
+  end
+
   newproperty(:region) do
     desc 'the region in which to launch the instance'
     validate do |value|
