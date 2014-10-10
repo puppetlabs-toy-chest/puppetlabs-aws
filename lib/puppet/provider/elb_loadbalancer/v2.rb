@@ -1,5 +1,3 @@
-require 'aws-sdk-core'
-
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
 Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
@@ -16,6 +14,8 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       end
     end.flatten
   end
+
+  read_only(:region, :security_groups, :availability_zones)
 
   def self.prefetch(resources)
     instances.each do |prov|
