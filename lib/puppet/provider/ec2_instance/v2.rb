@@ -22,6 +22,9 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end.flatten
   end
 
+  read_only(:instance_id, :instance_type, :region, :user_data,
+            :availability_zones, :security_groups)
+
   def self.prefetch(resources)
     instances.each do |prov|
       if resource = resources[prov.name] && resource[:region] == prov.region
@@ -37,6 +40,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       name: name_tag ? name_tag.value : nil,
       instance_type: instance.instance_type,
       image_id: instance.image_id,
+      instance_id: instance.instance_id,
       availability_zone: instance.placement.availability_zone,
       ensure: :present,
       region: region

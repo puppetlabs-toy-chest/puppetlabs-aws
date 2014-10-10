@@ -14,6 +14,8 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     end.flatten
   end
 
+  read_only(:region)
+
   def self.prefetch(resources)
     instances.each do |prov|
       if resource = resources[prov.name] && resource[:region] == prov.region
