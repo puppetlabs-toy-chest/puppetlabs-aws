@@ -19,7 +19,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
   def self.prefetch(resources)
     instances.each do |prov|
-      if resource = resources[prov.name]
+      if resource = resources[prov.name]  # rubocop:disable Lint/AssignmentInCondition
         resource.provider = prov
       end
     end

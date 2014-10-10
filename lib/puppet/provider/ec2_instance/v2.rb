@@ -27,7 +27,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def self.prefetch(resources)
     instances.each do |prov|
-      if resource = resources[prov.name]
+      if resource = resources[prov.name] # rubocop:disable Lint/AssignmentInCondition
         resource.provider = prov if resource[:region] == prov.region
       end
     end
