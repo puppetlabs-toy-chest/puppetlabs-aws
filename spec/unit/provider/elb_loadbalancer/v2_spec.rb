@@ -42,7 +42,6 @@ describe provider_class do
       end
 
       it 'should correctly find existing load balancers' do
-        skip "call to resource[:region] in notice causes this to fail"
         VCR.use_cassette('elb-named-test') do
           expect(instance.exists?).to be_truthy
         end
