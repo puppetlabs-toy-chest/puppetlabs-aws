@@ -9,13 +9,15 @@ ENV['AWS_REGION'] = 'sa-east-1'
 describe provider_class do
 
   context 'with the minimum params' do
-    let(:resource) { Puppet::Type.type(:elb_loadbalancer).new(
-      name: 'lb-1',
-      instances: ['web-1'],
-      listeners: [],
-      availability_zones: ['sa-east-1a'],
-      region: 'sa-east-1',
-    )}
+    let(:resource) {
+      Puppet::Type.type(:elb_loadbalancer).new(
+        name: 'lb-1',
+        instances: ['web-1'],
+        listeners: [],
+        availability_zones: ['sa-east-1a'],
+        region: 'sa-east-1',
+      )
+    }
 
     let(:provider) { resource.provider }
 

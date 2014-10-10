@@ -8,14 +8,16 @@ ENV['AWS_REGION'] = 'sa-east-1'
 
 describe provider_class do
 
-  let(:resource) { Puppet::Type.type(:ec2_instance).new(
+  let(:resource) {
+    Puppet::Type.type(:ec2_instance).new(
       name: 'web-15',
       image_id: 'ami-67a60d7a',
       instance_type: 't1.micro',
       availability_zone: 'sa-east-1a',
       region: 'sa-east-1',
       security_groups: ['web-sg']
-    )}
+    )
+  }
 
   let(:provider) { resource.provider }
 

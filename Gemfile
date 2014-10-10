@@ -12,7 +12,6 @@ end
 
 gem 'aws-sdk-core', '2.0.2'
 
-beaker_version = ENV['BEAKER_VERSION']
 group :test do
   gem 'rake'
   gem "puppet", *location_for(ENV['PUPPET_LOCATION'] || '~> 3.7.0')

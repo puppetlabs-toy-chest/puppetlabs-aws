@@ -34,9 +34,7 @@ Clamp do
     end
 
     instances = response.data.reservations.collect do |reservation|
-      reservation.instances.collect do |instance|
-        instance.public_dns_name
-      end
+      reservation.instances.collect(&:public_dns_name)
     end
 
     puts instances
