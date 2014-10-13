@@ -1,0 +1,93 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=CreateVpc&CidrBlock=10.0.0.0%2F16&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-13T13%3A07%3A22Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "233"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Mon, 13 Oct 2014 13:07:23 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <CreateVpcResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>202ae94b-a0c5-4492-ac73-0b8c38864347</requestId>
+                <vpc>
+                    <vpcId>vpc-64ec5501</vpcId>
+                    <state>pending</state>
+                    <cidrBlock>10.0.0.0/16</cidrBlock>
+                    <dhcpOptionsId>dopt-e5edfb87</dhcpOptionsId>
+                    <instanceTenancy>default</instanceTenancy>
+                </vpc>
+            </CreateVpcResponse>
+        http_version: 
+      recorded_at: "Mon, 13 Oct 2014 13:07:24 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=CreateTags&ResourceId.1=vpc-64ec5501&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Tag.1.Key=Name&Tag.1.Value=test-vpc&Timestamp=2014-10-13T13%3A07%3A24Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "276"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Mon, 13 Oct 2014 13:07:24 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <CreateTagsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>890d2297-72b3-497b-9b60-11a91eaf6bb8</requestId>
+                <return>true</return>
+            </CreateTagsResponse>
+        http_version: 
+      recorded_at: "Mon, 13 Oct 2014 13:07:25 GMT"
+  recorded_with: "VCR 2.9.3"
