@@ -39,6 +39,8 @@
 (defn get-live-instance-names [] (map :value
   (filter #(= (:key %) "Name") (flatten (map :tags (get-live-instances))))))
 
+(defn parse-int [s]
+   (Integer. (re-find  #"\d+" s )))
 
 (Given #"^we namespace our resources with a unique identifier" []
   (def identifier uuid))
@@ -63,3 +65,5 @@
   (def command (sh "./run-puppet.sh" manifest))
   (assert (= 0 (:exit command))))
 
+(When #"^after (\d+) seconds$" [seconds]
+  (Thread/sleep (* 1000 (parse-int seconds))))
