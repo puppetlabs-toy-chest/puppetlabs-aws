@@ -26,3 +26,7 @@ ec2_securitygroup { 'test-sg':
 elb_loadbalancer { ['test-lb']:
   ensure => absent,
 }
+
+elb_loadbalancer { ['empty-lb']:
+  ensure => absent,
+}
