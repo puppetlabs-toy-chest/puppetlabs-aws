@@ -54,6 +54,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     zones = [zones] unless zones.is_a?(Array)
 
     tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
+    tags << {key: 'Name', value: name}
     elb_client(region: resource[:region]).create_load_balancer(
       load_balancer_name: name,
       listeners: [
@@ -70,11 +71,16 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     )
 
     instances = resource[:instances]
-    instances = [instances] unless instances.is_a?(Array)
+    if ! instances.nil?
+      instances = [instances] unless instances.is_a?(Array)
+      self.class.add_instances_to_load_balancer(resource[:region], name, instances)
+    end
+  end
 
-    response = ec2_client(region: resource[:region]).describe_instances(
+  def self.add_instances_to_load_balancer(region, load_balancer_name, instance_names)
+    response = ec2_client(region: region).describe_instances(
       filters: [
-        {name: 'tag:Name', values: instances},
+        {name: 'tag:Name', values: instance_names},
         {name: 'instance-state-name', values: ['pending', 'running']}
       ]
     )
@@ -87,8 +93,8 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       instance_input << { instance_id: id }
     end
 
-    elb_client(region: resource[:region]).register_instances_with_load_balancer(
-      load_balancer_name: name,
+    elb_client(region: region).register_instances_with_load_balancer(
+      load_balancer_name: load_balancer_name,
       instances: instance_input
     )
   end
