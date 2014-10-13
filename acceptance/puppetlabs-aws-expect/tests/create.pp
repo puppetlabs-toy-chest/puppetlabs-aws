@@ -39,6 +39,16 @@ ec2_instance { 'test-1':
 elb_loadbalancer { 'test-lb':
   ensure             => present,
   availability_zones => ['sa-east-1a'],
+  instances          => 'test-1',
+  listeners          => [{
+    protocol => 'tcp',
+    port     => 80,
+  }],
+}
+
+elb_loadbalancer { 'empty-lb':
+  ensure             => present,
+  availability_zones => ['sa-east-1a'],
   listeners          => [{
     protocol => 'tcp',
     port     => 80,
