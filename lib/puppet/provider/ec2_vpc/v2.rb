@@ -47,10 +47,15 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
     response = ec2_client(region: resource[:region]).create_vpc(
       cidr_block: resource[:cidr_block]
     )
+    route_response = ec2_client(region: resource[:region]).describe_route_tables(filters: [
+      {name: 'vpc-id', values: [response.data.vpc.vpc_id]},
+      {name: 'association.main', values: ['true']},
+    ])
     ec2_client(region: resource[:region]).create_tags(
-      resources: [response.data.vpc.vpc_id],
+      resources: [route_response.data.route_tables.first.route_table_id, response.data.vpc.vpc_id],
       tags: [{key: 'Name', value: name}]
     )
+
   end
 
   def destroy
