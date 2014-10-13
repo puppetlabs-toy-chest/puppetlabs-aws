@@ -1,4 +1,4 @@
-ec2_vpc { 'test2-vpc':
+ec2_vpc { 'test-vpc':
   ensure     => present,
   cidr_block => '10.0.0.0/16',
   region     => 'sa-east-1',
