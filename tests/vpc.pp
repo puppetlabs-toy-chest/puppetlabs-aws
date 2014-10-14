@@ -10,3 +10,9 @@ ec2_vpc_subnet { 'test-subnet':
   region     => 'sa-east-1',
   vpc        => 'test-vpc',
 }
+
+ec2_vpc_internet_gateway { 'test-gateway':
+  ensure => present,
+  region => 'sa-east-1',
+  vpcs   => ['test-vpc'],
+}
