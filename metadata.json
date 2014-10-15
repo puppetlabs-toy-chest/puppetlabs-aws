@@ -17,7 +17,6 @@
       "version_requirement": ">= 3.3.0"
     }
   ],
-  "description": "This module provides the ability to manage AWS resources such as EC2 instances, Security Groups and ELBs.",
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
