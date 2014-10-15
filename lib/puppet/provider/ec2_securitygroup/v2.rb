@@ -7,7 +7,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
   def self.instances
     regions.collect do |region|
-      response = ec2_client(region: region).describe_security_groups
+      response = ec2_client(region).describe_security_groups
       response.data.security_groups.collect do |group|
         new(security_group_to_hash(region, group))
       end
@@ -42,14 +42,14 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   def create
     Puppet.info("Creating security group #{name} in region #{resource[:region]}")
     tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
-    response = ec2_client(region: resource[:region]).create_security_group(
+    response = ec2_client(resource[:region]).create_security_group(
       group_name: name,
       description: resource[:description]
     )
 
     @property_hash[:ensure] = :present
 
-    ec2_client(region: resource[:region]).create_tags(
+    ec2_client(resource[:region]).create_tags(
       resources: [response.group_id],
       tags: tags
     ) unless tags.empty?
@@ -59,12 +59,12 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
     rules.reject(&:nil?).each do |rule|
       if rule.key? 'security_group'
-        ec2_client(region: resource[:region]).authorize_security_group_ingress(
+        ec2_client(resource[:region]).authorize_security_group_ingress(
           group_name: name,
           source_security_group_name: rule['security_group']
         )
       else
-        ec2_client(region: resource[:region]).authorize_security_group_ingress(
+        ec2_client(resource[:region]).authorize_security_group_ingress(
           group_name: name,
           ip_permissions: [{
             ip_protocol: rule['protocol'],
@@ -81,7 +81,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
   def destroy
     Puppet.info("Deleting security group #{name} in region #{resource[:region]}")
-    ec2_client(region: resource[:region]).delete_security_group(
+    ec2_client(resource[:region]).delete_security_group(
       group_name: name
     )
     @property_hash[:ensure] = :absent
