@@ -10,6 +10,3 @@ begin
   RuboCop::RakeTask.new
 rescue LoadError
 end
-
-require 'puppet-lint/tasks/puppet-lint'
-PuppetLint.configuration.ignore_paths = ["contrib/**/*.pp", "tests/**/*.pp", "spec/**/*.pp", "pkg/**/*.pp"]

@@ -1,0 +1,1 @@
+--ignore_paths="contrib/**/*.pp","tests/**/*.pp","spec/**/*.pp","pkg/**/*.pp"
