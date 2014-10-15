@@ -18,7 +18,8 @@ describe type_class do
       :instance_type,
       :region,
       :availability_zone,
-      :monitoring
+      :monitoring,
+      :key_name,
     ]
   end
 

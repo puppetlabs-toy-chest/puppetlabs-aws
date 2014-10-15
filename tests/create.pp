@@ -81,6 +81,7 @@ ec2_instance { 'db-1':
   security_groups => ['db-sg'],
   instance_type   => 't1.micro',
   monitoring      => true,
+  key_name        => 'garethr-test',
   tags            => {
     department => 'engineering',
     project    => 'cloud',
