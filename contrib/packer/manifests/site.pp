@@ -22,5 +22,5 @@ ssh_authorized_key { 'garethr@pro':
 
 sudo::conf { 'garethr':
   priority  => 30,
-  content => 'garethr ALL=(ALL) NOPASSWD:ALL',
+  content   => 'garethr ALL=(ALL) NOPASSWD:ALL',
 }

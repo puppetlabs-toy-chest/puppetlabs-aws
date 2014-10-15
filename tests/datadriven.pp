@@ -1,5 +1,7 @@
-# a simple data structure defining a type and number of instances. Hardcoded as an example
-# but this could obviously come from hiera. Change the numbers or add new types at will.
+# a simple data structure defining a type and number of instances. Hardcoded as
+# an example but this could obviously come from hiera. Change the numbers or add
+# new types at will.
+#
 # Note that this example requires the future parser
 
 $instances = {
@@ -8,8 +10,9 @@ $instances = {
 }
 
 
-# Everything below here is really just implementation. If you like your defined types to
-# employ recursion and you enjoy iteration in the future parser continue onwards
+# Everything below here is really just implementation. If you like your defined
+# types to employ recursion and you enjoy iteration in the future parser
+# continue onwards
 
 Ec2_instance {
   region            => 'sa-east-1',
