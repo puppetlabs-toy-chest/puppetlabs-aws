@@ -71,6 +71,8 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       tags: tags
     )
 
+    @property_hash[:ensure] = :present
+
     instances = resource[:instances]
     if ! instances.nil?
       instances = [instances] unless instances.is_a?(Array)
