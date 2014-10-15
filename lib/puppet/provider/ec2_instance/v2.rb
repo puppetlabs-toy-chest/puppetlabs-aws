@@ -22,7 +22,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end.flatten
   end
 
-  read_only(:instance_id, :instance_type, :region, :user_data,
+  read_only(:instance_id, :instance_type, :region, :user_data, :key_name,
             :availability_zones, :security_groups, :monitoring)
 
   def self.prefetch(resources)
@@ -42,6 +42,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       image_id: instance.image_id,
       instance_id: instance.instance_id,
       monitoring: monitoring,
+      key_name: instance.key_name,
       availability_zone: instance.placement.availability_zone,
       ensure: :present,
       region: region
@@ -61,7 +62,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
     data = resource[:user_data].nil? ? nil : Base64.encode64(resource[:user_data])
 
-    response = ec2_client(resource[:region]).run_instances(
+
+    config = {
       image_id: resource[:image_id],
       min_count: 1,
       max_count: 1,
@@ -74,7 +76,12 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       monitoring: {
         enabled: resource[:monitoring].to_s,
       }
-    )
+    }
+
+    key = resource[:key_name] ? resource[:key_name] : false
+    config['key_name'] = key if key
+
+    response = ec2_client(resource[:region]).run_instances(config)
 
     @property_hash[:ensure] = :present
 
