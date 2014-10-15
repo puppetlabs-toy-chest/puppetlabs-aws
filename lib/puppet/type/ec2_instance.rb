@@ -34,6 +34,9 @@ Puppet::Type.newtype(:ec2_instance) do
     desc 'whether or not monitoring is enabled for this instance'
     defaultto :false
     newvalues(:true, :'false')
+    def insync?(is)
+      is.to_s == should.to_s
+    end
   end
 
   newproperty(:region) do
