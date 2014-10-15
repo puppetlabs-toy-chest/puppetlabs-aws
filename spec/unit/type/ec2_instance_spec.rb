@@ -17,7 +17,8 @@ describe type_class do
       :image_id,
       :instance_type,
       :region,
-      :availability_zone
+      :availability_zone,
+      :monitoring
     ]
   end
 
