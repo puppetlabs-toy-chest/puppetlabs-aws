@@ -1,5 +1,5 @@
-# This will create a set of instances, load balancers and security groups in the specified
-# AWS region.
+# This will create a set of instances, load balancers and security groups in the
+# specified AWS region.
 
 Ec2_securitygroup {
   region => 'sa-east-1',
