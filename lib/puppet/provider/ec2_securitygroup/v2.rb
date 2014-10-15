@@ -47,6 +47,8 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
       description: resource[:description]
     )
 
+    @property_hash[:ensure] = :present
+
     ec2_client(region: resource[:region]).create_tags(
       resources: [response.group_id],
       tags: tags
