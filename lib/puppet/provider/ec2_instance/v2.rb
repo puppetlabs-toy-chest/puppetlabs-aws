@@ -35,12 +35,13 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def self.instance_to_hash(region, instance)
     name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
-
+    monitoring = instance.monitoring.state == "enabled" ? true : false
     {
       name: name_tag ? name_tag.value : nil,
       instance_type: instance.instance_type,
       image_id: instance.image_id,
       instance_id: instance.instance_id,
+      monitoring: monitoring,
       availability_zone: instance.placement.availability_zone,
       ensure: :present,
       region: region
