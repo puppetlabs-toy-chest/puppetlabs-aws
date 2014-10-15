@@ -23,7 +23,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   read_only(:instance_id, :instance_type, :region, :user_data,
-            :availability_zones, :security_groups)
+            :availability_zones, :security_groups, :monitoring)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -69,6 +69,9 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       user_data: data,
       placement: {
         availability_zone: resource[:availability_zone]
+      },
+      monitoring: {
+        enabled: resource[:monitoring].to_s,
       }
     )
 
