@@ -31,20 +31,20 @@ module PuppetX
         end
       end
 
-      def self.ec2_client(region: default_region)
-        ::Aws::EC2::Client.new(region: region)
+      def self.ec2_client(default_region)
+        ::Aws::EC2::Client.new(region)
       end
 
-      def ec2_client(region: default_region)
-        self.class.ec2_client(region: region)
+      def ec2_client(default_region)
+        self.class.ec2_client(region)
       end
 
-      def self.elb_client(region: default_region)
-        ::Aws::ElasticLoadBalancing::Client.new(region: region)
+      def self.elb_client(default_region)
+        ::Aws::ElasticLoadBalancing::Client.new(region)
       end
 
-      def elb_client(region: default_region)
-        self.class.elb_client(region: region)
+      def elb_client(default_region)
+        self.class.elb_client(region)
       end
     end
   end

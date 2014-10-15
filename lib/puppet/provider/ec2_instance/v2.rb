@@ -8,7 +8,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def self.instances
     regions.collect do |region|
-      response = ec2_client(region: region).describe_instances(filters: [
+      response = ec2_client(region).describe_instances(filters: [
         {name: 'instance-state-name', values: ['pending', 'running']}
       ])
       instances = []
@@ -60,7 +60,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
     data = resource[:user_data].nil? ? nil : Base64.encode64(resource[:user_data])
 
-    response = ec2_client(region: resource[:region]).run_instances(
+    response = ec2_client(resource[:region]).run_instances(
       image_id: resource[:image_id],
       min_count: 1,
       max_count: 1,
@@ -76,7 +76,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
     tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
     tags << {key: 'Name', value: name}
-    ec2_client(region: resource[:region]).create_tags(
+    ec2_client(resource[:region]).create_tags(
       resources: response.instances.map(&:instance_id),
       tags: tags
     )
@@ -84,11 +84,11 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def destroy
     Puppet.info("Deleting instance #{name} in region #{resource[:region]}")
-    instances = ec2_client(region: resource[:region]).describe_instances(filters: [
+    instances = ec2_client(resource[:region]).describe_instances(filters: [
       {name: 'tag:Name', values: [name]},
       {name: 'instance-state-name', values: ['pending', 'running']}
     ])
-    ec2_client(region: resource[:region]).terminate_instances(
+    ec2_client(resource[:region]).terminate_instances(
       instance_ids: instances.reservations.map(&:instances).
         flatten.map(&:instance_id)
     )
