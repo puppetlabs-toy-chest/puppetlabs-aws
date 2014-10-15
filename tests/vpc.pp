@@ -16,3 +16,9 @@ ec2_vpc_internet_gateway { 'test-gateway':
   region => 'sa-east-1',
   vpcs   => ['test-vpc'],
 }
+
+ec2_vpc_route_table { 'test-route-table':
+  ensure => absent,
+  region => 'sa-east-1',
+  vpc    => 'test-vpc',
+}
