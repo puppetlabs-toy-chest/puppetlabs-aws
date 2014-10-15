@@ -26,10 +26,14 @@ Puppet::Type.newtype(:ec2_instance) do
     desc 'the AWS generated id for the instance'
   end
 
+  newproperty(:key_name) do
+    desc 'the name of the key pair associated with this instance'
+  end
+
   newproperty(:monitoring) do
     desc 'whether or not monitoring is enabled for this instance'
     defaultto :false
-    newvalues(:true, :false)
+    newvalues(:true, :'false')
   end
 
   newproperty(:region) do
