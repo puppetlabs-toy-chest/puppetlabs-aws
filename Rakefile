@@ -10,3 +10,14 @@ begin
   RuboCop::RakeTask.new
 rescue LoadError
 end
+
+require 'puppet-lint/tasks/puppet-lint'
+
+# necessary to ensure default :lint doesn't exist, else ignore_paths won't work
+Rake::Task[:lint].clear
+
+PuppetLint.configuration.relative = true
+PuppetLint.configuration.disable_class_inherits_from_params_class
+PuppetLint::RakeTask.new :lint do |config|
+  config.ignore_paths = ['contrib/**/*.pp', 'tests/**/*.pp', 'spec/**/*.pp', 'pkg/**/*.pp']
+end
