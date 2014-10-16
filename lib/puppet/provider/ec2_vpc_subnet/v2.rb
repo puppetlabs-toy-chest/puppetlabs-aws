@@ -17,7 +17,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
     end.flatten
   end
 
-  read_only(:cidr_block)
+  read_only(:cidr_block, :vpc)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -28,12 +28,14 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
   end
 
   def self.subnet_to_hash(region, subnet)
+    vpc_response = ec2_client(region: region).describe_vpcs(vpc_ids: [subnet.vpc_id])
+    vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
     name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
     {
       name: name_tag ? name_tag.value : nil,
       cidr_block: subnet.cidr_block,
       availability_zone: subnet.availability_zone,
-      vpc_id: subnet.vpc_id,
+      vpc: vpc_name_tag ? vpc_name_tag.value : nil,
       ensure: :present,
       region: region,
     }
