@@ -29,4 +29,8 @@ Puppet::Type.newtype(:ec2_vpc_route_table) do
     self[:vpc]
   end
 
+  autorequire(:ec2_vpc_internet_gateway) do
+    self[:routes].collect { |route| route['gateway'] }.reject(&:nil?)
+  end
+
 end
