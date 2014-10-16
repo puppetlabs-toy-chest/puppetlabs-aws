@@ -20,6 +20,9 @@ Puppet::Type.newtype(:ec2_vpc_route_table) do
 
   newproperty(:routes, :array_matching => :all) do
     desc 'individual routes for the routing table'
+    def insync?(is)
+      is.sort_by { |route| route['gateway'] } == should.sort_by { |route| route['gateway'] }
+    end
   end
 
   autorequire(:ec2_vpc) do

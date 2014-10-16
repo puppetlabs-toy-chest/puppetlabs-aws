@@ -29,11 +29,16 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
 
   def self.route_to_hash(region, route)
     ec2 = ec2_client(region: region)
-    igw_response = ec2.describe_internet_gateways(internet_gateway_ids: [route.gateway_id])
-    igw_name_tag = igw_response.data.internet_gateways.first.tags.detect { |tag| tag.key == 'Name' }
+    if route.gateway_id == 'local'
+      gateway = 'local'
+    else
+      igw_response = ec2.describe_internet_gateways(internet_gateway_ids: [route.gateway_id])
+      igw_name_tag = igw_response.data.internet_gateways.first.tags.detect { |tag| tag.key == 'Name' }
+      gateway = igw_name_tag ? igw_name_tag.value : nil
+    end
     {
       'destination_cidr_block' => route.destination_cidr_block,
-      'gateway' =>  igw_name_tag ? igw_name_tag.value : nil,
+      'gateway' => gateway,
     }
   end
 
@@ -45,7 +50,7 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
 
     routes = []
     table.routes.each do |route|
-      routes << route_to_hash(region, route) unless route.gateway_id == 'local'
+      routes << route_to_hash(region, route)
     end
 
     {

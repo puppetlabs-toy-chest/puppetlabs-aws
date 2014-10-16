@@ -25,6 +25,9 @@ ec2_vpc_route_table { 'test-route-table':
     {
       destination_cidr_block => '0.0.0.0/0',
       gateway                => 'test-gateway',
+    },{
+      destination_cidr_block => '10.0.0.0/16',
+      gateway                => 'local',
     }
   ]
 }
