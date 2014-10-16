@@ -90,7 +90,7 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
         route_table_id: id,
         destination_cidr_block: route['destination_cidr_block'],
         gateway_id: gateway_response.data.internet_gateways.first.internet_gateway_id,
-      )
+      ) unless gateway_response.data.internet_gateways.empty?
     end
   end
 
