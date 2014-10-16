@@ -28,10 +28,14 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def self.route_table_to_hash(region, table)
+    ec2 = ec2_client(region: region)
+    vpc_response = ec2.describe_vpcs(vpc_ids: [table.vpc_id])
+    vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
     name_tag = table.tags.detect { |tag| tag.key == 'Name' }
     {
       name: name_tag ? name_tag.value : nil,
       id: table.route_table_id,
+      vpc: vpc_name_tag ? vpc_name_tag.value : nil,
       ensure: :present,
       region: region,
     }
@@ -51,10 +55,21 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
     response = ec2.create_route_table(
       vpc_id: vpc_response.data.vpcs.first.vpc_id,
     )
+    id = response.data.route_table.route_table_id
     ec2.create_tags(
-      resources: [response.data.route_table.route_table_id],
+      resources: [id],
       tags: [{key: 'Name', value: name}]
     )
+    resource[:routes].each do |route|
+      gateway_response = ec2.describe_internet_gateways(filters: [
+        {name: "tag:Name", values: [route['gateway']]},
+      ])
+      ec2.create_route(
+        route_table_id: id,
+        destination_cidr_block: route['destination_cidr_block'],
+        gateway_id: gateway_response.data.internet_gateways.first.internet_gateway_id,
+      )
+    end
   end
 
   def destroy

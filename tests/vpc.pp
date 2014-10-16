@@ -18,7 +18,13 @@ ec2_vpc_internet_gateway { 'test-gateway':
 }
 
 ec2_vpc_route_table { 'test-route-table':
-  ensure => absent,
+  ensure => present,
   region => 'sa-east-1',
   vpc    => 'test-vpc',
+  routes => [
+    {
+      destination_cidr_block => '0.0.0.0/0',
+      gateway                => 'test-gateway',
+    }
+  ]
 }

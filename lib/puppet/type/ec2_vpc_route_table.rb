@@ -18,6 +18,10 @@ Puppet::Type.newtype(:ec2_vpc_route_table) do
     desc 'the vpc to assign this route table to'
   end
 
+  newproperty(:routes, :array_matching => :all) do
+    desc 'individual routes for the routing table'
+  end
+
   autorequire(:ec2_vpc) do
     self[:vpc]
   end
