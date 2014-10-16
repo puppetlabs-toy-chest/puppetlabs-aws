@@ -17,7 +17,7 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
     end.flatten
   end
 
-  read_only(:region)
+  read_only(:region, :vpc)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -27,16 +27,33 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
     end
   end
 
+  def self.route_to_hash(region, route)
+    ec2 = ec2_client(region: region)
+    igw_response = ec2.describe_internet_gateways(internet_gateway_ids: [route.gateway_id])
+    igw_name_tag = igw_response.data.internet_gateways.first.tags.detect { |tag| tag.key == 'Name' }
+    {
+      'destination_cidr_block' => route.destination_cidr_block,
+      'gateway' =>  igw_name_tag ? igw_name_tag.value : nil,
+    }
+  end
+
   def self.route_table_to_hash(region, table)
     ec2 = ec2_client(region: region)
     vpc_response = ec2.describe_vpcs(vpc_ids: [table.vpc_id])
     vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
     name_tag = table.tags.detect { |tag| tag.key == 'Name' }
+
+    routes = []
+    table.routes.each do |route|
+      routes << route_to_hash(region, route) unless route.gateway_id == 'local'
+    end
+
     {
       name: name_tag ? name_tag.value : nil,
       id: table.route_table_id,
       vpc: vpc_name_tag ? vpc_name_tag.value : nil,
       ensure: :present,
+      routes: routes,
       region: region,
     }
   end
