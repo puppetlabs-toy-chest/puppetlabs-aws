@@ -37,10 +37,11 @@ define create_ec2_instances($type, $count) {
   }
 }
 
-each($instances) |$type, $count| {
-  create_ec2_instances { "creating-${type}-${counter}":
-    type  => $type,
-    count => $count
-  }
-}
+# temporarily comment lambda code requiring future parser
+# each($instances) |$type, $count| {
+#   create_ec2_instances { "creating-${type}-${counter}":
+#     type  => $type,
+#     count => $count
+#   }
+# }
 
