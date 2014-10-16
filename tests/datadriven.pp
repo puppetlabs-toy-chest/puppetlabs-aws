@@ -19,6 +19,7 @@ Ec2_instance {
   availability_zone => 'sa-east-1a',
 }
 
+# A recursively defined function, hurray!
 define create_ec2_instances($type, $count) {
   ec2_instance { "${type}-${count}":
     ensure          => present,
@@ -27,7 +28,7 @@ define create_ec2_instances($type, $count) {
     instance_type   => 't1.micro',
   }
   $counter = inline_template('<%= @count.to_i - 1 %>')
-  if "${counter}" == '0' {
+  if $counter == '0' {
   } else {
     create_ec2_instances { "creating-${type}-${counter}":
       type  => $type,
