@@ -17,6 +17,10 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
+  newproperty(:vpc) do
+    desc 'vpc to associate group with'
+  end
+
   newparam(:ingress, :array_mathching => :all) do
     desc 'rules for ingress traffic'
   end
@@ -30,6 +34,10 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     validate do |value|
       fail Puppet::Error, 'Empty values are not allowed' if value == ''
     end
+  end
+
+  autorequire(:ec2_vpc) do
+    self[:vpc]
   end
 
   autorequire(:ec2_securitygroup) do

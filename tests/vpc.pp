@@ -31,3 +31,16 @@ ec2_vpc_route_table { 'test-route-table':
     }
   ]
 }
+
+ec2_securitygroup { 'vpc-sg':
+  ensure      => present,
+  region      => 'sa-east-1',
+  description => 'Security group for VPC',
+  vpc         => 'test-vpc',
+  ingress     => [{
+    protocol => 'tcp',
+    port     => 80,
+    cidr     => '0.0.0.0/0'
+  }],
+}
+

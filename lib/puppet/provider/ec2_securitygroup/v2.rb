@@ -25,11 +25,18 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def self.security_group_to_hash(region, group)
+    vpc_name_tag = nil
+    if group.vpc_id
+      vpc_response = ec2_client(region: region).describe_vpcs(vpc_ids: [group.vpc_id])
+      vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
+    end
+    vpc_name = vpc_name_tag ? vpc_name_tag.value : nil
     {
       name: group[:group_name],
       description: group[:description],
       ensure: :present,
       region: region,
+      vpc: vpc_name,
     }
   end
 
@@ -42,14 +49,26 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   def create
     Puppet.info("Creating security group #{name} in region #{resource[:region]}")
     tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
-    response = ec2_client(resource[:region]).create_security_group(
+
+    ec2 = ec2_client(resource[:region])
+
+    config = {
       group_name: name,
       description: resource[:description]
-    )
+    }
+
+    if resource[:vpc]
+      vpc_response = ec2.describe_vpcs(filters: [
+        {name: "tag:Name", values: [resource[:vpc]]},
+      ])
+      config[:vpc_id] = vpc_response.data.vpcs.first.vpc_id
+    end
+
+    response = ec2.create_security_group(config)
 
     @property_hash[:ensure] = :present
 
-    ec2_client(resource[:region]).create_tags(
+    ec2.create_tags(
       resources: [response.group_id],
       tags: tags
     ) unless tags.empty?
@@ -59,13 +78,13 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
     rules.reject(&:nil?).each do |rule|
       if rule.key? 'security_group'
-        ec2_client(resource[:region]).authorize_security_group_ingress(
-          group_name: name,
+        ec2.authorize_security_group_ingress(
+          group_id: response.group_id,
           source_security_group_name: rule['security_group']
         )
       else
-        ec2_client(resource[:region]).authorize_security_group_ingress(
-          group_name: name,
+        ec2.authorize_security_group_ingress(
+          group_id: response.group_id,
           ip_permissions: [{
             ip_protocol: rule['protocol'],
             to_port: rule['port'].to_i,
