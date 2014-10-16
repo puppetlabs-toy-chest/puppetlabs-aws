@@ -17,7 +17,7 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
     end.flatten
   end
 
-  read_only(:region, :vpc)
+  read_only(:region, :vpc, :routes)
 
   def self.prefetch(resources)
     instances.each do |prov|
