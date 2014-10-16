@@ -17,7 +17,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
     end.flatten
   end
 
-  read_only(:region)
+  read_only(:region, :vpcs)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -28,11 +28,16 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def self.gateway_to_hash(region, gateway)
+    vpc_response = ec2_client(region: region).describe_vpcs(vpc_ids: gateway.attachments.map(&:vpc_id))
+    vpcs = []
+    vpc_response.data.vpcs.each do |vpc|
+      vpc_name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
+      vpcs << vpc_name_tag.value if vpc_name_tag
+    end
     name_tag = gateway.tags.detect { |tag| tag.key == 'Name' }
     {
       name: name_tag ? name_tag.value : nil,
-      vpc_ids: gateway.attachments.map(&:vpc_id),
-      id: gateway.internet_gateway_id,
+      vpcs: vpcs,
       ensure: :present,
       region: region,
     }
