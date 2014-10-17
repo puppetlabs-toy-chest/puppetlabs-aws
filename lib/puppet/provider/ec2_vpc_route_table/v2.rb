@@ -91,7 +91,8 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
         destination_cidr_block: route['destination_cidr_block'],
         gateway_id: gateway_response.data.internet_gateways.first.internet_gateway_id,
       ) unless gateway_response.data.internet_gateways.empty?
-    end
+    end if resource[:routes]
+    @property_hash[:ensure] = :present
   end
 
   def destroy
@@ -102,6 +103,7 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
     ])
     fail("Multiple route tables with name #{name}. Not deleting.") if response.data.route_tables.count > 1
     ec2.delete_route_table(route_table_id: response.data.route_tables.first.route_table_id)
+    @property_hash[:ensure] = :absent
   end
 end
 
