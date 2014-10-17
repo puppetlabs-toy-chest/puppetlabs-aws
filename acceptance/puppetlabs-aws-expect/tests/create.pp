@@ -14,7 +14,15 @@ Elb_loadbalancer {
   region => 'sa-east-1',
 }
 
-ec2_securitygroup { 'test-sg':
+# on Jenkins, name resources with a pretty build identifier
+# otherwise, name instances via local environment info
+# for the sake of preventing name collisions
+$suffix = inline_template("<%= (ENV['BUILD_DISPLAY_NAME'] ||
+  (ENV['USER'] + '@' + Socket.gethostname.split('.')[0])).gsub(/'/, '') %>")
+# some resources have DNS rules, so simplify suffix
+$dns_suffix = inline_template("<%= '${suffix}'.gsub(/[^\\dA-Za-z-]/, '') %>")
+
+ec2_securitygroup { "test-sg-${suffix}":
   ensure      => present,
   description => 'Security group for load balancer',
   ingress     => [{
@@ -24,7 +32,7 @@ ec2_securitygroup { 'test-sg':
   }],
 }
 
-ec2_instance { 'test-1':
+ec2_instance { "test-1-${suffix}":
   ensure          => present,
   image_id        => 'ami-41e85d5c', # SA 'ami-67a60d7a', # EU 'ami-b8c41ccf',
   instance_type   => 't1.micro',
@@ -36,17 +44,17 @@ ec2_instance { 'test-1':
   }
 }
 
-elb_loadbalancer { 'test-lb':
+elb_loadbalancer { "test-lb-${dns_suffix}":
   ensure             => present,
   availability_zones => ['sa-east-1a'],
-  instances          => 'test-1',
+  instances          => "test-1-${suffix}",
   listeners          => [{
     protocol => 'tcp',
     port     => 80,
   }],
 }
 
-elb_loadbalancer { 'empty-lb':
+elb_loadbalancer { "empty-lb-${dns_suffix}":
   ensure             => present,
   availability_zones => ['sa-east-1a'],
   listeners          => [{
