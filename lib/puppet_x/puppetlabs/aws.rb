@@ -7,7 +7,7 @@ module PuppetX
         if ENV['AWS_REGION'] and not ENV['AWS_REGION'].empty?
           [ENV['AWS_REGION']]
         else
-          ec2_client(region: default_region).describe_regions.data.regions.map(&:region_name)
+          ec2_client(default_region).describe_regions.data.regions.map(&:region_name)
         end
       end
 
