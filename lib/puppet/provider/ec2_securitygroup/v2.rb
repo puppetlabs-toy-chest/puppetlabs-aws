@@ -27,7 +27,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   def self.security_group_to_hash(region, group)
     vpc_name_tag = nil
     if group.vpc_id
-      vpc_response = ec2_client(region: region).describe_vpcs(vpc_ids: [group.vpc_id])
+      vpc_response = ec2_client(region).describe_vpcs(vpc_ids: [group.vpc_id])
       vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
     end
     vpc_name = vpc_name_tag ? vpc_name_tag.value : nil

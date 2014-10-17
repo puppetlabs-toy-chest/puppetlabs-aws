@@ -43,7 +43,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
     subnet_name = nil
     if instance.subnet_id
-      subnet_response = ec2_client(region: region).describe_subnets(subnet_ids: [instance.subnet_id])
+      subnet_response = ec2_client(region).describe_subnets(subnet_ids: [instance.subnet_id])
       subnet_name_tag = subnet_response.data.subnets.first.tags.detect { |tag| tag.key == 'Name' }
     end
     subnet_name = subnet_name_tag ? subnet_name_tag.value : nil

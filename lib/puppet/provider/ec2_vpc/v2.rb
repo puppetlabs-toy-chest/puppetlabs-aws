@@ -7,7 +7,7 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
 
   def self.instances
     regions.collect do |region|
-      response = ec2_client(region: region).describe_vpcs()
+      response = ec2_client(region).describe_vpcs()
       vpcs = []
         response.data.vpcs.each do |vpc|
         hash = vpc_to_hash(region, vpc)
@@ -44,28 +44,29 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
 
   def create
     Puppet.info("Creating VPC #{name}")
-    response = ec2_client(region: resource[:region]).create_vpc(
+    ec2 = ec2_client(resource[:region])
+    response = ec2.create_vpc(
       cidr_block: resource[:cidr_block]
     )
-    route_response = ec2_client(region: resource[:region]).describe_route_tables(filters: [
+    route_response = ec2.describe_route_tables(filters: [
       {name: 'vpc-id', values: [response.data.vpc.vpc_id]},
       {name: 'association.main', values: ['true']},
     ])
-    ec2_client(region: resource[:region]).create_tags(
+    ec2.create_tags(
       resources: [route_response.data.route_tables.first.route_table_id, response.data.vpc.vpc_id],
       tags: [{key: 'Name', value: name}]
     )
-
   end
 
   def destroy
     Puppet.info("Deleting VPC #{name}}")
-    response = ec2_client(region: resource[:region]).describe_vpcs(filters: [
+    ec2 = ec2_client(resource[:region])
+    response = ec2.describe_vpcs(filters: [
       {name: 'tag:Name', values: [name]},
     ])
     fail("Multiple VPCs with name #{name}. Not deleting.") if response.data.vpcs.count > 1
     response.data.vpcs.each do |vpc|
-      ec2_client(region: resource[:region]).delete_vpc(
+      ec2.delete_vpc(
         vpc_id: vpc.vpc_id
       )
     end

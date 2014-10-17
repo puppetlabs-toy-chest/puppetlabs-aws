@@ -7,7 +7,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
 
   def self.instances
     regions.collect do |region|
-      response = ec2_client(region: region).describe_internet_gateways()
+      response = ec2_client(region).describe_internet_gateways()
       gateways = []
       response.data.internet_gateways.each do |gateway|
         hash = gateway_to_hash(region, gateway)
@@ -28,7 +28,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def self.gateway_to_hash(region, gateway)
-    vpc_response = ec2_client(region: region).describe_vpcs(vpc_ids: gateway.attachments.map(&:vpc_id))
+    vpc_response = ec2_client(region).describe_vpcs(vpc_ids: gateway.attachments.map(&:vpc_id))
     vpcs = []
     vpc_response.data.vpcs.each do |vpc|
       vpc_name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
@@ -50,7 +50,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
 
   def create
     Puppet.info("Creating internet gateway #{name}")
-    ec2 = ec2_client(region: resource[:region])
+    ec2 = ec2_client(resource[:region])
     vpc_response = ec2.describe_vpcs(filters: [
       {name: "tag:Name", values: resource[:vpcs]},
     ])
@@ -70,7 +70,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
 
   def destroy
     Puppet.info("Deleting internet gateway #{name}")
-    ec2 = ec2_client(region: resource[:region])
+    ec2 = ec2_client(resource[:region])
     response = ec2.describe_internet_gateways(filters: [
       {name: 'tag:Name', values: [name]},
     ])

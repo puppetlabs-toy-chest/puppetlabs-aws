@@ -7,7 +7,7 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
 
   def self.instances
     regions.collect do |region|
-      response = ec2_client(region: region).describe_route_tables()
+      response = ec2_client(region).describe_route_tables()
       tables = []
       response.data.route_tables.each do |table|
         hash = route_table_to_hash(region, table)
@@ -28,7 +28,7 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def self.route_to_hash(region, route)
-    ec2 = ec2_client(region: region)
+    ec2 = ec2_client(region)
     if route.gateway_id == 'local'
       gateway = 'local'
     else
@@ -43,7 +43,7 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def self.route_table_to_hash(region, table)
-    ec2 = ec2_client(region: region)
+    ec2 = ec2_client(region)
     vpc_response = ec2.describe_vpcs(vpc_ids: [table.vpc_id])
     vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
     name_tag = table.tags.detect { |tag| tag.key == 'Name' }
@@ -70,7 +70,7 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
 
   def create
     Puppet.info("Creating route table #{name}")
-    ec2 = ec2_client(region: resource[:region])
+    ec2 = ec2_client(resource[:region])
     vpc_response = ec2.describe_vpcs(filters: [
       {name: "tag:Name", values: [resource[:vpc]]},
     ])
@@ -96,7 +96,7 @@ Puppet::Type.type(:ec2_vpc_route_table).provide(:v2, :parent => PuppetX::Puppetl
 
   def destroy
     Puppet.info("Deleting route table #{name}")
-    ec2 = ec2_client(region: resource[:region])
+    ec2 = ec2_client(resource[:region])
     response = ec2.describe_route_tables(filters: [
       {name: 'tag:Name', values: [name]},
     ])
