@@ -15,18 +15,26 @@ Elb_loadbalancer {
   region => 'sa-east-1',
 }
 
-ec2_instance { 'test-1':
+# on Jenkins, name resources with a pretty build identifier
+# otherwise, name instances via local environment info
+# for the sake of preventing name collisions
+$suffix = inline_template("<%= (ENV['BUILD_DISPLAY_NAME'] ||
+  (ENV['USER'] + '@' + Socket.gethostname.split('.')[0])).gsub(/'/, '') %>")
+# some resources have DNS rules, so simplify suffix
+$dns_suffix = inline_template("<%= '${suffix}'.gsub(/[^\\dA-Za-z-]/, '') %>")
+
+ec2_instance { "test-1-${suffix}":
   ensure => absent,
 }
 
-ec2_securitygroup { 'test-sg':
+ec2_securitygroup { "test-sg-${suffix}":
   ensure => absent,
 }
 
-elb_loadbalancer { ['test-lb']:
+elb_loadbalancer { ["test-lb-${dns_suffix}"]:
   ensure => absent,
 }
 
-elb_loadbalancer { ['empty-lb']:
+elb_loadbalancer { ["empty-lb-${suffix}"]:
   ensure => absent,
 }
