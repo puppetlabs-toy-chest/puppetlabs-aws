@@ -1,0 +1,104 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeSubnets&Filter.1.Name=tag%3AName&Filter.1.Value.1=test-subnet&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-17T11%3A35%3A10Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "271"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 11:35:11 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSubnetsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>0e1156b6-3772-408c-b5b5-c602ce4ce849</requestId>
+                <subnetSet>
+                    <item>
+                        <subnetId>subnet-105c9475</subnetId>
+                        <state>available</state>
+                        <vpcId>vpc-6853ea0d</vpcId>
+                        <cidrBlock>10.0.0.0/24</cidrBlock>
+                        <availableIpAddressCount>251</availableIpAddressCount>
+                        <availabilityZone>sa-east-1a</availabilityZone>
+                        <defaultForAz>false</defaultForAz>
+                        <mapPublicIpOnLaunch>false</mapPublicIpOnLaunch>
+                        <tagSet>
+                            <item>
+                                <key>Name</key>
+                                <value>test-subnet</value>
+                            </item>
+                        </tagSet>
+                    </item>
+                </subnetSet>
+            </DescribeSubnetsResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 11:35:11 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=Del&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&SubnetId=subnet-105c9475&Timestamp=2014-10-17T11%3A35%3A11Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "241"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 11:35:12 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DeleteSubnetResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>073c4d18-b2a8-45fc-b1a6-d504f78a2d10</requestId>
+                <return>true</return>
+            </DeleteSubnetResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 11:35:12 GMT"
+  recorded_with: "VCR 2.9.3"
