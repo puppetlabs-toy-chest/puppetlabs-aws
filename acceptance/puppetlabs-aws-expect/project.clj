@@ -12,4 +12,5 @@
                  [org.clojure/clojure "1.5.1"]
                  [environ "0.5.0"]
                  [clj-time "0.8.0"]
+                 [com.brainbot/iniconfig "0.2.0"]
                  [amazonica "0.2.24" :exclusions [joda-time]]])

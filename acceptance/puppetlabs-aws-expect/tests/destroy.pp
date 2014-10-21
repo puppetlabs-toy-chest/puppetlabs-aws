@@ -38,3 +38,11 @@ elb_loadbalancer { ["test-lb-${dns_suffix}"]:
 elb_loadbalancer { ["empty-lb-${dns_suffix}"]:
   ensure => absent,
 }
+
+# temporary file used to track created instances for use by acceptance tests
+$filename = inline_template("<%= 'aws-resources-' +
+  (ENV['BUILD_DISPLAY_NAME'] || ENV['USER']) + '.ini' %>")
+
+file { "/tmp/${filename}":
+  ensure => absent
+}

@@ -62,3 +62,15 @@ elb_loadbalancer { "empty-lb-${dns_suffix}":
     port     => 80,
   }],
 }
+
+# track the created resources in a /tmp INI file for use by acceptance tests
+$filename = inline_template("<%= 'aws-resources-' +
+  (ENV['BUILD_DISPLAY_NAME'] || ENV['USER']) + '.ini' %>")
+
+file { "/tmp/${filename}":
+  content => "[resources]
+instances=test-1-${suffix}
+securitygroups=test-sg-${suffix}
+loadbalancers=test-lb-${dns_suffix},empty-lb-${dns_suffix}
+"
+}
