@@ -35,6 +35,6 @@ elb_loadbalancer { ["test-lb-${dns_suffix}"]:
   ensure => absent,
 }
 
-elb_loadbalancer { ["empty-lb-${suffix}"]:
+elb_loadbalancer { ["empty-lb-${dns_suffix}"]:
   ensure => absent,
 }
