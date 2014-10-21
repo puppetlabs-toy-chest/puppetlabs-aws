@@ -19,6 +19,9 @@ group :test do
   gem 'webmock'
   gem 'vcr'
   gem 'rspec-puppet', :git => 'https://github.com/rodjek/rspec-puppet.git'
+  gem 'beaker'
+  gem 'beaker-rspec'
+  gem 'vagrant-wrapper'
 end
 
 group :development do
@@ -28,7 +31,6 @@ group :development do
   gem 'guard-rake'
   gem 'rubocop', require: false
   gem 'pry'
-  gem 'librarian-puppet'
   gem 'clamp'
   gem "hiera-eyaml"
 end

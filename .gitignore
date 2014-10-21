@@ -46,3 +46,4 @@ hieradata/*.eyaml
 Gemfile.lock
 
 /graphs
+.vagrant
