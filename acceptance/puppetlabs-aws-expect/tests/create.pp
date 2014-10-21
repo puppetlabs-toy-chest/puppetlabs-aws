@@ -54,7 +54,7 @@ elb_loadbalancer { "test-lb-${dns_suffix}":
   }],
 }
 
-elb_loadbalancer { "empty-lb-${dns_suffix}":
+elb_loadbalancer { "nil-lb-${dns_suffix}":
   ensure             => present,
   availability_zones => ['sa-east-1a'],
   listeners          => [{
@@ -71,6 +71,6 @@ file { "/tmp/${filename}":
   content => "[resources]
 instances=test-1-${suffix}
 securitygroups=test-sg-${suffix}
-loadbalancers=test-lb-${dns_suffix},empty-lb-${dns_suffix}
+loadbalancers=test-lb-${dns_suffix},nil-lb-${dns_suffix}
 "
 }
