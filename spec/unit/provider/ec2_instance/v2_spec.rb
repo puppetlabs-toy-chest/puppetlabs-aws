@@ -15,7 +15,7 @@ describe provider_class do
       instance_type: 't1.micro',
       availability_zone: 'sa-east-1a',
       region: 'sa-east-1',
-      security_groups: ['web-sg']
+      security_groups: ['web-sg'],
     )
   }
 
