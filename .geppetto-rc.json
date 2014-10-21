@@ -1,0 +1,8 @@
+{
+  "exclusion_patterns" : [
+    "contrib/**/*.pp",
+    "tests/**/*.pp",
+    "spec/**/*.pp",
+    "pkg/**/*.pp"
+  ]
+}
