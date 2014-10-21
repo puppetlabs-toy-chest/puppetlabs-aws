@@ -1,8 +1,8 @@
 {
-  "exclusion_patterns" : [
-    "contrib/**/*.pp",
-    "tests/**/*.pp",
-    "spec/**/*.pp",
-    "pkg/**/*.pp"
+  "folder_exclusion_patterns" : [
+    "contrib",
+    "tests",
+    "spec",
+    "pkg"
   ]
 }
