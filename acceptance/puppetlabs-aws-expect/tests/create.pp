@@ -37,6 +37,8 @@ ec2_instance { "test-1-${suffix}":
   image_id        => 'ami-41e85d5c', # SA 'ami-67a60d7a', # EU 'ami-b8c41ccf',
   instance_type   => 't1.micro',
   security_groups => ['default'],
+  monitoring      => true,
+  key_name        => 'garethr-test',
   tags            => {
     department => 'engineering',
     project    => 'cloud',
