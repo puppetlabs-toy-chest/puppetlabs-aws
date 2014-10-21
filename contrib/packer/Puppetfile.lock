@@ -1,0 +1,23 @@
+FORGE
+  remote: https://forgeapi.puppetlabs.com
+  specs:
+    puppetlabs-ntp (3.2.0)
+      puppetlabs-stdlib (< 5.0.0, >= 3.2.0)
+    puppetlabs-stdlib (4.3.2)
+    saz-locales (2.2.0)
+    saz-motd (2.2.0)
+    saz-ssh (2.3.6)
+      puppetlabs-stdlib (>= 2.2.1)
+    saz-sudo (3.0.6)
+      puppetlabs-stdlib (>= 2.3.0)
+    saz-timezone (3.0.1)
+      puppetlabs-stdlib (>= 2.3.0)
+
+DEPENDENCIES
+  puppetlabs-ntp (>= 0)
+  saz-locales (>= 0)
+  saz-motd (>= 0)
+  saz-ssh (>= 0)
+  saz-sudo (>= 0)
+  saz-timezone (= 3.0.1)
+
