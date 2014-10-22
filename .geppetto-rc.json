@@ -4,5 +4,6 @@
     "tests",
     "spec",
     "pkg"
-  ]
+  ],
+  "compliance_level": "PUPPET_4_0"
 }
