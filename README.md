@@ -152,7 +152,7 @@ their parameters.
 ```puppet
 ec2_instance { 'name-of-instance':
   ensure            => present,
-  region            => 'us-east-1,
+  region            => 'us-east-1',
   availability_zone => 'us-east-1a',
   image_id          => 'ami-123456',
   instance_type     => 't1.micro',
