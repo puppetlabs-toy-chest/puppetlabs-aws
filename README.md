@@ -1,16 +1,78 @@
-Puppet module for managing AWS resources to build out infrastructure.
+####Table of Contents
 
-> Note that this repository contains a work-in-progress proof of
-> concept.
+1. [Overview](#overview)
+2. [Description - What the module does and why it is useful](#module-description)
+3. [Setup - Getting started](#setup)
+4. [Usage - Configuration options and additional functionality](#usage)
+5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+5. [Limitations - OS compatibility, etc.](#limitations)
+
+##Overview
+
+Puppet module for managing Amazon Web Services (AWS) resources to build out cloud infrastructure.
 
 [![Build
 Status](https://magnum.travis-ci.com/puppetlabs/puppetlabs-aws.svg?token=RqtxRv25TsPVz69Qso5L&branch=master)](https://magnum.travis-ci.com/puppetlabs/puppetlabs-aws)
 
-## Intention
+##Description
 
-Use the Puppet DSL to provision resources in AWS. To begin with we're
-targetting the following simple stack comprising EC2 instances, EC2
-security groups and ELB load balancers.
+Amazon Web Services exposes a powerful API for creating and managing
+it's Infrastructure as a Service platform. This module
+allows you to drive that API using Puppet code. In the simplest case
+this allows you to create new EC2 instances from Puppet code, but more
+importantly it allows you to describe your entire AWS infrastructure and
+to model the relationships between different components.
+
+##Setup
+
+The module relies on the Amazon AWS Ruby SDK, so first install this. The
+SDK is available as a gem so install it into the same Ruby as used by
+Puppet.
+
+```bash
+gem install aws-sdk-core
+```
+
+Once the library is installed you'll need to set a few environment
+variables for your AWS access credentials.
+
+```
+export AWS_ACCESS_KEY_ID=your_access_key_id
+export AWS_SECRET_ACCESS_KEY=your_secret_access_key
+```
+
+Alternatively, you can place the credentials in a file at
+~/.aws/credentials based on the following template:
+
+```yaml
+[default]
+aws_access_key_id = your_access_key_id
+aws_secret_access_key = your_secret_access_key
+```
+
+And finally you can install the module with:
+
+```bash
+puppet module install puppetlabs-aws
+```
+
+### A note on regions
+
+By default the module will look through all regions in AWS when
+determining if something is available. This can be a little slow. If you
+know what you're doing you can speed things up by targetting a single
+region using an environment variable.
+
+```bash
+export AWS_REGION=eu-west-1
+```
+
+##Usage
+
+### Using the DSL
+
+Lets start with an example. Lets aim to create the following simple
+stack in AWS.
 
 ```
                           WWW
@@ -37,16 +99,14 @@ security groups and ELB load balancers.
           +----------------------------------+
 ```
 
-## Usage
+Running the provided sample code with Puppet apply:
 
-First, set a few environment variables with your AWS credentials.
-
-```
-export AWS_ACCESS_KEY_ID=your_access_key_id
-export AWS_SECRET_ACCESS_KEY=your_secret_access_key
+```bash
+puppet apply tests/create.pp --test
 ```
 
-Running the sample code with Puppet apply:
+If you want to try this out from this directory without installing the
+module with `puppet module` or similar you can run the following:
 
 ```bash
 puppet apply tests/create.pp --modulepath ../ --test
@@ -55,27 +115,15 @@ puppet apply tests/create.pp --modulepath ../ --test
 To destroy the resources created by the above you can run the following:
 
 ```bash
-puppet apply tests/destroy.pp --modulepath ../ --test
+puppet apply tests/destroy.pp --test
 ```
 
 The tests directory contains other examples as well which should give an
-idea of what's possible. Note in particular the master/agent setup with
-EC2 API based autosigning.
+idea of what's possible.
 
-### A note on regions
+### From the command line
 
-By default the module will look through all regions in AWS when
-determining if something is available. This can be a little slow. If you
-know what you're doing you can speed things up by targetting a single
-region using an environment variable.
-
-```bash
-export AWS_REGION=eu-west-1
-```
-
-### Puppet resource support
-
-The module also has basic `puppet resource` support, so for instance the
+The module also has basic `puppet resource` support, so for example the
 following will list all the security groups:
 
 ```bash
@@ -85,7 +133,7 @@ puppet resource ec2_securitygroup
 We can also create new resources:
 
 ```bash
-puppet resource ec2_securitygroup test-group ensure=present description="test description" region=sa-east-1
+puppet resource ec2_securitygroup test-group ensure=present description="test description" region=us-east-1
 ```
 
 and then destroy them, all from the command line:
@@ -94,66 +142,76 @@ and then destroy them, all from the command line:
 puppet resource ec2_securitygroup test-group ensure=absent region=sa-east-1
 ```
 
-### Pegasus support
+##Reference
 
-See the contrib folder for an example EC2 inventory script for pegasus.
+The following shows each of the new types along with a full list of
+their parameters.
 
-### Puppet Cloud command
+### ec2_instance
 
-As an experiment we currently have an extention of the `puppet` command,
-called puppet cloud, that exposes the typical actions. For instance you
-can list all your ec2_instances (or other types):
-
-```bash
-puppet cloud list ec2_instance
+```puppet
+ec2_instance { 'name-of-instance':
+  ensure            => present,
+  region            => 'us-east-1,
+  availability_zone => 'us-east-1a',
+  image_id          => 'ami-123456',
+  instance_type     => 't1.micro',
+  monitoring        => true,
+  key_name          => 'name-of-existing-key',
+  security_groups   => ['name-of-security-group'],
+  user_data         => template('module/file-path.sh.erb'),
+  tags              => {
+    tag_name => 'value',
+  },
+}
 ```
 
-Produce the dot files describing the resouces and relationships for a
-given manifest.
+### ec2_securitygroup
 
-```bash
-puppet cloud graph tests/create.pp
+```puppet
+ec2_securitygroup { 'name-of-group':
+  ensure      => present,
+  region      => 'us-east-1',
+  description => 'a description of the group',
+  ingress     => [{
+    protocol => 'tcp',
+    port     => 80,
+    cidr     => '0.0.0.0/0',
+  },{
+    security_group => 'other-security-group',
+  }],
+  tags        => {
+    tag_name => 'value',
+  },
+}
 ```
 
-An apply a given manifest.
+### ec2_loadbalancer
 
-```bash
-puppet cloud apply tests/create.pp
+```puppet
+ec2_loadbalancer { 'name-of-load-balancer':
+  ensure             => present,
+  region             => 'us-east-1',
+  availability_zones => ['us-east-1a', 'us-east-1b'],
+  instances          => ['name-of-instance', 'another-instance'],
+  security_groups    => ['name-of-security-group'],
+  listeners          => [{
+    protocol => 'tcp',
+    port     => 80,
+  }],
+  tags               => {
+    tag_name => 'value',
+  },
+}
 ```
 
-Note that this currently only works when run from the root of this
-project, but is included as a way of helping design the eventual user
-interface.
+##Limitations
 
-## Testing
+At the moment this module only supports a small number of the resources
+in the AWS API. These resources also exist a little bit outside the
+normal host level resources like `package`, `file`, `user`, etc. We're
+really interested to see how people use these new resources, and what
+else you would like to be able to do with the module.
 
-First you'll need to install the dependencies:
-
-```bash
-bundle install --path .bundle/gems
-```
-
-The running the tests once is as simple as:
-
-```bash
-bundle exec rake spec
-```
-
-If you're working on the module you may find having the tests run
-whenever you change any code useful, in which case run:
-
-```bash
-bundle exec guard
-```
-
-### Acceptance tests
-
-Given the nature of this project a small acceptance testing framework is
-included in the `acceptance` directory. This is a small clojure
-application which makes assertions agains the AWS API that the resources
-we think we're creating are really there. Running this requires the
-above mentioned environment variables and should work with:
-
-```bash
-lein test
-```
+Note that this module also requires at least Ruby 1.9 and is only tested on Puppet
+versions from 3.4. If this is too limiting please let us know.
