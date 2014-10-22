@@ -46,6 +46,15 @@ module PuppetX
       def elb_client(region = default_region)
         self.class.elb_client(region)
       end
+
+      def self.route53_client(region: default_region)
+        ::Aws::Route53::Client.new(region: region)
+      end
+
+      def route53_client(region: default_region)
+        self.class.route53_client(region: region)
+      end
+
     end
   end
 end
