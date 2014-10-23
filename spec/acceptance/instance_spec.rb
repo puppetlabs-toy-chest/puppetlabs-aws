@@ -16,6 +16,7 @@ describe "ec2_instance" do
   end
 
   after(:all) do
+    sleep(3) # TODO: investigate more reliable way of making sure instances terminate
     new_config = @config.update({:ensure => 'absent'})
     PuppetManifest.new(@template, new_config).apply
   end
