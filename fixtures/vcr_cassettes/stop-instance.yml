@@ -1,0 +1,83 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeInstances&Filter.1.Name=tag%3AName&Filter.1.Value.1=web-15&Filter.2.Name=instance-state-name&Filter.2.Value.1=pending&Filter.2.Value.2=running&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-23T13%3A44%3A16Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "354"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Thu, 23 Oct 2014 13:44:17 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            </DescribeInstancesResponse>
+        http_version: 
+      recorded_at: "Thu, 23 Oct 2014 13:44:18 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=StopInstances&InstanceId.1=i-c67ae9d3&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-23T13%3A44%3A18Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "239"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Thu, 23 Oct 2014 13:44:18 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <StopInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            </StopInstancesResponse>
+        http_version: 
+      recorded_at: "Thu, 23 Oct 2014 13:44:19 GMT"
+  recorded_with: "VCR 2.9.3"
