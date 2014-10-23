@@ -19,6 +19,7 @@ group :test do
   gem 'webmock'
   gem 'vcr'
   gem 'rspec-puppet', :git => 'https://github.com/rodjek/rspec-puppet.git'
+  gem "mustache"
 end
 
 group :development do
