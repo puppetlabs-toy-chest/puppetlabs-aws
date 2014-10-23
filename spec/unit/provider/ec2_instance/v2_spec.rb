@@ -68,6 +68,14 @@ describe provider_class do
       end
     end
 
+    describe 'running stop' do
+      it 'should send a request to the EC2 API to stop the instance' do
+        VCR.use_cassette('stop-instance') do
+          expect(provider.stop).to be_truthy
+        end
+      end
+    end
+
   end
 
 end
