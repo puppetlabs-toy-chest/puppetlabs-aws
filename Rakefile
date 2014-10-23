@@ -21,3 +21,8 @@ PuppetLint.configuration.disable_class_inherits_from_params_class
 PuppetLint::RakeTask.new :lint do |config|
   config.ignore_paths = ['contrib/**/*.pp', 'tests/**/*.pp', 'spec/**/*.pp', 'pkg/**/*.pp']
 end
+
+desc "Run acceptance tests"
+RSpec::Core::RakeTask.new(:acceptance) do |t|
+    t.pattern = 'spec/acceptance'
+end
