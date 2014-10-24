@@ -98,6 +98,19 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     )
   end
 
+  def tags=(value)
+    Puppet.info("Updating tags for #{name} in region #{region}")
+    ec2_client(resource[:region]).create_tags(
+      resources: [instance_id],
+      tags: value.collect { |k,v| { :key => k, :value => v } }
+    ) unless value.empty?
+    missing_tags = tags.keys - value.keys
+    ec2_client(resource[:region]).delete_tags(
+      resources: [instance_id],
+      tags: missing_tags.collect { |k| { :key => k } }
+    ) unless missing_tags.empty?
+  end
+
   def destroy
     Puppet.info("Deleting instance #{name} in region #{resource[:region]}")
     instances = ec2_client(resource[:region]).describe_instances(filters: [
