@@ -17,8 +17,16 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
-  newparam(:ingress, :array_mathching => :all) do
+  newproperty(:ingress, :array_matching => :all) do
     desc 'rules for ingress traffic'
+    def insync?(is)
+      should == stringify_values(is)
+    end
+    def stringify_values(rules)
+      rules.collect do |obj|
+        obj.each { |k,v| obj[k] = v.to_s }
+      end
+    end
   end
 
   newparam(:tags, :array_matching => :all) do
