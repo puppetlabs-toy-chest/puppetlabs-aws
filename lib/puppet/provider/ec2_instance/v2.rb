@@ -36,6 +36,10 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   def self.instance_to_hash(region, instance)
     name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
     monitoring = instance.monitoring.state == "enabled" ? true : false
+    tags = {}
+    instance.tags.each do |tag|
+      tags[tag.key] = tag.value unless tag.key == 'Name'
+    end
     {
       name: name_tag ? name_tag.value : nil,
       instance_type: instance.instance_type,
@@ -45,6 +49,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       key_name: instance.key_name,
       availability_zone: instance.placement.availability_zone,
       ensure: :present,
+      tags: tags,
       region: region
     }
   end
@@ -91,6 +96,19 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       resources: response.instances.map(&:instance_id),
       tags: tags
     )
+  end
+
+  def tags=(value)
+    Puppet.info("Updating tags for #{name} in region #{region}")
+    ec2_client(resource[:region]).create_tags(
+      resources: [instance_id],
+      tags: value.collect { |k,v| { :key => k, :value => v } }
+    ) unless value.empty?
+    missing_tags = tags.keys - value.keys
+    ec2_client(resource[:region]).delete_tags(
+      resources: [instance_id],
+      tags: missing_tags.collect { |k| { :key => k } }
+    ) unless missing_tags.empty?
   end
 
   def destroy
