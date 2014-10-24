@@ -32,11 +32,15 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
+  def should_autorequire?(rule)
+    !rule.nil? and rule.key? 'security_group' and rule['security_group'] != name
+  end
+
   autorequire(:ec2_securitygroup) do
     rules = self[:ingress]
     rules = [rules] unless rules.is_a?(Array)
     rules.collect do |rule|
-      rule['security_group'] if !rule.nil? and rule.key? 'security_group'
+      rule['security_group'] if should_autorequire?(rule)
     end
   end
 end
