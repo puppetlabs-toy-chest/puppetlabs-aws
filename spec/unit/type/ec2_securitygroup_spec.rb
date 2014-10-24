@@ -7,7 +7,6 @@ describe type_class do
   let :params do
     [
       :name,
-      :ingress,
       :tags,
     ]
   end
@@ -17,6 +16,7 @@ describe type_class do
       :ensure,
       :description,
       :region,
+      :ingress,
     ]
   end
 
