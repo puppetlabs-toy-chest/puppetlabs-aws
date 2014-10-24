@@ -14,7 +14,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     end.flatten
   end
 
-  read_only(:region)
+  read_only(:region, :ingress, :description)
 
   def self.prefetch(resources)
     instances.each do |prov|
