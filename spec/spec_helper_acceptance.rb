@@ -13,6 +13,17 @@ class PuppetManifest < Mustache
     manifest = self.render.gsub("\n", '')
     system("bundle exec puppet apply -e \"#{manifest}\" --modulepath ../")
   end
+
+  def self.env_id
+    @env_id ||= (
+      ENV['BUILD_DISPLAY_NAME'] ||
+      (ENV['USER'] + '@' + Socket.gethostname.split('.')[0])
+    ).gsub(/'/, '')
+  end
+
+  def self.env_dns_id
+    @env_dns_id ||= @env_id.gsub(/[^\\dA-Za-z-]/, '')
+  end
 end
 
 class Ec2Helper

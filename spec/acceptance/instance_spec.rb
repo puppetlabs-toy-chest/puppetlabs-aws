@@ -5,7 +5,7 @@ describe "ec2_instance" do
 
   before(:all) do
     @config = {
-      :name => "#{SecureRandom.uuid}-instance",
+      :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
       :instance_type => 't1.micro',
       :region => 'sa-east-1',
       :image_id => 'ami-41e85d5c',
