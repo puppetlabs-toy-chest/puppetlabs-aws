@@ -11,7 +11,7 @@ describe "ec2_instance" do
       :image_id => 'ami-41e85d5c',
       :ensure => 'present',
     }
-    @template = 'instance.pp'
+    @template = 'instance.pp.tmpl'
     PuppetManifest.new(@template, @config).apply
   end
 
