@@ -10,7 +10,7 @@ def location_for(place, fake_version = nil)
   end
 end
 
-gem 'aws-sdk-core', '2.0.2'
+gem 'aws-sdk-core', '2.0.5'
 
 group :test do
   gem 'rake'
@@ -19,6 +19,7 @@ group :test do
   gem 'webmock'
   gem 'vcr'
   gem 'rspec-puppet', :git => 'https://github.com/rodjek/rspec-puppet.git'
+  gem "mustache"
 end
 
 group :development do
