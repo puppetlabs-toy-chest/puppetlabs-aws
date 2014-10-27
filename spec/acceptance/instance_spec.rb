@@ -4,7 +4,7 @@ require 'aws-sdk-core'
 
 def run_puppet(code)
   run = code.strip.gsub("\n", '')
-  `bundle exec puppet apply -e "#{run}" --test --modulepath ../`
+  system("bundle exec puppet apply -e \"#{run}\" --test --modulepath ../")
 end
 
 describe "ec2_instance" do
