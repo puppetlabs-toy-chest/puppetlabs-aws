@@ -10,7 +10,7 @@ def location_for(place, fake_version = nil)
   end
 end
 
-gem 'aws-sdk-core', '2.0.2'
+gem 'aws-sdk-core', '2.0.5'
 
 group :test do
   gem 'rake'
