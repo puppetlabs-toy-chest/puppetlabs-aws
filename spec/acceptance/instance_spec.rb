@@ -4,25 +4,9 @@ require 'securerandom'
 describe "ec2_instance" do
 
   before(:all) do
-    @config = {
-      :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
-      :instance_type => 't1.micro',
-      :region => 'sa-east-1',
-      :image_id => 'ami-41e85d5c',
-      :ensure => 'present',
-    }
-    @ec2 = Ec2Helper.new(@config[:region])
+    @default_region = 'sa-east-1'
+    @ec2 = Ec2Helper.new(@default_region)
     @template = 'instance.pp.tmpl'
-    PuppetManifest.new(@template, @config).apply
-  end
-
-  after(:all) do
-    wait_until_status(@config[:name], 'running')
-
-    new_config = @config.update({:ensure => 'absent'})
-    PuppetManifest.new(@template, new_config).apply
-
-    wait_until_status(@config[:name], 'shutting-down')
   end
 
   def find_instance(name)
@@ -51,7 +35,25 @@ describe "ec2_instance" do
   describe 'should create a new instance' do
 
     before(:all) do
+      @config = {
+        :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :instance_type => 't1.micro',
+        :region => @default_region,
+        :image_id => 'ami-41e85d5c',
+        :ensure => 'present',
+      }
+
+      PuppetManifest.new(@template, @config).apply
       @instance = find_instance(@config[:name])
+    end
+
+    after(:all) do
+      wait_until_status(@config[:name], 'running')
+
+      new_config = @config.update({:ensure => 'absent'})
+      PuppetManifest.new(@template, new_config).apply
+
+      wait_until_status(@config[:name], 'shutting-down')
     end
 
     it "with the specified name" do
