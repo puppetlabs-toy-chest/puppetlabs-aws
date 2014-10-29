@@ -1,7 +1,13 @@
 Puppet::Type.newtype(:ec2_instance) do
   @doc = 'type representing an EC2 instance'
 
-  ensurable
+  ensurable do
+    defaultvalues
+    aliasvalue(:running, :present)
+    newvalue(:stopped) do
+      provider.stop
+    end
+  end
 
   newparam(:name, namevar: true) do
     desc 'the name of the instance'
