@@ -70,4 +70,41 @@ describe "ec2_instance" do
 
   end
 
+  describe 'should create a new instance' do
+
+    before(:each) do
+      @config = {
+        :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :instance_type => 't1.micro',
+        :region => 'sa-east-1',
+        :image_id => 'ami-41e85d5c',
+        :ensure => 'present',
+      }
+
+      PuppetManifest.new(@template, @config).apply
+      @instance = find_instance(@config[:name])
+    end
+
+    after(:each) do
+      @config[:ensure] = 'absent'
+      PuppetManifest.new(@template, @config).apply
+
+      wait_until_status(@config[:name], 'shutting-down')
+    end
+
+    it "that can be stopped and restarted" do
+      wait_until_status(@config[:name], 'running', 45)
+
+      @config[:ensure] = 'stopped'
+      PuppetManifest.new(@template, @config).apply
+
+      wait_until_status(@config[:name], 'stopped', 120)
+
+      @config[:ensure] = 'present'
+      PuppetManifest.new(@template, @config).apply
+
+      wait_until_status(@config[:name], 'running', 30)
+    end
+  end
+
 end

@@ -9,7 +9,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   def self.instances
     regions.collect do |region|
       response = ec2_client(region).describe_instances(filters: [
-        {name: 'instance-state-name', values: ['pending', 'running', 'stopped']}
+        {name: 'instance-state-name', values: ['pending', 'running', 'stopping', 'stopped']}
       ])
       instances = []
       response.data.reservations.each do |reservation|
@@ -52,13 +52,13 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   def exists?
     dest_region = resource[:region] if resource
     Puppet.info("Checking if instance #{name} exists in region #{dest_region || region}")
-    [:present, :running].include? @property_hash[:ensure]
+    [:present, :pending, :running].include? @property_hash[:ensure]
   end
 
   def stopped?
     dest_region = resource[:region] if resource
     Puppet.info("Checking if instance #{name} is stopped in region #{dest_region || region}")
-    @property_hash[:ensure] == :stopped
+    [:stopping, :stopped].include? @property_hash[:ensure]
   end
 
   def create
@@ -107,9 +107,9 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     ec2 = ec2_client(resource[:region])
     instances = ec2.describe_instances(filters: [
       {name: 'tag:Name', values: [name]},
-      {name: 'instance-state-name', values: ['stopped']}
+      {name: 'instance-state-name', values: ['stopping', 'stopped']}
     ])
-    ec2_client.start_instances(
+    ec2.start_instances(
       instance_ids: instances.reservations.map(&:instances).
         flatten.map(&:instance_id)
     )
@@ -123,7 +123,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       {name: 'tag:Name', values: [name]},
       {name: 'instance-state-name', values: ['pending', 'running']}
     ])
-    ec2_client.stop_instances(
+    ec2.stop_instances(
       instance_ids: instances.reservations.map(&:instances).
         flatten.map(&:instance_id)
     )
@@ -134,7 +134,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     Puppet.info("Deleting instance #{name} in region #{resource[:region]}")
     instances = ec2_client(resource[:region]).describe_instances(filters: [
       {name: 'tag:Name', values: [name]},
-      {name: 'instance-state-name', values: ['pending', 'running', 'stopped']}
+      {name: 'instance-state-name', values: ['pending', 'running', 'stopping', 'stopped']}
     ])
     ec2_client(resource[:region]).terminate_instances(
       instance_ids: instances.reservations.map(&:instances).
