@@ -17,7 +17,7 @@ Status](https://magnum.travis-ci.com/puppetlabs/puppetlabs-aws.svg?token=RqtxRv2
 ##Description
 
 Amazon Web Services exposes a powerful API for creating and managing
-it's Infrastructure as a Service platform. This module
+its Infrastructure as a Service platform. This module
 allows you to drive that API using Puppet code. In the simplest case
 this allows you to create new EC2 instances from Puppet code, but more
 importantly it allows you to describe your entire AWS infrastructure and
@@ -60,7 +60,7 @@ puppet module install puppetlabs-aws
 
 By default the module will look through all regions in AWS when
 determining if something is available. This can be a little slow. If you
-know what you're doing you can speed things up by targetting a single
+know what you're doing you can speed things up by targeting a single
 region using an environment variable.
 
 ```bash
@@ -71,7 +71,7 @@ export AWS_REGION=eu-west-1
 
 ### Using the DSL
 
-Lets start with an example. Lets aim to create the following simple
+Let's start with an example. Let's aim to create the following simple
 stack in AWS.
 
 ```
