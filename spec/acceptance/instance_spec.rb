@@ -32,6 +32,14 @@ describe "ec2_instance" do
     end
   end
 
+  def has_matching_tags(instance, tags)
+    instance_tags = {}
+    instance.tags.each { |s| instance_tags[s.key.to_sym] = s.value if s.key != 'Name' }
+
+    symmetric_difference = tags.to_set ^ instance_tags.to_set
+    expect(symmetric_difference).to be_empty
+  end
+
   describe 'should create a new instance' do
 
     before(:all) do
@@ -41,6 +49,11 @@ describe "ec2_instance" do
         :region => @default_region,
         :image_id => 'ami-41e85d5c',
         :ensure => 'present',
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        }
       }
 
       PuppetManifest.new(@template, @config).apply
@@ -58,6 +71,10 @@ describe "ec2_instance" do
 
     it "with the specified name" do
       expect(@instance.tags.detect { |tag| tag.key == 'Name' }.value).to eq(@config[:name])
+    end
+
+    it "with the specified tags" do
+      has_matching_tags(@instance, @config[:tags])
     end
 
     it "with the specified type" do
@@ -79,6 +96,11 @@ describe "ec2_instance" do
         :region => 'sa-east-1',
         :image_id => 'ami-41e85d5c',
         :ensure => 'present',
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        }
       }
 
       PuppetManifest.new(@template, @config).apply
@@ -90,6 +112,18 @@ describe "ec2_instance" do
       PuppetManifest.new(@template, @config).apply
 
       wait_until_status(@config[:name], 'shutting-down')
+    end
+
+    it 'that can have tags changed' do
+      wait_until_status(@config[:name], 'running', 45)
+      has_matching_tags(@instance, @config[:tags])
+
+      tags = {:created_by => 'aws-tests', :foo => 'bar'}
+      @config[:tags].update(tags)
+
+      PuppetManifest.new(@template, @config).apply
+      @instance = find_instance(@config[:name])
+      has_matching_tags(@instance, @config[:tags])
     end
 
     it "that can be stopped and restarted" do

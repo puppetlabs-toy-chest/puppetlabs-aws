@@ -5,7 +5,11 @@ class PuppetManifest < Mustache
   def initialize(file, config)
     @template_file = File.join(Dir.getwd, 'spec', 'acceptance', 'fixtures', file)
     config.each do |key, value|
-      instance_variable_set("@#{key}".to_sym, value)
+      config_value = value
+      if (value.class == Hash)
+        config_value = value.map { |k, v| { :k => k, :v => v }}
+      end
+      instance_variable_set("@#{key}".to_sym, config_value)
       self.class.send(:attr_accessor, key)
     end
   end
