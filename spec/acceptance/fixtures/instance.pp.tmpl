@@ -4,4 +4,9 @@ ec2_instance { '{{name}}':
   image_id => '{{image_id}}',
   instance_type => '{{instance_type}}',
   security_groups => ['default'],
+  tags            => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  }
 }
