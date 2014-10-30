@@ -58,7 +58,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       availability_zone: instance.placement.availability_zone,
       ensure: instance.state.name.to_sym,
       tags: tags,
-      region: region
+      region: region,
       subnet: subnet_name,
     }
   end
@@ -104,6 +104,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
         monitoring: {
           enabled: resource[:monitoring].to_s,
         }
+      }
 
       key = resource[:key_name] ? resource[:key_name] : false
       config['key_name'] = key if key
