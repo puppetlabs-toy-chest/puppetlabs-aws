@@ -47,4 +47,11 @@ class Ec2Helper
     end.flatten
   end
 
+  def get_groups(name)
+    response = @client.describe_security_groups(
+      group_names: [name]
+    )
+    response.data.security_groups
+  end
+
 end
