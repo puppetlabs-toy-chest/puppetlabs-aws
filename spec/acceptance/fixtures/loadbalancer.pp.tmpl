@@ -3,7 +3,7 @@ elb_loadbalancer { '{{name}}':
   region => '{{region}}',
   availability_zones => {{{availability_zones}}},
   listeners => {{{listeners}}},
-  instances => {{{instances}}},
+  instances => [{{#instances}}'{{.}}',{{/instances}}],
   tags            => {
   {{#tags}}
     {{k}} => '{{v}}',
