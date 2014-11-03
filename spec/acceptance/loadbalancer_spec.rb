@@ -6,14 +6,8 @@ describe "ec2_loadbalancer" do
   before(:all) do
     @default_region = 'sa-east-1'
     @default_availability_zone = "#{@default_region}a"
-    @ec2 = Ec2Helper.new(@default_region)
+    @aws = AWSHelper.new(@default_region)
     @template = 'loadbalancer.pp.tmpl'
-  end
-
-  def find_loadbalancer(name)
-    loadbalancers = @ec2.get_loadbalancers(name)
-    expect(loadbalancers.count).to eq(1)
-    loadbalancers.first
   end
 
   describe 'should create a new load balancer' do
@@ -34,7 +28,7 @@ describe "ec2_loadbalancer" do
       }
       PuppetManifest.new(@template, @config).apply
 
-      @loadbalancer = find_loadbalancer(@config[:name])
+      @loadbalancer = @aws.get_loadbalancer(@config[:name])
     end
 
     after(:all) do
