@@ -34,6 +34,7 @@ class Ec2Helper
 
   def initialize(region)
     @client = ::Aws::EC2::Client.new({region: region})
+    @elb_client = ::Aws::ElasticLoadBalancing::Client.new({region: region})
   end
 
   def get_instances(name)
@@ -53,5 +54,13 @@ class Ec2Helper
     )
     response.data.security_groups
   end
+
+  def get_loadbalancers(name)
+    response = @elb_client.describe_load_balancers(
+      load_balancer_names: [name]
+    )
+    response.data.load_balancer_descriptions
+  end
+
 
 end
