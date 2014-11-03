@@ -61,12 +61,12 @@ describe "ec2_instance" do
     end
 
     after(:all) do
-      wait_until_status(@config[:name], 'running')
+      wait_until_status(@config[:name], 'running', 30)
 
       new_config = @config.update({:ensure => 'absent'})
       PuppetManifest.new(@template, new_config).apply
 
-      wait_until_status(@config[:name], 'shutting-down')
+      wait_until_status(@config[:name], 'shutting-down', 30)
     end
 
     it "with the specified name" do

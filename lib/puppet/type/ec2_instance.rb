@@ -76,9 +76,17 @@ Puppet::Type.newtype(:ec2_instance) do
     end
   end
 
+  newproperty(:subnet) do
+    desc 'the VPC subnet to attach the instance to'
+  end
+
   autorequire(:ec2_securitygroup) do
     groups = self[:security_groups]
     groups.is_a?(Array) ? groups : [groups]
+  end
+
+  autorequire(:ec2_vpc_subnet) do
+    self[:subnet]
   end
 
 end

@@ -3,7 +3,7 @@ ec2_instance { '{{name}}':
   region => '{{region}}',
   image_id => '{{image_id}}',
   instance_type => '{{instance_type}}',
-  security_groups => ['default'],
+  security_groups => ['acceptance-non-vpc'],
   tags            => {
   {{#tags}}
     {{k}} => '{{v}}',
