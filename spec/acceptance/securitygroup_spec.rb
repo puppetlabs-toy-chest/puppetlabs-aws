@@ -5,22 +5,8 @@ describe "ec2_securitygroup" do
 
   before(:all) do
     @default_region = 'sa-east-1'
-    @ec2 = Ec2Helper.new(@default_region)
+    @aws = AWSHelper.new(@default_region)
     @template = 'securitygroup.pp.tmpl'
-  end
-
-  def find_group(name)
-    groups = @ec2.get_groups(name)
-    expect(groups.count).to eq(1)
-    groups.first
-  end
-
-  def has_matching_tags(group, tags)
-    group_tags = {}
-    group.tags.each { |s| group_tags[s.key.to_sym] = s.value if s.key != 'Name' }
-
-    symmetric_difference = tags.to_set ^ group_tags.to_set
-    expect(symmetric_difference).to be_empty
   end
 
   describe 'should create a new security group' do
@@ -39,7 +25,7 @@ describe "ec2_securitygroup" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @group = find_group(@config[:name])
+      @group = @aws.get_group(@config[:name])
     end
 
     after(:all) do
@@ -56,7 +42,7 @@ describe "ec2_securitygroup" do
     end
 
     it "with the specified tags" do
-      has_matching_tags(@group, @config[:tags])
+      expect(@aws.tag_difference(@group, @config[:tags])).to be_empty
     end
 
     it "with the specified description" do
