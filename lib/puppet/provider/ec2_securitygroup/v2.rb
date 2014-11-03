@@ -14,7 +14,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     end.flatten
   end
 
-  read_only(:region)
+  read_only(:region, :ingress, :description)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -24,11 +24,28 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     end
   end
 
+  def self.format_ingress_rules(group)
+    group[:ip_permissions].collect do |rule|
+      if rule.user_id_group_pairs.empty?
+        {
+          'protocol' => rule.ip_protocol,
+          'port' => rule.to_port.to_i,
+          'cidr' => rule.ip_ranges.first.cidr_ip
+        }
+      else
+        {
+          'security_group' => rule.user_id_group_pairs.first.group_name
+        }
+      end
+    end.uniq
+  end
+
   def self.security_group_to_hash(region, group)
     {
       name: group[:group_name],
       description: group[:description],
       ensure: :present,
+      ingress: format_ingress_rules(group),
       region: region,
     }
   end

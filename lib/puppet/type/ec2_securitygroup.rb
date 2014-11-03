@@ -17,8 +17,16 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
-  newparam(:ingress, :array_mathching => :all) do
+  newproperty(:ingress, :array_matching => :all) do
     desc 'rules for ingress traffic'
+    def insync?(is)
+      should == stringify_values(is)
+    end
+    def stringify_values(rules)
+      rules.collect do |obj|
+        obj.each { |k,v| obj[k] = v.to_s }
+      end
+    end
   end
 
   newparam(:tags, :array_matching => :all) do
@@ -32,11 +40,15 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
+  def should_autorequire?(rule)
+    !rule.nil? and rule.key? 'security_group' and rule['security_group'] != name
+  end
+
   autorequire(:ec2_securitygroup) do
     rules = self[:ingress]
     rules = [rules] unless rules.is_a?(Array)
     rules.collect do |rule|
-      rule['security_group'] if !rule.nil? and rule.key? 'security_group'
+      rule['security_group'] if should_autorequire?(rule)
     end
   end
 end

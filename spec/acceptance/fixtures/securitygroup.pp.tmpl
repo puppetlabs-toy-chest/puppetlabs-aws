@@ -1,7 +1,16 @@
 ec2_securitygroup { '{{name}}':
   ensure => {{ensure}},
-  region => '{{region}}',
   description => '{{description}}',
+  region => '{{region}}',
+  ingress     => [
+    {{#ingress}}
+      {
+        {{#values}}
+          {{k}} => '{{v}}',
+        {{/values}}
+      },
+    {{/ingress}}
+  ],
   tags            => {
   {{#tags}}
     {{k}} => '{{v}}',
