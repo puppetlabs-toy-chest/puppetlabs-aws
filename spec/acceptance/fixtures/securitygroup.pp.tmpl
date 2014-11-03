@@ -1,0 +1,19 @@
+ec2_securitygroup { '{{name}}':
+  ensure => {{ensure}},
+  description => '{{description}}',
+  region => '{{region}}',
+  ingress     => [
+    {{#ingress}}
+      {
+        {{#values}}
+          {{k}} => '{{v}}',
+        {{/values}}
+      },
+    {{/ingress}}
+  ],
+  tags            => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  }
+}
