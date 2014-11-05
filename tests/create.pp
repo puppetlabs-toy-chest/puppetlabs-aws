@@ -71,7 +71,7 @@ ec2_instance { ['web-1', 'web-2']:
   tags            => {
     department => 'engineering',
     project    => 'cloud',
-    created_by => 'garethr'
+    created_by => "$id"
   }
 }
 
@@ -85,7 +85,7 @@ ec2_instance { 'db-1':
   tags            => {
     department => 'engineering',
     project    => 'cloud',
-    created_by => 'garethr'
+    created_by => "$id"
   }
 }
 
