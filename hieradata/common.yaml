@@ -1,5 +1,0 @@
----
-ami: ami-41e85d5c
-region: sa-east-1
-availability_zone: sa-east-1a
-master_address: ip-10-252-36-214.sa-east-1.compute.internal
