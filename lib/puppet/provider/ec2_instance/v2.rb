@@ -70,6 +70,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     Puppet.info("Starting instance #{name} in region #{resource[:region]}")
     groups = resource[:security_groups]
     groups = [groups] unless groups.is_a?(Array)
+    groups = groups.reject(&:nil?)
 
     if stopped?
       restart
