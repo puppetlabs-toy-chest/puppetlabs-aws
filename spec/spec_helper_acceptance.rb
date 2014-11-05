@@ -66,7 +66,7 @@ class AWSHelper
     @elb_client = ::Aws::ElasticLoadBalancing::Client.new({region: region})
   end
 
-  def get_instance(name)
+  def get_instances(name)
     response = @ec2_client.describe_instances(filters: [
       {name: 'tag:Name', values: [name]},
     ])
@@ -74,21 +74,21 @@ class AWSHelper
       reservation.instances.collect do |instance|
         instance
       end
-    end.flatten.first
+    end.flatten
   end
 
-  def get_group(name)
+  def get_groups(name)
     response = @ec2_client.describe_security_groups(
       group_names: [name]
     )
-    response.data.security_groups.first
+    response.data.security_groups
   end
 
-  def get_loadbalancer(name)
+  def get_loadbalancers(name)
     response = @elb_client.describe_load_balancers(
       load_balancer_names: [name]
     )
-    response.data.load_balancer_descriptions.first
+    response.data.load_balancer_descriptions
   end
 
   def tag_difference(item, tags)

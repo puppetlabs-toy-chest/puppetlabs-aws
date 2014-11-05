@@ -11,6 +11,12 @@ describe "ec2_loadbalancer" do
     @lb_template = 'loadbalancer.pp.tmpl'
   end
 
+  def get_loadbalancer(name)
+    loadbalancers = @aws.get_loadbalancers(name)
+    expect(loadbalancers.count).to eq(1)
+    loadbalancers.first
+  end
+
   describe 'should create a new load balancer' do
 
     before(:all) do
@@ -28,7 +34,9 @@ describe "ec2_loadbalancer" do
       }
 
       PuppetManifest.new(@instance_template, @instance_config).apply
-      @instance = @aws.get_instance(@instance_config[:name])
+      instances = @aws.get_instances(@instance_config[:name])
+      expect(instances.count).to eq(1)
+      @instance = instances.first
 
       @lb_config = {
         :name => "#{SecureRandom.uuid.gsub('-', '')}"[0...31], # loadbalancer has name length limit
@@ -44,7 +52,7 @@ describe "ec2_loadbalancer" do
         }
       }
       PuppetManifest.new(@lb_template, @lb_config).apply
-      @loadbalancer = @aws.get_loadbalancer(@lb_config[:name])
+      @loadbalancer = get_loadbalancer(@lb_config[:name])
     end
 
     after(:all) do

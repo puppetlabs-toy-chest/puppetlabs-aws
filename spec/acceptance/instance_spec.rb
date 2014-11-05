@@ -9,11 +9,17 @@ describe "ec2_instance" do
     @template = 'instance.pp.tmpl'
   end
 
+  def get_instance(name)
+    instances = @aws.get_instances(name)
+    expect(instances.count).to eq(1)
+    instances.first
+  end
+
   def wait_until_status(name, status, max_wait = 15)
     slept = 0
 
     loop do
-      current_status = @aws.get_instance(name).state.name
+      current_status = get_instance(name).state.name
       break if current_status == status
 
       sleep(1)
@@ -43,7 +49,7 @@ describe "ec2_instance" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @instance = @aws.get_instance(@config[:name])
+      @instance = get_instance(@config[:name])
     end
 
     after(:all) do
@@ -90,7 +96,7 @@ describe "ec2_instance" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @instance = @aws.get_instance(@config[:name])
+      @instance = get_instance(@config[:name])
     end
 
     after(:each) do
@@ -109,7 +115,7 @@ describe "ec2_instance" do
       @config[:tags].update(tags)
 
       PuppetManifest.new(@template, @config).apply
-      @instance = @aws.get_instance(@config[:name])
+      @instance = get_instance(@config[:name])
       expect(@aws.tag_difference(@instance, @config[:tags])).to be_empty
     end
 
