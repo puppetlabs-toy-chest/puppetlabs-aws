@@ -2,7 +2,7 @@ $pe_username = 'admin@puppetlabs.com'
 $pe_password = 'puppetlabs'
 $pe_version_string = '3.3.2'
 
-ec2_instance { 'tse-puppet-master-2':
+ec2_instance { 'tse-puppet-master':
   ensure          => present,
   region          => 'us-west-2',
   image_id        => 'ami-e08efbd0',
