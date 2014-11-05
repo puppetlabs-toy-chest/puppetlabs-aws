@@ -118,7 +118,7 @@ To destroy the resources created by the above you can run the following:
 puppet apply tests/destroy.pp --test
 ```
 
-The tests directory contains other examples as well which should give an
+The [examples](examples/) directory contains other examples which should give an
 idea of what's possible.
 
 ### From the command line
