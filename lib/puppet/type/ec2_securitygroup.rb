@@ -6,14 +6,14 @@ Puppet::Type.newtype(:ec2_securitygroup) do
   newparam(:name, namevar: true) do
     desc 'the name of the security group'
     validate do |value|
-      fail Puppet::Error, 'Empty values are not allowed' if value == ''
+      fail Puppet::Error, 'Security groups must have a name' if value == ''
     end
   end
 
   newproperty(:region) do
     desc 'the region in which to launch the security group'
     validate do |value|
-      fail Puppet::Error, 'Should not contains spaces' if value =~ /\s/
+      fail Puppet::Error, 'region should not contains spaces' if value =~ /\s/
     end
   end
 
@@ -30,13 +30,13 @@ Puppet::Type.newtype(:ec2_securitygroup) do
   end
 
   newparam(:tags, :array_matching => :all) do
-    desc 'the tags for the securitygroup'
+    desc 'the tags for the security group'
   end
 
   newproperty(:description) do
     desc 'a short description of the group'
     validate do |value|
-      fail Puppet::Error, 'Empty values are not allowed' if value == ''
+      fail Puppet::Error, 'description cannot be blank' if value == ''
     end
   end
 

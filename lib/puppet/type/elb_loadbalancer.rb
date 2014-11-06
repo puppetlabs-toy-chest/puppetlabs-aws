@@ -6,14 +6,14 @@ Puppet::Type.newtype(:elb_loadbalancer) do
   newparam(:name, namevar: true) do
     desc 'the name of the load balancer'
     validate do |value|
-      fail Puppet::Error, 'Empty values are not allowed' if value == ''
+      fail Puppet::Error, 'Load Balancers must have a name' if value == ''
     end
   end
 
   newproperty(:region) do
     desc 'the region in which to launch the load balancer'
     validate do |value|
-      fail Puppet::Error, 'Should not contains spaces' if value =~ /\s/
+      fail Puppet::Error, 'region must not contain spaces' if value =~ /\s/
     end
   end
 
