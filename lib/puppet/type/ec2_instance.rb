@@ -12,7 +12,7 @@ Puppet::Type.newtype(:ec2_instance) do
   newparam(:name, namevar: true) do
     desc 'the name of the instance'
     validate do |value|
-      fail Puppet::Error, 'Empty values are not allowed' if value == ''
+      fail Puppet::Error, 'Instances must have a name' if value == ''
     end
   end
 
@@ -48,31 +48,31 @@ Puppet::Type.newtype(:ec2_instance) do
   newproperty(:region) do
     desc 'the region in which to launch the instance'
     validate do |value|
-      fail Puppet::Error, 'Should not contains spaces' if value =~ /\s/
+      fail Puppet::Error, 'region should not contain spaces' if value =~ /\s/
     end
   end
 
   newproperty(:image_id) do
     desc 'the image id to use for the instance'
     validate do |value|
-      fail Puppet::Error, 'Should not contains spaces' if value =~ /\s/
-      fail Puppet::Error, 'Empty values are not allowed' if value == ''
+      fail Puppet::Error, 'image_id should not contain spaces' if value =~ /\s/
+      fail Puppet::Error, 'image_id should not be blank' if value == ''
     end
   end
 
   newproperty(:availability_zone) do
     desc 'the availability zone in which to place the instance'
     validate do |value|
-      fail Puppet::Error, 'Should not contains spaces' if value =~ /\s/
-      fail Puppet::Error, 'Empty values are not allowed' if value == ''
+      fail Puppet::Error, 'availability_zone should not contain spaces' if value =~ /\s/
+      fail Puppet::Error, 'availability_zone should not be blank' if value == ''
     end
   end
 
   newproperty(:instance_type) do
     desc 'the type to use for the instance'
     validate do |value|
-      fail Puppet::Error, 'Should not contains spaces' if value =~ /\s/
-      fail Puppet::Error, 'Empty values are not allowed' if value == ''
+      fail Puppet::Error, 'instance type should not contains spaces' if value =~ /\s/
+      fail Puppet::Error, 'instance_type should not be blank' if value == ''
     end
   end
 
