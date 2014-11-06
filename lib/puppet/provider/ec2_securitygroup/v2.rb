@@ -7,10 +7,13 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
   def self.instances
     regions.collect do |region|
-      response = ec2_client(region).describe_security_groups
-      response.data.security_groups.collect do |group|
-        new(security_group_to_hash(region, group))
+      groups = []
+      ec2_client(region).describe_security_groups.each do |response|
+        response.data.security_groups.collect do |group|
+          groups << new(security_group_to_hash(region, group))
+        end
       end
+      groups
     end.flatten
   end
 
