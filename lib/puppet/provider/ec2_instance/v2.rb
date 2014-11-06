@@ -15,7 +15,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       response.data.reservations.each do |reservation|
         reservation.instances.each do |instance|
           hash = instance_to_hash(region, instance)
-          instances << new(hash) if hash[:name]
+          instances << new(hash) if (hash[:name] and ! hash[:name].empty?)
         end
       end
       instances
