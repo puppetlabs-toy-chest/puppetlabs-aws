@@ -29,6 +29,7 @@ group :development do
   gem 'guard-rake'
   gem 'rubocop', require: false
   gem 'pry'
+  gem 'pry-byebug'
   gem 'librarian-puppet'
   gem 'clamp'
   gem "hiera-eyaml"
