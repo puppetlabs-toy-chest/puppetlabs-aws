@@ -24,7 +24,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   read_only(:instance_id, :instance_type, :region, :user_data, :key_name,
-            :availability_zones, :security_groups, :monitoring)
+            :availability_zones, :security_groups, :monitoring, :subnet)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -41,6 +41,13 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     instance.tags.each do |tag|
       tags[tag.key] = tag.value unless tag.key == 'Name'
     end
+    subnet_name = nil
+    if instance.subnet_id
+      subnet_response = ec2_client(region).describe_subnets(subnet_ids: [instance.subnet_id])
+      subnet_name_tag = subnet_response.data.subnets.first.tags.detect { |tag| tag.key == 'Name' }
+    end
+    subnet_name = subnet_name_tag ? subnet_name_tag.value : nil
+
     config = {
       name: name_tag ? name_tag.value : nil,
       instance_type: instance.instance_type,
@@ -54,6 +61,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       region: region,
       hypervisor: instance.hypervisor,
       virtualization_type: instance.virtualization_type,
+      subnet: subnet_name,
     }
     if instance.state.name == 'running'
       config[:public_dns_name] = instance.public_dns_name
@@ -89,11 +97,15 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
       ec2 = ec2_client(resource[:region])
 
+      groups_response = ec2.describe_security_groups(filters: [
+        {name: "group-name", values: groups},
+      ])
+
       config = {
         image_id: resource[:image_id],
         min_count: 1,
         max_count: 1,
-        security_groups: groups,
+        security_group_ids: groups_response.data.security_groups.map(&:group_id),
         instance_type: resource[:instance_type],
         user_data: data,
         placement: {
@@ -106,6 +118,13 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
       key = resource[:key_name] ? resource[:key_name] : false
       config['key_name'] = key if key
+
+      if resource[:subnet]
+        subnet_response = ec2.describe_subnets(filters: [
+          {name: "tag:Name", values: [resource[:subnet]]},
+        ])
+        config[:subnet_id] = subnet_response.data.subnets.first.subnet_id
+      end
 
       response = ec2.run_instances(config)
 
