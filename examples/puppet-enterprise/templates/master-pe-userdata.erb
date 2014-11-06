@@ -8,8 +8,6 @@ PUPPET_PE_CONSOLEPWD='<%= @pe_password %>'
 
 PUPPET_PE_VERSION='<%= @pe_version_string %>'
 
-
-
 RESULTS_FILE='/tmp/puppet_bootstrap_output'
 S3_BASE='https://s3.amazonaws.com/pe-builds/released/'
 
@@ -72,9 +70,6 @@ Package { allow_virtual => false }
 
 node default {
   include pe_mcollective
-  case $kernel {
-    'Linux': { include ntp }
-    default: {}
 }
 SITEPP
 }

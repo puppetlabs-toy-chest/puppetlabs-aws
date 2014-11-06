@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#change to internal hostname of the server provisioned in AWS with the master.sh script
-
 PE_MASTER='<%= @pe_master_hostname %>'
 
 if [ ! -d /etc/yum.repos.d ]; then
@@ -23,4 +21,3 @@ $PUPPET config set environment production --section agent
 $PUPPET config set certname $(curl -s http://169.254.169.254/latest/meta-data/instance-id) --section agent
 
 $PUPPET resource service pe-puppet ensure=running enable=true
-
