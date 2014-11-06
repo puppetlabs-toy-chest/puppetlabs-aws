@@ -8,14 +8,15 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def self.instances
     regions.collect do |region|
-      response = ec2_client(region).describe_instances(filters: [
-        {name: 'instance-state-name', values: ['pending', 'running', 'stopping', 'stopped']}
-      ])
       instances = []
-      response.data.reservations.each do |reservation|
-        reservation.instances.each do |instance|
-          hash = instance_to_hash(region, instance)
-          instances << new(hash) if hash[:name]
+      ec2_client(region).describe_instances(filters: [
+        {name: 'instance-state-name', values: ['pending', 'running', 'stopping', 'stopped']}
+      ]).each do |response|
+        response.data.reservations.each do |reservation|
+          reservation.instances.each do |instance|
+            hash = instance_to_hash(region, instance)
+            instances << new(hash) if hash[:name]
+          end
         end
       end
       instances
