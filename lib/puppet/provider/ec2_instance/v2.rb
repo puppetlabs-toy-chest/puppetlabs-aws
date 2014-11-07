@@ -41,7 +41,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     instance.tags.each do |tag|
       tags[tag.key] = tag.value unless tag.key == 'Name'
     end
-    {
+    config = {
       name: name_tag ? name_tag.value : nil,
       instance_type: instance.instance_type,
       image_id: instance.image_id,
@@ -51,8 +51,17 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       availability_zone: instance.placement.availability_zone,
       ensure: instance.state.name.to_sym,
       tags: tags,
-      region: region
+      region: region,
+      hypervisor: instance.hypervisor,
+      virtualization_type: instance.virtualization_type,
     }
+    if instance.state.name == 'running'
+      config[:public_dns_name] = instance.public_dns_name
+      config[:private_dns_name] = instance.private_dns_name
+      config[:public_ip_addresse] = instance.public_ip_address
+      config[:private_ip_address] = instance.private_ip_address
+    end
+    config
   end
 
   def exists?
