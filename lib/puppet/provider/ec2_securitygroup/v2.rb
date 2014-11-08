@@ -36,11 +36,13 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
           'cidr' => rule.ip_ranges.first.cidr_ip
         }
       else
-        {
-          'security_group' => rule.user_id_group_pairs.first.group_name
-        }
+        rule.user_id_group_pairs.collect do |security_group|
+          {
+            'security_group' => security_group.group_name
+          }
+        end
       end
-    end.uniq
+    end.flatten.uniq
   end
 
   def self.security_group_to_hash(region, group)
