@@ -87,8 +87,7 @@ describe "ec2_securitygroup" do
     after(:all) do
       new_config = @config.update({:ensure => 'absent'})
       PuppetManifest.new(@template, new_config).apply
-
-      expect(find_group(@config[:name])).to be_nil
+      expect { find_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
     end
 
     it "with the specified name" do
@@ -146,6 +145,7 @@ describe "ec2_securitygroup" do
     after(:each) do
       @config[:ensure] = 'absent'
       PuppetManifest.new(@template, @config).apply
+      expect { find_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
     end
 
     it 'that can have tags changed' do
