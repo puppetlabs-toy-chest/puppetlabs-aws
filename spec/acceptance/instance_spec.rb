@@ -15,23 +15,6 @@ describe "ec2_instance" do
     instances.first
   end
 
-  def wait_until_status(name, status, max_wait = 15)
-    slept = 0
-
-    loop do
-      current_status = find_instance(name).state.name
-      break if current_status == status
-
-      sleep(1)
-      slept += 1
-
-      if slept > max_wait
-        msg = "Exceeded timeout of #{max_wait} waiting for #{name} to be #{status}"
-        expect(current_status).to eq(status), msg
-      end
-    end
-  end
-
   def has_matching_tags(instance, tags)
     instance_tags = {}
     instance.tags.each { |s| instance_tags[s.key.to_sym] = s.value if s.key != 'Name' }
@@ -61,12 +44,12 @@ describe "ec2_instance" do
     end
 
     after(:all) do
-      wait_until_status(@config[:name], 'running')
+      @ec2.client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
 
       new_config = @config.update({:ensure => 'absent'})
       PuppetManifest.new(@template, new_config).apply
 
-      wait_until_status(@config[:name], 'shutting-down')
+      @ec2.client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id])
     end
 
     it "with the specified name" do
@@ -111,7 +94,7 @@ describe "ec2_instance" do
       @config[:ensure] = 'absent'
       PuppetManifest.new(@template, @config).apply
 
-      wait_until_status(@config[:name], 'shutting-down')
+      @ec2.client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id])
     end
 
     it 'that can have tags changed' do
@@ -127,17 +110,16 @@ describe "ec2_instance" do
     end
 
     it "that can be stopped and restarted" do
-      wait_until_status(@config[:name], 'running', 45)
+      @ec2.client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
 
       @config[:ensure] = 'stopped'
       PuppetManifest.new(@template, @config).apply
 
-      wait_until_status(@config[:name], 'stopped', 120)
+      @ec2.client.wait_until(:instance_stopped, instance_ids:[@instance.instance_id])
 
       @config[:ensure] = 'present'
       PuppetManifest.new(@template, @config).apply
-
-      wait_until_status(@config[:name], 'running', 30)
+      @ec2.client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
     end
   end
 
