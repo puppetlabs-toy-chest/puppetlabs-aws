@@ -45,10 +45,13 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     end
   end
 
-  newparam(:availability_zones, :array_matching => :all) do
+  newproperty(:availability_zones, :array_matching => :all) do
     desc 'The availability zones in which to launch the instances.'
     validate do |value|
       fail 'must provide a list of availability zones' if value.empty?
+    end
+    def insync?(is)
+      is.to_set == should.to_set
     end
   end
 

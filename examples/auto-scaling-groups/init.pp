@@ -14,9 +14,9 @@ ec2_launchconfiguration { 'test-lc':
 
 ec2_autoscalinggroup { 'test-asg':
   ensure               => present,
-  min_size             => 1,
-  max_size             => 3,
+  min_size             => 2,
+  max_size             => 4,
   region               => 'sa-east-1',
   launch_configuration => 'test-lc',
-  availability_zones   => ['sa-east-1a'],
+  availability_zones   => ['sa-east-1b', 'sa-east-1a'],
 }
