@@ -26,12 +26,13 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     end
   end
 
-  read_only(:region, :availability_zones, :launch_configuration)
+  read_only(:region)
 
   def self.group_to_hash(region, group)
     {
       name: group.auto_scaling_group_name,
       launch_configuration: group.launch_configuration_name,
+      availability_zones: group.availability_zones,
       min_size: group.min_size,
       max_size: group.max_size,
       ensure: :present,
@@ -70,6 +71,21 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     autoscaling_client(resource[:region]).update_auto_scaling_group(
       auto_scaling_group_name: name,
       max_size: value,
+    )
+  end
+
+  def availability_zones=(value)
+    zones = value.is_a?(Array) ? value : [value]
+    autoscaling_client(resource[:region]).update_auto_scaling_group(
+      auto_scaling_group_name: name,
+      availability_zones: zones,
+    )
+  end
+
+  def launch_configuration=(value)
+    autoscaling_client(resource[:region]).update_auto_scaling_group(
+      auto_scaling_group_name: name,
+      launch_configuration_name: value,
     )
   end
 
