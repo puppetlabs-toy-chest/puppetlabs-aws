@@ -46,6 +46,14 @@ module PuppetX
       def elb_client(region = default_region)
         self.class.elb_client(region)
       end
+
+      def self.autoscaling_client(region = default_region)
+        ::Aws::AutoScaling::Client.new({region: region})
+      end
+
+      def autoscaling_client(region = default_region)
+        self.class.autoscaling_client(region)
+      end
     end
   end
 end
