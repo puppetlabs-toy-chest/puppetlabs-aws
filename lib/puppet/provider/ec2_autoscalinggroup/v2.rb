@@ -26,7 +26,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     end
   end
 
-  read_only(:region, :min_size, :max_size, :availability_zones, :launch_configuration)
+  read_only(:region, :availability_zones, :launch_configuration)
 
   def self.group_to_hash(region, group)
     {
@@ -57,6 +57,20 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       launch_configuration_name: resource[:launch_configuration],
     )
     @property_hash[:ensure] = :present
+  end
+
+  def min_size=(value)
+    autoscaling_client(resource[:region]).update_auto_scaling_group(
+      auto_scaling_group_name: name,
+      min_size: value,
+    )
+  end
+
+  def max_size=(value)
+    autoscaling_client(resource[:region]).update_auto_scaling_group(
+      auto_scaling_group_name: name,
+      max_size: value,
+    )
   end
 
   def destroy
