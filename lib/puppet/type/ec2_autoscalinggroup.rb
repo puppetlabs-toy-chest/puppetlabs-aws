@@ -45,6 +45,13 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     end
   end
 
+  newproperty(:instance_count) do
+    desc 'The number of instances currently running.'
+    validate do |value|
+      fail 'instance_count is read only'
+    end
+  end
+
   newproperty(:availability_zones, :array_matching => :all) do
     desc 'The availability zones in which to launch the instances.'
     validate do |value|

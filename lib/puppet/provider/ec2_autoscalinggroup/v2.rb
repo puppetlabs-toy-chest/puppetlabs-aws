@@ -35,6 +35,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       availability_zones: group.availability_zones,
       min_size: group.min_size,
       max_size: group.max_size,
+      instance_count: group.instances.count,
       ensure: :present,
       region: region
     }
@@ -92,7 +93,8 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
   def destroy
     Puppet.info("Deleting auto scaling group #{name} in region #{resource[:region]}")
     autoscaling_client(resource[:region]).delete_auto_scaling_group(
-      auto_scaling_group_name: name
+      auto_scaling_group_name: name,
+      force_delete: true,
     )
     @property_hash[:ensure] = :absent
   end
