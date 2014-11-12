@@ -1,5 +1,5 @@
 $pe_master_hostname = 'ip-your-ip-here.us-west-2.compute.internal'
-$pe_version_string = '3.3.2'
+$pe_version_string = '3.7.0'
 
 ec2_instance { 'puppet-agent':
   ensure          => present,
@@ -8,7 +8,7 @@ ec2_instance { 'puppet-agent':
   instance_type   => 'm3.medium',
   monitoring      => 'true',
   security_groups => ['puppet'],
-  user_data       => template('el6.agent-pe-userdata.erb'),
+  user_data       => template('agent-pe-userdata.erb'),
 }
 
 ec2_instance { 'puppet-windows-agent':

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#edit this lines:
 #username for the console:
 PUPPET_PE_CONSOLEADMIN='<%= @pe_username %>'
 #password for the console:
@@ -58,7 +57,7 @@ ANSWERS
 }
 
 function write_sitepp() {
-  cat > /etc/puppetlabs/puppet/manifests/site.pp << SITEPP 
+  cat > /etc/puppetlabs/puppet/manifests/site.pp << SITEPP
 filebucket { 'main':
   server => \$servername,
   path   => false,
@@ -81,7 +80,7 @@ function install_puppetmaster() {
   if [ ! -f /opt/puppet-enterprise/puppet-enterprise-installer ]; then
     case ${breed} in
       "redhat")
-        ntpdate -u 0.north-america.pool.ntp.org 
+        ntpdate -u 0.north-america.pool.ntp.org
         curl -s -o /opt/pe-installer.tar.gz "https://s3.amazonaws.com/pe-builds/released/$PUPPET_PE_VERSION/puppet-enterprise-$PUPPET_PE_VERSION-el-6-x86_64.tar.gz" ;;
       "debian")
         curl -s -o /opt/pe-installer.tar.gz "https://s3.amazonaws.com/pe-builds/released/$PUPPET_PE_VERSION/puppet-enterprise-$PUPPET_PE_VERSION-debian-7-amd64.tar.gz" ;;
@@ -125,7 +124,6 @@ function classify_master () {
   done
 }
 
-
 function make_partition {
   parted -s "$1" unit s mkpart primary "$2" "$3"
 }
@@ -141,8 +139,6 @@ function format_partition {
   echo "/dev/xvda2              /opt                    ext4    defaults        0 2" >> /etc/fstab
 }
 
-
-
 function provision_puppet() {
   if [ -f /etc/redhat-release ]; then
     export breed='redhat'
@@ -150,15 +146,14 @@ function provision_puppet() {
   elif [ -f /etc/debian_version ]; then
     export breed='debian'
   else
-    echo "This OS is not supported by Puppet Cloud Provisioner"
+    echo "This OS is not supported"
     exit 1
   fi
-  
+
   # For more on metadata, see https://developers.google.com/compute/docs/metadata
   MD="http://169.254.169.254/latest/meta-data/"
   PUBLIC_HOSTNAME=$(curl -fs $MD/public-hostname)
   INTERNAL_HOSTNAME=$(curl -fs $MD/hostname)
-
 
   make_partition /dev/xvda $(get_partition)
   format_partition
@@ -168,9 +163,7 @@ function provision_puppet() {
   clone_modules    "$PUPPET_REPOS"
   classify_master
   write_sitepp
-  yum install -y git 2>/dev/null
-  cd /etc/puppetlabs/puppet/modules/; git clone https://github.com/mrzarquon/ec2facts.git
- 
+
   echo "*" > /etc/puppetlabs/puppet/autosign.conf
 
   /opt/puppet/bin/puppet agent --onetime --no-daemonize --color=false --verbose

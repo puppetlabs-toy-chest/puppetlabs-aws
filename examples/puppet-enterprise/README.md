@@ -37,7 +37,8 @@ directory run:
 
     puppet apply pe_master.pp --test --templatedir templates
 
-This will bring up the master.
+This will bring up the master. Please note that this could take up to 10
+minutes.
 
 We now need to modify the `pe_agent.pp` manifest so it points at the newly created
 master. Open up `pe_agent.pp` and change the line:
@@ -54,6 +55,9 @@ Now lets login to your new Puppet Enterprise console. Retrieve the _Public IP_ a
 of the `puppet-master` instance from the AWS console, then visit:
 
     https://your-public-ip-address
+
+You can login with the username `admin` and the password `puppetlabs`,
+or you can change these in the `pe_agent.pp` file mentioned above.
 
 Note the https part. Because we're just using a temporary IP address here you'll likely
 get a certificate error from your browser, ignore this for now.

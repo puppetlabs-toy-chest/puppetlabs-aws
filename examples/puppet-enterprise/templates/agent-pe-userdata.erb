@@ -1,0 +1,7 @@
+#!/bin/bash
+
+PE_MASTER='<%= @pe_master_hostname %>'
+
+PE_CERTNAME=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+
+curl -sk https://$PE_MASTER:8140/packages/current/install.bash | /bin/bash -s agent:certname=$PE_CERTNAME
