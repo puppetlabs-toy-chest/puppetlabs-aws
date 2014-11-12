@@ -4,9 +4,9 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
   ensurable
 
   newparam(:name, namevar: true) do
-    desc 'the name of the security group'
+    desc 'the name of the auto scaling group'
     validate do |value|
-      fail 'Security groups must have a name' if value == ''
+      fail 'Auto scaling groups must have a name' if value == ''
     end
   end
 
