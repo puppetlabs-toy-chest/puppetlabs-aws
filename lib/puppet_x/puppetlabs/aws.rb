@@ -54,6 +54,14 @@ module PuppetX
       def autoscaling_client(region = default_region)
         self.class.autoscaling_client(region)
       end
+
+      def self.cloudwatch_client(region = default_region)
+        ::Aws::CloudWatch::Client.new({region: region})
+      end
+
+      def cloudwatch_client(region = default_region)
+        self.class.cloudwatch_client(region)
+      end
     end
   end
 end
