@@ -186,10 +186,10 @@ ec2_securitygroup { 'name-of-group':
 }
 ```
 
-### ec2_loadbalancer
+### elb_loadbalancer
 
 ```puppet
-ec2_loadbalancer { 'name-of-load-balancer':
+elb_loadbalancer { 'name-of-load-balancer':
   ensure             => present,
   region             => 'us-east-1',
   availability_zones => ['us-east-1a', 'us-east-1b'],
