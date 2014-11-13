@@ -37,5 +37,35 @@ ec2_scalingpolicy { 'scalein':
   region             => 'sa-east-1',
 }
 
+cloudwatch_alarm { 'AddCapacity':
+  ensure              => present,
+  metric              => 'CPUUtilization',
+  namespace           => 'AWS/EC2',
+  statistic           => 'Average',
+  period              => 120,
+  threshold           => 70,
+  comparison_operator => 'GreaterThanOrEqualToThreshold',
+  dimensions          => [{
+    'AutoScalingGroupName' => 'test-asg',
+  }],
+  evaluation_periods  => 2,
+  alarm_actions       => ['scaleout'],
+  region              => 'sa-east-1',
+}
 
+cloudwatch_alarm { 'RemoveCapacity':
+  ensure              => present,
+  metric              => 'CPUUtilization',
+  namespace           => 'AWS/EC2',
+  statistic           => 'Average',
+  period              => 120,
+  threshold           => 40,
+  comparison_operator => 'LessThanOrEqualToThreshold',
+  dimensions          => [{
+    'AutoScalingGroupName' => 'test-asg',
+  }],
+  evaluation_periods  => 2,
+  region              => 'sa-east-1',
+  alarm_actions       => ['scalein'],
+}
 
