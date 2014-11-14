@@ -60,10 +60,12 @@ class PuppetManifest < Mustache
 end
 
 class Ec2Helper
+  attr_reader :client
 
   def initialize(region)
     @client = ::Aws::EC2::Client.new({region: region})
   end
+
 
   def get_instances(name)
     response = @client.describe_instances(filters: [
