@@ -1,0 +1,12 @@
+---
+security_groups:
+  create-resources-group:
+    description: Security group for create resources example
+    region: us-west-1
+instances:
+  create-resources-example:
+    image_id: ami-696e652c
+    instance_type: t1.micro
+    region: us-west-1
+    security_groups:
+      - create-resources-group

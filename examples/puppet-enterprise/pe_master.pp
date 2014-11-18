@@ -21,7 +21,6 @@ ec2_instance { 'puppet-master':
   image_id        => 'ami-e08efbd0',
   instance_type   => 'm3.large',
   monitoring      => 'true',
-  key_name        => 'garethr',
   security_groups => ['puppet'],
   user_data       => template('master-pe-userdata.erb'),
 }
