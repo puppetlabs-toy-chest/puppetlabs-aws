@@ -28,7 +28,7 @@ Checklist (and a short version for the impatient)
     - Make sure that you have tests for the bug you are fixing, or
       feature you are adding.
 
-    - Make sure the test suites passes after your commit:
+    - Make sure the test suite passes after your commit:
       `bundle exec rake acceptance` More information on [testing](#Testing) below
 
     - When introducing a new feature, make sure it is properly
@@ -36,7 +36,7 @@ Checklist (and a short version for the impatient)
 
   * Submission:
 
-    * Pre-requisites:
+    * Prerequisites:
 
       - Sign the [Contributor License Agreement](https://cla.puppetlabs.com/)
 
@@ -116,7 +116,6 @@ The long version
       repository on GitHub, you can switch to the branch in the
       GitHub UI and click "Pull Request" towards the top of the page
       in order to open a pull request.
-
 
   4.  Update the related GitHub issue.
 
