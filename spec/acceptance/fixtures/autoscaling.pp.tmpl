@@ -1,0 +1,70 @@
+ec2_securitygroup { 'autoscale-acceptance-sg':
+  ensure      => {{ensure}},
+  description => 'group for testing autoscaling group',
+  region      => 'sa-east-1',
+}
+
+ec2_launchconfiguration { '{{name}}-lc':
+  ensure          => {{ensure}},
+  security_groups => ['autoscale-acceptance-sg'],
+  region          => 'sa-east-1',
+  image_id        => 'ami-67a60d7a',
+  instance_type   => 't1.micro',
+}
+
+ec2_autoscalinggroup { '{{name}}-asg':
+  ensure               => {{ensure}},
+  min_size             => 2,
+  max_size             => 4,
+  region               => 'sa-east-1',
+  launch_configuration => '{{name}}-lc',
+  availability_zones   => ['sa-east-1b', 'sa-east-1a'],
+}
+
+ec2_scalingpolicy { '{{name}}-scaleout':
+  ensure             => {{ensure}},
+  auto_scaling_group => '{{name}}-asg',
+  scaling_adjustment => 30,
+  adjustment_type    => 'PercentChangeInCapacity',
+  region             => 'sa-east-1',
+}
+
+ec2_scalingpolicy { '{{name}}-scalein':
+  ensure             => {{ensure}},
+  auto_scaling_group => '{{name}}-asg',
+  scaling_adjustment => -2,
+  adjustment_type    => 'ChangeInCapacity',
+  region             => 'sa-east-1',
+}
+
+cloudwatch_alarm { '{{name}}-AddCapacity':
+  ensure              => {{ensure}},
+  metric              => 'CPUUtilization',
+  namespace           => 'AWS/EC2',
+  statistic           => 'Average',
+  period              => 120,
+  threshold           => 70,
+  comparison_operator => 'GreaterThanOrEqualToThreshold',
+  dimensions          => [{
+    'AutoScalingGroupName' => '{{name}}-asg',
+  }],
+  evaluation_periods  => 2,
+  alarm_actions       => ['{{name}}-scaleout'],
+  region              => 'sa-east-1',
+}
+
+cloudwatch_alarm { '{{name}}-RemoveCapacity':
+  ensure              => {{ensure}},
+  metric              => 'CPUUtilization',
+  namespace           => 'AWS/EC2',
+  statistic           => 'Average',
+  period              => 120,
+  threshold           => 40,
+  comparison_operator => 'LessThanOrEqualToThreshold',
+  dimensions          => [{
+    'AutoScalingGroupName' => '{{name}}-asg',
+  }],
+  evaluation_periods  => 2,
+  region              => 'sa-east-1',
+  alarm_actions       => ['{{name}}-scalein'],
+}
