@@ -7,3 +7,6 @@ infrastructure.
   parser to automatically generate resources based on a data structure
 * [Hiera Example](hiera-example/) - store common information like region
   or AMI id in Hiera
+* [Infrastructure as YAML](yaml-infrastructure-definition/) - describe an
+  entire infrastructure stack in YAML, and use `create_resources` and
+  Hiera to build your infrastructure
