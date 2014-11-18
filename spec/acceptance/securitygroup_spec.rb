@@ -5,22 +5,8 @@ describe "ec2_securitygroup" do
 
   before(:all) do
     @default_region = 'sa-east-1'
-    @ec2 = Ec2Helper.new(@default_region)
+    @aws = AWSHelper.new(@default_region)
     @template = 'securitygroup.pp.tmpl'
-  end
-
-  def find_group(name)
-    groups = @ec2.get_groups(name)
-    expect(groups.count).to eq(1)
-    groups.first
-  end
-
-  def has_matching_tags(group, tags)
-    group_tags = {}
-    group.tags.each { |s| group_tags[s.key.to_sym] = s.value if s.key != 'Name' }
-
-    symmetric_difference = tags.to_set ^ group_tags.to_set
-    expect(symmetric_difference).to be_empty
   end
 
   def get_group_permission(ip_permissions, group, protocol)
@@ -55,6 +41,12 @@ describe "ec2_securitygroup" do
     end
   end
 
+  def get_group(name)
+      groups = @aws.get_groups(@config[:name])
+      expect(groups.count).to eq(1)
+      groups.first
+  end
+
   describe 'should create a new security group' do
 
     before(:all) do
@@ -81,14 +73,14 @@ describe "ec2_securitygroup" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @group = find_group(@config[:name])
+      @group = get_group(@config[:name])
     end
 
     after(:all) do
       new_config = @config.update({:ensure => 'absent'})
       PuppetManifest.new(@template, new_config).apply
 
-      expect(find_group(@config[:name])).to be_nil
+      expect(@aws.get_group(@config[:name])).to be_nil
     end
 
     it "with the specified name" do
@@ -100,7 +92,7 @@ describe "ec2_securitygroup" do
     end
 
     it "with the specified tags" do
-      has_matching_tags(@group, @config[:tags])
+      expect(@aws.tag_difference(@group, @config[:tags])).to be_empty
     end
 
     it "with the specified description" do
@@ -140,7 +132,7 @@ describe "ec2_securitygroup" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @group = find_group(@config[:name])
+      @group = get_group(@config[:name])
     end
 
     after(:each) do
@@ -150,14 +142,14 @@ describe "ec2_securitygroup" do
 
     it 'that can have tags changed' do
       pending 'changing tags not yet supported for security groups'
-      has_matching_tags(@group, @config[:tags])
+      expect(@aws.tag_difference(@group, @config[:tags])).to be_empty
 
       tags = {:created_by => 'aws-tests', :foo => 'bar'}
       @config[:tags].update(tags)
 
       PuppetManifest.new(@template, @config).apply
-      @group = find_group(@config[:name])
-      has_matching_tags(@group, @config[:tags])
+      @group = get_group(@config[:name])
+      expect(@aws.tag_difference(@group, @config[:tags])).to be_empty
     end
   end
 

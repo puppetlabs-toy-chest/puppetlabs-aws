@@ -5,12 +5,12 @@ describe "ec2_instance" do
 
   before(:all) do
     @default_region = 'sa-east-1'
-    @ec2 = Ec2Helper.new(@default_region)
+    @aws = AWSHelper.new(@default_region)
     @template = 'instance.pp.tmpl'
   end
 
-  def find_instance(name)
-    instances = @ec2.get_instances(name)
+  def get_instance(name)
+    instances = @aws.get_instances(name)
     expect(instances.count).to eq(1)
     instances.first
   end
@@ -19,7 +19,7 @@ describe "ec2_instance" do
     slept = 0
 
     loop do
-      current_status = find_instance(name).state.name
+      current_status = get_instance(name).state.name
       break if current_status == status
 
       sleep(1)
@@ -30,14 +30,6 @@ describe "ec2_instance" do
         expect(current_status).to eq(status), msg
       end
     end
-  end
-
-  def has_matching_tags(instance, tags)
-    instance_tags = {}
-    instance.tags.each { |s| instance_tags[s.key.to_sym] = s.value if s.key != 'Name' }
-
-    symmetric_difference = tags.to_set ^ instance_tags.to_set
-    expect(symmetric_difference).to be_empty
   end
 
   describe 'should create a new instance' do
@@ -57,7 +49,7 @@ describe "ec2_instance" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @instance = find_instance(@config[:name])
+      @instance = get_instance(@config[:name])
     end
 
     after(:all) do
@@ -74,7 +66,7 @@ describe "ec2_instance" do
     end
 
     it "with the specified tags" do
-      has_matching_tags(@instance, @config[:tags])
+      expect(@aws.tag_difference(@instance, @config[:tags])).to be_empty
     end
 
     it "with the specified type" do
@@ -104,7 +96,7 @@ describe "ec2_instance" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @instance = find_instance(@config[:name])
+      @instance = get_instance(@config[:name])
     end
 
     after(:each) do
@@ -116,14 +108,15 @@ describe "ec2_instance" do
 
     it 'that can have tags changed' do
       wait_until_status(@config[:name], 'running', 45)
-      has_matching_tags(@instance, @config[:tags])
+
+      expect(@aws.tag_difference(@instance, @config[:tags])).to be_empty
 
       tags = {:created_by => 'aws-tests', :foo => 'bar'}
       @config[:tags].update(tags)
 
       PuppetManifest.new(@template, @config).apply
-      @instance = find_instance(@config[:name])
-      has_matching_tags(@instance, @config[:tags])
+      @instance = get_instance(@config[:name])
+      expect(@aws.tag_difference(@instance, @config[:tags])).to be_empty
     end
 
     it "that can be stopped and restarted" do

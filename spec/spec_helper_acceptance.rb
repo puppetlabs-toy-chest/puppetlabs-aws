@@ -59,14 +59,15 @@ class PuppetManifest < Mustache
   end
 end
 
-class Ec2Helper
+class AWSHelper
 
   def initialize(region)
-    @client = ::Aws::EC2::Client.new({region: region})
+    @ec2_client = ::Aws::EC2::Client.new({region: region})
+    @elb_client = ::Aws::ElasticLoadBalancing::Client.new({region: region})
   end
 
   def get_instances(name)
-    response = @client.describe_instances(filters: [
+    response = @ec2_client.describe_instances(filters: [
       {name: 'tag:Name', values: [name]},
     ])
     response.data.reservations.collect do |reservation|
@@ -77,10 +78,23 @@ class Ec2Helper
   end
 
   def get_groups(name)
-    response = @client.describe_security_groups(
+    response = @ec2_client.describe_security_groups(
       group_names: [name]
     )
     response.data.security_groups
+  end
+
+  def get_loadbalancers(name)
+    response = @elb_client.describe_load_balancers(
+      load_balancer_names: [name]
+    )
+    response.data.load_balancer_descriptions
+  end
+
+  def tag_difference(item, tags)
+    item_tags = {}
+    item.tags.each { |s| item_tags[s.key.to_sym] = s.value if s.key != 'Name' }
+    tags.to_set ^ item_tags.to_set
   end
 
 end
