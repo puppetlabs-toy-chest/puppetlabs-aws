@@ -1,7 +1,7 @@
-# Autscaling Support
+# Autoscaling Support
 
 This example demonstrates managing a higher level infrastructure
-component - auto scaling groups. It roughky follows [this
+component - auto scaling groups. It roughly follows [this
 example](http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/policy-creating-cli.html)
 from Amazon.
 
