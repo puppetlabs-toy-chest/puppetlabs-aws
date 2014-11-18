@@ -1,0 +1,20 @@
+cloudwatch_alarm { ['{{name}}-AddCapacity', '{{name}}-RemoveCapacity']:
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_scalingpolicy { ['{{name}}-scaleout', '{{name}}-scalein']:
+  ensure             => {{ensure}},
+  region             => 'sa-east-1',
+  auto_scaling_group => '{{name}}-asg',
+} ~>
+
+ec2_autoscalinggroup { '{{name}}-asg':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_launchconfiguration { '{{name}}-lc':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+}
