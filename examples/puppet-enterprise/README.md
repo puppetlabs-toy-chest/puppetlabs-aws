@@ -46,13 +46,19 @@ master. Open up `pe_agent.pp` and change the line:
     $pe_master_hostname = 'ip-your-ip-here.us-west-2.compute.internal'
 
 You can find the IP address under _Private DNS_ in the AWS web console.
+Alternatively you can use the Puppet resource commands:
+
+    puppet resource ec2_instance puppet-master
+
+This should return a Puppet resource, including the public and private
+IP and DNS details.
 
 Finally you can run:
 
     puppet apply pe_agent.pp --test --templatedir templates
 
 Now lets login to your new Puppet Enterprise console. Retrieve the _Public IP_ address
-of the `puppet-master` instance from the AWS console, then visit:
+of the `puppet-master` instance from the AWS console or using `puppet resource`, then visit:
 
     https://your-public-ip-address
 
@@ -73,8 +79,7 @@ edges, specifically:
 
 * You need to run the manifests twice, first to create the master and then to
   create the agents
-* You need to refer to the AWS web console
-* Certificates from agents are automatically signed by the master
+* All certificates from agents are automatically signed by the master
 
 All of these are solvable, one approach being to utilise Amazon's VPC service
 and to use the policy based autosigning API in Puppet. We'll likely build on
