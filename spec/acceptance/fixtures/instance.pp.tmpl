@@ -8,5 +8,8 @@ ec2_instance { '{{name}}':
   {{#tags}}
     {{k}} => '{{v}}',
   {{/tags}}
-  }
+  },
+  {{#optional}}
+  {{k}} => '{{v}}',
+  {{/optional}}
 }

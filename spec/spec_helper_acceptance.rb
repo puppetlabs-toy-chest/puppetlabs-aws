@@ -12,7 +12,7 @@ class PuppetManifest < Mustache
   end
   def apply
     manifest = self.render.gsub("\n", '')
-    system("bundle exec puppet apply -e \"#{manifest}\" --modulepath ../")
+    system("bundle exec puppet apply --detailed-exitcodes -e \"#{manifest}\" --modulepath ../")
   end
 
   def self.to_generalized_data(val)
