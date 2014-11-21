@@ -88,7 +88,7 @@ describe "ec2_securitygroup" do
       new_config = @config.update({:ensure => 'absent'})
       PuppetManifest.new(@template, new_config).apply
 
-      expect(find_group(@config[:name])).to be_nil
+      expect { find_group(@config[:name]) }.to raise_error(::Aws::EC2::Errors::InvalidGroupNotFound)
     end
 
     it "with the specified name" do
@@ -112,6 +112,46 @@ describe "ec2_securitygroup" do
       @config[:ingress].all? { |rule| has_ingress_rule(rule, @group.ip_permissions)}
     end
 
+    it 'and should not be able to modify the ingress rules and recreate the security group' do
+      new_config = @config.dup.update({:ingress => [{ :security_group => @name }]})
+      expect(PuppetManifest.new(@template, new_config).apply).to eq(false)
+
+      # should still have the original rules
+      @group = find_group(@config[:name])
+      @config[:ingress].all? { |rule| has_ingress_rule(rule, @group.ip_permissions)}
+    end
+
+    describe 'that another group depends on in a secondary manifest' do
+      before(:each) do
+        @name_2 = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
+        new_config = {
+          :name => @name_2,
+          # need both sgs by name to trigger a potential issue here
+          :ingress => [
+            {
+              :security_group => @name
+            },{
+              :security_group => @name_2
+            }
+          ],
+        }
+        @config_2 = @config.dup.update(new_config)
+
+        PuppetManifest.new(@template, @config_2).apply
+        @group_2 = find_group(@config_2[:name])
+      end
+
+      after(:each) do
+        new_config = @config_2.update({:ensure => 'absent'})
+        PuppetManifest.new(@template, new_config).apply
+
+        expect { find_group(@config_2[:name]) }.to raise_error(::Aws::EC2::Errors::InvalidGroupNotFound)
+      end
+
+      it 'and should not fail to be applied multiple times' do
+        expect(PuppetManifest.new(@template, @config_2).apply).to eq(true)
+      end
+    end
   end
 
   describe 'should create a new securitygroup' do
