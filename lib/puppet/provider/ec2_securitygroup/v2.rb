@@ -63,15 +63,16 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
   def create
     Puppet.info("Creating security group #{name} in region #{resource[:region]}")
+    ec2 = ec2_client(resource[:region])
     tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
-    response = ec2_client(resource[:region]).create_security_group(
+    response = ec2.create_security_group(
       group_name: name,
       description: resource[:description]
     )
 
     @property_hash[:ensure] = :present
 
-    ec2_client(resource[:region]).create_tags(
+    ec2.create_tags(
       resources: [response.group_id],
       tags: tags
     ) unless tags.empty?
@@ -81,12 +82,12 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
     rules.reject(&:nil?).each do |rule|
       if rule.key? 'security_group'
-        ec2_client(resource[:region]).authorize_security_group_ingress(
+        ec2.authorize_security_group_ingress(
           group_name: name,
           source_security_group_name: rule['security_group']
         )
       else
-        ec2_client(resource[:region]).authorize_security_group_ingress(
+        ec2.authorize_security_group_ingress(
           group_name: name,
           ip_permissions: [{
             ip_protocol: rule['protocol'],
