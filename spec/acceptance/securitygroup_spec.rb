@@ -186,6 +186,7 @@ describe "ec2_securitygroup" do
     after(:each) do
       @config[:ensure] = 'absent'
       PuppetManifest.new(@template, @config).apply
+      expect { find_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
     end
 
     it 'that can have tags changed' do
