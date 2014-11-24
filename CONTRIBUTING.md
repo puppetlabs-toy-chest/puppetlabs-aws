@@ -28,8 +28,8 @@ Checklist (and a short version for the impatient)
     - Make sure that you have tests for the bug you are fixing, or
       feature you are adding.
 
-    - Make sure the test suite passes after your commit:
-      `bundle exec rake acceptance` More information on [testing](#Testing) below
+    - Make sure the test suite passes after your commit. More information see
+      [testing](#Testing) below.
 
     - When introducing a new feature, make sure it is properly
       documented in the README.md
@@ -159,13 +159,14 @@ If you already have those gems installed, make sure they are up-to-date:
 With all dependencies in place and up-to-date we can now run the tests:
 
 ```shell
-% rake spec
+% bundle exec rake test
 ```
 
 This will execute all the [rspec tests](http://rspec-puppet.com/) tests
-under [spec/unit](./spec/unit). Rspec tests may have the same kind of dependencies as the
-module they are testing. While the module defines in its [Modulefile](./Modulefile),
-rspec tests define them in [.fixtures.yml](./fixtures.yml).
+under [spec/unit](./spec/unit) as well as run [puppet-lint](http://puppet-lint.com/).
+Rspec tests may have the same kind of dependencies as the module they are testing.
+While the module defines in its [Modulefile](./Modulefile), rspec tests define
+them in [.fixtures.yml](./fixtures.yml).
 
 You can run the acceptance tests as well by issuing the following command
 

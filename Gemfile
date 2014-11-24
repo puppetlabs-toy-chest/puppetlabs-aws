@@ -32,6 +32,7 @@ group :development do
   gem 'librarian-puppet'
   gem 'clamp'
   gem "hiera-eyaml"
+  gem "metadata-json-lint"
 end
 
 if File.exists? "#{__FILE__}.local"
