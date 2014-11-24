@@ -17,7 +17,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     end.flatten
   end
 
-  read_only(:region, :ingress, :description)
+  read_only(:region, :description)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -78,9 +78,17 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     ) unless tags.empty?
 
     rules = resource[:ingress]
-    rules = [rules] unless rules.is_a?(Array)
+    authorize_ingress(rules)
+  end
 
-    rules.reject(&:nil?).each do |rule|
+  def authorize_ingress(new_rules, existing_rules=[])
+    ec2 = ec2_client(resource[:region])
+    new_rules = [new_rules] unless new_rules.is_a?(Array)
+
+    to_create = new_rules - existing_rules
+    to_delete = existing_rules - new_rules
+
+    to_create.reject(&:nil?).each do |rule|
       if rule.key? 'security_group'
         ec2.authorize_security_group_ingress(
           group_name: name,
@@ -100,6 +108,32 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
         )
       end
     end
+
+    to_delete.reject(&:nil?).each do |rule|
+      if rule.key? 'security_group'
+         ec2.revoke_security_group_ingress(
+          group_name: name,
+          source_security_group_name: rule['security_group']
+        )
+      else
+        ec2.revoke_security_group_ingress(
+          group_name: name,
+          ip_permissions: [{
+            ip_protocol: rule['protocol'],
+            to_port: rule['port'].to_i,
+            from_port: rule['port'].to_i,
+            ip_ranges: [{
+              cidr_ip: rule['cidr']
+            }]
+          }]
+        )
+      end
+    end
+
+  end
+
+  def ingress=(value)
+    authorize_ingress(value, @property_hash[:ingress])
   end
 
   def destroy
