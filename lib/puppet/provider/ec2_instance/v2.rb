@@ -94,6 +94,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       Puppet.info("Starting instance #{name} in region #{resource[:region]}")
       data = resource[:user_data].nil? ? nil : Base64.encode64(resource[:user_data])
 
+      ec2 = ec2_client(resource[:region])
+
       config = {
         image_id: resource[:image_id],
         min_count: 1,
