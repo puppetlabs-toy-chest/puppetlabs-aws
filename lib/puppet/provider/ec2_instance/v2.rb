@@ -104,15 +104,22 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
       ec2 = ec2_client(resource[:region])
 
-      groups_response = ec2.describe_security_groups(filters: [
-        {name: "group-name", values: groups},
-      ])
+      classic_groups = []
+      vpc_groups = Hash.new
+
+      ec2.describe_security_groups(filters: [
+        {name: 'group-name', values: groups},
+      ]).each do |response|
+        response.security_groups.each do |sg|
+          classic_groups.push(sg) if sg.vpc_id.nil?
+          (vpc_groups[sg.vpc_id] ||= []).push(sg) if sg.vpc_id
+        end
+      end
 
       config = {
         image_id: resource[:image_id],
         min_count: 1,
         max_count: 1,
-        security_group_ids: groups_response.data.security_groups.map(&:group_id),
         instance_type: resource[:instance_type],
         user_data: data,
         placement: {
@@ -126,12 +133,48 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       key = resource[:key_name] ? resource[:key_name] : false
       config['key_name'] = key if key
 
-      ec2 = ec2_client(resource[:region])
-      if resource[:subnet]
+      # must specify a subnet to launch inside a VPC
+      if ! resource[:subnet]
+        matching_groups = classic_groups
+      else
+        # filter by VPC, since describe_subnets doesn't work on empty tag:Name
         subnet_response = ec2.describe_subnets(filters: [
-          {name: "tag:Name", values: [resource[:subnet]]},
-        ])
-        config[:subnet_id] = subnet_response.data.subnets.first.subnet_id
+          {name: "vpc-id", values: vpc_groups.keys}])
+
+        # then find the name in the VPC subnets that we have
+        subnets = subnet_response.subnets.select do |s|
+          if resource[:subnet].empty?
+            ! s.tags.any? { |t| t.key == 'Name' }
+          else
+            s.tags.any? { |t| t.key == 'Name' && t.value == resource[:subnet] }
+          end
+        end
+
+        # handle ambiguous name collisions by selecting first matching subnet / vpc
+        subnet = subnets.first
+        if subnets.length > 1
+          subnet_map = subnets.map { |s| "#{s.subnet_id} (vpc: #{s.vpc_id})" }.join(', ')
+          Puppet.warning "Ambiguous subnet name '#{resource[:subnet]}' resolves to subnets #{subnet_map} - using #{subnet.subnet_id}"
+        end
+
+        if subnet.nil?
+          raise Puppet::Error,
+            "Invalid security groups '#{groups.join(', ')}' not found in VPCs '#{vpc_groups.keys.join(', ')}'"
+        end
+
+        config[:subnet_id] = subnet.subnet_id
+        matching_groups = vpc_groups[subnet.vpc_id]
+      end
+
+      config[:security_group_ids] = matching_groups.map(&:group_id)
+
+      if (groups.uniq.length != matching_groups.map(&:group_name).uniq.length)
+        Puppet.warning <<-EOF
+Not all specified security groups found.
+Specified #{groups.length}: #{groups.join(', ')}
+Found #{matching_groups.length}:
+#{matching_groups.map { |g| 'Name : ' + g.group_name + ' - ' + g.group_id + "\n" }}
+        EOF
       end
 
       response = ec2.run_instances(config)
