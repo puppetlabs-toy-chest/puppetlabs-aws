@@ -87,6 +87,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     else
       data = resource[:user_data].nil? ? nil : Base64.encode64(resource[:user_data])
 
+      ec2 = ec2_client(resource[:region])
+
       config = {
         image_id: resource[:image_id],
         min_count: 1,
@@ -105,13 +107,13 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       key = resource[:key_name] ? resource[:key_name] : false
       config['key_name'] = key if key
 
-      response = ec2_client(resource[:region]).run_instances(config)
+      response = ec2.run_instances(config)
 
       @property_hash[:ensure] = :present
 
       tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
       tags << {key: 'Name', value: name}
-      ec2_client(resource[:region]).create_tags(
+      ec2.create_tags(
         resources: response.instances.map(&:instance_id),
         tags: tags
       )
@@ -148,12 +150,13 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def tags=(value)
     Puppet.info("Updating tags for #{name} in region #{region}")
-    ec2_client(resource[:region]).create_tags(
+    ec2 = ec2_client(resource[:region])
+    ec2.create_tags(
       resources: [instance_id],
       tags: value.collect { |k,v| { :key => k, :value => v } }
     ) unless value.empty?
     missing_tags = tags.keys - value.keys
-    ec2_client(resource[:region]).delete_tags(
+    ec2.delete_tags(
       resources: [instance_id],
       tags: missing_tags.collect { |k| { :key => k } }
     ) unless missing_tags.empty?
