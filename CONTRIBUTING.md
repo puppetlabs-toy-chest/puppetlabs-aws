@@ -124,19 +124,37 @@ The long version
       location of your branch, along with any other commentary you
       may wish to make.
 
+  5.  Responding to feedback.
+
+      We may have feedback for you to fix or change some things. We generally
+      like to see that pushed against the same topic branch (it will
+      automatically update the Pull Request). You can also
+      fix/squash/rebase commits and push the same topic branch with
+      -force (it's generally acceptable to do this on topic branches not
+      in the main repository, it is generally unacceptable and should be
+      avoided at all costs against the main repository).
+
+      The only reasons a pull request should be closed and resubmitted are as follows:
+
+      When the pull request is targeting the wrong branch (this doesn't happen as often).
+      When there are updates made to the original by someone other than the original
+      contributor. Then the old branch is closed with a note on the newer branch This
+      supersedes #github_number.
+
+
 Testing
 =======
 
 Getting Started
 ---------------
 
-Our puppet modules provide [`Gemfile`](./Gemfile)s which can tell a ruby
+Our puppet modules provide a [`Gemfile`](./Gemfile) which can tell a ruby
 package manager such as [bundler](http://bundler.io/) what Ruby packages,
 or Gems, are required to build, develop, and test this software.
 
 Please make sure you have [bundler installed](http://bundler.io/#getting-started)
 on your system, then use it to install all dependencies needed for this project,
-by running
+by running:
 
 ```shell
 % bundle install
@@ -194,13 +212,11 @@ review.
 Additional Resources
 ====================
 
-* [Getting additional help](http://projects.puppetlabs.com/projects/puppet/wiki/Getting_Help)
+* [Getting additional help](http://puppetlabs.com/community/get-help)
 
-* [Writing tests](http://projects.puppetlabs.com/projects/puppet/wiki/Development_Writing_Tests)
+* [Writing tests](https://docs.puppetlabs.com/guides/module_guides/bgtm.html#step-three-module-testing)
 
-* [Patchwork](https://patchwork.puppetlabs.com)
-
-* [Contributor License Agreement](https://projects.puppetlabs.com/contributor_licenses/sign)
+* [Contributor License Agreement](https://cla.puppetlabs.com/)
 
 * [General GitHub documentation](http://help.github.com/)
 
