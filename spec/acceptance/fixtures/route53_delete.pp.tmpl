@@ -1,0 +1,12 @@
+route53_a_record { '{{record_name}}':
+  ensure => absent,
+  zone   => '{{name}}',
+  ttl    => {{ttl}},
+  values => [{{#values}}'{{.}}',{{/values}}],
+} ~>
+
+route53_zone { '{{name}}':
+  ensure => absent,
+}
+
+

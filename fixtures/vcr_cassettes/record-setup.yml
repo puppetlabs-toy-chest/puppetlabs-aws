@@ -1,0 +1,167 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: get
+        uri: "https://route53.amazonaws.com/2013-04-01/hostedzone"
+        body: 
+          encoding: ASCII-8BIT
+          string: ""
+        headers: 
+          Content-Type: 
+            - ""
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          Date: 
+            - "Mon, 01 Dec 2014 10:57:38 GMT"
+          X-Amzn-Authorization: 
+            - "AWS3-HTTPS AWSAccessKeyId=Algorithm=HmacSHA256,Signature="
+          Content-Length: 
+            - "0"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - de8965b3-7948-11e4-8bca-e107b0a9ebb7
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "467"
+          Date: 
+            - "Mon, 01 Dec 2014 10:57:40 GMT"
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0"?>
+            <ListHostedZonesResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><HostedZones><HostedZone><Id>/hostedzone/Z11A654ME5UD0C</Id><Name>devopscentral.com.</Name><CallerReference>d29893c4732c33e760b3252b50690a4c</CallerReference><Config><PrivateZone>false</PrivateZone></Config><ResourceRecordSetCount>2</ResourceRecordSetCount></HostedZone></HostedZones><IsTruncated>false</IsTruncated><MaxItems>100</MaxItems></ListHostedZonesResponse>
+        http_version: 
+      recorded_at: "Mon, 01 Dec 2014 10:57:38 GMT"
+    - request: 
+        method: get
+        uri: "https://route53.amazonaws.com/2013-04-01/hostedzone/Z11A654ME5UD0C/rrset"
+        body: 
+          encoding: ASCII-8BIT
+          string: ""
+        headers: 
+          Content-Type: 
+            - ""
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          Date: 
+            - "Mon, 01 Dec 2014 10:57:38 GMT"
+          X-Amzn-Authorization: 
+            - "AWS3-HTTPS AWSAccessKeyId=,Algorithm=HmacSHA256,Signature="
+          Content-Length: 
+            - "0"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - deccfe8d-7948-11e4-b71e-452ca4351c38
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "914"
+          Date: 
+            - "Mon, 01 Dec 2014 10:57:40 GMT"
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0"?>
+            <ListResourceRecordSetsResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><ResourceRecordSets><ResourceRecordSet><Name>devopscentral.com.</Name><Type>NS</Type><TTL>172800</TTL><ResourceRecords><ResourceRecord><Value>ns-926.awsdns-51.net.</Value></ResourceRecord><ResourceRecord><Value>ns-174.awsdns-21.com.</Value></ResourceRecord><ResourceRecord><Value>ns-1087.awsdns-07.org.</Value></ResourceRecord><ResourceRecord><Value>ns-1866.awsdns-41.co.uk.</Value></ResourceRecord></ResourceRecords></ResourceRecordSet><ResourceRecordSet><Name>devopscentral.com.</Name><Type>SOA</Type><TTL>900</TTL><ResourceRecords><ResourceRecord><Value>ns-926.awsdns-51.net. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400</Value></ResourceRecord></ResourceRecords></ResourceRecordSet></ResourceRecordSets><IsTruncated>false</IsTruncated><MaxItems>100</MaxItems></ListResourceRecordSetsResponse>
+        http_version: 
+      recorded_at: "Mon, 01 Dec 2014 10:57:39 GMT"
+    - request: 
+        method: get
+        uri: "https://route53.amazonaws.com/2013-04-01/hostedzone"
+        body: 
+          encoding: ASCII-8BIT
+          string: ""
+        headers: 
+          Content-Type: 
+            - ""
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          Date: 
+            - "Mon, 01 Dec 2014 10:57:39 GMT"
+          X-Amzn-Authorization: 
+            - "AWS3-HTTPS AWSAccessKeyId=,Algorithm=HmacSHA256,Signature="
+          Content-Length: 
+            - "0"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - df08f632-7948-11e4-b71e-452ca4351c38
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "467"
+          Date: 
+            - "Mon, 01 Dec 2014 10:57:41 GMT"
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0"?>
+            <ListHostedZonesResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><HostedZones><HostedZone><Id>/hostedzone/Z11A654ME5UD0C</Id><Name>devopscentral.com.</Name><CallerReference>d29893c4732c33e760b3252b50690a4c</CallerReference><Config><PrivateZone>false</PrivateZone></Config><ResourceRecordSetCount>2</ResourceRecordSetCount></HostedZone></HostedZones><IsTruncated>false</IsTruncated><MaxItems>100</MaxItems></ListHostedZonesResponse>
+        http_version: 
+      recorded_at: "Mon, 01 Dec 2014 10:57:39 GMT"
+    - request: 
+        method: get
+        uri: "https://route53.amazonaws.com/2013-04-01/hostedzone/Z11A654ME5UD0C/rrset"
+        body: 
+          encoding: ASCII-8BIT
+          string: ""
+        headers: 
+          Content-Type: 
+            - ""
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          Date: 
+            - "Mon, 01 Dec 2014 10:57:39 GMT"
+          X-Amzn-Authorization: 
+            - "AWS3-HTTPS AWSAccessKeyId=Algorithm=HmacSHA256,Signature="
+          Content-Length: 
+            - "0"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - df422eb4-7948-11e4-ad26-0338ecdf83e7
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "914"
+          Date: 
+            - "Mon, 01 Dec 2014 10:57:41 GMT"
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0"?>
+            <ListResourceRecordSetsResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><ResourceRecordSets><ResourceRecordSet><Name>devopscentral.com.</Name><Type>NS</Type><TTL>172800</TTL><ResourceRecords><ResourceRecord><Value>ns-926.awsdns-51.net.</Value></ResourceRecord><ResourceRecord><Value>ns-174.awsdns-21.com.</Value></ResourceRecord><ResourceRecord><Value>ns-1087.awsdns-07.org.</Value></ResourceRecord><ResourceRecord><Value>ns-1866.awsdns-41.co.uk.</Value></ResourceRecord></ResourceRecords></ResourceRecordSet><ResourceRecordSet><Name>devopscentral.com.</Name><Type>SOA</Type><TTL>900</TTL><ResourceRecords><ResourceRecord><Value>ns-926.awsdns-51.net. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400</Value></ResourceRecord></ResourceRecords></ResourceRecordSet></ResourceRecordSets><IsTruncated>false</IsTruncated><MaxItems>100</MaxItems></ListResourceRecordSetsResponse>
+        http_version: 
+      recorded_at: "Mon, 01 Dec 2014 10:57:39 GMT"
+  recorded_with: "VCR 2.9.3"
