@@ -10,3 +10,6 @@ infrastructure.
 * [Infrastructure as YAML](yaml-infrastructure-definition/) - describe an
   entire infrastructure stack in YAML, and use `create_resources` and
   Hiera to build your infrastructure
+* [Auditing Resources](audit-security-group/) - example os using
+  Puppet's noop feature to Audit AWS resource changes and work alongside
+  other tools
