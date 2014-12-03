@@ -4,5 +4,5 @@ ec2_securitygroup { 'test-sg':
   description => 'Security group for audit',
   ingress     => [{
     security_group => 'test-sg',
-  },
+  }],
 }
