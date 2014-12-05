@@ -9,10 +9,11 @@
 /test/version_tmp/
 /tmp/
 
-## Specific to RubyMotion:
+## Specific to RubyMotion/RubyMine/IntelliJ:
 .dat*
 .repl_history
 build/
+/.idea/
 
 ## Documentation cache and generated files:
 /.yardoc/
@@ -44,5 +45,6 @@ keys
 hieradata/*.eyaml
 
 Gemfile.lock
+Gemfile.local
 
 /graphs
