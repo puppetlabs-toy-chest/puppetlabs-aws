@@ -15,14 +15,21 @@ Elb_loadbalancer {
   region => 'sa-east-1',
 }
 
-ec2_instance { ['web-1', 'web-2', 'db-1', 'puppet-1']:
-  ensure => absent,
-}
-
 elb_loadbalancer { 'lb-1':
   ensure => absent,
-}
-
-ec2_securitygroup { ['lb-sg', 'web-sg', 'db-sg', 'puppet-sg']:
+} ~>
+ec2_instance { ['web-1', 'web-2', 'db-1', 'puppet-1']:
   ensure => absent,
+} ~>
+ec2_securitygroup { 'puppet-sg':
+    ensure => absent,
+} ~>
+ec2_securitygroup { 'db-sg':
+    ensure => absent,
+} ~>
+ec2_securitygroup { 'web-sg':
+    ensure => absent,
+} ~>
+ec2_securitygroup { 'lb-sg':
+    ensure => absent,
 }
