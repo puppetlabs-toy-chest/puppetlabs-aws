@@ -161,15 +161,14 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def destroy
     Puppet.info("Deleting instance #{name} in region #{resource[:region]}")
-    instances = ec2_client(resource[:region]).describe_instances(filters: [
+    ec2 = ec2_client(resource[:region])
+    instances = ec2.describe_instances(filters: [
       {name: 'tag:Name', values: [name]},
       {name: 'instance-state-name', values: ['pending', 'running', 'stopping', 'stopped']}
     ])
-    ec2_client(resource[:region]).terminate_instances(
-      instance_ids: instances.reservations.map(&:instances).
-        flatten.map(&:instance_id)
-    )
-
+    instance_ids = instances.reservations.map(&:instances).flatten.map(&:instance_id)
+    ec2.terminate_instances(instance_ids: instance_ids)
+    ec2.wait_until(:instance_terminated, instance_ids: instance_ids)
     @property_hash[:ensure] = :absent
   end
 end
