@@ -103,7 +103,7 @@ describe "ec2_instance" do
     end
 
     def expect_failed_apply(config)
-      success = PuppetManifest.new(@template, config).apply
+      success = PuppetManifest.new(@template, config).apply[:exit_status].success?
       expect(success).to eq(false)
 
       expect(@ec2.get_instances(config[:name])).to be_empty

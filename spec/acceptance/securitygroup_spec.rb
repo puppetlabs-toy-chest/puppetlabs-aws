@@ -114,7 +114,8 @@ describe "ec2_securitygroup" do
 
     it 'and should not be able to modify the ingress rules and recreate the security group' do
       new_config = @config.dup.update({:ingress => [{ :security_group => @name }]})
-      expect(PuppetManifest.new(@template, new_config).apply).to eq(false)
+      success = PuppetManifest.new(@template, new_config).apply[:exit_status].success?
+      expect(success).to eq(false)
 
       # should still have the original rules
       @group = find_group(@config[:name])
@@ -149,8 +150,71 @@ describe "ec2_securitygroup" do
       end
 
       it 'and should not fail to be applied multiple times' do
-        expect(PuppetManifest.new(@template, @config_2).apply).to eq(true)
+        success = PuppetManifest.new(@template, @config_2).apply[:exit_status].success?
+        expect(success).to eq(true)
       end
+    end
+  end
+
+  describe 'should create a new securitygroup' do
+
+    before(:each) do
+      @name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
+      @config = {
+        :name => @name,
+        :ensure => 'present',
+        :description => 'aws acceptance sg',
+        :region => @default_region,
+        :ingress => [
+          {
+            :protocol => 'udp',
+            :port     => 22,
+            :cidr     => '0.0.0.0/0'
+          },
+          {
+            :protocol => 'tcp',
+            :port     => 443,
+            :cidr     => '0.0.0.0/0'
+          },{
+            :protocol => 'tcp',
+            :port     => 22,
+            :cidr     => '0.0.0.0/0'
+          },
+        ],
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        }
+      }
+
+      PuppetManifest.new(@template, @config).apply
+      @group = find_group(@config[:name])
+    end
+
+    after(:each) do
+      @config[:ensure] = 'absent'
+      PuppetManifest.new(@template, @config).apply
+      expect { find_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
+    end
+
+    def expect_rule_matches(ingress_rule, ip_permission)
+      expect(ingress_rule[:protocol]).to eq(ip_permission.ip_protocol)
+      expect(ingress_rule[:port]).to eq(ip_permission.to_port)
+    end
+
+    it 'and does not emit change notifications on a second run when the manifest ingress rule ordering does not match the one returned by AWS' do
+      output = PuppetManifest.new(@template, @config).apply[:output]
+      @group = find_group(@config[:name])
+
+      # Puppet code not loaded, so can't call format_ingress_rules on ec2_securitygroup type
+      expect_rule_matches(@config[:ingress][2], @group[:ip_permissions][0])
+      expect_rule_matches(@config[:ingress][1], @group[:ip_permissions][1])
+      expect_rule_matches(@config[:ingress][0], @group[:ip_permissions][2])
+
+      # should still be considered insync despite ordering differences
+      changed = output.any? { |l| l.match('ingress changed') }
+      expect(changed).to eq(false)
     end
   end
 
