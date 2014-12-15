@@ -1,5 +1,6 @@
 require 'aws-sdk-core'
 require 'mustache'
+require 'open3'
 
 class PuppetManifest < Mustache
   def initialize(file, config)
@@ -12,7 +13,19 @@ class PuppetManifest < Mustache
   end
   def apply
     manifest = self.render.gsub("\n", '')
-    system("bundle exec puppet apply --detailed-exitcodes -e \"#{manifest}\" --modulepath ../")
+    cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest}\" --modulepath ../"
+    result = { output: [], exit_status: nil }
+
+    Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
+      while line = stdout_err.gets
+        result[:output].push(line)
+        puts line
+      end
+
+      result[:exit_status] = wait_thr.value
+    end
+
+    result
   end
 
   def self.to_generalized_data(val)
