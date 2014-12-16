@@ -34,7 +34,7 @@ describe "ec2_securitygroup" do
 
   # a fairly naive matching algorithm, since the shape of ip_permissions is
   # quite different than the shape of our ingress rules
-  def has_ingress_rule(rule, ip_permissions)
+  def check_ingress_rule(rule, ip_permissions)
     if (rule.has_key? :security_group)
       group_name = rule[:security_group]
       # a match occurs when AWS has a TCP / UDP / ICMP perm setup for group
@@ -42,7 +42,7 @@ describe "ec2_securitygroup" do
       udp_perm = get_group_permission(ip_permissions, group_name, 'udp')
       icmp_perm = get_group_permission(ip_permissions, group_name, 'icmp')
       match = !tcp_perm.nil? && !udp_perm.nil? && !icmp_perm.nil?
-      expect(match).to eq(true), "Could not find ingress rule for #{group_name}"
+      msg = "Could not find ingress rule for #{group_name}"
     else
       match = ip_permissions.any? do |perm|
         rule[:protocol] == perm[:ip_protocol] &&
@@ -51,9 +51,20 @@ describe "ec2_securitygroup" do
         perm[:ip_ranges].any? { |ip| ip[:cidr_ip] == rule[:cidr] }
       end
       msg = "Could not find ingress rule for #{rule[:protocol]} port #{rule[:port]} and CIDR #{rule[:cidr]}"
-      expect(match).to eq(true), msg
     end
+    [match, msg]
   end
+
+  def has_ingress_rule(rule, ip_permissions)
+    match, msg = check_ingress_rule(rule, ip_permissions)
+    expect(match).to eq(true), msg
+  end
+
+  def doesnt_have_ingress_rule(rule, ip_permissions)
+    match, msg = check_ingress_rule(rule, ip_permissions)
+    expect(match).to eq(false), msg
+  end
+
 
   describe 'should create a new security group' do
 
@@ -112,14 +123,21 @@ describe "ec2_securitygroup" do
       @config[:ingress].all? { |rule| has_ingress_rule(rule, @group.ip_permissions)}
     end
 
-    it 'and should not be able to modify the ingress rules and recreate the security group' do
-      new_config = @config.dup.update({:ingress => [{ :security_group => @name }]})
+    it 'should be able to modify the ingress rules and recreate the security group' do
+      new_rules = [{
+        :protocol => 'tcp',
+        :port     => 80,
+        :cidr     => '0.0.0.0/0'
+      }]
+      new_config = @config.dup.update({:ingress => new_rules})
       success = PuppetManifest.new(@template, new_config).apply[:exit_status].success?
       expect(success).to eq(false)
 
       # should still have the original rules
       @group = find_group(@config[:name])
-      @config[:ingress].all? { |rule| has_ingress_rule(rule, @group.ip_permissions)}
+
+      new_rules.all? { |rule| has_ingress_rule(rule, @group.ip_permissions)}
+      @config[:ingress].all? { |rule| doesnt_have_ingress_rule(rule, @group.ip_permissions)}
     end
 
     describe 'that another group depends on in a secondary manifest' do

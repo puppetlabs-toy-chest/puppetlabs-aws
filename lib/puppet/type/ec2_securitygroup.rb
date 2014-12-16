@@ -20,7 +20,7 @@ Puppet::Type.newtype(:ec2_securitygroup) do
   newproperty(:ingress, :array_matching => :all) do
     desc 'rules for ingress traffic'
     def insync?(is)
-      order_ingress(should) == stringify_values(is)
+      order_ingress(should) == order_ingress(stringify_values(is))
     end
 
     def order_ingress(rules)
