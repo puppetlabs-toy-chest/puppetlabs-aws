@@ -3,6 +3,7 @@ require 'mustache'
 require 'open3'
 
 class PuppetManifest < Mustache
+
   def initialize(file, config)
     @template_file = File.join(Dir.getwd, 'spec', 'acceptance', 'fixtures', file)
     config.each do |key, value|
@@ -11,6 +12,7 @@ class PuppetManifest < Mustache
       self.class.send(:attr_accessor, key)
     end
   end
+
   def apply
     manifest = self.render.gsub("\n", '')
     cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest}\" --modulepath ../"
@@ -77,8 +79,8 @@ class Ec2Helper
 
   def initialize(region)
     @client = ::Aws::EC2::Client.new({region: region})
+    @elb_client = ::Aws::ElasticLoadBalancing::Client.new({region: region})
   end
-
 
   def get_instances(name)
     response = @client.describe_instances(filters: [
@@ -95,7 +97,16 @@ class Ec2Helper
     response = @client.describe_security_groups(
       group_names: [name]
     )
+
     response.data.security_groups
+  end
+
+  def get_loadbalancers(name)
+    response = @elb_client.describe_load_balancers(
+          load_balancer_names: [name]
+       )
+
+    response.data.load_balancer_descriptions
   end
 
 end
