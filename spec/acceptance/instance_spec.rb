@@ -6,12 +6,12 @@ describe "ec2_instance" do
 
   before(:all) do
     @default_region = 'sa-east-1'
-    @ec2 = Ec2Helper.new(@default_region)
+    @aws = AwsHelper.new(@default_region)
     @template = 'instance.pp.tmpl'
   end
 
   def find_instance(name)
-    instances = @ec2.get_instances(name)
+    instances = @aws.get_instances(name)
     expect(instances.count).to eq(1)
     instances.first
   end
@@ -45,12 +45,12 @@ describe "ec2_instance" do
     end
 
     after(:all) do
-      @ec2.client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
+      @aws.client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
 
       new_config = @config.update({:ensure => 'absent'})
       PuppetManifest.new(@template, new_config).apply
 
-      @ec2.client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id])
+      @aws.client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id])
     end
 
     it "with the specified name" do
@@ -106,7 +106,7 @@ describe "ec2_instance" do
       success = PuppetManifest.new(@template, config).apply[:exit_status].success?
       expect(success).to eq(false)
 
-      expect(@ec2.get_instances(config[:name])).to be_empty
+      expect(@aws.get_instances(config[:name])).to be_empty
     end
 
     it 'with an invalid name' do
@@ -174,11 +174,11 @@ describe "ec2_instance" do
       @config[:ensure] = 'absent'
       PuppetManifest.new(@template, @config).apply
 
-      @ec2.client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id])
+      @aws.client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id])
     end
 
     it 'that can have tags changed' do
-      @ec2.client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
+      @aws.client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
       has_matching_tags(@instance, @config[:tags])
 
       tags = {:created_by => 'aws-tests', :foo => 'bar'}
@@ -190,16 +190,16 @@ describe "ec2_instance" do
     end
 
     it "that can be stopped and restarted" do
-      @ec2.client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
+      @aws.client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
 
       @config[:ensure] = 'stopped'
       PuppetManifest.new(@template, @config).apply
 
-      @ec2.client.wait_until(:instance_stopped, instance_ids:[@instance.instance_id])
+      @aws.client.wait_until(:instance_stopped, instance_ids:[@instance.instance_id])
 
       @config[:ensure] = 'present'
       PuppetManifest.new(@template, @config).apply
-      @ec2.client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
+      @aws.client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
     end
   end
 

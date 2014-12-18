@@ -5,12 +5,12 @@ describe "ec2_securitygroup" do
 
   before(:all) do
     @default_region = 'sa-east-1'
-    @ec2 = Ec2Helper.new(@default_region)
+    @aws = AwsHelper.new(@default_region)
     @template = 'securitygroup.pp.tmpl'
   end
 
   def find_group(name)
-    groups = @ec2.get_groups(name)
+    groups = @aws.get_groups(name)
     expect(groups.count).to eq(1)
     groups.first
   end
