@@ -10,18 +10,18 @@ describe "ec2_instance" do
     @template = 'instance.pp.tmpl'
   end
 
-  def find_instance(name)
-    instances = @ec2.get_instances(name)
-    expect(instances.count).to eq(1)
-    instances.first
-  end
-
   def has_matching_tags(instance, tags)
     instance_tags = {}
     instance.tags.each { |s| instance_tags[s.key.to_sym] = s.value if s.key != 'Name' }
 
     symmetric_difference = tags.to_set ^ instance_tags.to_set
     expect(symmetric_difference).to be_empty
+  end
+
+  def get_instance(name)
+    instances = @ec2.get_instances(name)
+    expect(instances.count).to eq(1)
+    instances.first
   end
 
   describe 'should create a new instance' do
@@ -41,7 +41,7 @@ describe "ec2_instance" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @instance = find_instance(@config[:name])
+      @instance = get_instance(@config[:name])
     end
 
     after(:all) do
@@ -167,7 +167,7 @@ describe "ec2_instance" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @instance = find_instance(@config[:name])
+      @instance = get_instance(@config[:name])
     end
 
     after(:each) do
@@ -185,7 +185,7 @@ describe "ec2_instance" do
       @config[:tags].update(tags)
 
       PuppetManifest.new(@template, @config).apply
-      @instance = find_instance(@config[:name])
+      @instance = get_instance(@config[:name])
       has_matching_tags(@instance, @config[:tags])
     end
 

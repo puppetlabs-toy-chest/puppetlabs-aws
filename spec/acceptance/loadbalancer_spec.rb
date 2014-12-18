@@ -14,6 +14,7 @@ describe "ec2_loadbalancer" do
   def get_loadbalancer(name)
     loadbalancers = @aws.get_loadbalancers(name)
     expect(loadbalancers.count).to eq(1)
+
     loadbalancers.first
   end
 
