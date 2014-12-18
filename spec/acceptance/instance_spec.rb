@@ -10,7 +10,7 @@ describe "ec2_instance" do
     @template = 'instance.pp.tmpl'
   end
 
-  def find_instance(name)
+  def get_instance(name)
     instances = @aws.get_instances(name)
     expect(instances.count).to eq(1)
     instances.first
@@ -41,7 +41,7 @@ describe "ec2_instance" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @instance = find_instance(@config[:name])
+      @instance = get_instance(@config[:name])
     end
 
     after(:all) do
@@ -167,7 +167,7 @@ describe "ec2_instance" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @instance = find_instance(@config[:name])
+      @instance = get_instance(@config[:name])
     end
 
     after(:each) do
@@ -185,7 +185,7 @@ describe "ec2_instance" do
       @config[:tags].update(tags)
 
       PuppetManifest.new(@template, @config).apply
-      @instance = find_instance(@config[:name])
+      @instance = get_instance(@config[:name])
       has_matching_tags(@instance, @config[:tags])
     end
 
