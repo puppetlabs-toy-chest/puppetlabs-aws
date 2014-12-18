@@ -5,14 +5,8 @@ describe "ec2_securitygroup" do
 
   before(:all) do
     @default_region = 'sa-east-1'
-    @ec2 = Ec2Helper.new(@default_region)
+    @ec2 = AwsHelper.new(@default_region)
     @template = 'securitygroup.pp.tmpl'
-  end
-
-  def find_group(name)
-    groups = @ec2.get_groups(name)
-    expect(groups.count).to eq(1)
-    groups.first
   end
 
   def has_matching_tags(group, tags)
@@ -65,6 +59,11 @@ describe "ec2_securitygroup" do
     expect(match).to eq(false), msg
   end
 
+  def get_group(name)
+    groups = @ec2.get_groups(name)
+    expect(groups.count).to eq(1)
+    groups.first
+  end
 
   describe 'should create a new security group' do
 
@@ -92,14 +91,14 @@ describe "ec2_securitygroup" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @group = find_group(@config[:name])
+      @group = get_group(@config[:name])
     end
 
     after(:all) do
       new_config = @config.update({:ensure => 'absent'})
       PuppetManifest.new(@template, new_config).apply
 
-      expect { find_group(@config[:name]) }.to raise_error(::Aws::EC2::Errors::InvalidGroupNotFound)
+      expect { get_group(@config[:name]) }.to raise_error(::Aws::EC2::Errors::InvalidGroupNotFound)
     end
 
     it "with the specified name" do
@@ -134,7 +133,7 @@ describe "ec2_securitygroup" do
       expect(success).to eq(false)
 
       # should still have the original rules
-      @group = find_group(@config[:name])
+      @group = get_group(@config[:name])
 
       new_rules.all? { |rule| has_ingress_rule(rule, @group.ip_permissions)}
       @config[:ingress].all? { |rule| doesnt_have_ingress_rule(rule, @group.ip_permissions)}
@@ -157,14 +156,14 @@ describe "ec2_securitygroup" do
         @config_2 = @config.dup.update(new_config)
 
         PuppetManifest.new(@template, @config_2).apply
-        @group_2 = find_group(@config_2[:name])
+        @group_2 = get_group(@config_2[:name])
       end
 
       after(:each) do
         new_config = @config_2.update({:ensure => 'absent'})
         PuppetManifest.new(@template, new_config).apply
 
-        expect { find_group(@config_2[:name]) }.to raise_error(::Aws::EC2::Errors::InvalidGroupNotFound)
+        expect { get_group(@config_2[:name]) }.to raise_error(::Aws::EC2::Errors::InvalidGroupNotFound)
       end
 
       it 'and should not fail to be applied multiple times' do
@@ -207,13 +206,13 @@ describe "ec2_securitygroup" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @group = find_group(@config[:name])
+      @group = get_group(@config[:name])
     end
 
     after(:each) do
       @config[:ensure] = 'absent'
       PuppetManifest.new(@template, @config).apply
-      expect { find_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
+      expect { get_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
     end
 
     def expect_rule_matches(ingress_rule, ip_permission)
@@ -223,7 +222,7 @@ describe "ec2_securitygroup" do
 
     it 'and does not emit change notifications on a second run when the manifest ingress rule ordering does not match the one returned by AWS' do
       output = PuppetManifest.new(@template, @config).apply[:output]
-      @group = find_group(@config[:name])
+      @group = get_group(@config[:name])
 
       # Puppet code not loaded, so can't call format_ingress_rules on ec2_securitygroup type
       expect_rule_matches(@config[:ingress][2], @group[:ip_permissions][0])
@@ -262,13 +261,13 @@ describe "ec2_securitygroup" do
       }
 
       PuppetManifest.new(@template, @config).apply
-      @group = find_group(@config[:name])
+      @group = get_group(@config[:name])
     end
 
     after(:each) do
       @config[:ensure] = 'absent'
       PuppetManifest.new(@template, @config).apply
-      expect { find_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
+      expect { get_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
     end
 
     it 'that can have tags changed' do
@@ -279,7 +278,7 @@ describe "ec2_securitygroup" do
       @config[:tags].update(tags)
 
       PuppetManifest.new(@template, @config).apply
-      @group = find_group(@config[:name])
+      @group = get_group(@config[:name])
       has_matching_tags(@group, @config[:tags])
     end
   end
