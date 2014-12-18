@@ -6,7 +6,7 @@ describe "ec2_loadbalancer" do
   before(:all) do
     @default_region = 'sa-east-1'
     @default_availability_zone = "#{@default_region}a"
-    @aws = Ec2Helper.new(@default_region)
+    @aws = AwsHelper.new(@default_region)
     @instance_template = 'instance.pp.tmpl'
     @lb_template = 'loadbalancer.pp.tmpl'
   end

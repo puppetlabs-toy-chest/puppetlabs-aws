@@ -74,7 +74,7 @@ class PuppetManifest < Mustache
   end
 end
 
-class Ec2Helper
+class AwsHelper
   attr_reader :client
 
   def initialize(region)

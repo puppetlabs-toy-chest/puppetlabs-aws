@@ -5,7 +5,7 @@ describe "ec2_securitygroup" do
 
   before(:all) do
     @default_region = 'sa-east-1'
-    @ec2 = Ec2Helper.new(@default_region)
+    @ec2 = AwsHelper.new(@default_region)
     @template = 'securitygroup.pp.tmpl'
   end
 
