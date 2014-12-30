@@ -39,7 +39,7 @@ describe "ec2_loadbalancer" do
       @instance = instances.first
 
       @lb_config = {
-          :name => "#{PuppetManifest.env_dns_id}#{SecureRandom.uuid.gsub('-', '')}"[0...31], # loadbalancer has name length limit
+          :name => "#{PuppetManifest.env_dns_id}#{SecureRandom.uuid}".gsub('-', '')[0...31], # loadbalancer has name length limit
           :region => @default_region,
           :availability_zones => [@default_availability_zone],
           :instances => [@instance_config[:name]],
