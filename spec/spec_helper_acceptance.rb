@@ -75,15 +75,15 @@ class PuppetManifest < Mustache
 end
 
 class AwsHelper
-  attr_reader :client, :elb_client
+  attr_reader :ec2_client, :elb_client
 
   def initialize(region)
-    @client = ::Aws::EC2::Client.new({region: region})
+    @ec2_client = ::Aws::EC2::Client.new({region: region})
     @elb_client = ::Aws::ElasticLoadBalancing::Client.new({region: region})
   end
 
   def get_instances(name)
-    response = @client.describe_instances(filters: [
+    response = @ec2_client.describe_instances(filters: [
       {name: 'tag:Name', values: [name]},
     ])
     response.data.reservations.collect do |reservation|
@@ -94,7 +94,7 @@ class AwsHelper
   end
 
   def get_groups(name)
-    response = @client.describe_security_groups(
+    response = @ec2_client.describe_security_groups(
       group_names: [name]
     )
 
