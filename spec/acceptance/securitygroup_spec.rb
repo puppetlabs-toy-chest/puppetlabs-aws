@@ -15,14 +15,6 @@ describe "ec2_securitygroup" do
     groups.first
   end
 
-  def has_matching_tags(group, tags)
-    group_tags = {}
-    group.tags.each { |s| group_tags[s.key.to_sym] = s.value if s.key != 'Name' }
-
-    symmetric_difference = tags.to_set ^ group_tags.to_set
-    expect(symmetric_difference).to be_empty
-  end
-
   def get_group_permission(ip_permissions, group, protocol)
     ip_permissions.detect do |perm|
       pairs = perm[:user_id_group_pairs]
@@ -111,7 +103,7 @@ describe "ec2_securitygroup" do
     end
 
     it "with the specified tags" do
-      has_matching_tags(@group, @config[:tags])
+      expect(@aws.tag_difference(@group, @config[:tags])).to be_empty
     end
 
     it "with the specified description" do
@@ -273,14 +265,14 @@ describe "ec2_securitygroup" do
 
     it 'that can have tags changed' do
       pending 'changing tags not yet supported for security groups'
-      has_matching_tags(@group, @config[:tags])
+      expect(@aws.tag_difference(@group, @config[:tags])).to be_empty
 
       tags = {:created_by => 'aws-tests', :foo => 'bar'}
       @config[:tags].update(tags)
 
       PuppetManifest.new(@template, @config).apply
       @group = get_group(@config[:name])
-      has_matching_tags(@group, @config[:tags])
+      expect(@aws.tag_difference(@group, @config[:tags])).to be_empty
     end
   end
 

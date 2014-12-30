@@ -16,14 +16,6 @@ describe "ec2_instance" do
     instances.first
   end
 
-  def has_matching_tags(instance, tags)
-    instance_tags = {}
-    instance.tags.each { |s| instance_tags[s.key.to_sym] = s.value if s.key != 'Name' }
-
-    symmetric_difference = tags.to_set ^ instance_tags.to_set
-    expect(symmetric_difference).to be_empty
-  end
-
   describe 'should create a new instance' do
 
     before(:all) do
@@ -58,7 +50,7 @@ describe "ec2_instance" do
     end
 
     it "with the specified tags" do
-      has_matching_tags(@instance, @config[:tags])
+      expect(@aws.tag_difference(@instance, @config[:tags])).to be_empty
     end
 
     it "with the specified type" do
@@ -179,14 +171,14 @@ describe "ec2_instance" do
 
     it 'that can have tags changed' do
       @aws.ec2_client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
-      has_matching_tags(@instance, @config[:tags])
+      expect(@aws.tag_difference(@instance, @config[:tags])).to be_empty
 
       tags = {:created_by => 'aws-tests', :foo => 'bar'}
       @config[:tags].update(tags)
 
       PuppetManifest.new(@template, @config).apply
       @instance = get_instance(@config[:name])
-      has_matching_tags(@instance, @config[:tags])
+      expect(@aws.tag_difference(@instance, @config[:tags])).to be_empty
     end
 
     it "that can be stopped and restarted" do

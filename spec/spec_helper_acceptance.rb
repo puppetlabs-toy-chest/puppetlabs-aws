@@ -108,4 +108,10 @@ class AwsHelper
 
     response.data.load_balancer_descriptions
   end
+
+  def tag_difference(item, tags)
+      item_tags = {}
+      item.tags.each { |s| item_tags[s.key.to_sym] = s.value if s.key != 'Name' }
+      tags.to_set ^ item_tags.to_set
+  end
 end
