@@ -26,9 +26,18 @@ The module relies on the Amazon AWS Ruby SDK, so first install this. The
 SDK is available as a gem so install it into the same Ruby as used by
 Puppet.
 
-```bash
-gem install aws-sdk-core
-```
+    gem install aws-sdk-core
+
+If you're running Puppet Enterprise you need to install the gem using
+the following, so it can be used by the Puppet Enterprise Ruby.
+
+    /opt/puppet/bin/gem install aws-sdk-core
+
+And if you're running [Puppet
+Server](https://github.com/puppetlabs/puppet-server) you need to
+ make the gem available to JRuby with:
+
+    /opt/puppet/bin/puppetserver gem install aws-sdk-core
 
 Once the library is installed you'll need to set a few environment
 variables for your AWS access credentials.
