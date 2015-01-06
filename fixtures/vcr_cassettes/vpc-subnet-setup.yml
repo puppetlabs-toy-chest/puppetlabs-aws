@@ -1,0 +1,344 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeSubnets&Signature=Ch7hbu5Uaf9bUf3wLOmgW0xfhPgaytTXQfHpliWSQ6s%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-17T11%3A33%3A59Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "215"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 11:34:01 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSubnetsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+            </DescribeSubnetsResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 11:34:03 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeVpcs&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-17T11%3A34%3A03Z&Version=2014-06-15&VpcId.1=vpc-9204b9f7"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "241"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 11:34:03 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>068924e1-0c03-45b5-8dbd-c71003851990</requestId>
+                <vpcSet>
+                </vpcSet>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 11:34:04 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeVpcs&Signature=SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-17T11%3A34%3A04Z&Version=2014-06-15&VpcId.1=vpc-6853ea0d"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "235"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 11:34:04 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>c23e9b79-fc30-466c-93d6-f000e096c67e</requestId>
+                <vpcSet>
+                </vpcSet>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 11:34:05 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeVpcs&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-17T11%3A34%3A05Z&Version=2014-06-15&VpcId.1=vpc-9204b9f7"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "237"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 11:34:05 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>3e7ac2a6-e8f0-44ba-8575-dd6a69dc6977</requestId>
+                <vpcSet>
+                </vpcSet>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 11:34:06 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeSubnets&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-17T11%3A34%3A06Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "217"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 11:34:07 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSubnetsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>af8f3aed-e569-4fd7-859a-7ace68311214</requestId>
+                <subnetSet>
+                </subnetSet>
+            </DescribeSubnetsResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 11:34:07 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeVpcs&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-17T11%3A34%3A07Z&Version=2014-06-15&VpcId.1=vpc-9204b9f7"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "237"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 11:34:07 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>5538e567-6788-44c3-835e-f701854a3b70</requestId>
+                <vpcSet>
+                </vpcSet>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 11:34:08 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeVpcs&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-17T11%3A34%3A08Z&Version=2014-06-15&VpcId.1=vpc-6853ea0d"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "235"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 11:34:08 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>450b0e1c-65ab-4fed-affd-a444d9fa6dd0</requestId>
+                <vpcSet>
+                </vpcSet>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 11:34:08 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeVpcs&Signature=SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-17T11%3A34%3A08Z&Version=2014-06-15&VpcId.1=vpc-9204b9f7"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "233"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 11:34:09 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>9535b46b-c70c-4b14-9caf-e8453a4e5ca0</requestId>
+                <vpcSet>
+                </vpcSet>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 11:34:09 GMT"
+  recorded_with: "VCR 2.9.3"
