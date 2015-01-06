@@ -33,7 +33,7 @@ Puppet::Type.newtype(:ec2_vpc_subnet) do
     desc 'tags to assign to the subnet'
   end
 
-  newproperty(:route_table) do # TODO
+  newproperty(:route_table) do
     desc 'the route table to attach to the subnet'
   end
 

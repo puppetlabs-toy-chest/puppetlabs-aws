@@ -17,7 +17,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
     end.flatten
   end
 
-  read_only(:cidr_block, :vpc)
+  read_only(:cidr_block, :vpc, :region, :route_table, :availability_zone)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -28,11 +28,22 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
   end
 
   def self.subnet_to_hash(region, subnet)
-    vpc_response = ec2_client(region).describe_vpcs(vpc_ids: [subnet.vpc_id])
+    ec2 = ec2_client(region)
+    vpc_response = ec2.describe_vpcs(vpc_ids: [subnet.vpc_id])
     vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
     name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
+
+    table_response = ec2.describe_route_tables(filters: [
+      {name: 'association.subnet-id', values: [subnet.subnet_id]},
+      {name: 'vpc-id', values: [subnet.vpc_id]},
+    ])
+    tables = table_response.data.route_tables
+    table_name_tag = tables.empty? ? nil : tables.first.tags.detect { |tag| tag.key == 'Name' }
+
     {
       name: name_tag ? name_tag.value : nil,
+      route_table: table_name_tag ? table_name_tag.value : nil,
+      id: subnet.subnet_id,
       cidr_block: subnet.cidr_block,
       availability_zone: subnet.availability_zone,
       vpc: vpc_name_tag ? vpc_name_tag.value : nil,
@@ -53,29 +64,36 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
       {name: "tag:Name", values: [resource[:vpc]]},
     ])
     fail("Multiple VPCs with name #{resource[:vpc]}") if vpc_response.data.vpcs.count > 1
+    fail("No VPCs with name #{resource[:vpc]}") if vpc_response.data.vpcs.empty?
     response = ec2.create_subnet(
       cidr_block: resource[:cidr_block],
       availability_zone: resource[:availability_zone],
       vpc_id: vpc_response.data.vpcs.first.vpc_id,
     )
+    subnet_id = response.data.subnet.subnet_id
     ec2.create_tags(
-      resources: [response.data.subnet.subnet_id],
+      resources: [subnet_id],
       tags: [{key: 'Name', value: name}]
     )
+    route_table_name = resource[:route_table]
+    if route_table_name
+      table_response = ec2.describe_route_tables(filters: [
+        {name: 'tag:Name', values: [route_table_name]},
+      ])
+      fail("Multiple Route tables with name #{route_table_name}") if table_response.data.route_tables.count > 1
+      fail("No VPCs with name #{route_table_name}") if table_response.data.route_tables.empty?
+      ec2.associate_route_table(
+        subnet_id: subnet_id,
+        route_table_id: table_response.data.route_tables.first.route_table_id,
+      )
+    end
   end
 
   def destroy
     Puppet.info("Deleting subnet #{name}")
-    ec2 = ec2_client(resource[:region])
-    response = ec2.describe_subnets(filters: [
-      {name: 'tag:Name', values: [name]},
-    ])
-    fail("Multiple subnets with name #{name}. Not deleting.") if response.data.subnets.count > 1
-    response.data.subnets.each do |subnet|
-      ec2.delete_subnet(
-        subnet_id: subnet.subnet_id
-      )
-    end
+    ec2_client(resource[:region]).delete_subnet(
+      subnet_id: @property_hash[:id]
+    )
+    @property_hash[:ensure] = :absent
   end
 end
-

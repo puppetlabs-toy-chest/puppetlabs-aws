@@ -31,6 +31,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def self.gateway_to_hash(region, gateway)
+
     name_tag = gateway.tags.detect { |tag| tag.key == 'Name' }
 
     attached = gateway.vpc_attachments.detect { |vpc| vpc.state == 'attached' }
@@ -51,6 +52,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
       :id     => gateway.vpn_gateway_id,
       :vpc    => vpc_name,
       :vpc_id => vpc_id,
+      :availability_zone => gateway.availability_zone,
       :ensure => :present,
       :region => region,
       :type   => gateway.type,
@@ -75,6 +77,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
 
     response = ec2.create_vpn_gateway(
       type: resource[:type],
+      availability_zone: resource[:availability_zone],
     )
 
     ec2.attach_vpn_gateway(

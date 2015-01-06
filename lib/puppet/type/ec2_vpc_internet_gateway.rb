@@ -14,8 +14,6 @@ Puppet::Type.newtype(:ec2_vpc_internet_gateway) do
     desc 'tags to assign to the internet gateway'
   end
 
-  newparam(:route_to_main) # TODO
-
   newproperty(:region) do
     desc 'the region in which to launch the subnet'
   end

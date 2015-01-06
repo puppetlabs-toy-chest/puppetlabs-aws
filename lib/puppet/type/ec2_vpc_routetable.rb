@@ -18,10 +18,6 @@ Puppet::Type.newtype(:ec2_vpc_routetable) do
     desc 'region in which to launch the route table'
   end
 
-  newproperty(:subnets) do # TODO
-    desc 'subnets to attach the route table to'
-  end
-
   newproperty(:routes, :array_matching => :all) do
     desc 'individual routes for the routing table'
     def insync?(is)
@@ -29,15 +25,8 @@ Puppet::Type.newtype(:ec2_vpc_routetable) do
     end
   end
 
-  newproperty(:main) do # TODO
-    desc 'whether this is the main route table for the VPC'
-    newvalue 'true'
-    newvalue 'false'
-  end
-
   newproperty(:tags) do # TODO
     desc 'tags to assign to the route table'
   end
 
-  newproperty(:propagate_routes_from) # TODO
 end

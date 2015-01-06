@@ -25,7 +25,7 @@ Puppet::Type.newtype(:ec2_vpc_vpn_gateway) do
     end
   end
 
-  newproperty(:availability_zone) do # TODO
+  newproperty(:availability_zone) do
     desc 'the availability zone in which to launch the VPN gateway'
   end
 

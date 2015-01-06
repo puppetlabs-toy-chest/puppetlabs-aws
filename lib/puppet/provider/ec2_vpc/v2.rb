@@ -83,8 +83,9 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   def destroy
     Puppet.info("Deleting VPC #{name}}")
     ec2_client(resource[:region]).delete_vpc(
-      vpc_id: @remote_hash[:vpc_id]
+      vpc_id: @remote_hash[:id]
     )
+    @property_hash[:ensure] = :absent
   end
 end
 
