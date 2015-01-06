@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-type_class = Puppet::Type.type(:ec2_vpc)
+type_class = Puppet::Type.type(:ec2_vpc_dhcp_options)
 
 describe type_class do
 
@@ -13,8 +13,13 @@ describe type_class do
   let :properties do
     [
       :ensure,
-      :cidr_block,
+      :tags,
       :region,
+      :domain_name,
+      :domain_name_servers,
+      :ntp_servers,
+      :netbios_name_servers,
+      :netbios_node_type,
     ]
   end
 

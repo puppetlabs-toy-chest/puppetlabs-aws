@@ -1,15 +1,42 @@
 Puppet::Type.newtype(:ec2_vpc) do
-  @doc = "Manage AWS vpcs"
-  newparam(:name)
+  @doc = 'a type representing an AWS VPC'
+
   ensurable
-  newproperty(:id) # TODO
-  newproperty(:region)
-  newproperty(:cidr_block)
-  newproperty(:dhcp_options) # TODO
+
+  newparam(:name, namevar: true) do
+    desc 'the name of the VPC'
+    validate do |value|
+      fail 'a VPC must have a name' if value == ''
+    end
+  end
+
+  newproperty(:region) do
+    desc 'the region in which to launch the VPC'
+    validate do |value|
+      fail 'region should not contain spaces' if value =~ /\s/
+    end
+  end
+
+  newproperty(:cidr_block) do
+    desc 'the IP range for the VPC'
+  end
+
+  newparam(:dhcp_options) do
+    desc 'the DHCP option set to use for this VPC'
+  end
+
   autorequire(:ec2_vpc_dhcp_options) do
     self[:dhcp_options]
   end
-  newproperty(:instance_tenancy) # TODO
-  newproperty(:tags) # TODO
+
+  newproperty(:instance_tenancy) do
+    desc 'the supported tenancy options for instances in this VPC'
+    defaultto 'default'
+    newvalues('default', 'dedicated')
+  end
+
+  newproperty(:tags) do # TODO
+    desc 'the tags to assign to the VPC'
+  end
 end
 

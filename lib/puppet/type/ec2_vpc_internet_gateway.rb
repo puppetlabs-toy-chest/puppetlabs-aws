@@ -1,6 +1,5 @@
 Puppet::Type.newtype(:ec2_vpc_internet_gateway) do
   @doc = 'type representing an EC2 VPC Internet Gateway'
-  @doc = "Manage AWS internet gateways"
 
   newparam(:name, namevar: true) do
     desc 'the name of the internet gateway'
@@ -11,15 +10,18 @@ Puppet::Type.newtype(:ec2_vpc_internet_gateway) do
 
   ensurable
 
-  newproperty(:tags) # TODO
+  newproperty(:tags) do # TODO
+    desc 'tags to assign to the internet gateway'
+  end
+
   newparam(:route_to_main) # TODO
 
-  newproperty(:region) do # TODO work out if this is required
+  newproperty(:region) do
     desc 'the region in which to launch the subnet'
   end
 
   newproperty(:vpcs, :array_matching => :all) do
-    desc 'the vpc to assign this subnet to'
+    desc 'the vpcs to assign this subnet to'
   end
 
   autorequire(:ec2_vpc) do
@@ -27,4 +29,3 @@ Puppet::Type.newtype(:ec2_vpc_internet_gateway) do
     vpcs.is_a?(Array) ? vpcs : [vpcs]
   end
 end
-

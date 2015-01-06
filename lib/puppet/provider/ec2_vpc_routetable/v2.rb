@@ -64,16 +64,20 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
   end
 
   def exists?
-    Puppet.info("Checking if route table #{name} exists")
+    Puppet.info("Checking if Route table #{name} exists")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating route table #{name}")
+    Puppet.info("Creating Route table #{name}")
     ec2 = ec2_client(resource[:region])
+
     vpc_response = ec2.describe_vpcs(filters: [
       {name: "tag:Name", values: [resource[:vpc]]},
     ])
+    fail("Multiple VPCs with name #{resource[:vpc]}") if vpc_response.data.vpcs.count > 1
+    fail("No VPCs with name #{resource[:vpc]}") if vpc_response.data.vpcs.empty?
+
     response = ec2.create_route_table(
       vpc_id: vpc_response.data.vpcs.first.vpc_id,
     )
@@ -96,7 +100,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
   end
 
   def destroy
-    Puppet.info("Deleting route table #{name}")
+    Puppet.info("Deleting Route table #{name}")
     ec2 = ec2_client(resource[:region])
     response = ec2.describe_route_tables(filters: [
       {name: 'tag:Name', values: [name]},

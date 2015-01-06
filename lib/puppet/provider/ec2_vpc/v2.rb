@@ -17,7 +17,7 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
     end.flatten
   end
 
-  read_only(:cidr_block)
+  read_only(:cidr_block, :dhcp_options, :instance_tenancy, :region)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -31,7 +31,9 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
     name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
     {
       name: name_tag ? name_tag.value : nil,
+      id: vpc.vpc_id,
       cidr_block: vpc.cidr_block,
+      instance_tenancy: vpc.instance_tenancy,
       ensure: :present,
       region: region,
     }
@@ -46,30 +48,43 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
     Puppet.info("Creating VPC #{name}")
     ec2 = ec2_client(resource[:region])
     response = ec2.create_vpc(
-      cidr_block: resource[:cidr_block]
+      cidr_block: resource[:cidr_block],
+      instance_tenancy: resource[:instance_tenancy]
     )
+    vpc_id = response.data.vpc.vpc_id
+
+    options_name = resource[:dhcp_options]
+    if options_name
+      options_response = ec2.describe_dhcp_options(filters: [
+        {name: 'tag:Name', values: [options_name]},
+      ])
+
+      fail("No DHCP options with name #{options_name}") if options_response.data.dhcp_options.count == 0
+      fail("Multiple DHCP options with name #{options_name}") if options_response.data.dhcp_options.count > 1
+
+      ec2.associate_dhcp_options(
+        dhcp_options_id: options_response.data.dhcp_options.first.dhcp_options_id,
+        vpc_id: vpc_id,
+      )
+    end
+
+    # When creating a VPC a Route Table is automatically created
+    # We want to name to the same as the VPC so we can find it later
     route_response = ec2.describe_route_tables(filters: [
       {name: 'vpc-id', values: [response.data.vpc.vpc_id]},
       {name: 'association.main', values: ['true']},
     ])
     ec2.create_tags(
-      resources: [route_response.data.route_tables.first.route_table_id, response.data.vpc.vpc_id],
+      resources: [route_response.data.route_tables.first.route_table_id, vpc_id],
       tags: [{key: 'Name', value: name}]
     )
   end
 
   def destroy
     Puppet.info("Deleting VPC #{name}}")
-    ec2 = ec2_client(resource[:region])
-    response = ec2.describe_vpcs(filters: [
-      {name: 'tag:Name', values: [name]},
-    ])
-    fail("Multiple VPCs with name #{name}. Not deleting.") if response.data.vpcs.count > 1
-    response.data.vpcs.each do |vpc|
-      ec2.delete_vpc(
-        vpc_id: vpc.vpc_id
-      )
-    end
+    ec2_client(resource[:region]).delete_vpc(
+      vpc_id: @remote_hash[:vpc_id]
+    )
   end
 end
 

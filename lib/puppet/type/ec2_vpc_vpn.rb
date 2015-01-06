@@ -1,19 +1,62 @@
 Puppet::Type.newtype(:ec2_vpc_vpn) do
-  @doc = "Manage AWS Virtual Private Networks"
-  newparam(:name)
+  @doc = 'type representing an AWS Virtual Private Networks'
+
   ensurable
-  newproperty(:virtual_private_gateway)
-  autorequire(:ec2_vpc_virtual_private_gateway) do
-    self[:virtual_private_gateway]
+
+  newparam(:name, namevar: true) do
+    desc 'the name of the VPN'
+    validate do |value|
+      fail 'VPNs must have a name' if value == ''
+    end
   end
-  newproperty(:customer_gateway)
+
+  newproperty(:vpn_gateway) do
+    desc 'the VPN gateway to attach to the VPN'
+  end
+
+  newproperty(:customer_gateway) do
+    desc 'the customer gateway to attach to the VPN'
+  end
+
+  newproperty(:type) do
+    desc 'the type of VPN gateway, defaults to ipsec.1'
+    defaultto 'ipsec.1'
+    validate do |value|
+      unless value =~ /^ipsec\.1$/
+        raise ArgumentError , "'%s' is not a valid type" % value
+      end
+    end
+  end
+
+  newproperty(:routes, :array_matching => :all) do
+    desc 'the list of routes for the VPN'
+  end
+
+  newproperty(:static_routes) do
+    desc 'whether or not to use static routes, defaults to true'
+    defaultto :true
+    newvalues(:true, :false)
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
+  newproperty(:region) do
+    desc 'the region in which to launch the VPN'
+    validate do |value|
+      fail 'region should not contain spaces' if value =~ /\s/
+    end
+  end
+
+  newproperty(:tags) do # TODO
+    desc 'the tags for the VPN'
+  end
+
   autorequire(:ec2_vpc_customer_gateway) do
     self[:customer_gateway]
   end
-  newproperty(:type)
-  newproperty(:routing)
-  newproperty(:static_routes)
-  newproperty(:region) # TODO is this required
-  newproperty(:tags) # TODO
-end
 
+  autorequire(:ec2_vpc_vpn_gateway) do
+    self[:vpn_gateway]
+  end
+end

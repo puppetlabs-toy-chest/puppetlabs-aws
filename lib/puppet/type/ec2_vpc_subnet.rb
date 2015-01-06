@@ -1,18 +1,47 @@
 Puppet::Type.newtype(:ec2_vpc_subnet) do
-  @doc = "Manage AWS subnets"
-  newparam(:name)
+  @doc = 'type representing a VPC Subnet'
+
   ensurable
-  newproperty(:vpc)
-  newproperty(:region)
+
+  newparam(:name, namevar: true) do
+    desc 'the name of the subnet'
+    validate do |value|
+      fail 'Subnets must have a name' if value == ''
+    end
+  end
+
+  newproperty(:vpc) do
+    desc 'the VPC to attach the subnet to'
+  end
+
+  newproperty(:region) do
+    desc 'the region in which to launch the subnet'
+    validate do |value|
+      fail 'region should not contain spaces' if value =~ /\s/
+    end
+  end
+
+  newproperty(:cidr_block) do
+    desc 'the IP address range for the subnet'
+  end
+
+  newproperty(:availability_zone) do
+    desc 'the availability zone in which to launch the subnet'
+  end
+
+  newproperty(:tags) do # TODO
+    desc 'tags to assign to the subnet'
+  end
+
+  newproperty(:route_table) do # TODO
+    desc 'the route table to attach to the subnet'
+  end
+
   autorequire(:ec2_vpc) do
     self[:vpc]
   end
-  newproperty(:cidr_block)
-  newproperty(:availability_zone)
-  newparam(:unique_az_in_vpc) do # TODO
-    desc "Auto-assign to an AZ not used by any other subnets in this VPC."
-  end
-  newproperty(:tags) # TODO
-  newproperty(:route_table) # TODO
-end
 
+  autorequire(:ec2_vpc_route_table) do
+    self[:route_table]
+  end
+end

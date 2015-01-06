@@ -1,10 +1,26 @@
 Puppet::Type.newtype(:ec2_vpc_routetable) do
-  @doc = "Manage AWS route tables"
-  newparam(:name)
+  @doc = 'type representing a VPC route table'
+
   ensurable
-  newproperty(:vpc)
-  newproperty(:region) # TODO determine if required
-  newproperty(:subnets) # TODO
+
+  newparam(:name, namevar: true) do
+    desc 'the name of the route table'
+    validate do |value|
+      fail 'route tables must have a name' if value == ''
+    end
+  end
+
+  newproperty(:vpc) do
+    desc 'VPC to assign the route table to'
+  end
+
+  newproperty(:region) do
+    desc 'region in which to launch the route table'
+  end
+
+  newproperty(:subnets) do # TODO
+    desc 'subnets to attach the route table to'
+  end
 
   newproperty(:routes, :array_matching => :all) do
     desc 'individual routes for the routing table'
@@ -14,10 +30,14 @@ Puppet::Type.newtype(:ec2_vpc_routetable) do
   end
 
   newproperty(:main) do # TODO
+    desc 'whether this is the main route table for the VPC'
     newvalue 'true'
     newvalue 'false'
   end
-  newproperty(:tags) # TODO
+
+  newproperty(:tags) do # TODO
+    desc 'tags to assign to the route table'
+  end
+
   newproperty(:propagate_routes_from) # TODO
 end
-

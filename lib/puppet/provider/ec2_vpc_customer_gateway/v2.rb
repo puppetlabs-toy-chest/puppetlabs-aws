@@ -1,47 +1,76 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'puppet_x', 'bobtfish', 'ec2_api.rb'))
+require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
-Puppet::Type.type(:aws_cgw).provide(:api, :parent => Puppet_X::Bobtfish::Ec2_api) do
+Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
+  confine feature: :aws
+
   mk_resource_methods
-  remove_method :tags= # We want the method inherited from the parent
-  def self.new_from_aws(region_name, item)
-    tags = item.tags.to_h
-    name = tags.delete('Name') || item.id
-    new(
-      :aws_item   => item,
-      :name       => name,
-      :id         => item.id,
-      :bgp_asn    => item.bgp_asn,
-      :type       => 'ipsec.1', # FIXME
-      :region     => region_name,
-      :ip_address => item.ip_address,
-      :ensure     => :present,
-      :tags       => tags
-    )
-  end
+
   def self.instances()
-    regions.collect do |region_name|
-      ec2.regions[region_name].customer_gateways.reject { |item| item.state == :deleting or item.state == :deleted }.collect { |item| new_from_aws(region_name,item) }
+    regions.collect do |region|
+      gateways = []
+      ec2_client(region).describe_customer_gateways.each do |response|
+        response.data.customer_gateways.each do |gateway|
+          hash = gateway_to_hash(region, gateway)
+          gateways << new(hash) unless (gateway.state == "deleting" or gateway.state == "deleted")
+        end
+      end
+      gateways
     end.flatten
   end
 
   read_only(:ip_address, :bgp_asn, :region, :type)
 
-  def create
-    begin
-      fail "Cannot create aws_cgw #{resource[:title]} without a region" unless resource[:region]
-      region = ec2.regions[resource[:region]]
-      fail "Cannot find region '#{resource[:region]} for resource #{resource[:title]}" unless region
-      cgw = region.customer_gateways.create(resource[:bgp_asn].to_i, resource[:ip_address])
-      tag_with_name cgw, resource[:name]
-      tags = resource[:tags] || {}
-      tags.each { |k,v| cgw.add_tag(k, :value => v) }
-      cgw
-    rescue Exception => e
-      fail e
+  def self.prefetch(resources)
+    instances.each do |prov|
+      if resource = resources[prov.name]  # rubocop:disable Lint/AssignmentInCondition
+        resource.provider = prov
+      end
     end
   end
+
+  def self.gateway_to_hash(region, gateway)
+    name_tag = gateway.tags.detect { |tag| tag.key == 'Name' }
+    {
+      :name       => name_tag ? name_tag.value : nil,
+      :id         => gateway.customer_gateway_id,
+      :bgp_asn    => gateway.bgp_asn,
+      :state      => gateway.state,
+      :type       => gateway.type,
+      :region     => region,
+      :ip_address => gateway.ip_address,
+      :ensure     => :present,
+    }
+  end
+
+  def exists?
+    dest_region = resource[:region] if resource
+    Puppet.info("Checking if Customer gateway #{name} exists in region #{dest_region || region}")
+    @property_hash[:ensure] == :present
+  end
+
+  def create
+    Puppet.info("Creating Customer gateway #{name} in region #{resource[:region]}")
+    ec2 = ec2_client(resource[:region])
+
+    response = ec2.create_customer_gateway(
+      type: resource[:type],
+      public_ip: resource[:ip_address],
+      bgp_asn: resource[:bgp_asn],
+    )
+
+    ec2.create_tags(
+      resources: [response.data.customer_gateway.customer_gateway_id],
+      tags: [{key: 'Name', value: name}]
+    )
+
+    @property_hash[:ensure] = :present
+  end
+
   def destroy
-    @property_hash[:aws_item].delete
+    Puppet.info("Destroying Customer gateway #{name} in region #{resource[:region]}")
+    ec2_client(resource[:region]).delete_customer_gateway(
+      customer_gateway_id: @property_hash[:id]
+    )
     @property_hash[:ensure] = :absent
   end
 end
