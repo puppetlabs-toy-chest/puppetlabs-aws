@@ -1,0 +1,157 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=CreateVpc&CidrBlock=10.0.0.0%2F16&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-13T15%3A14%3A24Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "235"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Mon, 13 Oct 2014 15:14:25 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <CreateVpcResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>ff6c7586-b2c9-42c6-a9b3-03a2640bd795</requestId>
+                <vpc>
+                    <vpcId>vpc-63e15806</vpcId>
+                    <state>pending</state>
+                    <cidrBlock>10.0.0.0/16</cidrBlock>
+                    <dhcpOptionsId>dopt-e5edfb87</dhcpOptionsId>
+                    <instanceTenancy>default</instanceTenancy>
+                </vpc>
+            </CreateVpcResponse>
+        http_version: 
+      recorded_at: "Mon, 13 Oct 2014 15:14:26 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeRouteTables&Filter.1.Name=vpc-id&Filter.1.Value.1=vpc-63e15806&Filter.2.Name=association.main&Filter.2.Value.1=true&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-13T15%3A14%3A26Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "327"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Mon, 13 Oct 2014 15:14:26 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeRouteTablesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>8e65ddd5-d675-4041-a807-8aa6007bd544</requestId>
+                <routeTableSet>
+                    <item>
+                        <routeTableId>rtb-215aac44</routeTableId>
+                        <vpcId>vpc-63e15806</vpcId>
+                        <routeSet>
+                            <item>
+                                <destinationCidrBlock>10.0.0.0/16</destinationCidrBlock>
+                                <gatewayId>local</gatewayId>
+                                <state>active</state>
+                                <origin>CreateRouteTable</origin>
+                            </item>
+                        </routeSet>
+                        <associationSet>
+                            <item>
+                                <routeTableAssociationId>rtbassoc-d4d120b1</routeTableAssociationId>
+                                <routeTableId>rtb-215aac44</routeTableId>
+                                <main>true</main>
+                            </item>
+                        </associationSet>
+                        <propagatingVgwSet/>
+                        <tagSet/>
+                    </item>
+                </routeTableSet>
+            </DescribeRouteTablesResponse>
+        http_version: 
+      recorded_at: "Mon, 13 Oct 2014 15:14:27 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=CreateTags&ResourceId.1=rtb-215aac44&ResourceId.2=vpc-63e15806&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Tag.1.Key=Name&Tag.1.Value=test-vpc&Timestamp=2014-10-13T15%3A14%3A27Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "298"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Mon, 13 Oct 2014 15:14:27 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <CreateTagsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>619f1736-eade-4766-a3a8-143a014fe453</requestId>
+                <return>true</return>
+            </CreateTagsResponse>
+        http_version: 
+      recorded_at: "Mon, 13 Oct 2014 15:14:28 GMT"
+  recorded_with: "VCR 2.9.3"

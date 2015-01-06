@@ -1,0 +1,179 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeInternetGateways&Signature=SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-17T13%3A19%3A23Z&Version=2014-06-15"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "224"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 13:19:24 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeInternetGatewaysResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>9561dbcc-82d0-4733-adf0-452b9b4de401</requestId>
+                <internetGatewaySet>
+                    <item>
+                        <internetGatewayId>igw-300a1352</internetGatewayId>
+                        <attachmentSet>
+                            <item>
+                                <vpcId>vpc-9204b9f7</vpcId>
+                                <state>available</state>
+                            </item>
+                        </attachmentSet>
+                        <tagSet/>
+                    </item>
+                    <item>
+                        <internetGatewayId>igw-22edf640</internetGatewayId>
+                        <attachmentSet>
+                            <item>
+                                <vpcId>vpc-6853ea0d</vpcId>
+                                <state>available</state>
+                            </item>
+                        </attachmentSet>
+                        <tagSet>
+                            <item>
+                                <key>Name</key>
+                                <value>test-gateway</value>
+                            </item>
+                        </tagSet>
+                    </item>
+                </internetGatewaySet>
+            </DescribeInternetGatewaysResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 13:19:24 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeVpcs&Signature=&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-17T13%3A19%3A25Z&Version=2014-06-15&VpcId.1=vpc-9204b9f7"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "237"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 13:19:25 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>13f9443a-49c0-49fd-b85f-2d4ed6ff223b</requestId>
+                <vpcSet>
+                    <item>
+                        <vpcId>vpc-9204b9f7</vpcId>
+                        <state>available</state>
+                        <cidrBlock>172.30.0.0/16</cidrBlock>
+                        <dhcpOptionsId>dopt-e5edfb87</dhcpOptionsId>
+                        <instanceTenancy>default</instanceTenancy>
+                        <isDefault>false</isDefault>
+                    </item>
+                </vpcSet>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 13:19:26 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "AWSAccessKeyId=&Action=DescribeVpcs&Signature=estamp=2014-10-17T13%3A19%3A26Z&Version=2014-06-15&VpcId.1=vpc-6853ea0d"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.2 ruby/2.1.1 x86_64-darwin13.0"
+          Content-Length: 
+            - "235"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Fri, 17 Oct 2014 13:19:26 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
+                <requestId>692b351a-e8c7-47fb-913c-600da57e1d07</requestId>
+                <vpcSet>
+                    <item>
+                        <vpcId>vpc-6853ea0d</vpcId>
+                        <state>available</state>
+                        <cidrBlock>10.0.0.0/16</cidrBlock>
+                        <dhcpOptionsId>dopt-e5edfb87</dhcpOptionsId>
+                        <tagSet>
+                            <item>
+                                <key>Name</key>
+                                <value>test-vpc</value>
+                            </item>
+                        </tagSet>
+                        <instanceTenancy>default</instanceTenancy>
+                        <isDefault>false</isDefault>
+                    </item>
+                </vpcSet>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Fri, 17 Oct 2014 13:19:27 GMT"
+  recorded_with: "VCR 2.9.3"
