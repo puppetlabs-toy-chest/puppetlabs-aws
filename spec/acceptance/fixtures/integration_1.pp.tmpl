@@ -1,0 +1,55 @@
+node default {
+  ec2_instance { '{{instance_name}}':
+    ensure => {{ensure}},
+    region => '{{region}}',
+    image_id => '{{image_id}}',
+    instance_type => '{{instance_type}}',
+    security_groups => ['default'],
+    tags            => {
+      {{#tags}}
+        {{k}} => '{{v}}',
+      {{/tags}}
+    },
+  }
+
+  ec2_securitygroup { '{{group_name}}':
+    ensure => {{ensure}},
+    description => '{{group_description}}',
+    region => '{{region}}',
+    ingress     => [
+      {{#ingress}}
+        {
+          {{#values}}
+          {{k}} => '{{v}}',
+          {{/values}}
+        },
+      {{/ingress}}
+    ],
+    tags            => {
+      {{#tags}}
+      {{k}} => '{{v}}',
+      {{/tags}}
+    },
+  }
+
+  elb_loadbalancer { '{{elb_name}}':
+    ensure => {{ensure}},
+    region => '{{region}}',
+    availability_zones => [{{elb_availability_zones}}],
+    listeners => [
+      {{#listeners}}
+        {
+          {{#values}}
+          {{k}} => '{{v}}',
+          {{/values}}
+        }
+      {{/listeners}}
+    ],
+    instances => [{{#balanced_instances}}'{{.}}',{{/balanced_instances}}],
+    tags            => {
+      {{#tags}}
+      {{k}} => '{{v}}',
+      {{/tags}}
+    },
+  }
+}

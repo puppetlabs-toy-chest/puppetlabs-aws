@@ -35,6 +35,11 @@ group :development do
   gem "metadata-json-lint"
 end
 
+group :integration do
+  gem 'beaker-rspec',  :require => false
+  gem 'serverspec',    :require => false
+end
+
 if File.exists? "#{__FILE__}.local"
   eval(File.read("#{__FILE__}.local"), binding)
 end
