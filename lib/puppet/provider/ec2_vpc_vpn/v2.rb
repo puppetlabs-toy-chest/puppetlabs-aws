@@ -125,8 +125,9 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   end
 
   def destroy
-    Puppet.info("Destroying VPN #{name} in region #{resource[:region]}")
-    ec2_client(resource[:region]).delete_vpn_connection(
+    region = @property_hash[:region]
+    Puppet.info("Destroying VPN #{name} in region #{region}")
+    ec2_client(region).delete_vpn_connection(
       vpn_connection_id: @property_hash[:id]
     )
     @property_hash[:ensure] = :absent

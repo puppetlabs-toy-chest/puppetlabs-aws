@@ -40,7 +40,8 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   end
 
   def exists?
-    Puppet.info("Checking if VPC #{name} exists")
+    dest_region = resource[:region] if resource
+    Puppet.info("Checking if VPC #{name} exists in #{dest_region || region}")
     @property_hash[:ensure] == :present
   end
 
@@ -81,11 +82,11 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   end
 
   def destroy
-    Puppet.info("Deleting VPC #{name}}")
-    ec2_client(resource[:region]).delete_vpc(
-      vpc_id: @remote_hash[:id]
+    region = @property_hash[:region]
+    Puppet.info("Deleting VPC #{name} in #{region}")
+    ec2_client(region).delete_vpc(
+      vpc_id: @property_hash[:id]
     )
     @property_hash[:ensure] = :absent
   end
 end
-

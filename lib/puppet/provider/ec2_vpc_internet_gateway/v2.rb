@@ -28,28 +28,37 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def self.gateway_to_hash(region, gateway)
-    vpc_response = ec2_client(region).describe_vpcs(vpc_ids: gateway.attachments.map(&:vpc_id))
-    vpcs = []
-    vpc_response.data.vpcs.each do |vpc|
-      vpc_name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
-      vpcs << vpc_name_tag.value if vpc_name_tag
-    end
     name_tag = gateway.tags.detect { |tag| tag.key == 'Name' }
+    vpcs = []
+    vpc_ids = []
+    if name_tag
+      vpc_response = ec2_client(region).describe_vpcs(vpc_ids: gateway.attachments.map(&:vpc_id))
+      vpc_response.data.vpcs.each do |vpc|
+        vpc_name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
+        if vpc_name_tag
+          vpcs << vpc_name_tag.value
+          vpc_ids << vpc.vpc_id
+        end
+      end
+    end
     {
       name: name_tag ? name_tag.value : nil,
       vpcs: vpcs,
+      vpc_ids: vpc_ids,
+      id: gateway.internet_gateway_id,
       ensure: :present,
       region: region,
     }
   end
 
   def exists?
-    Puppet.info("Checking if internet gateway #{name} exists")
+    dest_region = resource[:region] if resource
+    Puppet.info("Checking if internet gateway #{name} exists in #{dest_region || region}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating internet gateway #{name}")
+    Puppet.info("Creating internet gateway #{name} in #{resource[:region]}")
     ec2 = ec2_client(resource[:region])
     vpc_response = ec2.describe_vpcs(filters: [
       {name: "tag:Name", values: resource[:vpcs]},
@@ -69,21 +78,16 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def destroy
-    Puppet.info("Deleting internet gateway #{name}")
-    ec2 = ec2_client(resource[:region])
-    response = ec2.describe_internet_gateways(filters: [
-      {name: 'tag:Name', values: [name]},
-    ])
-    fail("Multiple gateways with name #{name}. Not deleting.") if response.data.internet_gateways.count > 1
-    response.data.internet_gateways.each do |gateway|
-      gateway.attachments.each do |vpc|
-        ec2.detach_internet_gateway(
-          internet_gateway_id: gateway.internet_gateway_id,
-          vpc_id: vpc.vpc_id,
-        )
-      end
-      ec2.delete_internet_gateway(internet_gateway_id: gateway.internet_gateway_id)
+    region = @property_hash[:region]
+    Puppet.info("Deleting internet gateway #{name} in #{region}")
+    ec2 = ec2_client(region)
+    @property_hash[:vpc_ids].each do |vpc_id|
+      ec2.detach_internet_gateway(
+        internet_gateway_id: @property_hash[:id],
+        vpc_id: vpc_id,
+      )
     end
+    ec2.delete_internet_gateway(internet_gateway_id: @property_hash[:id])
+    @property_hash[:ensure] = :absent
   end
 end
-

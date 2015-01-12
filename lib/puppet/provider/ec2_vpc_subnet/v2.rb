@@ -53,7 +53,8 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
   end
 
   def exists?
-    Puppet.info("Checking if subnet #{name} exists")
+    dest_region = resource[:region] if resource
+    Puppet.info("Checking if subnet #{name} exists in #{dest_region || region }")
     @property_hash[:ensure] == :present
   end
 
@@ -90,8 +91,9 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
   end
 
   def destroy
-    Puppet.info("Deleting subnet #{name}")
-    ec2_client(resource[:region]).delete_subnet(
+    region = @property_hash[:region]
+    Puppet.info("Deleting subnet #{name} in #{region}")
+    ec2_client(region).delete_subnet(
       subnet_id: @property_hash[:id]
     )
     @property_hash[:ensure] = :absent

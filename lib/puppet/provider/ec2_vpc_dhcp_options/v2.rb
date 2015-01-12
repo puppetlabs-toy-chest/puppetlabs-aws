@@ -76,8 +76,9 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
   end
 
   def destroy
-    Puppet.info("Destroying DHCP options #{name} in region #{resource[:region]}")
-    ec2_client(resource[:region]).delete_dhcp_options(
+    region = @property_hash[:region]
+    Puppet.info("Destroying DHCP options #{name} in #{region}")
+    ec2_client(region).delete_dhcp_options(
       dhcp_options_id: @property_hash[:id]
     )
     @property_hash[:ensure] = :absent

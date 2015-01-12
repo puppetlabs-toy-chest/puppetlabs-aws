@@ -64,7 +64,8 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
   end
 
   def exists?
-    Puppet.info("Checking if Route table #{name} exists")
+    dest_region = resource[:region] if resource
+    Puppet.info("Checking if Route table #{name} exists in #{dest_region || region}")
     @property_hash[:ensure] == :present
   end
 
@@ -100,13 +101,9 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
   end
 
   def destroy
-    Puppet.info("Deleting Route table #{name}")
-    ec2 = ec2_client(resource[:region])
-    response = ec2.describe_route_tables(filters: [
-      {name: 'tag:Name', values: [name]},
-    ])
-    fail("Multiple route tables with name #{name}. Not deleting.") if response.data.route_tables.count > 1
-    ec2.delete_route_table(route_table_id: response.data.route_tables.first.route_table_id)
+    region = @property_hash[:region]
+    Puppet.info("Deleting Route table #{name} in #{region}")
+    ec2_client(region).delete_route_table(route_table_id: @property_hash[:id])
     @property_hash[:ensure] = :absent
   end
 end

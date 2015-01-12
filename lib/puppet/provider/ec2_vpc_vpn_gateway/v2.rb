@@ -31,7 +31,6 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def self.gateway_to_hash(region, gateway)
-
     name_tag = gateway.tags.detect { |tag| tag.key == 'Name' }
 
     attached = gateway.vpc_attachments.detect { |vpc| vpc.state == 'attached' }
@@ -94,8 +93,9 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def destroy
-    Puppet.info("Destroying VPN gateway #{name} in region #{resource[:region]}")
-    ec2 = ec2_client(resource[:region])
+    region = @property_hash[:region]
+    Puppet.info("Destroying VPN gateway #{name} in #{region}")
+    ec2 = ec2_client(region)
     vpc_id = @property_hash[:vpc_id]
     ec2.detach_vpn_gateway(
       vpn_gateway_id: @property_hash[:id],
