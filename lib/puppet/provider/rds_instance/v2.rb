@@ -9,21 +9,17 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   def self.instances
     regions.collect do |region|
       instances = []
-      rds_client(region).describe_db_instances(filters: [
-        {name: 'MaxRecords', values: ['100', ]}
-      ]).each do |response|
-        response.data.reservations.each do |reservation|
-          reservation.instances.each do |instance|
-            hash = instance_to_hash(region, instance)
-            instances << new(hash) if (hash[:name] and ! hash[:name].empty?)
-          end
+      rds_client(region).describe_db_instances.each do |response|
+        response.data.db_instances.each do |db|
+            hash = db_instance_to_hash(region, db)
+            instances << new(hash) if hash[:name]
         end
       end
       instances
     end.flatten
   end
 
-  read_only(:allocated_storage, :auto_minor_version_upgrade, :availability_zone,
+  read_only(:allocated_storage, :auto_minor_version_upgrade, :availability_zone_name,
             :backup_retention_period, :character_set_name, :creation_date_time,
             :db_instance_class, :instance_id, :db_name, :engine, :engine_version, :iops, :master_username,
             :multi_az, :backup_window, :vpc_id, :license_model)
@@ -36,26 +32,27 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end
   end
 
-  def self.instance_to_hash(region, instance)
-    monitoring = instance.monitoring.state == "enabled" ? true : false
-    tags = {}
-    instance.tags.each do |tag|
-      tags[tag.key] = tag.value unless tag.key == 'Name'
-    end
+  def self.db_instance_to_hash(region, instance)
+    #monitoring = instance.monitoring.state == "enabled" ? true : false
+    #tags = {}
+    #instance.tags.each do |tag|
+    #  tags[tag.key] = tag.value unless tag.key == 'Name'
+    #end
     config = {
       db_instance_class: instance.db_instance_class,
-      instance_id: instance.instance_id,
+      #instance_id: instance.instance_id,
       master_username: instance.master_username,
-      availability_zone: instance.placement.availability_zone,
-      tags: tags,
+    #  availability_zone_name: instance.availability_zone_name,
+    #  tags: tags,
       db_name: instance.db_name,
       allocated_storage: instance.allocated_storage,
       storage_type: instance.storage_type,
       license_model: instance.license_model,
       multi_az: instance.multi_az,
       iops: instance.iops,
-      master_user_password: instance.master_password,
+      master_user_password: instance.master_user_password,
       db_name: instance.db_name,
+      db_subnet_group_name: instance.db_subnet_group_name,
     }
     config
   end
@@ -74,16 +71,18 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def create
     Puppet.info("Starting DB instance #{name}")
-    groups = resource[:security_groups]
-    groups = [groups] unless groups.is_a?(Array)
-    groups = groups.reject(&:nil?)
+#    groups = resource[:security_groups]
+#    groups = [groups] unless groups.is_a?(Array)
+#    groups = groups.reject(&:nil?)
 
     if stopped?
       restart
     else
       config = {
         db_instance_identifier: resource[:db_name],
-        security_groups: groups,
+        db_instance_class: resource[:db_instance_class],
+        #availability_zone_name: resource[:availability_zone_name],
+        #security_groups: groups,
         engine: resource[:engine],
         engine_version: resource[:engine_version],
         license_model: resource[:license_model],
@@ -91,9 +90,10 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
         multi_az: resource[:multi_az],
         allocated_storage: resource[:allocated_storage],
         iops: resource[:iops],
-        instance_id: resource[:instance_id],
+        #instance_id: resource[:instance_id],
         master_username: resource[:master_username],
-        master_user_password: resource[:master_password],
+        master_user_password: resource[:master_user_password],
+        db_subnet_group_name: resource[:db_subnet_group_name],
       }
 
       response = rds_client(resource[:region]).create_db_instance(config)
@@ -104,8 +104,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       #tags << {key: 'Name', value: name}
       #rds_client(resource[:region]).create_tags(
       #  resources: response.instances.map(&:instance_id),
-      #  tags: tags
-      #)
+      #  tags: tags)
     end
   end
 end

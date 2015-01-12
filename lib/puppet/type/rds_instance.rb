@@ -31,19 +31,19 @@ Puppet::Type.newtype(:rds_instance) do
     end
   end
 
-  newproperty(:instance_id) do
-    desc 'the instance id to use for the instance'
+  newproperty(:db_instance_class) do
+    desc 'the type to use for the instance (mysql, | postgres)'
     validate do |value|
-      fail 'instance_id should not contain spaces' if value =~ /\s/
-      fail 'instance_id should not be blank' if value == ''
+      fail 'db_instance_class should not contain spaces' if value =~ /\s/
+      fail 'db_instance_class should not be blank' if value == ''
     end
   end
 
-  newproperty(:availability_zone) do
+  newproperty(:availability_zone_name) do
     desc 'the availability zone in which to place the instance'
     validate do |value|
-      fail 'availability_zone should not contain spaces' if value =~ /\s/
-      fail 'availability_zone should not be blank' if value == ''
+      fail 'availability_zone_name should not contain spaces' if value =~ /\s/
+      fail 'availability_zone_name should not be blank' if value == ''
     end
   end
 
@@ -60,6 +60,14 @@ Puppet::Type.newtype(:rds_instance) do
     validate do |value|
       fail 'engine_version type should not contains spaces' if value =~ /\s/
       fail 'engine_version should not be blank' if value == ''
+    end
+  end
+
+  newproperty(:allocated_storage) do
+    desc 'The size of the DB'
+    validate do |value|
+      fail 'allocated_storage type should not contains spaces' if value =~ /\s/
+      fail 'allocated_storage should not be blank' if value == ''
     end
   end
 
@@ -91,10 +99,10 @@ Puppet::Type.newtype(:rds_instance) do
     end
   end
 
-  newproperty(:master_password) do
+  newproperty(:master_user_password) do
     desc 'The main user Password'
     validate do |value|
-      fail 'master_password should not be blank' if value == ''
+      fail 'master_user_password should not be blank' if value == ''
     end
   end
 
@@ -102,6 +110,13 @@ Puppet::Type.newtype(:rds_instance) do
     desc 'The main user Password'
     validate do |value|
       fail 'multi_az should not be blank' if value == ''
+    end
+  end
+
+  newproperty(:db_subnet_group_name) do
+    desc 'The VPC subnet for this instance.'
+    validate do |value|
+      fail 'db_subnet_group_name should not be blank' if value == ''
     end
   end
 
