@@ -82,7 +82,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
         {name: 'tag:Name', values: [route_table_name]},
       ])
       fail("Multiple Route tables with name #{route_table_name}") if table_response.data.route_tables.count > 1
-      fail("No VPCs with name #{route_table_name}") if table_response.data.route_tables.empty?
+      fail("No Route tables with name #{route_table_name}") if table_response.data.route_tables.empty?
       ec2.associate_route_table(
         subnet_id: subnet_id,
         route_table_id: table_response.data.route_tables.first.route_table_id,

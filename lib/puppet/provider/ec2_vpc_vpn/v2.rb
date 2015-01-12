@@ -127,9 +127,14 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   def destroy
     region = @property_hash[:region]
     Puppet.info("Destroying VPN #{name} in region #{region}")
-    ec2_client(region).delete_vpn_connection(
+    ec2 = ec2_client(region)
+    ec2.delete_vpn_connection(
       vpn_connection_id: @property_hash[:id]
     )
+    # We wait for deletion here as other resources like
+    # customer gateways can't be deleted until the vpn connection
+    # has terminated
+    ec2.wait_until(:vpn_connection_deleted, vpn_connection_ids: [@property_hash[:id]])
     @property_hash[:ensure] = :absent
   end
 end

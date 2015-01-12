@@ -41,7 +41,7 @@ Puppet::Type.newtype(:ec2_vpc_subnet) do
     self[:vpc]
   end
 
-  autorequire(:ec2_vpc_route_table) do
+  autorequire(:ec2_vpc_routetable) do
     self[:route_table]
   end
 end

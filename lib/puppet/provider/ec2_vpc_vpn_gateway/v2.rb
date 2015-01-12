@@ -101,7 +101,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
       vpn_gateway_id: @property_hash[:id],
       vpc_id: vpc_id,
     ) if vpc_id
-    # TODO need to wait for detachment, currently requires a rerun
+    sleep 60 # TODO should be able to wait for detachment
     ec2.delete_vpn_gateway(
       vpn_gateway_id: @property_hash[:id]
     )

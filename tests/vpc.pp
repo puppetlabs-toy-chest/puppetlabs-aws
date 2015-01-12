@@ -31,10 +31,10 @@ ec2_vpc_routetable { 'garethr-routes':
 }
 
 ec2_vpc_vpn_gateway { 'garethr-vgw':
-  ensure            => present,
-  region            => 'sa-east-1',
-  vpc               => 'garethr-test',
-  type              => 'ipsec.1',
+  ensure => present,
+  region => 'sa-east-1',
+  vpc    => 'garethr-test',
+  type   => 'ipsec.1',
 }
 
 ec2_vpc_internet_gateway { 'garethr-igw':

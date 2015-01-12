@@ -29,4 +29,8 @@ Puppet::Type.newtype(:ec2_vpc_routetable) do
     desc 'tags to assign to the route table'
   end
 
+  autorequire(:ec2_vpc) do
+    self[:vpc]
+  end
+
 end

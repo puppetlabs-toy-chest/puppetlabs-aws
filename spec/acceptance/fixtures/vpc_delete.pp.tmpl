@@ -1,0 +1,39 @@
+ec2_vpc_internet_gateway { '{{name}}-igw':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_vpc_vpn { '{{name}}-vpn':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_vpc_customer_gateway { '{{name}}-cgw':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_vpc_vpn_gateway { '{{name}}-vgw':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_vpc_subnet { '{{name}}-subnet':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_vpc_routetable { '{{name}}-routes':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_vpc { '{{name}}-vpc':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_vpc_dhcp_options { '{{name}}-options':
+  ensure            => {{ensure}},
+  region            => 'sa-east-1',
+}

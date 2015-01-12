@@ -25,10 +25,6 @@ Puppet::Type.newtype(:ec2_vpc) do
     desc 'the DHCP option set to use for this VPC'
   end
 
-  autorequire(:ec2_vpc_dhcp_options) do
-    self[:dhcp_options]
-  end
-
   newproperty(:instance_tenancy) do
     desc 'the supported tenancy options for instances in this VPC'
     defaultto 'default'
@@ -38,5 +34,8 @@ Puppet::Type.newtype(:ec2_vpc) do
   newproperty(:tags) do # TODO
     desc 'the tags to assign to the VPC'
   end
-end
 
+  autorequire(:ec2_vpc_dhcp_options) do
+    self[:dhcp_options]
+  end
+end
