@@ -39,8 +39,16 @@ module PuppetX
         self.class.ec2_client(region)
       end
 
+      def rds_client(region = default_region)
+        self.class.rds_client(region)
+      end
+
       def self.elb_client(region = default_region)
         ::Aws::ElasticLoadBalancing::Client.new({region: region})
+      end
+
+      def self.rds_client(region = default_region)
+        ::Aws::RDS::Client.new({region: region})
       end
 
       def elb_client(region = default_region)
