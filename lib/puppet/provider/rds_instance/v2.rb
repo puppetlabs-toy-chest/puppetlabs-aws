@@ -33,7 +33,6 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def self.db_instance_to_hash(region, instance)
-    #monitoring = instance.monitoring.state == "enabled" ? true : false
     #tags = {}
     #instance.tags.each do |tag|
     #  tags[tag.key] = tag.value unless tag.key == 'Name'
@@ -71,9 +70,9 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def create
     Puppet.info("Starting DB instance #{name}")
-#    groups = resource[:security_groups]
-#    groups = [groups] unless groups.is_a?(Array)
-#    groups = groups.reject(&:nil?)
+    groups = resource[:security_groups]
+    groups = [groups] unless groups.is_a?(Array)
+    groups = groups.reject(&:nil?)
 
     if stopped?
       restart
@@ -82,7 +81,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
         db_instance_identifier: resource[:db_name],
         db_instance_class: resource[:db_instance_class],
         #availability_zone_name: resource[:availability_zone_name],
-        #security_groups: groups,
+        vpc_security_group_ids: groups,
         engine: resource[:engine],
         engine_version: resource[:engine_version],
         license_model: resource[:license_model],
@@ -90,7 +89,6 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
         multi_az: resource[:multi_az],
         allocated_storage: resource[:allocated_storage],
         iops: resource[:iops],
-        #instance_id: resource[:instance_id],
         master_username: resource[:master_username],
         master_user_password: resource[:master_user_password],
         db_subnet_group_name: resource[:db_subnet_group_name],
@@ -107,4 +105,28 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       #  tags: tags)
     end
   end
+
+#  def tags=(value)
+#    Puppet.info("Updating tags for #{name} in region #{region}")
+#    ec2_client(resource[:region]).create_tags(
+#      resources: [instance_id],
+#      tags: value.collect { |k,v| { :key => k, :value => v } }
+#    ) unless value.empty?
+#    missing_tags = tags.keys - value.keys
+#    ec2_client(resource[:region]).delete_tags(
+#      resources: [instance_id],
+#      tags: missing_tags.collect { |k| { :key => k } }
+#    ) unless missing_tags.empty?
+#  end
+
+  def destroy
+    Puppet.info("Deleting instance #{name} in region #{resource[:region]}")
+#    rds = rds_client(resource[:region])
+#    instance = rds.describe_db_instances
+#    instance_ids = instances.reservations.map(&:instances).flatten.map(&:instance_id)
+#    rds.terminate_instances(instance_ids: instance_ids)
+#    rds.wait_until(:instance_terminated, instance_ids: instance_ids)
+    @property_hash[:ensure] = :absent
+  end
+
 end

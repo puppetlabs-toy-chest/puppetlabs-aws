@@ -113,6 +113,13 @@ Puppet::Type.newtype(:rds_instance) do
     end
   end
 
+  newproperty(:security_groups) do
+    desc 'The main user Password'
+    validate do |value|
+      fail 'security_groups should not be blank' if value == ''
+    end
+  end
+
   newproperty(:db_subnet_group_name) do
     desc 'The VPC subnet for this instance.'
     validate do |value|
