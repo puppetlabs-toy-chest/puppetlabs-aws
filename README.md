@@ -218,7 +218,8 @@ elb_loadbalancer { 'name-of-load-balancer':
 
 ### rds_instance
 
-```#rds_instance { 'db-name': 
+```puppet
+rds_instance { 'db-name': 
   ensure => present,
   region => 'us-west-1', 
 
