@@ -216,6 +216,37 @@ elb_loadbalancer { 'name-of-load-balancer':
 }
 ```
 
+### rds_instance
+
+```#rds_instance { 'db-name': 
+  ensure => present,
+  region => 'us-west-1', 
+
+# Database name
+  db_name => 'db-name', 
+
+#Database Engine
+# [ mysql ]
+  engine => 'mysql', 
+  engine_version => '5.6.19a', 
+
+# Licence
+# [ license-included | bring-your-own-license | general-public-license ]
+  license_model => 'general-public-license', 
+  allocated_storage => 10, 
+  availability_zone_name => 'us-west-1a', 
+# Storage type for database
+# [ gp2 | io1 ]
+# Note * an iops parameter must be specified if using io1
+  storage_type => 'gp2',
+# Db class
+  db_instance_class => 'db.t2.micro', 
+  master_username => 'master-db-user', 
+  master_user_password => 'the-master-password', 
+  multi_az => false, 
+  db_subnet_group_name => 'name-of-VPC', 
+}
+```
 ##Limitations
 
 At the moment this module only supports a small number of the resources
