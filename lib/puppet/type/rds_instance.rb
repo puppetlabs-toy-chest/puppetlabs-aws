@@ -4,8 +4,8 @@ Puppet::Type.newtype(:rds_instance) do
   ensurable do
     defaultvalues
     aliasvalue(:running, :present)
-    newvalue(:stopped) do
-      provider.stop
+    newvalue(:destroy) do
+      provider.destroy
     end
   end
 
@@ -124,6 +124,20 @@ Puppet::Type.newtype(:rds_instance) do
     desc 'The VPC subnet for this instance.'
     validate do |value|
       fail 'db_subnet_group_name should not be blank' if value == ''
+    end
+  end
+
+  newproperty(:skip_final_snapshot) do
+    desc 'Create one last snapshot.'
+    validate do |value|
+      fail 'skip_final_snapshot should not be blank' if value == ''
+    end
+  end
+
+  newproperty(:final_db_snapshot_identifier) do
+    desc 'Create one last snapshot.'
+    validate do |value|
+      fail 'final_db_snapshot_identifier should not be blank' if value == ''
     end
   end
 

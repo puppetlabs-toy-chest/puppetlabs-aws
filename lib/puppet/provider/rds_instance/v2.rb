@@ -39,9 +39,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     #end
     config = {
       db_instance_class: instance.db_instance_class,
-      #instance_id: instance.instance_id,
       master_username: instance.master_username,
-    #  availability_zone_name: instance.availability_zone_name,
     #  tags: tags,
       db_name: instance.db_name,
       allocated_storage: instance.allocated_storage,
@@ -52,6 +50,8 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       master_user_password: instance.master_user_password,
       db_name: instance.db_name,
       db_subnet_group_name: instance.db_subnet_group_name,
+      skip_final_snapshot: instance.skip_final_snapshot,
+      final_db_snapshot_identifier: instance.final_db_snapshot_identifier,
     }
     config
   end
@@ -121,11 +121,14 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def destroy
     Puppet.info("Deleting instance #{name} in region #{resource[:region]}")
-#    rds = rds_client(resource[:region])
-#    instance = rds.describe_db_instances
-#    instance_ids = instances.reservations.map(&:instances).flatten.map(&:instance_id)
-#    rds.terminate_instances(instance_ids: instance_ids)
-#    rds.wait_until(:instance_terminated, instance_ids: instance_ids)
+    rds = rds_client(resource[:region])
+    Puppet.info("Skip Final Snapshot: #{resource[:skip_final_snapshot]}")
+    config = {
+      db_instance_identifier: resource[:db_name],
+      skip_final_snapshot: resource[:skip_final_snapshot],
+      final_db_snapshot_identifier: resource[:final_db_snapshot_identifier],
+    }
+    rds.delete_db_instance(config)
     @property_hash[:ensure] = :absent
   end
 
