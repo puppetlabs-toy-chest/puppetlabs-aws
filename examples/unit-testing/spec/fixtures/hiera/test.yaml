@@ -1,0 +1,7 @@
+---
+default_image_id: ami-67a60d7a
+default_instance_type: t1.micro
+default_region: sa-east-1
+instances:
+  web1: {}
+  web2: {}
