@@ -6,6 +6,7 @@ describe "ec2_instance" do
 
   before(:all) do
     @default_region = 'sa-east-1'
+    @default_availability_zone = "#{@default_region}a"
     @aws = AwsHelper.new(@default_region)
     @template = 'instance.pp.tmpl'
   end
@@ -231,4 +232,148 @@ describe "ec2_instance" do
       expect(instance.state.name).to eq('running')
     end
   end
+
+  describe 'should create a new instance with puppet resource' do
+
+    before(:all) do
+      @config = {
+        :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :instance_type => 't1.micro',
+        :region => @default_region,
+        :image_id => 'ami-41e85d5c',
+        :ensure => 'present',
+        :monitoring => false,
+        :availability_zone => @default_availability_zone,
+        :security_groups => 'default',
+      }
+
+      # The value for this ENV var must be an existing key in your Amazon account
+      # the key must be available in the sa-east-1 region
+      @config[:key_name] = ENV['AWS_KEY_PAIR'] if ENV['AWS_KEY_PAIR']
+      # create new instance with puppet resource
+      TestExecutor.puppet_resource('ec2_instance', @config, '--modulepath ../')
+      #wait for instance to report as running
+      @instance = get_instance(@config[:name])
+      @aws.ec2_client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
+      # set env variable and use puppet resource to inspect state of ec2 instance
+      ENV['AWS_REGION'] = @config[:region]
+      @result = TestExecutor.puppet_resource('ec2_instance', {:name => @config[:name]}, '--modulepath ../')
+      expect(@result.stderr).not_to match(/\b/)
+      # re-assign @instance for more up to date info
+      @instance = get_instance(@config[:name])
+    end
+
+    after(:all) do
+      @config[:ensure] = 'absent'
+      TestExecutor.puppet_resource('ec2_instance', @config, '--modulepath ../')
+      @aws.ec2_client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id]) do |w|
+        w.max_attempts = 5
+      end
+    end
+
+    it 'ensure is correct' do
+      regex = /(ensure)(\s*)(=>)(\s*)('running')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'instance_type is correct' do
+      regex = /(instance_type)(\s*)(=>)(\s*)('#{@config[:instance_type]}')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'region is correct' do
+      regex = /(region)(\s*)(=>)(\s*)('#{@config[:region]}')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'image_id is correct' do
+      regex = /(image_id)(\s*)(=>)(\s*)('#{@config[:image_id]}')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'security_groups is correct' do
+      regex = /(security_groups)(\s*)(=>)(\s*)(\['default'\])/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'virtualization_type is correct' do
+      regex = /(virtualization_type)(\s*)(=>)(\s*)('paravirtual')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'availability_zone is correct' do
+      regex = /(availability_zone)(\s*)(=>)(\s*)('#{@config[:availability_zone]}')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'hypervisor is correct' do
+      regex = /(hypervisor)(\s*)(=>)(\s*)('xen')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'instance_id is reported' do
+      regex = /(instance_id)(\s*)(=>)(\s*)('#{@instance.instance_id}')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'monitoring is correct' do
+      regex = /(monitoring)(\s*)(=>)(\s*)('#{@config[:monitoring]}')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'private_dns_name is reported' do
+      regex = /(private_dns_name)(\s*)(=>)(\s*)('#{@instance.private_dns_name}')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'public_dns_name is reported' do
+      regex = /(public_dns_name)(\s*)(=>)(\s*)('#{@instance.public_dns_name}')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'key_name is correct' do
+      if ENV['AWS_KEY_PAIR']
+        # key was supplied at creation of ec2 instance
+        # key should be reported
+        # we will need a key to run this with in CI
+        regex = /(key_name)(\s*)(=>)(\s*)('#{@config[:key_name]}')/
+        expect(@result.stdout).to match(regex)
+      else
+        # no key was supplied on creation of ec2 instance
+        # should not report key
+        regex = /key_name/
+        expect(@result.stdout).not_to match(regex)
+      end
+    end
+
+    it 'private_ip_address is reported' do
+      regex = /(private_ip_address)(\s*)(=>)(\s*)('#{@instance.private_ip_address}')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'public_ip_address is reported' do
+      regex = /(public_ip_address)(\s*)(=>)(\s*)('#{@instance.public_ip_address}')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    context 'stop the instance' do
+
+      before(:all) do
+        #stop the instance
+        @config[:ensure] = 'stopped'
+        ENV['AWS_REGION'] = @config[:region]
+        TestExecutor.puppet_resource('ec2_instance', @config, '--modulepath ../')
+        @aws.ec2_client.wait_until(:instance_stopped, instance_ids:[@instance.instance_id])
+        @stop_result = TestExecutor.puppet_resource('ec2_instance', {:name => @config[:name]}, '--modulepath ../')
+      end
+
+      it 'reports the instance as stopped' do
+        regex = /(ensure)(\s*)(=>)(\s*)('stopped')/
+        expect(@stop_result.stdout).to match(regex)
+      end
+
+    end
+
+  end
+
 end
