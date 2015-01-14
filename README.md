@@ -39,7 +39,11 @@ Server](https://github.com/puppetlabs/puppet-server) you need to
 
     /opt/puppet/bin/puppetserver gem install aws-sdk-core
 
-Once the library is installed you'll need to set a few environment
+Once the gem is installed you will need to restart the puppet-server:
+
+    service pe-puppetserver restart
+
+Finally you need to set a few environment
 variables for your AWS access credentials.
 
 ```
