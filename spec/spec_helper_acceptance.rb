@@ -2,6 +2,9 @@ require 'aws-sdk-core'
 require 'mustache'
 require 'open3'
 
+require 'spec_helper_integration' if ENV['USE_BEAKER']
+
+
 class PuppetManifest < Mustache
 
   def initialize(file, config)
@@ -14,6 +17,17 @@ class PuppetManifest < Mustache
   end
 
   def apply
+    ENV['USE_BEAKER'] ||= false
+    ENV['USE_BEAKER'] ? apply_with_beaker : apply_locally
+  end
+
+  def apply_with_beaker
+    create_remote_file(master, '/etc/puppet/manifests/site.pp', self.render)
+    on(master, 'chmod 777 /etc/puppet/manifests/site.pp')
+    on(master, puppet('agent --test'), {:acceptable_exit_codes => [0,2]})
+  end
+
+  def apply_locally
     manifest = self.render.gsub("\n", '')
     cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest}\" --modulepath ../"
     result = { output: [], exit_status: nil }

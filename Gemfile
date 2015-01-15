@@ -22,6 +22,10 @@ group :test do
   gem "mustache"
 end
 
+group :integration do
+  gem 'beaker-rspec',  :require => false
+end
+
 group :development do
   gem 'travis'
   gem 'travis-lint'
