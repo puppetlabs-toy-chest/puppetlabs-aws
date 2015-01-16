@@ -61,6 +61,11 @@ describe "ec2_instance" do
       expect(@instance.image_id).to eq(@config[:image_id])
     end
 
+    it "not associated with a VPC" do
+      expect(@instance.subnet_id).to be_nil
+      expect(@instance.vpc_id).to be_nil
+    end
+
     it "and return hypervisor, virtualization_type properties" do
       expect(@instance.hypervisor).to eq('xen')
       expect(@instance.virtualization_type).to eq('paravirtual')
@@ -68,7 +73,7 @@ describe "ec2_instance" do
 
     it "and return public_dns_name, private_dns_name,
       public_ip_address, private_ip_address" do
-      pending('we return instance on pending, and not running, and
+      skip('we return instance on pending, and not running, and
         also need to provide better validation around the values')
       expect(@instance.public_dns_name).to match(/\.compute\.amazonaws\.com/)
       expect(@instance.private_dns_name).to match(/\.compute\.internal/)
@@ -192,6 +197,45 @@ describe "ec2_instance" do
       @config[:ensure] = 'present'
       PuppetManifest.new(@template, @config).apply
       @aws.ec2_client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
+    end
+  end
+
+  describe 'with a specified subnet should create a new instance' do
+
+    before(:each) do
+      @config = {
+        :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :instance_type => 't1.micro',
+        :region => 'sa-east-1',
+        :image_id => 'ami-41e85d5c',
+        :ensure => 'present',
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        },
+        :optional => {
+          # This is currently a hardcoded, pre-existing subnet.
+          # Once the VPC support is merged this test should move to the VPC
+          # test suite and use a subnet created during the tests
+          :subnet => 'subnet-acceptance',
+        }
+      }
+
+      PuppetManifest.new(@template, @config).apply
+      @instance = get_instance(@config[:name])
+    end
+
+    after(:each) do
+      @config[:ensure] = 'absent'
+      PuppetManifest.new(@template, @config).apply
+
+      @aws.ec2_client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id])
+    end
+
+    it "associated with a VPC" do
+      expect(@instance.subnet_id).not_to be_nil
+      expect(@instance.vpc_id).not_to be_nil
     end
   end
 
