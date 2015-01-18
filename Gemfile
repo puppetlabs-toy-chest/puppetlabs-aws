@@ -1,26 +1,23 @@
 source 'https://rubygems.org'
 
-def location_for(place, fake_version = nil)
-  if place =~ /^(git:[^#]*)#(.*)/
-    [fake_version, { :git => $1, :branch => $2, :require => false }].compact
-  elsif place =~ /^file:\/\/(.*)/
-    ['>= 0', { :path => File.expand_path($1), :require => false }]
-  else
-    [place, { :require => false }]
-  end
+if puppetversion = ENV['PUPPET_GEM_VERSION']
+  gem 'puppet', puppetversion, :require => false
+else
+  gem 'puppet', :require => false
 end
+
+gem 'puppetlabs_spec_helper', '>= 0.1.0'
+gem 'puppet-lint', '>= 1.0.0'
+gem 'facter', '>= 1.7.0'
 
 gem 'aws-sdk-core', '2.0.5'
 
-group :test do
-  gem 'rake'
-  gem "puppet", *location_for(ENV['PUPPET_LOCATION'] || '~> 3.7.0')
-  gem 'puppetlabs_spec_helper'
-  gem 'webmock'
-  gem 'vcr'
-  gem 'rspec-puppet', :git => 'https://github.com/rodjek/rspec-puppet.git'
-  gem "mustache"
-end
+gem 'rake'
+gem 'webmock'
+gem 'vcr'
+gem 'rspec-puppet'
+gem 'mustache'
+gem 'metadata-json-lint'
 
 group :development do
   gem 'travis'
@@ -32,7 +29,6 @@ group :development do
   gem 'librarian-puppet'
   gem 'clamp'
   gem "hiera-eyaml"
-  gem "metadata-json-lint"
 end
 
 if File.exists? "#{__FILE__}.local"
