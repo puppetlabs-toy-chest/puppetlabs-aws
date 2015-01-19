@@ -19,7 +19,6 @@ group :test do
   gem 'webmock'
   gem 'vcr'
   gem 'rspec-puppet', :git => 'https://github.com/rodjek/rspec-puppet.git'
-  gem 'mustache'
   gem 'metadata-json-lint'
 end
 
@@ -31,7 +30,10 @@ group :development do
   gem 'rubocop', require: false
   gem 'pry'
   gem 'librarian-puppet'
-  gem 'clamp'
+end
+
+group :acceptance do
+  gem 'mustache'
 end
 
 if File.exists? "#{__FILE__}.local"
