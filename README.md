@@ -228,5 +228,5 @@ normal host level resources like `package`, `file`, `user`, etc. We're
 really interested to see how people use these new resources, and what
 else you would like to be able to do with the module.
 
-Note that this module also requires at least Ruby 1.9 and is only tested on Puppet
+Note that this module also requires at least Ruby 2.0.0 and is only tested on Puppet
 versions from 3.4. If this is too limiting please let us know.

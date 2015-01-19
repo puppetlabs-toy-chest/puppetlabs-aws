@@ -22,6 +22,8 @@ PuppetLint::RakeTask.new :lint do |config|
   config.ignore_paths = ['contrib/**/*.pp', 'examples/**/*.pp', 'tests/**/*.pp', 'spec/**/*.pp', 'pkg/**/*.pp']
 end
 
+PuppetSyntax.exclude_paths = ["examples/**/*"]
+
 desc "Run acceptance tests"
 RSpec::Core::RakeTask.new(:acceptance) do |t|
     t.pattern = 'spec/acceptance'
@@ -33,6 +35,7 @@ end
 
 desc "Run lint and spec tests and check metadata format"
 task :test => [
+  :syntax,
   :lint,
   :spec,
   :metadata,
