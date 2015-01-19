@@ -11,6 +11,10 @@
 
 Puppet module for managing Amazon Web Services (AWS) resources to build out cloud infrastructure.
 
+[![Puppet
+Forge](http://img.shields.io/puppetforge/v/puppetlabs/aws.svg)](https://forge.puppetlabs.com/puppetlabs/aws) [![Build
+Status](https://travis-ci.org/puppetlabs/puppetlabs-aws.svg?branch=master)](https://travis-ci.org/puppetlabs/puppetlabs-aws)
+
 ##Description
 
 Amazon Web Services exposes a powerful API for creating and managing
