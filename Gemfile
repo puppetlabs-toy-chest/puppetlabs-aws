@@ -14,12 +14,13 @@ gem 'aws-sdk-core', '2.0.5'
 
 group :test do
   gem 'rake'
-  gem "puppet", *location_for(ENV['PUPPET_LOCATION'] || '~> 3.7.0')
+  gem 'puppet', *location_for(ENV['PUPPET_LOCATION'] || '~> 3.7.0')
   gem 'puppetlabs_spec_helper'
   gem 'webmock'
   gem 'vcr'
   gem 'rspec-puppet', :git => 'https://github.com/rodjek/rspec-puppet.git'
-  gem "mustache"
+  gem 'mustache'
+  gem 'metadata-json-lint'
 end
 
 group :development do
@@ -31,8 +32,6 @@ group :development do
   gem 'pry'
   gem 'librarian-puppet'
   gem 'clamp'
-  gem "hiera-eyaml"
-  gem "metadata-json-lint"
 end
 
 if File.exists? "#{__FILE__}.local"
