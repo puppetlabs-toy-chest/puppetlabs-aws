@@ -10,6 +10,8 @@ infrastructure.
 * [Infrastructure as YAML](yaml-infrastructure-definition/) - describe an
   entire infrastructure stack in YAML, and use `create_resources` and
   Hiera to build your infrastructure
-* [Auditing Resources](audit-security-groups/) - example os using
+* [Auditing Resources](audit-security-groups/) - example of using
   Puppet's noop feature to Audit AWS resource changes and work alongside
   other tools
+* [Unit Testing](unit-testing) - how to make use of the Puppet testing
+  tools like rspec-puppet to test your AWS code

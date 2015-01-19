@@ -1,0 +1,34 @@
+require 'rake'
+require 'rspec/core/rake_task'
+
+require 'puppet-lint/tasks/puppet-lint'
+require 'puppet-syntax/tasks/puppet-syntax'
+
+exclude_paths = [
+  "pkg/**/*",
+  "vendor/**/*",
+  "spec/**/*",
+  "modules/**/*",
+]
+
+PuppetSyntax.exclude_paths = exclude_paths
+
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.pattern = 'spec/*/*_spec.rb'
+end
+
+Rake::Task[:lint].clear
+PuppetLint::RakeTask.new :lint do |config|
+  config.ignore_paths = exclude_paths
+  config.disable_checks = [ '80chars', 'autoloader_layout', 'class_inherits_from_params_class' ]
+  config.fail_on_warnings = true
+  config.with_context = true
+  config.log_format = "%{path}:%{linenumber}:%{check}:%{KIND}:%{message}"
+end
+
+desc "Run lint and spec tests"
+task :test => [
+  :lint,
+  :syntax,
+  :spec,
+]
