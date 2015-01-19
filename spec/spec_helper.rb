@@ -9,3 +9,9 @@ VCR.configure do |c|
   c.cassette_library_dir = 'fixtures/vcr_cassettes'
   c.hook_into :webmock
 end
+
+if ENV['PARSER'] == 'future'
+  RSpec.configure do |c|
+    c.parser = 'future'
+  end
+end

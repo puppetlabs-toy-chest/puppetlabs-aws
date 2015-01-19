@@ -8,5 +8,7 @@ rvm:
   - 2.1.1
 script: bundle exec rake test
 env:
+  - PUPPET_LOCATION="~> 3.6.0" PARSER="future"
+  - PUPPET_LOCATION="~> 3.7.0" PARSER="future"
   - PUPPET_LOCATION="~> 3.6.0"
   - PUPPET_LOCATION="~> 3.7.0"
