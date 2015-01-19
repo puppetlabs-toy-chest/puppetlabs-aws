@@ -13,7 +13,7 @@ end
 
 require 'puppet-lint/tasks/puppet-lint'
 
-ignore_paths = ['contrib/**/*.pp', 'examples/**/*.pp', 'spec/**/*.pp', 'pkg/**/*.pp', 'vendor/**/*.pp']
+ignore_paths = ['contrib/**/*.pp', 'examples/**/*.pp', 'spec/**/*.pp', 'pkg/**/*.pp', 'vendor/**/*']
 
 # necessary to ensure default :lint doesn't exist, else ignore_paths won't work
 Rake::Task[:lint].clear
