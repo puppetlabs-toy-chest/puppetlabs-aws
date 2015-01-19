@@ -58,7 +58,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     if instance.state.name == 'running'
       config[:public_dns_name] = instance.public_dns_name
       config[:private_dns_name] = instance.private_dns_name
-      config[:public_ip_addresse] = instance.public_ip_address
+      config[:public_ip_address] = instance.public_ip_address
       config[:private_ip_address] = instance.private_ip_address
     end
     config
