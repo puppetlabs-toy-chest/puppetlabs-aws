@@ -13,16 +13,18 @@ end
 
 require 'puppet-lint/tasks/puppet-lint'
 
+ignore_paths = ['contrib/**/*.pp', 'examples/**/*.pp', 'spec/**/*.pp', 'pkg/**/*.pp', 'vendor/**/*.pp']
+
 # necessary to ensure default :lint doesn't exist, else ignore_paths won't work
 Rake::Task[:lint].clear
 
 PuppetLint.configuration.relative = true
 PuppetLint.configuration.disable_class_inherits_from_params_class
 PuppetLint::RakeTask.new :lint do |config|
-  config.ignore_paths = ['contrib/**/*.pp', 'examples/**/*.pp', 'tests/**/*.pp', 'spec/**/*.pp', 'pkg/**/*.pp']
+  config.ignore_paths = ignore_paths
 end
 
-PuppetSyntax.exclude_paths = ["examples/**/*"]
+PuppetSyntax.exclude_paths = ignore_paths
 
 desc "Run acceptance tests"
 RSpec::Core::RakeTask.new(:acceptance) do |t|
