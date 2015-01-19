@@ -5,7 +5,9 @@ cache: bundler
 before_install: rm Gemfile.lock || true
 sudo: false
 rvm:
-  - 2.1.1
+  - 2.1
+  - 2.2
+  - 1.9.3
 script: bundle exec rake test
 env:
   - PUPPET_LOCATION="~> 3.6.0" PARSER="future"
