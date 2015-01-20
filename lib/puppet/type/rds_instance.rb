@@ -3,7 +3,7 @@ Puppet::Type.newtype(:rds_instance) do
 
   ensurable do
     defaultvalues
-    aliasvalue(:running, :present)
+    aliasvalue(:available, :present)
     newvalue(:destroy) do
       provider.destroy
     end

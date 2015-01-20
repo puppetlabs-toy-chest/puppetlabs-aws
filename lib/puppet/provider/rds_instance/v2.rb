@@ -21,7 +21,8 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   read_only(:allocated_storage, :auto_minor_version_upgrade, :availability_zone_name,
             :backup_retention_period, :character_set_name, :creation_date_time,
-            :db_instance_class, :instance_id, :db_name, :engine, :engine_version, :iops, :master_username,
+#            :db_instance_class, :instance_id, :db_name, :engine, :engine_version,
+            :iops, :master_username,
             :multi_az, :backup_window, :vpc_id, :license_model)
 
   def self.prefetch(resources)
@@ -38,20 +39,17 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     #  tags[tag.key] = tag.value unless tag.key == 'Name'
     #end
     config = {
+      ensure: :present,
+      name: instance.db_name,
+      region: region,
       db_instance_class: instance.db_instance_class,
       master_username: instance.master_username,
-    #  tags: tags,
       db_name: instance.db_name,
       allocated_storage: instance.allocated_storage,
       storage_type: instance.storage_type,
       license_model: instance.license_model,
       multi_az: instance.multi_az,
       iops: instance.iops,
-      master_user_password: instance.master_user_password,
-      db_name: instance.db_name,
-      db_subnet_group_name: instance.db_subnet_group_name,
-      skip_final_snapshot: instance.skip_final_snapshot,
-      final_db_snapshot_identifier: instance.final_db_snapshot_identifier,
     }
     config
   end
@@ -59,13 +57,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   def exists?
     dest_region = resource[:region] if resource
     Puppet.info("Checking if instance #{name} exists in region #{dest_region || region}")
-    [:present, :pending, :running].include? @property_hash[:ensure]
-  end
-
-  def stopped?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if instance #{name} is stopped in region #{dest_region || region}")
-    [:stopping, :stopped].include? @property_hash[:ensure]
+    [:present, :creating, :available].include? @property_hash[:ensure]
   end
 
   def create
@@ -74,36 +66,31 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     groups = [groups] unless groups.is_a?(Array)
     groups = groups.reject(&:nil?)
 
-    if stopped?
-      restart
-    else
-      config = {
-        db_instance_identifier: resource[:db_name],
-        db_instance_class: resource[:db_instance_class],
-        #availability_zone_name: resource[:availability_zone_name],
-        vpc_security_group_ids: groups,
-        engine: resource[:engine],
-        engine_version: resource[:engine_version],
-        license_model: resource[:license_model],
-        storage_type: resource[:storage_type],
-        multi_az: resource[:multi_az],
-        allocated_storage: resource[:allocated_storage],
-        iops: resource[:iops],
-        master_username: resource[:master_username],
-        master_user_password: resource[:master_user_password],
-        db_subnet_group_name: resource[:db_subnet_group_name],
-      }
+    config = {
+      db_instance_identifier: resource[:db_name],
+      db_instance_class: resource[:db_instance_class],
+      #availability_zone_name: resource[:availability_zone_name],
+      vpc_security_group_ids: groups,
+      engine: resource[:engine],
+      engine_version: resource[:engine_version],
+      license_model: resource[:license_model],
+      storage_type: resource[:storage_type],
+      multi_az: resource[:multi_az],
+      allocated_storage: resource[:allocated_storage],
+      iops: resource[:iops],
+      master_username: resource[:master_username],
+      master_user_password: resource[:master_user_password],
+      db_subnet_group_name: resource[:db_subnet_group_name],
+    }
 
-      response = rds_client(resource[:region]).create_db_instance(config)
+    response = rds_client(resource[:region]).create_db_instance(config)
 
-      @property_hash[:ensure] = :present
-
-      #tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
-      #tags << {key: 'Name', value: name}
-      #rds_client(resource[:region]).create_tags(
-      #  resources: response.instances.map(&:instance_id),
-      #  tags: tags)
-    end
+    @property_hash[:ensure] = :present
+    #tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
+    #tags << {key: 'Name', value: name}
+    #rds_client(resource[:region]).create_tags(
+    #  resources: response.instances.map(&:instance_id),
+    #  tags: tags)
   end
 
 #  def tags=(value)
