@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
 def location_for(place, fake_version = nil)
   if place =~ /^(git:[^#]*)#(.*)/
@@ -33,7 +33,7 @@ group :development do
 end
 
 group :acceptance do
-  gem 'mustache'
+  gem 'mustache', '0.99.8'
 end
 
 if File.exists? "#{__FILE__}.local"
