@@ -1,4 +1,5 @@
 require 'puppetlabs_spec_helper/rake_tasks'
+require 'puppet/vendor/semantic/lib/semantic'
 
 begin
   require 'puppet_blacksmith/rake_tasks'
