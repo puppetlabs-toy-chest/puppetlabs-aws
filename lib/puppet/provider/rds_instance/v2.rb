@@ -19,7 +19,8 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end.flatten
   end
 
-  read_only(:allocated_storage, :auto_minor_version_upgrade, :availability_zone_name,
+#  read_only(:allocated_storage, :auto_minor_version_upgrade, :availability_zone_name,
+  read_only(:auto_minor_version_upgrade,
             :backup_retention_period, :character_set_name, :creation_date_time,
 #            :db_instance_class, :instance_id, :db_name, :engine, :engine_version,
             :iops, :master_username,
@@ -40,8 +41,10 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     #end
     config = {
       ensure: :present,
-      name: instance.db_name,
+#      name: instance.db_name,
+      name: instance.db_instance_identifier,
       region: region,
+      engine: instance.engine,
       db_instance_class: instance.db_instance_class,
       master_username: instance.master_username,
       db_name: instance.db_name,
