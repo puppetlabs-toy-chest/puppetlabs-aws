@@ -1,17 +1,17 @@
 Puppet::Type.newtype(:ec2_scalingpolicy) do
-  @doc = 'type representing an EC2 scaling policy'
+  @doc = 'Type representing an EC2 scaling policy.'
 
   ensurable
 
   newparam(:name, namevar: true) do
-    desc 'the name of the scaling policy'
+    desc 'The name of the scaling policy.'
     validate do |value|
       fail 'Scaling policies must have a name' if value == ''
     end
   end
 
   newproperty(:scaling_adjustment) do
-    desc 'the amount to adjust the size of the group by'
+    desc 'The amount to adjust the size of the group by.'
     validate do |value|
       fail 'scaling adjustment cannot be blank' if value == ''
     end
@@ -21,7 +21,7 @@ Puppet::Type.newtype(:ec2_scalingpolicy) do
   end
 
   newproperty(:region) do
-    desc 'the region in which to launch the policy'
+    desc 'The region in which to launch the policy.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
       fail 'region should not be blank' if value == ''
@@ -29,7 +29,7 @@ Puppet::Type.newtype(:ec2_scalingpolicy) do
   end
 
   newproperty(:adjustment_type) do
-    desc 'the type of policy'
+    desc 'The type of policy.'
     validate do |value|
       fail 'adjustment type should not contain spaces' if value =~ /\s/
       fail 'adjustment type should not be blank' if value == ''
@@ -37,7 +37,7 @@ Puppet::Type.newtype(:ec2_scalingpolicy) do
   end
 
   newproperty(:auto_scaling_group) do
-    desc 'the auto scaling group to attach the policy to'
+    desc 'The auto scaling group to attach the policy to.'
     validate do |value|
       fail 'auto scaling group cannot be blank' if value == ''
     end
