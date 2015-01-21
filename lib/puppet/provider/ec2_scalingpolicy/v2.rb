@@ -60,16 +60,8 @@ Puppet::Type.type(:ec2_scalingpolicy).provide(:v2, :parent => PuppetX::Puppetlab
     )
   end
 
-  def auto_scaling_group=(value)
-    update
-  end
-
-  def adjustment_type=(value)
-    update
-  end
-
-  def scaling_adjustment=(value)
-    update
+  def flush
+    update unless @property_hash[:ensure] == :absent
   end
 
   def destroy
