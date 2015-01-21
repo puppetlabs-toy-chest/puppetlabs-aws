@@ -56,6 +56,7 @@ Puppet::Type.newtype(:ec2_instance) do
 
   newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'The tags for the instance.'
+    desc 'the tags for the instance'
   end
 
   newparam(:user_data) do
