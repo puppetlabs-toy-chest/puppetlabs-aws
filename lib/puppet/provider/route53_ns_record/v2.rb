@@ -9,8 +9,7 @@ Puppet::Type.type(:route53_ns_record).provide(:v2, :parent => Puppet::Provider::
     'NS'
   end
 
-  [
-    :ttl=,
-    :values=,
-  ].each{ |method| alias_method method, :update }
+  def flush
+    update unless @property_hash[:ensure] == :absent
+  end
 end

@@ -58,7 +58,7 @@ class Puppet::Provider::Route53Record < PuppetX::Puppetlabs::Aws
     zones.first.id
   end
 
-  def update(*args)
+  def update
     Puppet.info("Updating #{self.class.record_type} record #{name}")
     route53_client.change_resource_record_sets(
       record_hash('UPSERT')

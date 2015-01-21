@@ -9,8 +9,7 @@ Puppet::Type.type(:route53_txt_record).provide(:v2, :parent => Puppet::Provider:
     'TXT'
   end
 
-  [
-    :ttl=,
-    :values=,
-  ].each{ |method| alias_method method, :update }
+  def flush
+    update unless @property_hash[:ensure] == :absent
+  end
 end
