@@ -1,5 +1,15 @@
 require 'spec_helper'
 
+def launchconfig_config
+  {
+    name: 'test-lc',
+    image_id: 'ami-67a660d7a',
+    instance_type: 't1.micro',
+    region: 'sa-east-1',
+    security_groups: ['test-sg'],
+  }
+end
+
 type_class = Puppet::Type.type(:ec2_launchconfiguration)
 
 describe type_class do
@@ -33,4 +43,27 @@ describe type_class do
       expect(type_class.parameters).to be_include(param)
     end
   end
+
+  it 'should require a name' do
+    expect {
+      type_class.new({})
+    }.to raise_error(Puppet::Error, 'Title or name must be provided')
+  end
+
+  launchconfig_config.keys.each do |key|
+    it "should require a value for #{key}" do
+      modified_config = launchconfig_config
+      modified_config[key] = ''
+      expect {
+        type_class.new(modified_config)
+      }.to raise_error(Puppet::Error)
+    end
+  end
+
+  context 'with a full set of properties' do
+    it 'should successfully instantiate' do
+      type_class.new(launchconfig_config)
+    end
+  end
+
 end
