@@ -22,8 +22,8 @@ module PuppetX
 
         newproperty(:ttl) do
           desc 'the time to live for the record'
-          def insync?(is)
-            is.to_i == should.to_i
+          munge do |value|
+            value.to_i
           end
         end
 

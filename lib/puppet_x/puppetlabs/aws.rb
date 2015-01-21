@@ -48,6 +48,7 @@ module PuppetX
       end
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       def self.autoscaling_client(region = default_region)
         ::Aws::AutoScaling::Client.new({region: region})
       end
@@ -64,12 +65,12 @@ module PuppetX
         self.class.cloudwatch_client(region)
       end
 
-      def self.route53_client(region: default_region)
-        ::Aws::Route53::Client.new(region: region)
+      def self.route53_client(region = default_region)
+        ::Aws::Route53::Client.new({region: region})
       end
 
-      def route53_client(region: default_region)
-        self.class.route53_client(region: region)
+      def route53_client(region = default_region)
+        self.class.route53_client(region)
       end
 
     end
