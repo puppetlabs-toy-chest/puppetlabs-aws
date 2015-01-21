@@ -28,7 +28,13 @@ directory run:
 
 
 This should create the AWS resources. You can delete them
-with the `puppet resource` commands when done.
+with the destroy manifest when done.
+
+    puppet apply destroy.pp --test
+
+Note that this will shut down any instances launched by the auto scaling
+group. Once the instances are terminated you can remove the accompanying
+security group with:
 
    puppet resource ec2_securitygroup test-sg region=sa-east-1 ensure=absent
 
