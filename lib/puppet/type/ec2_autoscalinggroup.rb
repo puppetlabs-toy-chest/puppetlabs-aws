@@ -15,8 +15,8 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     validate do |value|
       fail 'min_size cannot be blank' if value == ''
     end
-    def insync?(is)
-      is.to_i == should.to_i
+    munge do |value|
+      value.to_i
     end
   end
 
@@ -25,8 +25,8 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     validate do |value|
       fail 'min_size cannot be blank' if value == ''
     end
-    def insync?(is)
-      is.to_i == should.to_i
+    munge do |value|
+      value.to_i
     end
   end
 

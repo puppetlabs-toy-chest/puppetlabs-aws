@@ -36,8 +36,8 @@ Puppet::Type.newtype(:cloudwatch_alarm) do
     validate do |value|
       fail 'period cannot be blank' if value == ''
     end
-    def insync?(is)
-      is.to_i == should.to_i
+    munge do |value|
+      value.to_i
     end
   end
 
@@ -46,8 +46,8 @@ Puppet::Type.newtype(:cloudwatch_alarm) do
     validate do |value|
       fail 'evaluation periods cannot be blank' if value == ''
     end
-    def insync?(is)
-      is.to_i == should.to_i
+    munge do |value|
+      value.to_i
     end
   end
 
@@ -56,8 +56,8 @@ Puppet::Type.newtype(:cloudwatch_alarm) do
     validate do |value|
       fail 'threshold cannot be blank' if value == ''
     end
-    def insync?(is)
-      is.to_f == should.to_f
+    munge do |value|
+      value.to_f
     end
   end
 
