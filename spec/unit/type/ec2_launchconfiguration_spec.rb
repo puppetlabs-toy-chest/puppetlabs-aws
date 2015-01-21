@@ -3,7 +3,7 @@ require 'spec_helper'
 def launchconfig_config
   {
     name: 'test-lc',
-    image_id: 'ami-67a660d7a',
+    image_id: 'ami-67a60d7a',
     instance_type: 't1.micro',
     region: 'sa-east-1',
     security_groups: ['test-sg'],

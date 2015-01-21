@@ -1,0 +1,46 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://autoscaling.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribePolicies&Version=2011-01-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150121T112655Z"
+          Host: 
+            - autoscaling.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "46310113bb64f0b8f0f7562176bf35da4aa38bfd8a5446e8d5aebc51ed21beb2"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150121/sa-east-1/autoscaling/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=f05edf4cbd26260c631dd4cfdb75e8b63ed7ca9ca112fcac70ff7de10a49ea11"
+          Content-Length: 
+            - "42"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - "6706ab8c-a160-11e4-beaf-61c8dfde9d69"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "1594"
+          Date: 
+            - "Wed, 21 Jan 2015 11:26:54 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<DescribePoliciesResponse xmlns=\x22http://autoscaling.amazonaws.com/doc/2011-01-01/\x22>\n  <DescribePoliciesResult>\n    <ScalingPolicies>\n      <member>\n        <AdjustmentType>ChangeInCapacity</AdjustmentType>\n        <PolicyARN>arn:aws:autoscaling:sa-east-1:482693910459:scalingPolicy:b4db7259-c815-4a95-ab65-3c260995ad8c:autoScalingGroupName/test-asg:policyName/scalein</PolicyARN>\n        <ScalingAdjustment>-2</ScalingAdjustment>\n        <PolicyName>scalein</PolicyName>\n        <AutoScalingGroupName>test-asg</AutoScalingGroupName>\n        <Alarms>\n          <member>\n            <AlarmName>RemoveCapacity</AlarmName>\n            <AlarmARN>arn:aws:cloudwatch:sa-east-1:482693910459:alarm:RemoveCapacity</AlarmARN>\n          </member>\n        </Alarms>\n      </member>\n      <member>\n        <AdjustmentType>PercentChangeInCapacity</AdjustmentType>\n        <PolicyARN>arn:aws:autoscaling:sa-east-1:482693910459:scalingPolicy:b9bf0e07-b363-49d0-9cae-972965125147:autoScalingGroupName/test-asg:policyName/scaleout</PolicyARN>\n        <ScalingAdjustment>30</ScalingAdjustment>\n        <PolicyName>scaleout</PolicyName>\n        <AutoScalingGroupName>test-asg</AutoScalingGroupName>\n        <Alarms>\n          <member>\n            <AlarmName>AddCapacity</AlarmName>\n            <AlarmARN>arn:aws:cloudwatch:sa-east-1:482693910459:alarm:AddCapacity</AlarmARN>\n          </member>\n        </Alarms>\n      </member>\n    </ScalingPolicies>\n  </DescribePoliciesResult>\n  <ResponseMetadata>\n    <RequestId>6706ab8c-a160-11e4-beaf-61c8dfde9d69</RequestId>\n  </ResponseMetadata>\n</DescribePoliciesResponse>\n"
+        http_version: 
+      recorded_at: "Wed, 21 Jan 2015 11:26:56 GMT"
+  recorded_with: "VCR 2.9.3"

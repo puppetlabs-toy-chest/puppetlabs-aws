@@ -77,7 +77,7 @@ Puppet::Type.newtype(:cloudwatch_alarm) do
   end
 
   newparam(:dimensions, :array_matching => :all) do
-    desc 'The dimensions to filter the alerm by.'
+    desc 'The dimensions to filter the alarm by.'
   end
 
   newparam(:alarm_actions, :array_matching => :all) do

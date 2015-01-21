@@ -2,7 +2,7 @@ require 'spec_helper'
 
 def policy_config
   {
-    name: 'AddCapacity',
+    name: 'scaleout',
     auto_scaling_group: 'test-asg',
     scaling_adjustment: 30,
     adjustment_type: 'PercentChangeInCapacity',
