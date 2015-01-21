@@ -1,0 +1,89 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://autoscaling.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeLaunchConfigurations&Version=2011-01-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150121T111822Z"
+          Host: 
+            - autoscaling.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - e858e902d9287f6cedec21fa27ca23bda00820e3ffa25f3eac1929c4a84f423d
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150121/sa-east-1/autoscaling/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=80a4b601a5f728f42ca6929f3202b71362a30ed95fe390330401c6b910b32bb1"
+          Content-Length: 
+            - "54"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - "3586342f-a15f-11e4-92ee-93450842f682"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "1183"
+          Date: 
+            - "Wed, 21 Jan 2015 11:18:22 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<DescribeLaunchConfigurationsResponse xmlns=\x22http://autoscaling.amazonaws.com/doc/2011-01-01/\x22>\n  <DescribeLaunchConfigurationsResult>\n    <LaunchConfigurations>\n      <member>\n        <SecurityGroups>\n          <member>test-sg</member>\n        </SecurityGroups>\n        <CreatedTime>2015-01-21T11:04:46.866Z</CreatedTime>\n        <KernelId/>\n        <LaunchConfigurationName>test-lc</LaunchConfigurationName>\n        <UserData/>\n        <InstanceType>t1.micro</InstanceType>\n        <LaunchConfigurationARN>arn:aws:autoscaling:sa-east-1:482693910459:launchConfiguration:21a46548-daed-4945-89b4-424314dea2e7:launchConfigurationName/test-lc</LaunchConfigurationARN>\n        <BlockDeviceMappings/>\n        <KeyName/>\n        <ImageId>ami-67a60d7a</ImageId>\n        <RamdiskId/>\n        <InstanceMonitoring>\n          <Enabled>true</Enabled>\n        </InstanceMonitoring>\n        <ClassicLinkVPCSecurityGroups/>\n        <EbsOptimized>false</EbsOptimized>\n      </member>\n    </LaunchConfigurations>\n  </DescribeLaunchConfigurationsResult>\n  <ResponseMetadata>\n    <RequestId>3586342f-a15f-11e4-92ee-93450842f682</RequestId>\n  </ResponseMetadata>\n</DescribeLaunchConfigurationsResponse>\n"
+        http_version: 
+      recorded_at: "Wed, 21 Jan 2015 11:18:23 GMT"
+    - request: 
+        method: post
+        uri: "https://autoscaling.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeLaunchConfigurations&Version=2011-01-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150121T111824Z"
+          Host: 
+            - autoscaling.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - e858e902d9287f6cedec21fa27ca23bda00820e3ffa25f3eac1929c4a84f423d
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150121/sa-east-1/autoscaling/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=a2af30f84bd404f3bc2db90a2184d0bce771daaeddf2eeeadb47c9968c5f7ebe"
+          Content-Length: 
+            - "54"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - "3608351f-a15f-11e4-af18-b914cb772d39"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "1183"
+          Date: 
+            - "Wed, 21 Jan 2015 11:18:22 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<DescribeLaunchConfigurationsResponse xmlns=\x22http://autoscaling.amazonaws.com/doc/2011-01-01/\x22>\n  <DescribeLaunchConfigurationsResult>\n    <LaunchConfigurations>\n      <member>\n        <SecurityGroups>\n          <member>test-sg</member>\n        </SecurityGroups>\n        <CreatedTime>2015-01-21T11:04:46.866Z</CreatedTime>\n        <KernelId/>\n        <LaunchConfigurationName>test-lc</LaunchConfigurationName>\n        <UserData/>\n        <InstanceType>t1.micro</InstanceType>\n        <LaunchConfigurationARN>arn:aws:autoscaling:sa-east-1:482693910459:launchConfiguration:21a46548-daed-4945-89b4-424314dea2e7:launchConfigurationName/test-lc</LaunchConfigurationARN>\n        <BlockDeviceMappings/>\n        <ImageId>ami-67a60d7a</ImageId>\n        <KeyName/>\n        <RamdiskId/>\n        <InstanceMonitoring>\n          <Enabled>true</Enabled>\n        </InstanceMonitoring>\n        <ClassicLinkVPCSecurityGroups/>\n        <EbsOptimized>false</EbsOptimized>\n      </member>\n    </LaunchConfigurations>\n  </DescribeLaunchConfigurationsResult>\n  <ResponseMetadata>\n    <RequestId>3608351f-a15f-11e4-af18-b914cb772d39</RequestId>\n  </ResponseMetadata>\n</DescribeLaunchConfigurationsResponse>\n"
+        http_version: 
+      recorded_at: "Wed, 21 Jan 2015 11:18:24 GMT"
+  recorded_with: "VCR 2.9.3"

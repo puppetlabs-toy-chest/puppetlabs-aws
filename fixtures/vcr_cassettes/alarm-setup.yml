@@ -1,0 +1,89 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://monitoring.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeAlarms&Version=2010-08-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150121T110322Z"
+          Host: 
+            - monitoring.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "57c3d9c7d24b342f02bb6f04344888c8b2f5edb728e610a68d0d1665454dde11"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150121/sa-east-1/monitoring/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=65031cd5b70549e656a6eea245f686c063cedeb889d1116e6dbde21872095d79"
+          Content-Length: 
+            - "40"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - "1d34fdff-a15d-11e4-a057-71e863a3c9f5"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "285"
+          Date: 
+            - "Wed, 21 Jan 2015 11:03:21 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<DescribeAlarmsResponse xmlns=\x22http://monitoring.amazonaws.com/doc/2010-08-01/\x22>\n  <DescribeAlarmsResult>\n    <MetricAlarms/>\n  </DescribeAlarmsResult>\n  <ResponseMetadata>\n    <RequestId>1d34fdff-a15d-11e4-a057-71e863a3c9f5</RequestId>\n  </ResponseMetadata>\n</DescribeAlarmsResponse>\n"
+        http_version: 
+      recorded_at: "Wed, 21 Jan 2015 11:03:24 GMT"
+    - request: 
+        method: post
+        uri: "https://monitoring.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeAlarms&Version=2010-08-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150121T110324Z"
+          Host: 
+            - monitoring.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "57c3d9c7d24b342f02bb6f04344888c8b2f5edb728e610a68d0d1665454dde11"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150121/sa-east-1/monitoring/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=c409356b55977cf2706dfdad64aeae25092c2aae5106f1508d480c7d66615261"
+          Content-Length: 
+            - "40"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - "1dc18661-a15d-11e4-a585-992e947afaa4"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "285"
+          Date: 
+            - "Wed, 21 Jan 2015 11:03:22 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<DescribeAlarmsResponse xmlns=\x22http://monitoring.amazonaws.com/doc/2010-08-01/\x22>\n  <DescribeAlarmsResult>\n    <MetricAlarms/>\n  </DescribeAlarmsResult>\n  <ResponseMetadata>\n    <RequestId>1dc18661-a15d-11e4-a585-992e947afaa4</RequestId>\n  </ResponseMetadata>\n</DescribeAlarmsResponse>\n"
+        http_version: 
+      recorded_at: "Wed, 21 Jan 2015 11:03:25 GMT"
+  recorded_with: "VCR 2.9.3"
