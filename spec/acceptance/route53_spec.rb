@@ -5,7 +5,7 @@ describe "route53_zone" do
 
   before(:all) do
     @default_region = 'sa-east-1'
-    @aws = Ec2Helper.new(@default_region)
+    @aws = AwsHelper.new(@default_region)
   end
 
   def find_zone(name)
