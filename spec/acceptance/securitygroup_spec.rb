@@ -276,4 +276,106 @@ describe "ec2_securitygroup" do
     end
   end
 
+  describe 'create a security group' do
+
+    before(:all) do
+      @config = {
+        :name         => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :ensure       => 'present',
+        :description  => 'A_security_group_used_in_an_automated_acceptance_test',
+        :region       => @default_region,
+      }
+    end
+
+    it 'create with puppet resource' do
+      r = TestExecutor.puppet_resource('ec2_securitygroup', @config, '--modulepath ../')
+      expect(r.stderr).not_to match(/Error:/)
+      # assert with AWS SKD
+      expect{get_group(@config[:name])}.not_to raise_error
+    end
+
+    it 'destroy with puppet resource' do
+      @config[:ensure] = 'absent'
+      TestExecutor.puppet_resource('ec2_securitygroup', @config, '--modulepath ../')
+      expect { get_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
+    end
+
+  end
+
+  describe 'create a new securitygroup with manifest' do
+    # create with manifest, describe with puppet resource
+    before(:all) do
+      @config = {
+        :name         => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :ensure       => 'present',
+        :description  => 'A_security group used in an automated acceptance test',
+        :region       => @default_region,
+        :ingress => [
+          {
+            :protocol => 'tcp',
+            :port     => 22,
+            :cidr     => '0.0.0.0/0'
+          },
+          {
+            :security_group => 'default',
+          }
+
+        ],
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance',
+          :dude       => 'Sweet!',
+        },
+      }
+      PuppetManifest.new(@template, @config).apply
+      expect{get_group(@config[:name])}.not_to raise_error
+      @response = TestExecutor.puppet_resource('ec2_securitygroup', {:name => @config[:name]}, '--modulepath ../')
+      @group = get_group(@config[:name])
+    end
+
+    context 'describe ec2 securitygroup with puppet resource' do
+
+      it 'ensure is correct' do
+        regex = /(ensure)(\s*)(=>)(\s*)('#{@config[:ensure]}')/
+        expect(@response.stdout).to match(regex)
+      end
+
+      it 'description is correct' do
+        regex = /(description)(\s*)(=>)(\s*)('#{@config[:description]}')/
+        expect(@response.stdout).to match(regex)
+      end
+
+      it 'region is correct' do
+        regex = /(region)(\s*)(=>)(\s*)('#{@config[:region]}')/
+        expect(@response.stdout).to match(regex)
+      end
+
+      it 'tags are correct' do
+        pending('This test is blocked by CLOUD-203')
+        @config[:tags].each do |tag, value|
+          regex = /('#{tag.to_s}')(\s*)(=>)(\s*)('#{value}')/
+          expect(@response.stdout).to match(regex)
+        end
+      end
+
+      it 'ingress rules are correct' do
+        @config[:ingress].each do |i|
+          i.each do |key, value|
+            regex = /('#{key}')(\s*)(=>)(\s*)('#{value}')/
+            expect(@response.stdout).to match(regex)
+          end
+        end
+      end
+
+    end
+
+    after(:all) do
+      @config[:ensure] = 'absent'
+      PuppetManifest.new(@template, @config).apply
+      expect { get_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
+    end
+
+  end
+
 end
