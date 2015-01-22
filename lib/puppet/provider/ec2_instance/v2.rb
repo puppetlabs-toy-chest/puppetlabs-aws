@@ -96,6 +96,10 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     groups = [groups] unless groups.is_a?(Array)
     groups = groups.reject(&:nil?)
 
+    # this replicates the default behaviour of the API but also allows
+    # us to query the group id which varies between VPC or standard usage
+    groups = ['default'] if groups.empty?
+
     if stopped?
       restart
     else
@@ -142,7 +146,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
           {name: "vpc-id", values: vpc_groups.keys}])
 
         # then find the name in the VPC subnets that we have
-        subnets = subnet_response.subnets.select do |s|
+        subnets = subnet_response.data.subnets.select do |s|
           if resource[:subnet].empty?
             ! s.tags.any? { |t| t.key == 'Name' }
           else
