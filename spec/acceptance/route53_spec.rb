@@ -44,6 +44,11 @@ describe "route53_zone" do
       expect(@aws.get_dns_zones(@name)).to be_empty
     end
 
+    it 'should run idempotently' do
+      success = PuppetManifest.new(@template, @config).apply[:exit_status].success?
+      expect(success).to eq(true)
+    end
+
     it 'should create a DNS zone with the correct name' do
       expect(@zone.name).to eq(@name)
     end
