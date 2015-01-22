@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:ec2_instance) do
   @doc = 'type representing an EC2 instance'
 
@@ -37,7 +39,7 @@ Puppet::Type.newtype(:ec2_instance) do
     desc 'the security groups to associate the instance'
   end
 
-  newproperty(:tags) do
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'the tags for the instance'
   end
 
