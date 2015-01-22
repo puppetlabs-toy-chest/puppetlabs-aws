@@ -14,8 +14,8 @@ ec2_launchconfiguration { '{{name}}-lc':
 
 ec2_autoscalinggroup { '{{name}}-asg':
   ensure               => {{ensure}},
-  min_size             => 2,
-  max_size             => 4,
+  min_size             => {{min_size}},
+  max_size             => {{max_size}},
   region               => 'sa-east-1',
   launch_configuration => '{{name}}-lc',
   availability_zones   => ['sa-east-1b', 'sa-east-1a'],
@@ -24,47 +24,23 @@ ec2_autoscalinggroup { '{{name}}-asg':
 ec2_scalingpolicy { '{{name}}-scaleout':
   ensure             => {{ensure}},
   auto_scaling_group => '{{name}}-asg',
-  scaling_adjustment => 30,
-  adjustment_type    => 'PercentChangeInCapacity',
-  region             => 'sa-east-1',
-}
-
-ec2_scalingpolicy { '{{name}}-scalein':
-  ensure             => {{ensure}},
-  auto_scaling_group => '{{name}}-asg',
-  scaling_adjustment => -2,
-  adjustment_type    => 'ChangeInCapacity',
+  scaling_adjustment => {{scaling_adjustment}},
+  adjustment_type    => '{{adjustment_type}}',
   region             => 'sa-east-1',
 }
 
 cloudwatch_alarm { '{{name}}-AddCapacity':
   ensure              => {{ensure}},
-  metric              => 'CPUUtilization',
-  namespace           => 'AWS/EC2',
-  statistic           => 'Average',
-  period              => 120,
-  threshold           => 70,
-  comparison_operator => 'GreaterThanOrEqualToThreshold',
+  metric              => '{{metric}}',
+  namespace           => '{{namespace}}',
+  statistic           => '{{statistic}}',
+  period              => {{period}},
+  threshold           => {{threshold}},
+  comparison_operator => '{{comparison_operator}}',
   dimensions          => [{
     'AutoScalingGroupName' => '{{name}}-asg',
   }],
-  evaluation_periods  => 2,
+  evaluation_periods  => {{evaluation_periods}},
   alarm_actions       => ['{{name}}-scaleout'],
   region              => 'sa-east-1',
-}
-
-cloudwatch_alarm { '{{name}}-RemoveCapacity':
-  ensure              => {{ensure}},
-  metric              => 'CPUUtilization',
-  namespace           => 'AWS/EC2',
-  statistic           => 'Average',
-  period              => 120,
-  threshold           => 40,
-  comparison_operator => 'LessThanOrEqualToThreshold',
-  dimensions          => [{
-    'AutoScalingGroupName' => '{{name}}-asg',
-  }],
-  evaluation_periods  => 2,
-  region              => 'sa-east-1',
-  alarm_actions       => ['{{name}}-scalein'],
 }
