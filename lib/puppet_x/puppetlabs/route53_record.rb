@@ -4,7 +4,7 @@ module PuppetX
       def create_properties_and_params
         ensurable
         newproperty(:zone) do
-          desc 'the zone associated with this record'
+          desc 'The zone associated with this record.'
           validate do |value|
             fail 'The name of the zone must not be blank' if value.empty?
             fail 'Zone names must end with a .' if value[-1] != '.'
@@ -12,7 +12,7 @@ module PuppetX
         end
 
         newparam(:name) do
-          desc 'the name of DNS record'
+          desc 'The name of DNS record.'
           isnamevar
           validate do |value|
             fail 'The name of the record must not be blank' if value.empty?
@@ -21,14 +21,14 @@ module PuppetX
         end
 
         newproperty(:ttl) do
-          desc 'the time to live for the record'
+          desc 'The time to live for the record.'
           munge do |value|
             value.to_i
           end
         end
 
         newproperty(:values, :array_matching => :all) do
-          desc 'the values of the record'
+          desc 'The values of the record.'
           validate do |value|
             fail 'The value of the record must not be blank' if value.empty?
           end
