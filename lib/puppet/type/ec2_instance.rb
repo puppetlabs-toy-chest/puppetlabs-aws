@@ -1,11 +1,28 @@
 Puppet::Type.newtype(:ec2_instance) do
   @doc = 'type representing an EC2 instance'
 
-  ensurable do
-    defaultvalues
-    aliasvalue(:running, :present)
+  newproperty(:ensure) do
+    newvalue(:present) do
+      provider.create unless provider.running?
+    end
+    newvalue(:absent) do
+      provider.destroy if provider.exists?
+    end
+    newvalue(:running) do
+      provider.create unless provider.running?
+    end
     newvalue(:stopped) do
-      provider.stop
+      provider.stop unless provider.stopped?
+    end
+    def change_to_s(current, desired)
+      current = :running if current == :present
+      desired = :running if desired == :present
+      current == desired ? current : "changed #{current} to #{desired}"
+    end
+    def insync?(is)
+      is = :present if is == :running
+      is = :stopped if is == :stopping
+      is.to_s == should.to_s
     end
   end
 

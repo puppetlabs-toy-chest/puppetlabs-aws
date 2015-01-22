@@ -34,4 +34,12 @@ describe type_class do
       expect(type_class.parameters).to be_include(param)
     end
   end
+
+  it 'should support :stopped as a value to :ensure' do
+    Puppet::Type.type(:ec2_instance).new(:name => 'sample', :ensure => :stopped)
+  end
+
+  it 'should support :running as a value to :ensure' do
+    Puppet::Type.type(:ec2_instance).new(:name => 'sample', :ensure => :running)
+  end
 end
