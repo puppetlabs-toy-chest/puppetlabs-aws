@@ -1,25 +1,25 @@
 Puppet::Type.newtype(:ec2_vpc_vpn) do
-  @doc = 'type representing an AWS Virtual Private Networks'
+  @doc = 'Type representing an AWS Virtual Private Networks.'
 
   ensurable
 
   newparam(:name, namevar: true) do
-    desc 'the name of the VPN'
+    desc 'The name of the VPN.'
     validate do |value|
       fail 'VPNs must have a name' if value == ''
     end
   end
 
   newproperty(:vpn_gateway) do
-    desc 'the VPN gateway to attach to the VPN'
+    desc 'The VPN gateway to attach to the VPN.'
   end
 
   newproperty(:customer_gateway) do
-    desc 'the customer gateway to attach to the VPN'
+    desc 'The customer gateway to attach to the VPN.'
   end
 
   newproperty(:type) do
-    desc 'the type of VPN gateway, defaults to ipsec.1'
+    desc 'The type of VPN gateway, defaults to ipsec.1.'
     defaultto 'ipsec.1'
     validate do |value|
       unless value =~ /^ipsec\.1$/
@@ -29,11 +29,11 @@ Puppet::Type.newtype(:ec2_vpc_vpn) do
   end
 
   newproperty(:routes, :array_matching => :all) do
-    desc 'the list of routes for the VPN'
+    desc 'The list of routes for the VPN.'
   end
 
   newproperty(:static_routes) do
-    desc 'whether or not to use static routes, defaults to true'
+    desc 'Whether or not to use static routes, defaults to true.'
     defaultto :true
     newvalues(:true, :false)
     def insync?(is)
@@ -42,14 +42,14 @@ Puppet::Type.newtype(:ec2_vpc_vpn) do
   end
 
   newproperty(:region) do
-    desc 'the region in which to launch the VPN'
+    desc 'The region in which to launch the VPN.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
     end
   end
 
   newproperty(:tags) do # TODO
-    desc 'the tags for the VPN'
+    desc 'The tags for the VPN.'
   end
 
   autorequire(:ec2_vpc_customer_gateway) do
