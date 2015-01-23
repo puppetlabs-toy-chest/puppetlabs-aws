@@ -41,7 +41,6 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     #end
     config = {
       ensure: :present,
-#      name: instance.db_name,
       name: instance.db_instance_identifier,
       region: region,
       engine: instance.engine,
@@ -70,7 +69,8 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     groups = groups.reject(&:nil?)
 
     config = {
-      db_instance_identifier: resource[:db_name],
+      db_instance_identifier: resource[:name],
+      db_name: resource[:db_name],
       db_instance_class: resource[:db_instance_class],
       #availability_zone_name: resource[:availability_zone_name],
       vpc_security_group_ids: groups,
@@ -114,7 +114,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     rds = rds_client(resource[:region])
     Puppet.info("Skip Final Snapshot: #{resource[:skip_final_snapshot]}")
     config = {
-      db_instance_identifier: resource[:db_name],
+      db_instance_identifier: resource[:name],
       skip_final_snapshot: resource[:skip_final_snapshot],
       final_db_snapshot_identifier: resource[:final_db_snapshot_identifier],
     }
