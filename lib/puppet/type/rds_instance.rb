@@ -12,7 +12,6 @@ Puppet::Type.newtype(:rds_instance) do
   newparam(:db_name, namevar: true) do
     desc 'the name of the db instance'
     validate do |value|
-      fail 'Instances must have a db_name' if value == ''
     end
   end
 
