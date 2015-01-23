@@ -1,21 +1,16 @@
 Puppet::Type.newtype(:rds_instance) do
-  @doc = 'type representing an RDS instance'
+  @doc = 'Type representing an RDS instance.'
 
-  ensurable do
-    defaultvalues
-    aliasvalue(:available, :present)
-    newvalue(:destroy) do
-      provider.destroy
-    end
-  end
+  ensurable
 
   newparam(:name, namevar: true) do
     desc 'the name of the db instance (also known as the db_instance_identifier)'
     validate do |value|
+      fail 'RDS Instances must have a name' if value == ''
     end
   end
 
-  newparam(:db_name) do
+  newproperty(:db_name) do
     desc 'The meaning of this parameter differs according to the database engine you use.
 Type: String
 
@@ -27,6 +22,7 @@ Constraints:
 
 Must contain 1 to 64 alphanumeric characters
 Cannot be a word reserved by the specified database engine
+
 PostgreSQL
 
 The name of the database to create when the DB instance is created. If this parameter is not specified, no database is created in the DB instance.
@@ -48,16 +44,6 @@ Cannot be longer than 8 characters
 SQL Server
 
 Not applicable. Must be null.'
-    validate do |value|
-    end
-  end
-
-  newparam(:security_groups, :array_matching => :all) do
-    desc 'the security groups to associate the instance'
-  end
-
-  newproperty(:tags) do
-    desc 'the tags for the instance'
   end
 
   newproperty(:region) do
@@ -68,17 +54,18 @@ Not applicable. Must be null.'
   end
 
   newproperty(:db_instance_class) do
-    desc 'the type to use for the instance (mysql, | postgres)'
+    desc 'the instance class to use for the instance eg. db.m3.medium'
     validate do |value|
       fail 'db_instance_class should not contain spaces' if value =~ /\s/
       fail 'db_instance_class should not be blank' if value == ''
     end
   end
 
-  newproperty(:availability_zone_name) do
+  newproperty(:availability_zone) do
     desc 'the availability zone in which to place the instance'
     validate do |value|
-      fail 'availability_zone_name should not contain spaces' if value =~ /\s/
+      fail 'availability_zone should not contain spaces' if value =~ /\s/
+      fail 'availability_zone should not be blank' if value == ''
     end
   end
 
@@ -121,10 +108,8 @@ Not applicable. Must be null.'
   end
 
   newproperty(:iops) do
-    desc 'The IOPS stype for the DB (minimum 1000)'
-    validate do |value|
-      fail 'iops type should not contains spaces' if value =~ /\s/
-    end
+    desc 'The IOPS stype for the DB.'
+    newvalue(/\d+/)
   end
 
   newproperty(:master_username) do
@@ -142,16 +127,9 @@ Not applicable. Must be null.'
   end
 
   newproperty(:multi_az) do
-    desc 'The main user Password'
+    desc 'Define a multi-az'
     validate do |value|
       fail 'multi_az should not be blank' if value == ''
-    end
-  end
-
-  newproperty(:security_groups) do
-    desc 'The main user Password'
-    validate do |value|
-      fail 'security_groups should not be blank' if value == ''
     end
   end
 
@@ -162,23 +140,29 @@ Not applicable. Must be null.'
     end
   end
 
+  newproperty(:db_security_groups, :array_matching => :all) do
+    desc 'the DB security groups to assign to this RDS instance'
+  end
+
+  newproperty(:endpoint) do
+    desc 'the connection endpoint for the database'
+  end
+
+  newproperty(:port) do
+    desc 'the port the database is running on'
+  end
+
   newproperty(:skip_final_snapshot) do
-    desc 'Create one last snapshot.'
-    validate do |value|
-      fail 'skip_final_snapshot should not be blank' if value == ''
-    end
+    desc 'Skip snapshot on deletion.'
+    defaultto :true
+    newvalues(:false, :'false',:'true')
   end
 
   newproperty(:final_db_snapshot_identifier) do
-    desc 'Create one last snapshot.'
+    desc 'Name given to the last snapshot on deletion.'
     validate do |value|
       fail 'final_db_snapshot_identifier should not be blank' if value == ''
     end
-  end
-
-  autorequire(:ec2_securitygroup) do
-    groups = self[:security_groups]
-    groups.is_a?(Array) ? groups : [groups]
   end
 
 end

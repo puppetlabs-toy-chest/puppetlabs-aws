@@ -34,10 +34,12 @@ Puppet::Type.type(:rds_db_securitygroup).provide(:v2, :parent => PuppetX::Puppet
   def self.db_security_group_to_hash(region, db_security_group)
     {
       :ensure => :present,
+      :region => region,
       :name => db_security_group.db_security_group_name,
       :db_security_group_description => db_security_group.db_security_group_description,
       :owner_id => db_security_group.owner_id,
       :ec2_security_groups => ec2_security_group_to_array_of_hashes(db_security_group.ec2_security_groups),
+      :ip_ranges => ip_ranges_to_array_of_hashes(db_security_group.ip_ranges),
     }
   end
 
@@ -49,7 +51,7 @@ Puppet::Type.type(:rds_db_securitygroup).provide(:v2, :parent => PuppetX::Puppet
   def create
     Puppet.info("Starting DB instance #{name}")
     config = {
-      :db_security_group_name => resource[:name],
+      :db_security_group_name        => resource[:name],
       :db_security_group_description => resource[:db_security_group_description],
     }
 
@@ -64,7 +66,7 @@ Puppet::Type.type(:rds_db_securitygroup).provide(:v2, :parent => PuppetX::Puppet
     config = {
       db_security_group_name: name,
     }
-    rds.delete_db_instance(config)
+    rds.delete_db_security_group(config)
     @property_hash[:ensure] = :absent
   end
 
@@ -75,6 +77,15 @@ Puppet::Type.type(:rds_db_securitygroup).provide(:v2, :parent => PuppetX::Puppet
         :ec2_security_group_name => group.ec2_security_group_name,
         :ec2_security_group_owner_id => group.ec2_security_group_owner_id,
         :ec2_security_group_id => group.ec2_security_group_id,
+      }
+    end
+  end
+
+  def self.ip_ranges_to_array_of_hashes(ip_ranges)
+    ip_ranges.collect do |group|
+      {
+        :status => group.status,
+        :ip_range => group.cidrip,
       }
     end
   end
