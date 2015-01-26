@@ -80,6 +80,8 @@ class AwsHelper
   def initialize(region)
     @ec2_client = ::Aws::EC2::Client.new({region: region})
     @elb_client = ::Aws::ElasticLoadBalancing::Client.new({region: region})
+    @autoscaling_client = ::Aws::AutoScaling::Client.new({region: region})
+    @cloudwatch_client = ::Aws::CloudWatch::Client.new({region: region})
   end
 
   def get_instances(name)
@@ -110,8 +112,38 @@ class AwsHelper
   end
 
   def tag_difference(item, tags)
-      item_tags = {}
-      item.tags.each { |s| item_tags[s.key.to_sym] = s.value if s.key != 'Name' }
-      tags.to_set ^ item_tags.to_set
+    item_tags = {}
+    item.tags.each { |s| item_tags[s.key.to_sym] = s.value if s.key != 'Name' }
+    tags.to_set ^ item_tags.to_set
   end
+
+  def get_autoscaling_groups(name)
+    response = @autoscaling_client.describe_auto_scaling_groups(
+      auto_scaling_group_names: [name]
+    )
+    response.data.auto_scaling_groups
+  end
+
+  def get_launch_configs(name)
+    response = @autoscaling_client.describe_launch_configurations(
+      launch_configuration_names: [name]
+    )
+    response.data.launch_configurations
+  end
+
+  def get_scaling_policies(name, group)
+    response = @autoscaling_client.describe_policies(
+      auto_scaling_group_name: group,
+      policy_names: [name]
+    )
+    response.data.scaling_policies
+  end
+
+  def get_alarms(name)
+    response = @cloudwatch_client.describe_alarms(
+      alarm_names: [name]
+    )
+    response.data.metric_alarms
+  end
+
 end

@@ -1,0 +1,46 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://autoscaling.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=CreateLaunchConfiguration&ImageId=ami-67a60d7a&InstanceType=t1.micro&LaunchConfigurationName=test-lc&SecurityGroups.member.1=test-sg&Version=2011-01-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150121T112112Z"
+          Host: 
+            - autoscaling.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "4d897c87281ad49ea7b81de4da5e2e1baf140470fbd544a31bf815ffc6e96e2a"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150121/sa-east-1/autoscaling/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=bad7d7692568b138ee5ca2f248237eb89dfca54453b1d9504104a8092bbf4edd"
+          Content-Length: 
+            - "158"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - "9aa7ca7c-a15f-11e4-92ee-93450842f682"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "237"
+          Date: 
+            - "Wed, 21 Jan 2015 11:21:11 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<CreateLaunchConfigurationResponse xmlns=\x22http://autoscaling.amazonaws.com/doc/2011-01-01/\x22>\n  <ResponseMetadata>\n    <RequestId>9aa7ca7c-a15f-11e4-92ee-93450842f682</RequestId>\n  </ResponseMetadata>\n</CreateLaunchConfigurationResponse>\n"
+        http_version: 
+      recorded_at: "Wed, 21 Jan 2015 11:21:13 GMT"
+  recorded_with: "VCR 2.9.3"

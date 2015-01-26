@@ -1,0 +1,46 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://monitoring.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DeleteAlarms&AlarmNames.member.1=AddCapacity&Version=2010-08-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150121T110326Z"
+          Host: 
+            - monitoring.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "4cee2b238d18001f6831ae0b94dec35a08d73240f8846e54d11b1ed50af4f58a"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150121/sa-east-1/monitoring/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=bb1e4571cf4ad93559671750536441cbaa4be184e2e30ec5d9dc2f8e084792ec"
+          Content-Length: 
+            - "70"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - "1f4dcc10-a15d-11e4-9d11-4b0294d39075"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "210"
+          Date: 
+            - "Wed, 21 Jan 2015 11:03:25 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<DeleteAlarmsResponse xmlns=\x22http://monitoring.amazonaws.com/doc/2010-08-01/\x22>\n  <ResponseMetadata>\n    <RequestId>1f4dcc10-a15d-11e4-9d11-4b0294d39075</RequestId>\n  </ResponseMetadata>\n</DeleteAlarmsResponse>\n"
+        http_version: 
+      recorded_at: "Wed, 21 Jan 2015 11:03:27 GMT"
+  recorded_with: "VCR 2.9.3"
