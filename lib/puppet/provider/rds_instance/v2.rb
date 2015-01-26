@@ -19,10 +19,8 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end.flatten
   end
 
-#  read_only(:allocated_storage, :auto_minor_version_upgrade, :availability_zone_name,
   read_only(:auto_minor_version_upgrade,
             :backup_retention_period, :character_set_name, :creation_date_time,
-#            :db_instance_class, :instance_id, :db_name, :engine, :engine_version,
             :iops, :master_username,
             :multi_az, :backup_window, :vpc_id, :license_model)
 
@@ -41,13 +39,12 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     #end
     config = {
       ensure: :present,
-#      name: instance.db_name,
       name: instance.db_instance_identifier,
       region: region,
       engine: instance.engine,
       db_instance_class: instance.db_instance_class,
       master_username: instance.master_username,
-      db_name: instance.db_name,
+      db_instance_identifier: instance.db_instance_identifier,
       allocated_storage: instance.allocated_storage,
       storage_type: instance.storage_type,
       license_model: instance.license_model,
@@ -70,9 +67,8 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     groups = groups.reject(&:nil?)
 
     config = {
-      db_instance_identifier: resource[:db_name],
+      db_instance_identifier: resource[:db_instance_identifier],
       db_instance_class: resource[:db_instance_class],
-      #availability_zone_name: resource[:availability_zone_name],
       vpc_security_group_ids: groups,
       engine: resource[:engine],
       engine_version: resource[:engine_version],
