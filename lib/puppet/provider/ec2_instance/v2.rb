@@ -132,22 +132,14 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   def restart
     Puppet.info("Restarting instance #{name} in region #{resource[:region]}")
     ec2 = ec2_client(resource[:region])
-    instances = ec2.describe_instances(filters: [
-      {name: 'tag:Name', values: [name]},
-      {name: 'instance-state-name', values: ['stopping', 'stopped']}
-    ])
-    ec2.start_instances(
-      instance_ids: instances.reservations.map(&:instances).
-        flatten.map(&:instance_id)
-    )
+    ec2.start_instances(instance_ids: [instance_id])
     @property_hash[:ensure] = :present
   end
 
   def stop
     create unless exists?
     Puppet.info("Stopping instance #{name} in region #{resource[:region]}")
-    ec2 = ec2_client(resource[:region])
-    ec2.stop_instances(
+    ec2_client(resource[:region]).stop_instances(
       instance_ids: [@property_hash[:instance_id]]
     )
     @property_hash[:ensure] = :stopped
@@ -155,12 +147,13 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def tags=(value)
     Puppet.info("Updating tags for #{name} in region #{region}")
-    ec2_client(resource[:region]).create_tags(
+    ec2 = ec2_client(resource[:region])
+    ec2.create_tags(
       resources: [instance_id],
       tags: value.collect { |k,v| { :key => k, :value => v } }
     ) unless value.empty?
     missing_tags = tags.keys - value.keys
-    ec2_client(resource[:region]).delete_tags(
+    ec2.delete_tags(
       resources: [instance_id],
       tags: missing_tags.collect { |k| { :key => k } }
     ) unless missing_tags.empty?
@@ -169,13 +162,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   def destroy
     Puppet.info("Deleting instance #{name} in region #{resource[:region]}")
     ec2 = ec2_client(resource[:region])
-    instances = ec2.describe_instances(filters: [
-      {name: 'tag:Name', values: [name]},
-      {name: 'instance-state-name', values: ['pending', 'running', 'stopping', 'stopped']}
-    ])
-    instance_ids = instances.reservations.map(&:instances).flatten.map(&:instance_id)
-    ec2.terminate_instances(instance_ids: instance_ids)
-    ec2.wait_until(:instance_terminated, instance_ids: instance_ids)
+    ec2.terminate_instances(instance_ids: [instance_id])
+    ec2.wait_until(:instance_terminated, instance_ids: [instance_id])
     @property_hash[:ensure] = :absent
   end
 end
