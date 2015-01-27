@@ -25,7 +25,7 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
     desc 'The domain name for the DHCP options.'
     validate do |value|
       unless value =~ /^[\w\.-]+$/
-        raise ArgumentError , "'%s' is not a valid domain_name" % value
+        fail "'%s' is not a valid domain_name" % value
       end
     end
   end
@@ -45,9 +45,12 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
   newproperty(:netbios_node_type) do
     desc 'The netbios node type, defaults to 2.'
     defaultto '2'
+    munge do |value|
+      value.to_s
+    end
     validate do |value|
-      unless value =~ /^[1248]$/
-        raise ArgumentError , "'%s' is not a valid netbios_node_type, can be [1248]" % value
+      unless value.to_s =~ /^[1248]$/
+        fail "'%s' is not a valid netbios_node_type, can be [1248]" % value
       end
     end
   end

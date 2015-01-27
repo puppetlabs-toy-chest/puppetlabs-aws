@@ -16,6 +16,9 @@ Puppet::Type.newtype(:ec2_vpc_routetable) do
 
   newproperty(:region) do
     desc 'Region in which to launch the route table.'
+    validate do |value|
+      fail 'region should not contain spaces' if value =~ /\s/
+    end
   end
 
   newproperty(:routes, :array_matching => :all) do

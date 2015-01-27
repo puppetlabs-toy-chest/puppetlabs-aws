@@ -16,6 +16,9 @@ Puppet::Type.newtype(:ec2_vpc_internet_gateway) do
 
   newproperty(:region) do
     desc 'The region in which to launch the subnet.'
+    validate do |value|
+      fail 'region should not contain spaces' if value =~ /\s/
+    end
   end
 
   newproperty(:vpcs, :array_matching => :all) do

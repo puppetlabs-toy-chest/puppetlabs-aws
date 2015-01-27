@@ -34,4 +34,38 @@ describe type_class do
       expect(type_class.parameters).to be_include(param)
     end
   end
+
+  it 'should require a name' do
+    expect {
+      type_class.new({})
+    }.to raise_error(Puppet::Error, 'Title or name must be provided')
+  end
+
+  it 'should default type to ipsec.1' do
+    srv = type_class.new(:name => 'sample')
+    expect(srv[:type]).to eq('ipsec.1')
+  end
+
+  it 'should default static routes to true' do
+    srv = type_class.new(:name => 'sample')
+    expect(srv[:static_routes]).to eq(:true)
+  end
+
+  it 'should be able to set static routes to false' do
+    srv = type_class.new(:name => 'sample', :static_routes => false)
+    expect(srv[:static_routes]).to eq(:false)
+  end
+
+  it 'should not be able to set static routes to arbitrary values' do
+    expect {
+      type_class.new(:name => 'sample', :static_routes => 'invalid')
+    }.to raise_error(Puppet::ResourceError, /Invalid value "invalid"/)
+  end
+
+  it 'region should not contain spaces' do
+    expect {
+      type_class.new(:name => 'sample', :region => 'sa east 1')
+    }.to raise_error(Puppet::ResourceError, /region should not contain spaces/)
+  end
+
 end
