@@ -195,4 +195,42 @@ describe "ec2_instance" do
     end
   end
 
+  describe 'create a new instance' do
+
+    let(:config) do
+      {
+        :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :instance_type => 't1.micro',
+        :region => 'sa-east-1',
+        :image_id => 'ami-41e85d5c',
+        :ensure => 'present',
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        }
+      }
+    end
+
+    after(:each) do
+      config[:ensure] = 'absent'
+      PuppetManifest.new(@template, config).apply
+    end
+
+    it 'launched as stopped' do
+      config[:ensure] = 'stopped'
+      r = PuppetManifest.new(@template, config).apply
+      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      instance = get_instance(config[:name])
+      expect(['stopping', 'stopped']).to include(instance.state.name)
+    end
+
+    it 'launched as running' do
+      config[:ensure] = 'running'
+      r = PuppetManifest.new(@template, config).apply
+      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      instance = get_instance(config[:name])
+      expect(instance.state.name).to eq('running')
+    end
+  end
 end
