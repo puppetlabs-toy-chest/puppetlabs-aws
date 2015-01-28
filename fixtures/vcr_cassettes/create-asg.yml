@@ -1,0 +1,46 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://autoscaling.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=CreateAutoScalingGroup&AutoScalingGroupName=test-asg&AvailabilityZones.member.1=sa-east-1a&LaunchConfigurationName=test-lc&MaxSize=2&MinSize=1&Version=2011-01-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150121T111300Z"
+          Host: 
+            - autoscaling.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - cf10a61eae93d4130ffcf95e17c72caca35175f0e23b1bd58cb4723d776775a8
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150121/sa-east-1/autoscaling/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=4d716e3c95df52bc4d66e04141a4dbed2a726cafb3cad453f65c0aa2c8a23826"
+          Content-Length: 
+            - "168"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - "75c04564-a15e-11e4-a114-2f40cb204012"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "231"
+          Date: 
+            - "Wed, 21 Jan 2015 11:12:59 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<CreateAutoScalingGroupResponse xmlns=\x22http://autoscaling.amazonaws.com/doc/2011-01-01/\x22>\n  <ResponseMetadata>\n    <RequestId>75c04564-a15e-11e4-a114-2f40cb204012</RequestId>\n  </ResponseMetadata>\n</CreateAutoScalingGroupResponse>\n"
+        http_version: 
+      recorded_at: "Wed, 21 Jan 2015 11:13:02 GMT"
+  recorded_with: "VCR 2.9.3"
