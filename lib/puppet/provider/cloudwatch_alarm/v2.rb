@@ -55,7 +55,7 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
     @property_hash[:ensure] = :present
   end
 
-  def update(*args)
+  def update
     config = {
       alarm_name: name,
       metric_name: resource[:metric],
@@ -66,13 +66,14 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
       evaluation_periods: resource[:evaluation_periods],
       comparison_operator: resource[:comparison_operator],
     }
-
-    config[:dimensions] = resource[:dimensions].map { |k,v| {name: k, value: v} }
+    if resource[:dimensions]
+      config[:dimensions] = resource[:dimensions].map { |k,v| {name: k, value: v} }
+    end
 
     actions = []
     alarm_actions = resource[:alarm_actions]
     alarm_actions = [alarm_actions] unless alarm_actions.is_a?(Array)
-    alarm_actions.each do |action|
+    alarm_actions.reject(&:nil?).each do |action|
       response = autoscaling_client(resource[:region]).describe_policies(
         policy_names: [action]
       )
@@ -83,17 +84,9 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
     cloudwatch_client(resource[:region]).put_metric_alarm(config)
   end
 
-  [
-    :metric=,
-    :namespace=,
-    :statistic=,
-    :period=,
-    :threshold=,
-    :comparison_operator=,
-    :dimensions=,
-    :evaluation_period,
-    :alarm_actions=,
-  ].each{ |method| alias_method method, :update }
+  def flush
+    update unless @property_hash[:ensure] == :absent
+  end
 
   def destroy
     Puppet.info("Deleting alarm #{name} in region #{resource[:region]}")
