@@ -5,16 +5,24 @@
         uri: "https://ec2.sa-east-1.amazonaws.com/"
         body: 
           encoding: UTF-8
-          string: "AWSAccessKeyId=redacted&Action=RunInstances&ImageId=ami-67a60d7a&InstanceType=t1.micro&MaxCount=1&MinCount=1&Placement.AvailabilityZone=sa-east-1a&SecurityGroup.1=web-sg&Signature=redacted%2Bh6uwC4cA%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-03T14%3A00%3A45Z&UserData=&Version=2014-06-15"
+          string: "Action=RunInstances&ImageId=ami-67a60d7a&InstanceType=t1.micro&MaxCount=1&MinCount=1&Monitoring.Enabled=false&Placement.AvailabilityZone=sa-east-1a&SecurityGroup.1=web-sg&Version=2014-09-01"
         headers: 
           Content-Type: 
             - "application/x-www-form-urlencoded; charset=utf-8"
           Accept-Encoding: 
             - ""
           User-Agent: 
-            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150129T100524Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - e5e51e6a26bad5b8c837d6060199f581f90454a909970fb353585d13dc53b3af
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150129/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=de49349a7b55b9dc35ae9614b6baa41d56d20fbe495ff87fdde824c568e94b98"
           Content-Length: 
-            - "350"
+            - "189"
           Accept: 
             - "*/*"
       response: 
@@ -29,26 +37,26 @@
           Vary: 
             - Accept-Encoding
           Date: 
-            - "Fri, 03 Oct 2014 14:00:46 GMT"
+            - "Thu, 29 Jan 2015 10:05:23 GMT"
           Server: 
             - AmazonEC2
         body: 
           encoding: UTF-8
           string: |-
             <?xml version="1.0" encoding="UTF-8"?>
-            <RunInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
-                <requestId>e840bed7-aa57-4305-934c-05ae99132d67</requestId>
-                <reservationId>r-d1ae1bc4</reservationId>
+            <RunInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>4d437131-94b2-4a01-98c1-749a53aa71ac</requestId>
+                <reservationId>r-84651a91</reservationId>
                 <ownerId>482693910459</ownerId>
                 <groupSet>
                     <item>
-                        <groupId>sg-d5d0f4c8</groupId>
+                        <groupId>sg-4b50e354</groupId>
                         <groupName>web-sg</groupName>
                     </item>
                 </groupSet>
                 <instancesSet>
                     <item>
-                        <instanceId>i-e68e0cf3</instanceId>
+                        <instanceId>i-c2065bd7</instanceId>
                         <imageId>ami-67a60d7a</imageId>
                         <instanceState>
                             <code>0</code>
@@ -60,7 +68,7 @@
                         <amiLaunchIndex>0</amiLaunchIndex>
                         <productCodes/>
                         <instanceType>t1.micro</instanceType>
-                        <launchTime>2014-10-03T14:00:46.000Z</launchTime>
+                        <launchTime>2015-01-29T10:05:24.000Z</launchTime>
                         <placement>
                             <availabilityZone>sa-east-1a</availabilityZone>
                             <groupName/>
@@ -72,7 +80,7 @@
                         </monitoring>
                         <groupSet>
                             <item>
-                                <groupId>sg-d5d0f4c8</groupId>
+                                <groupId>sg-4b50e354</groupId>
                                 <groupName>web-sg</groupName>
                             </item>
                         </groupSet>
@@ -93,22 +101,30 @@
                 </instancesSet>
             </RunInstancesResponse>
         http_version: 
-      recorded_at: "Fri, 03 Oct 2014 14:00:47 GMT"
+      recorded_at: "Thu, 29 Jan 2015 10:05:25 GMT"
     - request: 
         method: post
         uri: "https://ec2.sa-east-1.amazonaws.com/"
         body: 
           encoding: UTF-8
-          string: "AWSAccessKeyId=redacted&Action=CreateTags&ResourceId.1=i-e68e0cf3&Signature=redacted%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Tag.1.Key=Name&Tag.1.Value=web-15&Timestamp=2014-10-03T14%3A00%3A47Z&Version=2014-06-15"
+          string: "Action=DescribeInstances&InstanceId.1=i-c2065bd7&Version=2014-09-01"
         headers: 
           Content-Type: 
             - "application/x-www-form-urlencoded; charset=utf-8"
           Accept-Encoding: 
             - ""
           User-Agent: 
-            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150129T100541Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "79d22502e4cfe2fb2a605d49b78bd9d76751221b988d9763c8d34facf73b6f00"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150129/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=c865fbb51f17ae6fc43ad3145cd2e8c50e008aaa0860e110ac01cde7cbbe8f3b"
           Content-Length: 
-            - "268"
+            - "67"
           Accept: 
             - "*/*"
       response: 
@@ -123,17 +139,131 @@
           Vary: 
             - Accept-Encoding
           Date: 
-            - "Fri, 03 Oct 2014 14:00:47 GMT"
+            - "Thu, 29 Jan 2015 10:05:41 GMT"
           Server: 
             - AmazonEC2
         body: 
           encoding: UTF-8
           string: |-
             <?xml version="1.0" encoding="UTF-8"?>
-            <CreateTagsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
-                <requestId>a9d1c644-c734-4bb6-a126-0fab8dc3ab87</requestId>
+            <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>f20d7b31-d24e-43f5-9e12-ae4c387915aa</requestId>
+                <reservationSet>
+                    <item>
+                        <reservationId>r-84651a91</reservationId>
+                        <ownerId>482693910459</ownerId>
+                        <groupSet>
+                            <item>
+                                <groupId>sg-4b50e354</groupId>
+                                <groupName>web-sg</groupName>
+                            </item>
+                        </groupSet>
+                        <instancesSet>
+                            <item>
+                                <instanceId>i-c2065bd7</instanceId>
+                                <imageId>ami-67a60d7a</imageId>
+                                <instanceState>
+                                    <code>16</code>
+                                    <name>running</name>
+                                </instanceState>
+                                <privateDnsName>ip-10-252-9-105.sa-east-1.compute.internal</privateDnsName>
+                                <dnsName>ec2-54-94-69-247.sa-east-1.compute.amazonaws.com</dnsName>
+                                <reason/>
+                                <amiLaunchIndex>0</amiLaunchIndex>
+                                <productCodes/>
+                                <instanceType>t1.micro</instanceType>
+                                <launchTime>2015-01-29T10:05:24.000Z</launchTime>
+                                <placement>
+                                    <availabilityZone>sa-east-1a</availabilityZone>
+                                    <groupName/>
+                                    <tenancy>default</tenancy>
+                                </placement>
+                                <kernelId>aki-5553f448</kernelId>
+                                <monitoring>
+                                    <state>disabled</state>
+                                </monitoring>
+                                <privateIpAddress>10.252.9.105</privateIpAddress>
+                                <ipAddress>54.94.69.247</ipAddress>
+                                <groupSet>
+                                    <item>
+                                        <groupId>sg-4b50e354</groupId>
+                                        <groupName>web-sg</groupName>
+                                    </item>
+                                </groupSet>
+                                <architecture>x86_64</architecture>
+                                <rootDeviceType>ebs</rootDeviceType>
+                                <rootDeviceName>/dev/sda1</rootDeviceName>
+                                <blockDeviceMapping>
+                                    <item>
+                                        <deviceName>/dev/sda1</deviceName>
+                                        <ebs>
+                                            <volumeId>vol-2246833e</volumeId>
+                                            <status>attached</status>
+                                            <attachTime>2015-01-29T10:05:26.000Z</attachTime>
+                                            <deleteOnTermination>true</deleteOnTermination>
+                                        </ebs>
+                                    </item>
+                                </blockDeviceMapping>
+                                <virtualizationType>paravirtual</virtualizationType>
+                                <clientToken/>
+                                <hypervisor>xen</hypervisor>
+                                <networkInterfaceSet/>
+                                <ebsOptimized>false</ebsOptimized>
+                            </item>
+                        </instancesSet>
+                    </item>
+                </reservationSet>
+            </DescribeInstancesResponse>
+        http_version: 
+      recorded_at: "Thu, 29 Jan 2015 10:05:42 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=CreateTags&ResourceId.1=i-c2065bd7&Tag.1.Key=Name&Tag.1.Value=web-15&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150129T100543Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - e13ad3e9a1c18100c1691ed8873f484725efd544bc8dd395faacb9f3916ee8ba
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150129/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=4aa9f5044f88d1d60b993cccc2a30d848a58d2e8e32d18280f3e18b50b11ae12"
+          Content-Length: 
+            - "94"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Thu, 29 Jan 2015 10:05:42 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <CreateTagsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>9ff199c9-2172-4f2c-9bb9-2ef3ae3a5062</requestId>
                 <return>true</return>
             </CreateTagsResponse>
         http_version: 
-      recorded_at: "Fri, 03 Oct 2014 14:00:48 GMT"
+      recorded_at: "Thu, 29 Jan 2015 10:05:44 GMT"
   recorded_with: "VCR 2.9.3"
