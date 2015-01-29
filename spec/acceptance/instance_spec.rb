@@ -68,8 +68,6 @@ describe "ec2_instance" do
 
     it "and return public_dns_name, private_dns_name,
       public_ip_address, private_ip_address" do
-      pending('we return instance on pending, and not running, and
-        also need to provide better validation around the values')
       expect(@instance.public_dns_name).to match(/\.compute\.amazonaws\.com/)
       expect(@instance.private_dns_name).to match(/\.compute\.internal/)
       expect{ IPAddr.new(@instance.public_ip_address) }.not_to raise_error
