@@ -10,7 +10,7 @@ Puppet::Type.newtype(:ec2_vpc_internet_gateway) do
 
   ensurable
 
-  newproperty(:tags) do # TODO
+  newproperty(:tags) do
     desc 'Tags to assign to the internet gateway.'
   end
 

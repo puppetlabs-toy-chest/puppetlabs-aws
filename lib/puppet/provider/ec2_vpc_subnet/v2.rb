@@ -4,6 +4,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
   confine feature: :aws
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances
     regions.collect do |region|
@@ -31,7 +32,6 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
     ec2 = ec2_client(region)
     vpc_response = ec2.describe_vpcs(vpc_ids: [subnet.vpc_id])
     vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
-    name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
 
     table_response = ec2.describe_route_tables(filters: [
       {name: 'association.subnet-id', values: [subnet.subnet_id]},
@@ -41,7 +41,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
     table_name_tag = tables.empty? ? nil : tables.first.tags.detect { |tag| tag.key == 'Name' }
 
     {
-      name: name_tag ? name_tag.value : nil,
+      name: name_from_tag(subnet),
       route_table: table_name_tag ? table_name_tag.value : nil,
       id: subnet.subnet_id,
       cidr_block: subnet.cidr_block,
@@ -49,6 +49,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
       vpc: vpc_name_tag ? vpc_name_tag.value : nil,
       ensure: :present,
       region: region,
+      tags: tags_for(subnet),
     }
   end
 
@@ -74,7 +75,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
     subnet_id = response.data.subnet.subnet_id
     ec2.create_tags(
       resources: [subnet_id],
-      tags: [{key: 'Name', value: name}]
+      tags: tags_for_resource,
     )
     route_table_name = resource[:route_table]
     if route_table_name

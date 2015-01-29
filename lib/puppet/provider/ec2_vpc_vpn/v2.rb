@@ -4,6 +4,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   confine feature: :aws
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances()
     regions.collect do |region|
@@ -31,8 +32,6 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   end
 
   def self.connection_to_hash(region, connection)
-    name_tag = connection.tags.detect { |tag| tag.key == 'Name' }
-
     ec2 = ec2_client(region)
 
     customer_response = ec2.describe_customer_gateways(
@@ -62,7 +61,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
     routes = connection.routes.collect { |route| route.destination_cidr_block }
 
     {
-      :name             => name_tag ? name_tag.value : nil,
+      :name             => name_from_tag(connection),
       :id               => connection.vpn_connection_id,
       :customer_gateway => customer_gateway_name,
       :ensure           => :present,
@@ -71,6 +70,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
       :vpn_gateway      => vpn_gateway_name,
       :routes           => routes,
       :static_routes    => connection.options.static_routes_only,
+      :tags             => tags_for(connection),
     }
   end
 
@@ -109,7 +109,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
 
     ec2.create_tags(
       resources: [vpn_connection_id],
-      tags: [{key: 'Name', value: name}]
+      tags: tags_for_resource,
     )
 
     ec2.wait_until(:vpn_connection_available, vpn_connection_ids: [vpn_connection_id]) unless resource[:routes].empty?

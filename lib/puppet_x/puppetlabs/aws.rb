@@ -77,6 +77,38 @@ module PuppetX
         self.class.route53_client(region)
       end
 
+      def tags_for_resource
+        tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
+        tags << {key: 'Name', value: name}
+      end
+
+      def self.name_from_tag(item)
+        name_tag = item.tags.detect { |tag| tag.key == 'Name' }
+        name_tag ? name_tag.value : nil
+      end
+
+      def self.tags_for(item)
+        tags = {}
+        item.tags.each do |tag|
+          tags[tag.key] = tag.value unless tag.key == 'Name'
+        end
+        tags
+      end
+
+      def tags=(value)
+        Puppet.info("Updating tags for #{name} in region #{region}")
+        ec2 = ec2_client(resource[:region])
+        ec2.create_tags(
+          resources: [@property_hash[:id]],
+          tags: value.collect { |k,v| { :key => k, :value => v } }
+        ) unless value.empty?
+        missing_tags = tags.keys - value.keys
+        ec2.delete_tags(
+          resources: [@property_hash[:id]],
+          tags: missing_tags.collect { |k| { :key => k } }
+        ) unless missing_tags.empty?
+      end
+
     end
   end
 end

@@ -4,6 +4,7 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
   confine feature: :aws
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances()
     regions.collect do |region|
@@ -29,9 +30,8 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def self.gateway_to_hash(region, gateway)
-    name_tag = gateway.tags.detect { |tag| tag.key == 'Name' }
     {
-      :name       => name_tag ? name_tag.value : nil,
+      :name       => name_from_tag(gateway),
       :id         => gateway.customer_gateway_id,
       :bgp_asn    => gateway.bgp_asn,
       :state      => gateway.state,
@@ -39,6 +39,7 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
       :region     => region,
       :ip_address => gateway.ip_address,
       :ensure     => :present,
+      :tags       => tags_for(gateway),
     }
   end
 
@@ -60,7 +61,7 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
 
     ec2.create_tags(
       resources: [response.data.customer_gateway.customer_gateway_id],
-      tags: [{key: 'Name', value: name}]
+      tags: tags_for_resource
     )
 
     @property_hash[:ensure] = :present

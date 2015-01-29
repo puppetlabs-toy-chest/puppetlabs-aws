@@ -31,7 +31,7 @@ Puppet::Type.newtype(:ec2_vpc) do
     newvalues('default', 'dedicated')
   end
 
-  newproperty(:tags) do # TODO
+  newproperty(:tags) do
     desc 'The tags to assign to the VPC.'
   end
 

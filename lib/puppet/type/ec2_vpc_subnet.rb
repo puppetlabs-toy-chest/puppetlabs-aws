@@ -29,7 +29,7 @@ Puppet::Type.newtype(:ec2_vpc_subnet) do
     desc 'The availability zone in which to launch the subnet.'
   end
 
-  newproperty(:tags) do # TODO
+  newproperty(:tags) do
     desc 'Tags to assign to the subnet.'
   end
 

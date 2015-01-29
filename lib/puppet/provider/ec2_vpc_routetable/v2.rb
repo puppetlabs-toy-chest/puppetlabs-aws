@@ -4,6 +4,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
   confine feature: :aws
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances
     regions.collect do |region|
@@ -46,20 +47,19 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
     ec2 = ec2_client(region)
     vpc_response = ec2.describe_vpcs(vpc_ids: [table.vpc_id])
     vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
-    name_tag = table.tags.detect { |tag| tag.key == 'Name' }
 
-    routes = []
-    table.routes.each do |route|
-      routes << route_to_hash(region, route)
+    routes = table.routes.collect do |route|
+      route_to_hash(region, route)
     end
 
     {
-      name: name_tag ? name_tag.value : nil,
+      name: name_from_tag(table),
       id: table.route_table_id,
       vpc: vpc_name_tag ? vpc_name_tag.value : nil,
       ensure: :present,
       routes: routes,
       region: region,
+      tags: tags_for(table),
     }
   end
 
@@ -85,7 +85,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
     id = response.data.route_table.route_table_id
     ec2.create_tags(
       resources: [id],
-      tags: [{key: 'Name', value: name}]
+      tags: tags_for_resource,
     )
     resource[:routes].each do |route|
       gateway_response = ec2.describe_internet_gateways(filters: [

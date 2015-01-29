@@ -4,6 +4,7 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
   confine feature: :aws
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances
     regions.collect do |region|
@@ -29,21 +30,21 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
   end
 
   def self.dhcp_option_to_hash(region, option)
-    name_tag = option.tags.detect { |tag| tag.key == 'Name' }
     config = {}
     option.dhcp_configurations.each do |conf|
       config[conf[:key]] = conf[:values].first[:value]
     end
     {
-      :name                 => name_tag ? name_tag.value : nil,
-      :id                   => option.dhcp_options_id,
-      :region               => region,
-      :ensure               => :present,
-      :domain_name          => config['domain-name'],
-      :ntp_servers          => config['ntp-servers'],
-      :domain_name_servers  => config['domain-name-servers'],
-      :netbios_name_servers => config['netbios-name-servers'],
-      :netbios_node_type    => config['netbios-node-type'],
+      name: name_from_tag(option),
+      id: option.dhcp_options_id,
+      region: region,
+      ensure: :present,
+      domain_name: config['domain-name'],
+      ntp_servers: config['ntp-servers'],
+      domain_name_servers: config['domain-name-servers'],
+      netbios_name_servers: config['netbios-name-servers'],
+      netbios_node_type: config['netbios-node-type'],
+      tags: tags_for(option),
     }
   end
 
@@ -69,7 +70,7 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
 
     ec2.create_tags(
       resources: [response.data.dhcp_options.dhcp_options_id],
-      tags: [{key: 'Name', value: name}]
+      tags: tags_for_resource
     )
 
     @property_hash[:ensure] = :present

@@ -4,6 +4,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
   confine feature: :aws
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances
     regions.collect do |region|
@@ -28,10 +29,10 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def self.gateway_to_hash(region, gateway)
-    name_tag = gateway.tags.detect { |tag| tag.key == 'Name' }
+    assigned_name = name_from_tag(gateway)
     vpcs = []
     vpc_ids = []
-    if name_tag
+    if assigned_name
       vpc_response = ec2_client(region).describe_vpcs(vpc_ids: gateway.attachments.map(&:vpc_id))
       vpc_response.data.vpcs.each do |vpc|
         vpc_name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
@@ -42,12 +43,13 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
       end
     end
     {
-      name: name_tag ? name_tag.value : nil,
+      name: assigned_name,
       vpcs: vpcs,
       vpc_ids: vpc_ids,
       id: gateway.internet_gateway_id,
       ensure: :present,
       region: region,
+      tags: tags_for(gateway),
     }
   end
 
@@ -73,7 +75,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
     end
     ec2.create_tags(
       resources: [id],
-      tags: [{key: 'Name', value: name}]
+      tags: tags_for_resource,
     )
   end
 

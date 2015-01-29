@@ -4,6 +4,7 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances
     regions.collect do |region|
@@ -28,14 +29,14 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   end
 
   def self.vpc_to_hash(region, vpc)
-    name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
     {
-      name: name_tag ? name_tag.value : nil,
+      name: name_from_tag(vpc),
       id: vpc.vpc_id,
       cidr_block: vpc.cidr_block,
       instance_tenancy: vpc.instance_tenancy,
       ensure: :present,
       region: region,
+      tags: tags_for(vpc),
     }
   end
 
@@ -75,9 +76,10 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
       {name: 'vpc-id', values: [response.data.vpc.vpc_id]},
       {name: 'association.main', values: ['true']},
     ])
+
     ec2.create_tags(
       resources: [route_response.data.route_tables.first.route_table_id, vpc_id],
-      tags: [{key: 'Name', value: name}]
+      tags: tags_for_resource
     )
   end
 

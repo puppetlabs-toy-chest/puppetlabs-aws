@@ -4,6 +4,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
   confine feature: :aws
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances()
     regions.collect do |region|
@@ -31,8 +32,6 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def self.gateway_to_hash(region, gateway)
-    name_tag = gateway.tags.detect { |tag| tag.key == 'Name' }
-
     attached = gateway.vpc_attachments.detect { |vpc| vpc.state == 'attached' }
     if attached
       vpc_id = attached.vpc_id
@@ -47,7 +46,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
       vpc_id = nil
     end
     {
-      :name   => name_tag ? name_tag.value : nil,
+      :name   => name_from_tag(gateway),
       :id     => gateway.vpn_gateway_id,
       :vpc    => vpc_name,
       :vpc_id => vpc_id,
@@ -55,6 +54,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
       :ensure => :present,
       :region => region,
       :type   => gateway.type,
+      :tags   =>  tags_for(gateway),
     }
   end
 
@@ -86,7 +86,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
 
     ec2.create_tags(
       resources: [response.data.vpn_gateway.vpn_gateway_id],
-      tags: [{key: 'Name', value: name}]
+      tags: tags_for_resource,
     )
 
     @property_hash[:ensure] = :present

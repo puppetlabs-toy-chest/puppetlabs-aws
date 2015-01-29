@@ -48,7 +48,7 @@ Puppet::Type.newtype(:ec2_vpc_vpn) do
     end
   end
 
-  newproperty(:tags) do # TODO
+  newproperty(:tags) do
     desc 'The tags for the VPN.'
   end
 

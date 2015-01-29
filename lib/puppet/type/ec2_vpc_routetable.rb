@@ -28,7 +28,7 @@ Puppet::Type.newtype(:ec2_vpc_routetable) do
     end
   end
 
-  newproperty(:tags) do # TODO
+  newproperty(:tags) do
     desc 'Tags to assign to the route table.'
   end
 

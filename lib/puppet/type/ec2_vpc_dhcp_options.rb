@@ -10,7 +10,7 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
     end
   end
 
-  newproperty(:tags) do # TODO
+  newproperty(:tags) do
     desc 'Tags for the DHCP option set.'
   end
 
