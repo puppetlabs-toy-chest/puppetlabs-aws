@@ -105,16 +105,21 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       key = resource[:key_name] ? resource[:key_name] : false
       config['key_name'] = key if key
 
-      response = ec2_client(resource[:region]).run_instances(config)
+      ec2 = ec2_client(resource[:region])
+      response = ec2.run_instances(config)
 
-      @property_hash[:ensure] = :present
+      instance_ids = response.instances.map(&:instance_id)
+      ec2.wait_until(:instance_running, instance_ids: instance_ids)
 
       tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
       tags << {key: 'Name', value: name}
-      ec2_client(resource[:region]).create_tags(
-        resources: response.instances.map(&:instance_id),
+      ec2.create_tags(
+        resources: instance_ids,
         tags: tags
       )
+
+      @property_hash[:instance_id] = instance_ids.first
+      @property_hash[:ensure] = :present
     end
   end
 
@@ -133,15 +138,11 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def stop
+    create unless exists?
     Puppet.info("Stopping instance #{name} in region #{resource[:region]}")
     ec2 = ec2_client(resource[:region])
-    instances = ec2.describe_instances(filters: [
-      {name: 'tag:Name', values: [name]},
-      {name: 'instance-state-name', values: ['pending', 'running']}
-    ])
     ec2.stop_instances(
-      instance_ids: instances.reservations.map(&:instances).
-        flatten.map(&:instance_id)
+      instance_ids: [@property_hash[:instance_id]]
     )
     @property_hash[:ensure] = :stopped
   end
