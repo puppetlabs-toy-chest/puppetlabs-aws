@@ -1,0 +1,5 @@
+ec2_securitygroup { '{{name}}-sg':
+  ensure      => {{ensure}},
+  description => 'group for testing autoscaling group',
+  region      => '{{region}}',
+}

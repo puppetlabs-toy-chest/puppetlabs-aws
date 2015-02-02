@@ -1,4 +1,4 @@
-ec2_securitygroup { 'autoscale-acceptance-sg':
+ec2_securitygroup { '{{name}}-sg':
   ensure      => {{ensure}},
   description => 'group for testing autoscaling group',
   region      => 'sa-east-1',
@@ -6,7 +6,7 @@ ec2_securitygroup { 'autoscale-acceptance-sg':
 
 ec2_launchconfiguration { '{{name}}-lc':
   ensure          => {{ensure}},
-  security_groups => ['autoscale-acceptance-sg'],
+  security_groups => ['{{name}}-sg'],
   region          => 'sa-east-1',
   image_id        => 'ami-67a60d7a',
   instance_type   => 't1.micro',
