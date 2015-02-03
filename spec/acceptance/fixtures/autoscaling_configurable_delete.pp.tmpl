@@ -1,0 +1,20 @@
+cloudwatch_alarm { '{{alarm_name}}':
+  ensure => {{ensure}},
+  region => '{{region}}',
+} ~>
+
+ec2_scalingpolicy { '{{policy_name}}':
+  ensure             => {{ensure}},
+  region             => '{{region}}',
+  auto_scaling_group => '{{asg_name}}',
+} ~>
+
+ec2_autoscalinggroup { '{{asg_name}}':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_launchconfiguration { '{{lc_name}}':
+  ensure => {{ensure}},
+  region => '{{region}}',
+}

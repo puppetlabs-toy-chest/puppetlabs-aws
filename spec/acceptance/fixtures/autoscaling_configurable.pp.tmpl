@@ -1,0 +1,54 @@
+ec2_securitygroup { '{{sg_name}}':
+  ensure      => {{ensure}},
+  description => 'group for testing autoscaling group',
+  region      => '{{region}}',
+}
+
+ec2_launchconfiguration { '{{lc_name}}':
+  ensure          => {{ensure}},
+  security_groups => ['{{sg_setting}}'],
+  region          => '{{region}}',
+  image_id        => 'ami-67a60d7a',
+  instance_type   => 't1.micro',
+}
+
+ec2_autoscalinggroup { '{{asg_name}}':
+  ensure               => {{ensure}},
+  min_size             => {{min_size}},
+  max_size             => {{max_size}},
+  region               => '{{region}}',
+  launch_configuration => '{{lc_setting}}',
+  availability_zones => [{{#availability_zones}}'{{.}}',{{/availability_zones}}],
+}
+
+ec2_scalingpolicy { '{{policy_name}}':
+  ensure             => {{ensure}},
+  auto_scaling_group => '{{asg_setting}}',
+  scaling_adjustment => {{scaling_adjustment}},
+  adjustment_type    => '{{adjustment_type}}',
+  region             => '{{region}}',
+}
+
+ec2_scalingpolicy { '{{second_policy_name}}':
+  ensure             => {{ensure}},
+  auto_scaling_group => '{{asg_setting}}',
+  scaling_adjustment => {{scaling_adjustment}},
+  adjustment_type    => '{{adjustment_type}}',
+  region             => '{{region}}',
+}
+
+cloudwatch_alarm { '{{alarm_name}}':
+  ensure              => {{ensure}},
+  metric              => '{{metric}}',
+  namespace           => '{{namespace}}',
+  statistic           => '{{statistic}}',
+  period              => {{period}},
+  threshold           => {{threshold}},
+  comparison_operator => '{{comparison_operator}}',
+  dimensions          => [{
+    'AutoScalingGroupName' => '{{asg_setting}}',
+  }],
+  evaluation_periods  => {{evaluation_periods}},
+  alarm_actions       => ['{{alarm_actions}}'],
+  region              => '{{region}}',
+}

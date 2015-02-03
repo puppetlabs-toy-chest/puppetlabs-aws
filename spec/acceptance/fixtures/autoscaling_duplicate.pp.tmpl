@@ -1,0 +1,46 @@
+ec2_securitygroup { '{{sg_name}}':
+  ensure      => present,
+  description => 'group for testing autoscaling group',
+  region      => '{{region}}',
+}
+
+ec2_launchconfiguration { '{{lc_name}}':
+  ensure          => present,
+  security_groups => ['{{sg_name}}'],
+  region          => '{{region}}',
+  image_id        => 'ami-67a60d7a',
+  instance_type   => 't1.micro',
+}
+
+ec2_autoscalinggroup { '{{asg_name}}':
+  ensure               => present,
+  min_size             => 1,
+  max_size             => 2,
+  region               => '{{region}}',
+  launch_configuration => '{{lc-name}}',
+  availability_zones   => ['{{region}}a'],
+}
+
+ec2_scalingpolicy { '{{policy_name}}':
+  ensure             => present,
+  auto_scaling_group => '{{asg_name}}',
+  scaling_adjustment => 30,
+  adjustment_type    => 'PercentChangeInCapacity',
+  region             => '{{region}}',
+}
+
+cloudwatch_alarm { '{{alarm_name}}':
+  ensure              => present,
+  metric              => 'CPUUtilization',
+  namespace           => 'AWS/EC2',
+  statistic           => 'Average',
+  period              => 60,
+  threshold           => 30,
+  comparison_operator => 'GreaterThanOrEqualToThreshold',
+  dimensions          => [{
+    'AutoScalingGroupName' => '{{asg_name}}',
+  }],
+  evaluation_periods  => 2,
+  alarm_actions       => ['{{policy_name}}'],
+  region              => '{{region}}',
+}
