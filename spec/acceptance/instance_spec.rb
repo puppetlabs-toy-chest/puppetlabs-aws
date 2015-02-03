@@ -68,8 +68,6 @@ describe "ec2_instance" do
 
     it "and return public_dns_name, private_dns_name,
       public_ip_address, private_ip_address" do
-      pending('we return instance on pending, and not running, and
-        also need to provide better validation around the values')
       expect(@instance.public_dns_name).to match(/\.compute\.amazonaws\.com/)
       expect(@instance.private_dns_name).to match(/\.compute\.internal/)
       expect{ IPAddr.new(@instance.public_ip_address) }.not_to raise_error
@@ -195,4 +193,42 @@ describe "ec2_instance" do
     end
   end
 
+  describe 'create a new instance' do
+
+    let(:config) do
+      {
+        :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :instance_type => 't1.micro',
+        :region => 'sa-east-1',
+        :image_id => 'ami-41e85d5c',
+        :ensure => 'present',
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        }
+      }
+    end
+
+    after(:each) do
+      config[:ensure] = 'absent'
+      PuppetManifest.new(@template, config).apply
+    end
+
+    it 'launched as stopped' do
+      config[:ensure] = 'stopped'
+      r = PuppetManifest.new(@template, config).apply
+      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      instance = get_instance(config[:name])
+      expect(['stopping', 'stopped']).to include(instance.state.name)
+    end
+
+    it 'launched as running' do
+      config[:ensure] = 'running'
+      r = PuppetManifest.new(@template, config).apply
+      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      instance = get_instance(config[:name])
+      expect(instance.state.name).to eq('running')
+    end
+  end
 end
