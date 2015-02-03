@@ -67,6 +67,12 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   def exists?
     dest_region = resource[:region] if resource
     Puppet.info("Checking if instance #{name} exists in region #{dest_region || region}")
+    running? || stopped?
+  end
+
+  def running?
+    dest_region = resource[:region] if resource
+    Puppet.info("Checking if instance #{name} is running in region #{dest_region || region}")
     [:present, :pending, :running].include? @property_hash[:ensure]
   end
 
@@ -77,7 +83,6 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def create
-    Puppet.info("Starting instance #{name} in region #{resource[:region]}")
     groups = resource[:security_groups]
     groups = [groups] unless groups.is_a?(Array)
     groups = groups.reject(&:nil?)
@@ -85,6 +90,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     if stopped?
       restart
     else
+      Puppet.info("Starting instance #{name} in region #{resource[:region]}")
       data = resource[:user_data].nil? ? nil : Base64.encode64(resource[:user_data])
 
       config = {
@@ -119,7 +125,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def restart
-    Puppet.info("Starting instance #{name} in region #{resource[:region]}")
+    Puppet.info("Restarting instance #{name} in region #{resource[:region]}")
     ec2 = ec2_client(resource[:region])
     instances = ec2.describe_instances(filters: [
       {name: 'tag:Name', values: [name]},
