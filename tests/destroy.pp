@@ -30,3 +30,9 @@ ec2_securitygroup { 'web-sg':
 ec2_securitygroup { 'lb-sg':
     ensure => absent,
 }
+
+rds_instance { 'db-name-5':
+  ensure => absent,
+  region => 'us-west-1',
+  skip_final_snapshot => 'true',
+}

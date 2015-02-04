@@ -83,3 +83,19 @@ elb_loadbalancer { 'lb-1':
     port     => 80,
   }],
 }
+
+rds_instance { 'db-name-5':
+  ensure => present,
+  region => 'us-west-1',
+  db_name =>  'mysqldbname3',
+  engine => 'mysql',
+  engine_version => '5.6.19a',
+  license_model => 'general-public-license',
+  allocated_storage => 10,
+  availability_zone_name => 'us-west-1a',
+  storage_type => 'gp2',
+  db_instance_class => 'db.m3.medium',
+  master_username => 'awsusername',
+  master_user_password => 'the-master-password',
+  multi_az => false,
+}
