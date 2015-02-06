@@ -1,0 +1,24 @@
+HOSTS:
+  master:
+    roles:
+      - master
+      - agent
+      - database
+      - dashboard
+    platform: el-7-x86_64
+    hypervisor: vcloud
+    template: Delivery/Quality Assurance/Templates/vCloud/redhat-7-x86_64
+  agent:
+    roles:
+      - agent
+      - provisioner
+    platform: el-7-x86_64
+    hypervisor: vcloud
+    template: Delivery/Quality Assurance/Templates/vCloud/redhat-7-x86_64
+CONFIG:
+  filecount: 12
+  datastore: instance0
+  resourcepool: delivery/Quality Assurance/FOSS/Dynamic
+  folder: Delivery/Quality Assurance/FOSS/Dynamic
+  pooling_api: http://vmpooler.delivery.puppetlabs.net/
+  pe_dir: http://enterprise.delivery.puppetlabs.net/archives/releases/3.7.1/

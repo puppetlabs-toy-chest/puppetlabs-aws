@@ -1,0 +1,115 @@
+node default {
+
+  ec2_securitygroup { '{{group_name_3}}':
+    ensure => {{ensure}},
+    description => '{{group_description_3}}',
+    region => '{{region}}',
+    ingress     => [
+      {{#ingress}}
+        {
+          {{#values}}
+          {{k}} => '{{v}}',
+          {{/values}}
+        },
+      {{/ingress}}
+    ],
+    tags            => {
+      {{#tags}}
+      {{k}} => '{{v}}',
+      {{/tags}}
+    },
+  }
+
+  ec2_instance { '{{instance_name_1}}':
+    ensure => {{ensure}},
+    region => '{{region}}',
+    image_id => '{{image_id}}',
+    instance_type => '{{instance_type}}',
+    security_groups => [{{#instance_1_sg}}'{{.}}',{{/instance_1_sg}}],
+    tags            => {
+      {{#tags}}
+        {{k}} => '{{v}}',
+      {{/tags}}
+    },
+  }
+
+  ec2_securitygroup { '{{group_name_1}}':
+    ensure => {{ensure}},
+    description => '{{group_description_1}}',
+    region => '{{region}}',
+    ingress     => [
+      {{#ingress}}
+        {
+          {{#values}}
+          {{k}} => '{{v}}',
+          {{/values}}
+        },
+      {{/ingress}}
+    ],
+    tags            => {
+      {{#tags}}
+      {{k}} => '{{v}}',
+      {{/tags}}
+    },
+  }
+
+  ec2_instance { '{{instance_name_2}}':
+    ensure => {{ensure}},
+    region => '{{region}}',
+    image_id => '{{image_id}}',
+    instance_type => '{{instance_type}}',
+    security_groups => [{{#instance_2_sg}}'{{.}}',{{/instance_2_sg}}],
+    tags            => {
+      {{#tags}}
+        {{k}} => '{{v}}',
+      {{/tags}}
+    },
+  }
+
+  ec2_instance { '{{instance_name_3}}':
+    ensure => {{ensure}},
+    region => '{{region}}',
+    image_id => '{{image_id}}',
+    instance_type => '{{instance_type}}',
+    security_groups => [{{#instance_3_sg}}'{{.}}',{{/instance_3_sg}}],
+    tags            => {
+      {{#tags}}
+        {{k}} => '{{v}}',
+      {{/tags}}
+    },
+  }
+
+  ec2_instance { '{{instance_name_4}}':
+    ensure => {{ensure}},
+    region => '{{region}}',
+    image_id => '{{image_id}}',
+    instance_type => '{{instance_type}}',
+    security_groups => [{{#instance_4_sg}}'{{.}}',{{/instance_4_sg}}],
+    tags            => {
+      {{#tags}}
+        {{k}} => '{{v}}',
+      {{/tags}}
+    },
+  }
+
+  ec2_securitygroup { '{{group_name_2}}':
+    ensure => {{ensure}},
+    description => '{{group_description_2}}',
+    region => '{{region}}',
+    ingress     => [
+      {{#ingress}}
+        {
+          {{#values}}
+          {{k}} => '{{v}}',
+          {{/values}}
+        },
+      {{/ingress}}
+    ],
+    tags            => {
+      {{#tags}}
+      {{k}} => '{{v}}',
+      {{/tags}}
+    },
+  }
+
+}

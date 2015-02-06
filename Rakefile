@@ -32,6 +32,16 @@ RSpec::Core::RakeTask.new(:acceptance) do |t|
     t.pattern = 'spec/acceptance'
 end
 
+desc "Run integration tests"
+RSpec::Core::RakeTask.new(:integration) do |t|
+  t.pattern = 'spec/acceptance/integration'
+  ENV['BEAKER_setfile'] ||= 'spec/acceptance/beaker/nodesets/rhel7.yaml'
+  ENV['SPEC_FORGE'] ||= 'https://api-forge-aio01-qatest.puppetlabs.com/'
+  unless ENV['SPEC_VERSION']
+    raise StandardError 'You must specify the environment variable SPEC_VERSION'
+  end
+end
+
 task :metadata do
   sh "bundle exec metadata-json-lint metadata.json"
 end

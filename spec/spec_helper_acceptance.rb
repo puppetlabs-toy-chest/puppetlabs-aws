@@ -75,6 +75,7 @@ class PuppetManifest < Mustache
 end
 
 class AwsHelper
+
   attr_reader :ec2_client, :elb_client
 
   def initialize(region)
@@ -95,6 +96,15 @@ class AwsHelper
     end.flatten
   end
 
+  def get_instance(name)
+    instances = self.get_instances(name)
+    if instances.count == 1
+      instances.first
+    else
+      raise StandardError, 'A single instance was not returned from AWS'
+    end
+  end
+
   def get_groups(name)
     response = @ec2_client.describe_security_groups(
       group_names: [name]
@@ -103,12 +113,30 @@ class AwsHelper
     response.data.security_groups
   end
 
+  def get_group(name)
+    groups = self.get_groups(name)
+    if groups.count == 1
+      groups.first
+    else
+      raise StandardError, 'A single group was not returned from AWS'
+    end
+  end
+
   def get_loadbalancers(name)
     response = @elb_client.describe_load_balancers(
       load_balancer_names: [name]
     )
 
     response.data.load_balancer_descriptions
+  end
+
+  def get_loadbalancer(name)
+    load_balancers = self.get_loadbalancers(name)
+    if load_balancers.count == 1
+      load_balancers.first
+    else
+      raise StandardError, 'A single load balancer was not returned from AWS'
+    end
   end
 
   def tag_difference(item, tags)
