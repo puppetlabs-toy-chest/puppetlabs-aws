@@ -33,8 +33,11 @@ Puppet::Type.newtype(:ec2_instance) do
     end
   end
 
-  newparam(:security_groups, :array_matching => :all) do
+  newproperty(:security_groups, :array_matching => :all) do
     desc 'the security groups to associate the instance'
+    def insync?(is)
+      is.to_set == should.to_set
+    end
   end
 
   newproperty(:tags) do
