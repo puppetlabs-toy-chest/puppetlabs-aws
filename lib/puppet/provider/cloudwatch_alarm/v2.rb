@@ -39,7 +39,8 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
       evaluation_periods: alarm.evaluation_periods,
       comparison_operator: alarm.comparison_operator,
       ensure: :present,
-      region: region
+      region: region,
+      dimensions: alarm.dimensions.collect { |v| { v.name => v.value} }
     }
   end
 
