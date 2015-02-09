@@ -15,6 +15,9 @@ Puppet::Type.newtype(:ec2_launchconfiguration) do
     validate do |value|
       fail 'you must specifiy security groups for the launch configuration' if value.empty?
     end
+    def insync?(is)
+      is.to_set == should.to_set
+    end
   end
 
   newparam(:user_data) do
