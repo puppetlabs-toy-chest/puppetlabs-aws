@@ -75,7 +75,7 @@ class PuppetManifest < Mustache
 end
 
 class AwsHelper
-  attr_reader :ec2_client, :elb_client
+  attr_reader :ec2_client, :elb_client, :autoscaling_client
 
   def initialize(region)
     @ec2_client = ::Aws::EC2::Client.new({region: region})

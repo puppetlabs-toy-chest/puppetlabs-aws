@@ -61,6 +61,23 @@ describe "ec2_autoscalinggroup" do
       new_config = @config.update({:ensure => 'absent'})
       template = 'autoscaling_delete.pp.tmpl'
       PuppetManifest.new(template, new_config).apply
+      # wait for all instances under ASG to be terminated
+      response = @aws.autoscaling_client.describe_auto_scaling_groups(
+        auto_scaling_group_names: ["#{@name}-asg"],
+      )
+      id = Array.new
+      response.to_h[:auto_scaling_groups].first[:instances].each do |x|
+        id.push(x[:instance_id])
+      end
+      @aws.ec2_client.wait_until(:instance_terminated, instance_ids: id)
+      # delete the security group
+      sg_template = 'sg_delete.pp.tmpl'
+      sg_config = {
+        :ensure   => 'absent',
+        :name     => @name,
+        :region   => @default_region
+      }
+      PuppetManifest.new(sg_template, sg_config).apply
     end
 
     it 'should run idempotently' do
