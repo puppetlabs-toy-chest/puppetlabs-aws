@@ -26,7 +26,7 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
     end
   end
 
-  read_only(:region)
+  read_only(:region, :alarm_actions)
 
   def self.alarm_to_hash(region, alarm)
     {
