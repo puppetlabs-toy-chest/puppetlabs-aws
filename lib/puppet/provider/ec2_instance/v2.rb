@@ -141,6 +141,12 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       if ! resource[:subnet]
         matching_groups = classic_groups
       else
+
+        if vpc_groups.empty?
+          raise Puppet::Error,
+            "When specifying a subnet you must specify a security group associated with a VPC"
+        end
+
         # filter by VPC, since describe_subnets doesn't work on empty tag:Name
         subnet_response = ec2.describe_subnets(filters: [
           {name: "vpc-id", values: vpc_groups.keys}])
@@ -163,7 +169,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
         if subnet.nil?
           raise Puppet::Error,
-            "Invalid security groups '#{groups.join(', ')}' not found in VPCs '#{vpc_groups.keys.join(', ')}'"
+            "Security groups '#{groups.join(', ')}' not found in VPCs '#{vpc_groups.keys.join(', ')}'"
         end
 
         config[:subnet_id] = subnet.subnet_id
