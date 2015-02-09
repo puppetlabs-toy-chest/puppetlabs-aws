@@ -68,7 +68,11 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
       comparison_operator: resource[:comparison_operator],
     }
     if resource[:dimensions]
-      config[:dimensions] = resource[:dimensions].map { |k,v| {name: k, value: v} }
+      dimensions = []
+      resource[:dimensions].each do |dimension|
+        dimensions << dimension.map { |k,v| {name: k, value: v} }
+      end
+      config[:dimensions] = dimensions.flatten
     end
 
     actions = []
