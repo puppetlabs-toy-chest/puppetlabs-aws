@@ -55,6 +55,12 @@ require 'spec_helper'
       }.to raise_error(Puppet::Error, /Zone names must end with a \./)
     end
 
+    it 'should require ttl to be a number' do
+      expect {
+        type_class.new({ name: 'valid.', ttl: 'invalid' })
+      }.to raise_error(Puppet::Error, /TTL values must be integers/)
+    end
+
     context 'with a full set of properties' do
       before :all do
         @instance = type_class.new({ name: 'valid.', zone: 'valid.', ttl: "400" })

@@ -25,6 +25,9 @@ module PuppetX
           munge do |value|
             value.to_i
           end
+          validate do |value|
+            fail 'TTL values must be integers' unless value.to_i.to_s == value.to_s
+          end
         end
 
         newproperty(:values, :array_matching => :all) do

@@ -118,7 +118,6 @@ class AwsHelper
     tags.to_set ^ item_tags.to_set
   end
 
-<<<<<<< HEAD
   def get_autoscaling_groups(name)
     response = @autoscaling_client.describe_auto_scaling_groups(
       auto_scaling_group_names: [name]
