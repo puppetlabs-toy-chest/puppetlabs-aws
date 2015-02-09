@@ -5,8 +5,8 @@ records.
 
 ## What
 
-For this example we'll create a Zone, along with an A record. We'll also
-show how to list current records of the supported types.
+For this example we'll create a Zone, along with an A record and a TXT
+record. We'll also show how to list current records of the supported types.
 
 The Zone we're creating is for `puppetlabs.com`, although when you run
 the example you may want to change that to your own domain.
@@ -18,9 +18,8 @@ directory run:
 
     puppet apply init.pp --test
 
-
-This should create a ROute53 zone and an A record for
-`local.puppetlabs.com` pointing to 127.0.0.1.
+This should create a Route53 zone, an A record for
+`local.puppetlabs.com` pointing to 127.0.0.1 and a TXT record.
 
 You should be see the zone when you run:
 
@@ -50,9 +49,10 @@ route53_a_record { 'local.puppetlabs.com.':
 }
 ```
 
-We can also list the automatically created NS records with:
+We can also list the automatically created NS record and a TXT record with:
 
     puppet resource route53_ns_record
+    puppet resource route53_txt_record
 
 Which should output something like:
 
@@ -65,8 +65,17 @@ route53_ns_record { 'puppetlabs.com.':
 }
 ```
 
-Finally we can delete the A record followed by the Zone:
+and:
 
-    puppet resource route53_a_record local.puppetlabs.com. zone=puppetlabs.com. values=127.0.0.1 ttl=3000 ensure=absent
-    puppet resource route53_zone puppetlabs.com. ensure=absent
+```puppet
+route53_txt_record { 'local.puppetlabs.com.':
+  ensure => 'present',
+  ttl    => '17200',
+  values => ['"message"'],
+  zone   => 'puppetlabs.com.',
+}
+```
 
+Finally we can delete all the records followed by the zone:
+
+    puppet apply delete.pp --test

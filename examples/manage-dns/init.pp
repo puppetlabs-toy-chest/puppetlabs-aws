@@ -9,3 +9,9 @@ route53_a_record { 'local.puppetlabs.com.':
   values => ['127.0.0.1'],
 }
 
+route53_txt_record { 'local.puppetlabs.com.':
+  ensure => present,
+  zone   => 'puppetlabs.com.',
+  ttl    => 17200,
+  values => '"message"'
+}
