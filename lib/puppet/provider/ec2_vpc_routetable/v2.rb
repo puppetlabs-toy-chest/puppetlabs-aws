@@ -30,12 +30,15 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
 
   def self.route_to_hash(region, route)
     ec2 = ec2_client(region)
-    if route.gateway_id == 'local'
-      gateway = 'local'
+    gateway = if route.gateway_id == 'local'
+      'local'
     else
-      igw_response = ec2.describe_internet_gateways(internet_gateway_ids: [route.gateway_id])
-      igw_name_tag = igw_response.data.internet_gateways.first.tags.detect { |tag| tag.key == 'Name' }
-      gateway = igw_name_tag ? igw_name_tag.value : nil
+      begin
+        igw_response = ec2.describe_internet_gateways(internet_gateway_ids: [route.gateway_id])
+        name_from_tag(igw_response.data.internet_gateways.first)
+      rescue Aws::EC2::Errors::InvalidInternetGatewayIDNotFound
+        nil
+      end
     end
     {
       'destination_cidr_block' => route.destination_cidr_block,
