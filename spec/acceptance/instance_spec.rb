@@ -33,12 +33,12 @@ describe "ec2_instance" do
       }
 
       PuppetManifest.new(@template, @config).apply
+      instance_placeholder = get_instance(@config[:name])
+      @aws.ec2_client.wait_until(:instance_running, instance_ids:[instance_placeholder.instance_id])
       @instance = get_instance(@config[:name])
     end
 
     after(:all) do
-      @aws.ec2_client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
-
       new_config = @config.update({:ensure => 'absent'})
       PuppetManifest.new(@template, new_config).apply
 
