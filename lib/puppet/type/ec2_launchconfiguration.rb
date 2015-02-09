@@ -10,7 +10,7 @@ Puppet::Type.newtype(:ec2_launchconfiguration) do
     end
   end
 
-  newparam(:security_groups, :array_matching => :all) do
+  newproperty(:security_groups, :array_matching => :all) do
     desc 'The security groups to associate with the instances.'
     validate do |value|
       fail 'you must specifiy security groups for the launch configuration' if value.empty?
