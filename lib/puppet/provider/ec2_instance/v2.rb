@@ -54,6 +54,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       region: region,
       hypervisor: instance.hypervisor,
       virtualization_type: instance.virtualization_type,
+      security_groups: instance.security_groups.collect(&:group_name),
     }
     if instance.state.name == 'running'
       config[:public_dns_name] = instance.public_dns_name

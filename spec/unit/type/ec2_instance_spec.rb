@@ -7,13 +7,13 @@ describe type_class do
   let :params do
     [
       :name,
-      :security_groups
     ]
   end
 
   let :properties do
     [
       :ensure,
+      :security_groups,
       :image_id,
       :instance_type,
       :region,
