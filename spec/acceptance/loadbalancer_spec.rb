@@ -85,4 +85,126 @@ describe "ec2_loadbalancer" do
     end
 
   end
+
+
+  describe 'create a load balancer' do
+
+    context 'with a manifest' do
+      before(:all) do
+        @instance_config = {
+          :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+          :instance_type => 't1.micro',
+          :region => @default_region,
+          :image_id => 'ami-41e85d5c',
+          :ensure => 'present',
+          :tags => {
+              :department => 'engineering',
+              :project    => 'cloud',
+              :created_by => 'aws-acceptance'
+          }
+        }
+
+        PuppetManifest.new(@instance_template, @instance_config).apply
+
+        @lb_config = {
+          :name                 => "#{PuppetManifest.env_dns_id}#{SecureRandom.uuid}".gsub('-', '')[0...31],
+          :ensure               => 'present',
+          :region               => @default_region,
+          :security_groups      => ['default'],
+          :availability_zones   => [@default_availability_zone, "#{@default_region}b"],
+          :instances            => [@instance_config[:name]],
+          :listeners            => [
+            {
+              :protocol => 'tcp',
+              :port     => 80,
+            }
+          ],
+          :tags                 => {
+              :department => 'engineering',
+              :project    => 'cloud',
+              :created_by => 'aws-acceptance',
+              :marco      => 'polo',
+          }
+        }
+        @lb2_template = 'loadbalancer2.pp.tmpl'
+        PuppetManifest.new(@lb2_template, @lb_config).apply
+      end
+
+      context 'using puppet resource to describe' do
+
+        before(:all) do
+          @result = TestExecutor.puppet_resource('elb_loadbalancer', {:name => @lb_config[:name]}, '--modulepath ../')
+        end
+
+        it 'region' do
+          regex = /(region)(\s*)(=>)(\s*)('#{@lb_config[:region]}')/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'security_groups' do
+          pending('This test is blocked by CLOUD-211')
+          regex = /(security_groups)(\s*)(=>)(\s*)('default')/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'availablity_zones' do
+          pending('This test is blocked by CLOUD-210')
+          @lb_config[:availability_zones].each do |listener, value|
+            regex = /('#{listener}')(\s*)(=>)(\s*)('#{value}')/
+            expect(@result.stdout).to match(regex)
+          end
+        end
+
+        it 'instances' do
+          pending('This test is blocked by CLOUD-209')
+          @lb_config[:instances].each do |i|
+            regex = /('#{i}')/
+            expect(@result.stdout).to match(regex)
+          end
+        end
+
+        it 'listeners' do
+          pending('This test is blocked by CLOUD-208')
+          # this needs to be tested once fixed
+          @lb_config[:listeners].each do |l|
+            r = String.new
+            l.each do |k, v|
+              r << "('#{k}')(\\s*)(=>)(\\s*)('#{v}')(\\s*)"
+            end
+            regex = /#{r}/m
+            expect(result.stdout).to (regex)
+          end
+        end
+
+        it 'tags' do
+          pending('This test is blocked by CLOUD-207')
+          @elb_config[:tags].each do |tag, value|
+            regex = /('#{tag}')(\s*)(=>)(\s*)('#{value}')/
+            expect(@result.stdout).to match(regex)
+          end
+        end
+
+      end
+
+      context 'destroy the load balancer' do
+        before(:all) do
+          ENV['AWS_REGION'] = @default_region
+        end
+
+        after(:all) do
+          # destroy the EC2 instance
+          @instance_config[:ensure] = 'absent'
+          PuppetManifest.new(@instance_template, @instance_config).apply
+        end
+
+        it 'with puppet resource' do
+          ENV['AWS_REGION'] = @default_region
+          TestExecutor.puppet_resource('elb_loadbalancer', {:name => @lb_config[:name], :ensure => 'absent', :region => @default_region}, '--modulepath ../')
+          expect{ get_loadbalancer(@lb_config[:name]) }.to raise_error Aws::ElasticLoadBalancing::Errors::LoadBalancerNotFound
+        end
+
+      end
+    end
+
+  end
 end
