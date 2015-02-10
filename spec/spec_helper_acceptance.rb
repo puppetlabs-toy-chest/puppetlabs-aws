@@ -147,3 +147,60 @@ class AwsHelper
   end
 
 end
+
+# a tool for applying commands on the system that is running a test
+class TestExecutor
+
+  def self.shell(cmd)
+    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+      @out = read_stream(stdout)
+      @error = read_stream(stderr)
+      @code = /(exit)(\s)(\d+)/.match(wait_thr.value.to_s)[3]
+    end
+    TestExecutor::Response.new(@out, @error, @code, cmd)
+  end
+
+  def self.read_stream(stream)
+    result = String.new
+    while line = stream.gets
+      result << line if line.class == String
+      puts line
+    end
+    result
+  end
+
+  # build and apply complex puppet resource commands
+  # the arguement resource is the type of the resource
+  # the opts hash must include a key 'name'
+  def self.puppet_resource(resource, opts = {}, command_flags = '')
+    raise 'A name for the resource must be specified' unless opts[:name]
+    cmd = "puppet resource #{resource} "
+    options = String.new
+    opts.each do |k,v|
+      if k.to_s == 'name'
+        @name = v
+      else
+        options << "#{k.to_s}=#{v.to_s} "
+      end
+    end
+    cmd << "#{@name} "
+    cmd << options
+    cmd << " #{command_flags}"
+    # apply the command
+    response = shell(cmd)
+    response
+  end
+
+end
+
+class TestExecutor::Response
+  attr_reader :stdout , :stderr, :exit_code, :command
+
+  def initialize(standard_out, standard_error, exit, cmd)
+    @stdout = standard_out
+    @stderr = standard_error
+    @exit_code = exit
+    @command = cmd
+  end
+
+end
