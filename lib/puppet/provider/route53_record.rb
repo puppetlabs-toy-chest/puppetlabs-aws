@@ -34,7 +34,9 @@ class Puppet::Provider::Route53Record < PuppetX::Puppetlabs::Aws
   end
 
   def record_hash(action)
-    records = resource[:values] ? resource[:values].map { |v| {value: v} } : []
+    values = resource[:values] || @property_hash[:values]
+    records = values ? values.map { |v| {value: v} } : []
+    ttl = resource[:ttl] || @property_hash[:ttl]
     {
       hosted_zone_id: zone_id,
       change_batch: {
@@ -43,7 +45,7 @@ class Puppet::Provider::Route53Record < PuppetX::Puppetlabs::Aws
           resource_record_set: {
             name: resource[:name],
             type: self.class.record_type,
-            ttl: resource[:ttl],
+            ttl: ttl,
             resource_records: records,
           }
         }]
@@ -52,9 +54,12 @@ class Puppet::Provider::Route53Record < PuppetX::Puppetlabs::Aws
   end
 
   def zone_id
-    zones = route53_client.list_hosted_zones.data.hosted_zones.select { |zone| zone.name == resource[:zone] }
-    fail "No Zone named #{resource[:zone]}" if zones.count < 1
-    fail "Multiple Zone records found for #{resource[:zone]}" if zones.count > 1
+    zone_name = resource[:zone] || @property_hash[:zone]
+    zones = route53_client.list_hosted_zones.data.hosted_zones.select { |zone|
+      zone.name == zone_name
+    }
+    fail "No Zone named #{zone_name}" if zones.count < 1
+    fail "Multiple Zone records found for #{zone_name}" if zones.count > 1
     zones.first.id
   end
 
