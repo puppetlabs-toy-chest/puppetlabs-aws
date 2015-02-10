@@ -21,7 +21,6 @@ describe type_class do
   let :params do
     [
       :name,
-      :dimensions,
       :alarm_actions
     ]
   end
@@ -36,6 +35,7 @@ describe type_class do
       :metric,
       :statistic,
       :period,
+      :dimensions,
     ]
   end
 

@@ -26,7 +26,7 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
     end
   end
 
-  read_only(:region)
+  read_only(:region, :alarm_actions)
 
   def self.alarm_to_hash(region, alarm)
     {
@@ -39,7 +39,8 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
       evaluation_periods: alarm.evaluation_periods,
       comparison_operator: alarm.comparison_operator,
       ensure: :present,
-      region: region
+      region: region,
+      dimensions: alarm.dimensions.collect { |v| { v.name => v.value} }
     }
   end
 
@@ -67,7 +68,11 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
       comparison_operator: resource[:comparison_operator],
     }
     if resource[:dimensions]
-      config[:dimensions] = resource[:dimensions].map { |k,v| {name: k, value: v} }
+      dimensions = []
+      resource[:dimensions].each do |dimension|
+        dimensions << dimension.map { |k,v| {name: k, value: v} }
+      end
+      config[:dimensions] = dimensions.flatten
     end
 
     actions = []

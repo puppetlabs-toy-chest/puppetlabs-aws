@@ -26,7 +26,7 @@ Puppet::Type.type(:ec2_scalingpolicy).provide(:v2, :parent => PuppetX::Puppetlab
     end
   end
 
-  read_only(:region)
+  read_only(:region, :auto_scaling_group)
 
   def self.policy_to_hash(region, policy)
     {

@@ -17,7 +17,6 @@ describe type_class do
   let :params do
     [
       :name,
-      :security_groups,
       :user_data,
     ]
   end
@@ -26,6 +25,7 @@ describe type_class do
     [
       :ensure,
       :region,
+      :security_groups,
       :instance_type,
       :image_id,
       :key_name,
