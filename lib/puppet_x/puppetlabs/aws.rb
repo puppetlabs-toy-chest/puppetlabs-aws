@@ -39,6 +39,12 @@ module PuppetX
         self.class.ec2_client(region)
       end
 
+      def vpc_only_account?
+        # this is a stub for detecting VPC only accounts
+        # it currently maintains the existing functionality
+        false
+      end
+
       def self.elb_client(region = default_region)
         ::Aws::ElasticLoadBalancing::Client.new({region: region})
       end
