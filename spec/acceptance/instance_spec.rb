@@ -24,7 +24,7 @@ describe "ec2_instance" do
         :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
         :instance_type => 't1.micro',
         :region => @default_region,
-        :image_id => 'ami-41e85d5c',
+        :image_id => 'ami-67a60d7a',
         :ensure => 'present',
         :tags => {
           :department => 'engineering',
@@ -63,6 +63,7 @@ describe "ec2_instance" do
     end
 
     it "not associated with a VPC" do
+      skip('VPC only accounts will fail here')
       expect(@instance.subnet_id).to be_nil
       expect(@instance.vpc_id).to be_nil
     end
@@ -88,7 +89,7 @@ describe "ec2_instance" do
         :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
         :instance_type => 't1.micro',
         :region => @default_region,
-        :image_id => 'ami-41e85d5c',
+        :image_id => 'ami-67a60d7a',
         :ensure => 'present',
         :tags => {
           :department => 'engineering',
@@ -153,7 +154,7 @@ describe "ec2_instance" do
         :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
         :instance_type => 't1.micro',
         :region => 'sa-east-1',
-        :image_id => 'ami-41e85d5c',
+        :image_id => 'ami-67a60d7a',
         :ensure => 'present',
         :tags => {
           :department => 'engineering',
@@ -206,7 +207,7 @@ describe "ec2_instance" do
         :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
         :instance_type => 't1.micro',
         :region => 'sa-east-1',
-        :image_id => 'ami-41e85d5c',
+        :image_id => 'ami-67a60d7a',
         :ensure => 'present',
         :tags => {
           :department => 'engineering',
@@ -387,7 +388,7 @@ describe "ec2_instance" do
         :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
         :instance_type => 't1.micro',
         :region => 'sa-east-1',
-        :image_id => 'ami-41e85d5c',
+        :image_id => 'ami-67a60d7a',
         :ensure => 'present',
         :tags => {
           :department => 'engineering',

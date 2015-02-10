@@ -176,16 +176,22 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
         matching_groups = vpc_groups[subnet.vpc_id]
       end
 
-      config[:security_group_ids] = matching_groups.map(&:group_id)
+      group_ids = matching_groups.map(&:group_id)
 
-      if (groups.uniq.length != matching_groups.map(&:group_name).uniq.length)
-        Puppet.warning <<-EOF
-Not all specified security groups found.
-Specified #{groups.length}: #{groups.join(', ')}
-Found #{matching_groups.length}:
-#{matching_groups.map { |g| 'Name : ' + g.group_name + ' - ' + g.group_id + "\n" }}
-        EOF
+      # All instances have to be in a security group, and if one is not specified
+      # EC2 will use the default. The reverse of this is if you only specify the default group
+      # we're find to rely on the default EC2 behaviour
+      unless groups == ['default'] && group_ids.empty?
+        if (groups.uniq.length != matching_groups.map(&:group_name).uniq.length)
+          Puppet.warning <<-EOF
+  Mismatch between specified and found security groups.
+  Specified #{groups.length}: #{groups.join(', ')}
+  Found #{matching_groups.length}:
+  #{matching_groups.map { |g| 'Name : ' + g.group_name + ' - ' + g.group_id + "\n" }}
+          EOF
+        end
       end
+      config[:security_group_ids] = group_ids.empty? ? nil : group_ids
 
       response = ec2.run_instances(config)
 
