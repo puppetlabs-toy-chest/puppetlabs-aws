@@ -13,5 +13,5 @@ route53_txt_record { 'local.puppetlabs.com.':
   ensure => present,
   zone   => 'puppetlabs.com.',
   ttl    => 17200,
-  values => '"message"'
+  values => 'message'
 }

@@ -74,3 +74,28 @@ require 'spec_helper'
   end
 
 end
+
+describe Puppet::Type.type(:route53_txt_record) do
+
+  it 'should add additional quotes around values' do
+    record = Puppet::Type.type(:route53_txt_record).new({
+      name: 'example.com.',
+      ttl: 3000,
+      zone: 'example.com.',
+      values: 'value',
+    })
+    expect(record[:values]).to eq(["\"value\""])
+  end
+
+  it 'should not add additional quotes around values if already present' do
+    record = Puppet::Type.type(:route53_txt_record).new({
+      name: 'example.com.',
+      ttl: 3000,
+      zone: 'example.com.',
+      values: '"value"',
+    })
+    expect(record[:values]).to eq(["\"value\""])
+  end
+
+
+end
