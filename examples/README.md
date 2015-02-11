@@ -3,6 +3,8 @@ infrastructure.
 
 * [Puppet Enterprise](puppet-enterprise/) - quickly startup a small
   Puppet Enterprise cluster using the AWS module
+* [Managing DNS](manage-dns/) - manage DNS records in Amazon Route53
+  using Puppet
 * [Data Driven Manifests](data-driven-manifests/) - use the future
   parser to automatically generate resources based on a data structure
 * [Hiera Example](hiera-example/) - store common information like region

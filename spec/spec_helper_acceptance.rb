@@ -82,6 +82,7 @@ class AwsHelper
     @elb_client = ::Aws::ElasticLoadBalancing::Client.new({region: region})
     @autoscaling_client = ::Aws::AutoScaling::Client.new({region: region})
     @cloudwatch_client = ::Aws::CloudWatch::Client.new({region: region})
+    @route53_client = ::Aws::Route53::Client.new({region: region})
   end
 
   def get_instances(name)
@@ -144,6 +145,17 @@ class AwsHelper
       alarm_names: [name]
     )
     response.data.metric_alarms
+  end
+
+  def get_dns_zones(name)
+    @route53_client.list_hosted_zones.data.hosted_zones.select { |zone|
+      zone.name == name
+    }
+  end
+
+  def get_dns_records(name, zone, type)
+    records = @route53_client.list_resource_record_sets(hosted_zone_id: zone.id)
+    records.data.resource_record_sets.select { |r| r.type == type }
   end
 
 end
