@@ -52,6 +52,7 @@ describe "ec2_autoscalinggroup" do
         :adjustment_type => 'PercentChangeInCapacity',
         :scaling_adjustment => 30,
       }
+      @config[:optional] = {:key_name => ENV['AWS_KEY_PAIR']} if ENV['AWS_KEY_PAIR']
 
       @template = 'autoscaling.pp.tmpl'
       PuppetManifest.new(@template, @config).apply
@@ -174,6 +175,173 @@ describe "ec2_autoscalinggroup" do
         policy = find_scaling_policy("#{@name}-scaleout", "#{@name}-asg")
         expect(policy.adjustment_type).to eq(new_adjustment_type)
         expect(policy.scaling_adjustment).to eq(new_scaling_adjustment)
+      end
+
+    end
+
+    context 'using puppet resource to describe' do
+
+      before(:all) do
+        #reset to known state
+         r = PuppetManifest.new(@template, @config).apply
+         expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      end
+
+      context 'CloudWatch alarm' do
+
+        before(:all) do
+          ENV['AWS_REGION'] = @default_region
+          options = {:name => "#{@config[:name]}-AddCapacity"}
+          @result = TestExecutor.puppet_resource('cloudwatch_alarm', options, '--modulepath ../')
+          @cw = find_alarm("#{@config[:name]}-AddCapacity")
+        end
+
+        it 'metric is correct' do
+          regex = /metric\s*=>\s*'#{@cw.metric_name}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'namespace is corect' do
+          regex = /namespace\s*=>\s*'#{@cw.namespace}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'statistic is correct' do
+          regex = /statistic\s*=>\s*'#{@cw.statistic}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'period is corrrect' do
+          regex = /period\s*=>\s*'#{@cw.period}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'threshold is correct' do
+          regex = /threshold\s*=>\s*'#{@cw.threshold}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'comparison_operator' do
+          regex = /comparison_operator\s*=>\s*'#{@cw.comparison_operator}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'dimensions' do
+          expect(@cw.dimensions.all?{ |d| /#{d.value}/.match(@result.stdout) }).to eq(true)
+        end
+
+        it 'evaluation_periods' do
+          regex = /evaluation_periods\s*=>\s*'#{@cw.evaluation_periods}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+      end
+
+      context 'autoscaling group' do
+
+        before(:all) do
+          ENV['AWS_REGION'] = @default_region
+          options = {:name => "#{@config[:name]}-asg"}
+          @result = TestExecutor.puppet_resource('ec2_autoscalinggroup', options, '--modulepath ../')
+          @asg = find_autoscaling_group("#{@config[:name]}-asg")
+        end
+
+        it 'min_size' do
+          regex = /min_size\s*=>\s*'#{@asg.min_size}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'max_size' do
+          regex = /max_size\s*=>\s*'#{@asg.max_size}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'launch_configuration' do
+          regex = /launch_configuration\s*=>\s*'#{@asg.launch_configuration_name }'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'instance_count' do
+          regex = /instance_count\s*=>\s*'#{@asg.instances.count}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'availability_zones' do
+          ["#{@default_region}a", "#{@default_region}b"].each do |az|
+            regex = /'#{az}'/
+            expect(@result.stdout).to match(regex)
+          end
+        end
+
+      end
+
+      context 'launch_configuration' do
+
+        before(:all) do
+          ENV['AWS_REGION'] = @default_region
+          options = {:name => "#{@config[:name]}-lc"}
+          @result = TestExecutor.puppet_resource('ec2_launchconfiguration', options, '--modulepath ../')
+          @lc = find_launch_config("#{@config[:name]}-lc")
+        end
+
+        it 'security_groups' do
+          expect(@result.stdout).to match(regex)
+          @lc.security_groups.each do |sg|
+            expect(@result.stdout).to match(/#{sg}/)
+          end
+        end
+
+        it 'key_name' do
+          if ENV['AWS_KEY_PAIR']
+            # key was supplied at creation of asg
+            # key should be reported
+            # we will need a key to run this with in CI
+            regex = /(key_name)(\s*)(=>)(\s*)('#{@lc.key_name}')/
+            expect(@result.stdout).to match(regex)
+          else
+            # no key was supplied on creation of asg
+            # should not report key
+            regex = /key_name/
+            expect(@result.stdout).not_to match(regex)
+          end
+        end
+
+        it 'instance_type' do
+          regex = /instance_type\s*=>\s*'#{@lc.instance_type}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'image_id' do
+          regex = /image_id\s*=>\s*'#{@lc.image_id}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+      end
+
+      context 'scaling policy' do
+
+        before(:all) do
+          ENV['AWS_REGION'] = @default_region
+          options = {:name => "#{@config[:name]}-scaleout"}
+          @result = TestExecutor.puppet_resource('ec2_scalingpolicy', options, '--modulepath ../')
+          @sp = find_scaling_policy("#{@config[:name]}-scaleout", "#{@config[:name]}-asg")
+        end
+
+        it 'scaling_adjustment' do
+          regex = /scaling_adjustment\s*=>\s*'#{@sp.scaling_adjustment}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'adjustment_type' do
+          regex = /adjustment_type\s*=>\s*'#{@sp.adjustment_type}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'ec2_autoscaling_group' do
+          regex = /auto_scaling_group\s*=>\s*'#{@sp.auto_scaling_group_name}'/
+          expect(@result.stdout).to match(regex)
+        end
+
       end
 
     end

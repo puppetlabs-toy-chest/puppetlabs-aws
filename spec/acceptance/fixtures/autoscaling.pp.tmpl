@@ -10,6 +10,9 @@ ec2_launchconfiguration { '{{name}}-lc':
   region          => 'sa-east-1',
   image_id        => 'ami-67a60d7a',
   instance_type   => 't1.micro',
+  {{#optional}}
+  {{k}} => '{{v}}',
+  {{/optional}}
 }
 
 ec2_autoscalinggroup { '{{name}}-asg':
