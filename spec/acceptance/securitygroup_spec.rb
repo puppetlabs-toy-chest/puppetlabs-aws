@@ -99,6 +99,7 @@ describe "ec2_securitygroup" do
     end
 
     it "isn't attached to a VPC" do
+      skip('VPC only accounts will fail here')
       expect(@group.vpc_id).to eq(nil)
     end
 

@@ -20,6 +20,7 @@ describe type_class do
       :availability_zone,
       :monitoring,
       :key_name,
+      :subnet,
     ]
   end
 
