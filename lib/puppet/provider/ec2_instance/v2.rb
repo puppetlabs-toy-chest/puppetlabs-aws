@@ -1,8 +1,10 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
-require "base64"
+require 'base64'
+require 'retries'
 
 Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
+  confine feature: :retries
 
   mk_resource_methods
 
@@ -208,14 +210,15 @@ Found #{matching_groups.length}:
       response = ec2.run_instances(config)
 
       instance_ids = response.instances.map(&:instance_id)
-      ec2.wait_until(:instance_running, instance_ids: instance_ids)
 
-      tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
-      tags << {key: 'Name', value: name}
-      ec2.create_tags(
-        resources: instance_ids,
-        tags: tags
-      )
+      with_retries(:max_tries => 5) do
+        tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
+        tags << {key: 'Name', value: name}
+        ec2.create_tags(
+          resources: instance_ids,
+          tags: tags
+        )
+      end
 
       @property_hash[:instance_id] = instance_ids.first
       @property_hash[:ensure] = :present
@@ -232,7 +235,10 @@ Found #{matching_groups.length}:
   def stop
     create unless exists?
     Puppet.info("Stopping instance #{name} in region #{resource[:region]}")
-    ec2_client(resource[:region]).stop_instances(
+    ec2 = ec2_client(resource[:region])
+    # Can't stop an instance that hasn't started yet
+    ec2.wait_until(:instance_running, instance_ids: [@property_hash[:instance_id]])
+    ec2.stop_instances(
       instance_ids: [@property_hash[:instance_id]]
     )
     @property_hash[:ensure] = :stopped

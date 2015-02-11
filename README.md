@@ -32,16 +32,20 @@ Puppet.
 
     gem install aws-sdk-core
 
-If you're running Puppet Enterprise you need to install the gem using
+We also use the retries library so install that with:
+
+    gem install retries
+
+If you're running Puppet Enterprise you need to install the gems using
 the following, so it can be used by the Puppet Enterprise Ruby.
 
-    /opt/puppet/bin/gem install aws-sdk-core
+    /opt/puppet/bin/gem install aws-sdk-core retries
 
 And if you're running [Puppet
 Server](https://github.com/puppetlabs/puppet-server) you need to
  make the gem available to JRuby with:
 
-    /opt/puppet/bin/puppetserver gem install aws-sdk-core
+    /opt/puppet/bin/puppetserver gem install aws-sdk-core retries
 
 Once the gem is installed you will need to restart the puppet-server:
 
