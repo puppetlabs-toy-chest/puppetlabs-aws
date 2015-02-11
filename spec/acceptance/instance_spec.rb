@@ -69,10 +69,12 @@ describe "ec2_instance" do
 
     it "and return public_dns_name, private_dns_name,
       public_ip_address, private_ip_address" do
-      expect(@instance.public_dns_name).to match(/\.compute\.amazonaws\.com/)
-      expect(@instance.private_dns_name).to match(/\.compute\.internal/)
-      expect{ IPAddr.new(@instance.public_ip_address) }.not_to raise_error
-      expect{ IPAddr.new(@instance.private_ip_address) }.not_to raise_error
+      @aws.ec2_client.wait_until(:instance_running, instance_ids: [@instance.instance_id])
+      instance = get_instance(@config[:name])
+      expect(instance.public_dns_name).to match(/\.compute\.amazonaws\.com/)
+      expect(instance.private_dns_name).to match(/\.compute\.internal/)
+      expect{ IPAddr.new(instance.public_ip_address) }.not_to raise_error
+      expect{ IPAddr.new(instance.private_ip_address) }.not_to raise_error
     end
 
   end
@@ -159,6 +161,7 @@ describe "ec2_instance" do
 
       PuppetManifest.new(@template, @config).apply
       @instance = get_instance(@config[:name])
+      @aws.ec2_client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
     end
 
     after(:each) do
@@ -169,7 +172,6 @@ describe "ec2_instance" do
     end
 
     it 'that can have tags changed' do
-      @aws.ec2_client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
       expect(@aws.tag_difference(@instance, @config[:tags])).to be_empty
 
       tags = {:created_by => 'aws-tests', :foo => 'bar'}
@@ -181,8 +183,6 @@ describe "ec2_instance" do
     end
 
     it "that can be stopped and restarted" do
-      @aws.ec2_client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
-
       @config[:ensure] = 'stopped'
       PuppetManifest.new(@template, @config).apply
 
@@ -228,6 +228,10 @@ describe "ec2_instance" do
       config[:ensure] = 'running'
       r = PuppetManifest.new(@template, config).apply
       expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      instance = get_instance(config[:name])
+      # without a wait this will return pending due to the EC2 lifecycle
+      # the test here is that we can use running as an alias, so the wait isn't breaking that
+      @aws.ec2_client.wait_until(:instance_running, instance_ids: [instance.instance_id])
       instance = get_instance(config[:name])
       expect(instance.state.name).to eq('running')
     end
