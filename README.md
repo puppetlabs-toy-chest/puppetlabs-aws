@@ -219,8 +219,10 @@ elb_loadbalancer { 'name-of-load-balancer':
   instances          => ['name-of-instance', 'another-instance'],
   security_groups    => ['name-of-security-group'],
   listeners          => [{
-    protocol => 'tcp',
-    port     => 80,
+    protocol           => 'tcp',
+    load_balancer_port => 80,
+    instance_protocol  => 'tcp',
+    instance_port      => 80,
   }],
   tags               => {
     tag_name => 'value',

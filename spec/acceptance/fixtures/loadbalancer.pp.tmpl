@@ -2,7 +2,15 @@ elb_loadbalancer { '{{name}}':
 ensure => {{ensure}},
 region => '{{region}}',
 availability_zones => {{{availability_zones}}},
-listeners => {{{listeners}}},
+listeners     => [
+    {{#listeners}}
+      {
+        {{#values}}
+          {{k}} => '{{v}}',
+        {{/values}}
+      },
+    {{/listeners}}
+  ],
 instances => [{{#instances}}'{{.}}',{{/instances}}],
 tags            => {
 {{#tags}}

@@ -43,7 +43,14 @@ describe "ec2_loadbalancer" do
           :region => @default_region,
           :availability_zones => [@default_availability_zone],
           :instances => [@instance_config[:name]],
-          :listeners => [],
+          :listeners => [
+            {
+              :protocol           => 'TCP',
+              :load_balancer_port => 80,
+              :instance_protocol  => 'TCP',
+              :instance_port      => 80,
+            }
+          ],
           :ensure => 'present',
           :tags => {
               :department => 'engineering',
@@ -87,7 +94,6 @@ describe "ec2_loadbalancer" do
 
   end
 
-
   describe 'create a load balancer' do
 
     context 'with a manifest' do
@@ -116,8 +122,10 @@ describe "ec2_loadbalancer" do
           :instances            => [@instance_config[:name]],
           :listeners            => [
             {
-              :protocol => 'TCP',
-              :port     => 80,
+              :protocol           => 'TCP',
+              :load_balancer_port => 80,
+              :instance_protocol  => 'TCP',
+              :instance_port      => 80,
             }
           ],
           :tags                 => {
@@ -127,8 +135,8 @@ describe "ec2_loadbalancer" do
               :marco      => 'polo',
           }
         }
-        @lb2_template = 'loadbalancer2.pp.tmpl'
-        PuppetManifest.new(@lb2_template, @lb_config).apply
+        @lb_template = 'loadbalancer.pp.tmpl'
+        PuppetManifest.new(@lb_template, @lb_config).apply
       end
 
       context 'using puppet resource to describe' do

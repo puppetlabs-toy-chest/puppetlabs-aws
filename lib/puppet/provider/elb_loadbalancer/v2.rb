@@ -18,7 +18,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     end.flatten
   end
 
-  read_only(:region, :availability_zones)
+  read_only(:region, :availability_zones, :listeners)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -48,7 +48,9 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     listeners = load_balancer.listener_descriptions.collect do |listener|
       {
         'protocol' => listener.listener.protocol,
-        'port' => listener.listener.load_balancer_port,
+        'load_balancer_port' => listener.listener.load_balancer_port,
+        'instance_protocol' => listener.listener.instance_protocol,
+        'instance_port' => listener.listener.instance_port,
       }
     end
     {
@@ -74,16 +76,22 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
     tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
     tags << {key: 'Name', value: name}
+
+    listeners = resource[:listeners]
+    listeners = [listeners] unless listeners.is_a?(Array)
+
+    listeners_for_api = listeners.collect do |listener|
+      {
+        protocol: listener['protocol'],
+        load_balancer_port: listener['load_balancer_port'],
+        instance_protocol: listener['instanceprotocol'],
+        instance_port: listener['instance_port'],
+      }
+    end
+
     elb_client(resource[:region]).create_load_balancer(
       load_balancer_name: name,
-      listeners: [
-        {
-          protocol: 'tcp',
-          load_balancer_port: 80,
-          instance_protocol: 'tcp',
-          instance_port: 80,
-        },
-      ],
+      listeners: listeners_for_api,
       availability_zones: zones,
       tags: tags
     )

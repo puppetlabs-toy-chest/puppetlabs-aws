@@ -8,8 +8,10 @@ def elb_config
     availability_zones: ['sa-east-1a'],
     instances: ['web-1', 'web-2'],
     listeners: [{
-      protocol: 'tcp',
-      port: 80,
+      'protocol' => 'tcp',
+      'load_balancer_port' => 80,
+      'instance_protocol' => 'tcp',
+      'instance_port' => 80,
     }],
     region: 'sa-east-1',
   }
@@ -66,6 +68,29 @@ describe type_class do
     expect(elb.property(:tags).should_to_s(tags).to_s).to eq(reverse.to_s)
   end
 
+  it "should require a non-empty valid listener" do
+    expect {
+      type_class.new({:name => 'sample', :listener => []})
+    }.to raise_error(Puppet::Error)
+  end
+
+  it "should require a valid listener" do
+
+    valid_listener = {
+      'protocol' => 'tcp',
+      'load_balancer_port' => 80,
+      'instance_protocol' => 'tcp',
+      'instance_port' => 80,
+    }
+
+    valid_listener.keys.each do |key|
+      listener = valid_listener.tap { |inner| inner.delete(key) }
+      expect {
+        type_class.new({:name => 'sample', :listener => [listener]})
+      }.to raise_error(Puppet::Error)
+    end
+  end
+
   it 'with a valid config it should not error' do
     expect { type_class.new(elb_config) }.to_not raise_error
   end
@@ -73,8 +98,10 @@ describe type_class do
   it 'should normalise listener information' do
     elb = type_class.new(elb_config)
     expect(elb.property(:listeners).insync?([{
-      protocol: 'TCP',
-      port: '80',
+      'protocol' => 'TCP',
+      'load_balancer_port' => '80',
+      'instance_protocol' => 'TCP',
+      'instance_port' => '80',
     }])).to be true
   end
 

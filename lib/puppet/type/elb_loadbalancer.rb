@@ -1,34 +1,34 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
 
 Puppet::Type.newtype(:elb_loadbalancer) do
-  @doc = 'type representing an ELB load balancer'
+  @doc = 'Type representing an ELB load balancer.'
 
   ensurable
 
   newparam(:name, namevar: true) do
-    desc 'the name of the load balancer'
+    desc 'The name of the load balancer.'
     validate do |value|
-      fail Puppet::Error, 'Load Balancers must have a name' if value == ''
+      fail 'Load Balancers must have a name' if value == ''
     end
   end
 
   newproperty(:region) do
-    desc 'the region in which to launch the load balancer'
+    desc 'The region in which to launch the load balancer.'
     validate do |value|
-      fail Puppet::Error, 'region must not contain spaces' if value =~ /\s/
+      fail 'region must not contain spaces' if value =~ /\s/
     end
   end
 
   newproperty(:availability_zones, :array_matching => :all) do
-    desc 'the availability zones in which to launch the load balancer'
+    desc 'The availability zones in which to launch the load balancer.'
   end
 
   newproperty(:instances, :array_matching => :all) do
-    desc 'the instances to associate with the load balancer'
+    desc 'The instances to associate with the load balancer.'
   end
 
   newproperty(:listeners, :array_matching => :all) do
-    desc 'the ports and protocols the load balancer listens to'
+    desc 'The ports and protocols the load balancer listens to.'
     def insync?(is)
       normalise(is).to_set == normalise(should).to_set
     end
@@ -37,10 +37,19 @@ Puppet::Type.newtype(:elb_loadbalancer) do
         obj.each { |k,v| obj[k] = v.to_s.downcase }
       end
     end
+    validate do |value|
+      value = [value] unless value.is_a?(Array)
+      fail "you must provide a set if listeners for the load balancer" if value.empty?
+      value.each do |listener|
+        ['protocol', 'load_balancer_port', 'instance_protocol', 'instance_port'].each do |key|
+          fail "listeners must include #{key}" unless listener.keys.include?(key)
+        end
+      end
+    end
   end
 
   newparam(:tags, :parent => PuppetX::Property::AwsTag) do
-    desc 'the tags for the load balancer'
+    desc 'The tags for the load balancer.'
   end
 
   autorequire(:ec2_instance) do
