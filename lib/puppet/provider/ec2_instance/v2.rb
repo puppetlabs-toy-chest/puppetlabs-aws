@@ -204,7 +204,8 @@ Found #{matching_groups.length}:
         }
       }
 
-      config[:key_name] = key if resource[:key_name]
+      key = resource[:key_name] ? resource[:key_name] : false
+      config['key_name'] = key if key
       config = config_with_network_details(config)
 
       response = ec2.run_instances(config)

@@ -50,7 +50,7 @@ ec2_securitygroup { 'db-sg':
 
 ec2_instance { ['web-1', 'web-2']:
   ensure          => present,
-  image_id        => 'ami-41e85d5c', # SA 'ami-67a60d7a', # EU 'ami-b8c41ccf',
+  image_id        => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
   security_groups => ['web-sg'],
   instance_type   => 't1.micro',
   tags            => {
@@ -62,11 +62,10 @@ ec2_instance { ['web-1', 'web-2']:
 
 ec2_instance { 'db-1':
   ensure          => present,
-  image_id        => 'ami-41e85d5c', # SA 'ami-67a60d7a', # EU 'ami-b8c41ccf',
+  image_id        => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
   security_groups => ['db-sg'],
   instance_type   => 't1.micro',
   monitoring      => true,
-  key_name        => 'garethr-test',
   tags            => {
     department => 'engineering',
     project    => 'cloud',
