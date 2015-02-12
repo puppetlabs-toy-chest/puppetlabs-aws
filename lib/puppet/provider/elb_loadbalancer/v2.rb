@@ -18,7 +18,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     end.flatten
   end
 
-  read_only(:region, :security_groups, :availability_zones)
+  read_only(:region, :availability_zones)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -29,10 +29,35 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def self.load_balancer_to_hash(region, load_balancer)
+    instance_ids = load_balancer.instances.map(&:instance_id)
+    instance_names = []
+    unless instance_ids.empty?
+      instances = ec2_client(region).describe_instances(instance_ids: instance_ids).collect do |response|
+        response.data.reservations.collect do |reservation|
+          reservation.instances.collect do |instance|
+            instance
+          end
+        end.flatten
+      end.flatten
+      instances.each do |instance|
+        name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
+        name = name_tag ? name_tag.value : nil
+        instance_names << name if name
+      end
+    end
+    listeners = load_balancer.listener_descriptions.collect do |listener|
+      {
+        'protocol' => listener.listener.protocol,
+        'port' => listener.listener.load_balancer_port,
+      }
+    end
     {
       name: load_balancer.load_balancer_name,
       ensure: :present,
-      region: region
+      region: region,
+      availability_zones: load_balancer.availability_zones,
+      instances: instance_names,
+      listeners: listeners,
     }
   end
 
@@ -44,16 +69,6 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
   def create
     Puppet.info("Creating load balancer #{name} in region #{resource[:region]}")
-    groups = resource[:security_groups]
-
-    if groups.nil?
-      security_groups = []
-    else
-      groups = [groups] unless groups.is_a?(Array)
-      response = ec2_client(resource[:region]).describe_security_groups(group_names: groups.map(&:title))
-      security_groups = response.data.security_groups.map(&:group_id)
-    end
-
     zones = resource[:availability_zones]
     zones = [zones] unless zones.is_a?(Array)
 
@@ -70,7 +85,6 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         },
       ],
       availability_zones: zones,
-      security_groups: security_groups,
       tags: tags
     )
 

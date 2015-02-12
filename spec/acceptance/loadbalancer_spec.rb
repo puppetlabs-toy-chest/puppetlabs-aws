@@ -116,7 +116,7 @@ describe "ec2_loadbalancer" do
           :instances            => [@instance_config[:name]],
           :listeners            => [
             {
-              :protocol => 'tcp',
+              :protocol => 'TCP',
               :port     => 80,
             }
           ],
@@ -142,22 +142,12 @@ describe "ec2_loadbalancer" do
           expect(@result.stdout).to match(regex)
         end
 
-        it 'security_groups' do
-          pending('This test is blocked by CLOUD-211')
-          regex = /(security_groups)(\s*)(=>)(\s*)('default')/
+        it 'availablity_zones' do
+          regex = /(availability_zones)(\s*)(=>)(\s*)(\[\'sa\-east\-1a\', \'sa\-east\-1b\'\])/
           expect(@result.stdout).to match(regex)
         end
 
-        it 'availablity_zones' do
-          pending('This test is blocked by CLOUD-210')
-          @lb_config[:availability_zones].each do |listener, value|
-            regex = /('#{listener}')(\s*)(=>)(\s*)('#{value}')/
-            expect(@result.stdout).to match(regex)
-          end
-        end
-
         it 'instances' do
-          pending('This test is blocked by CLOUD-209')
           @lb_config[:instances].each do |i|
             regex = /('#{i}')/
             expect(@result.stdout).to match(regex)
@@ -165,15 +155,11 @@ describe "ec2_loadbalancer" do
         end
 
         it 'listeners' do
-          pending('This test is blocked by CLOUD-208')
-          # this needs to be tested once fixed
           @lb_config[:listeners].each do |l|
-            r = String.new
             l.each do |k, v|
-              r << "('#{k}')(\\s*)(=>)(\\s*)('#{v}')(\\s*)"
+              regex = "('#{k}')(\\s*)(=>)(\\s*)('#{v}')(\\s*)"
+              expect(@result.stdout).to match(regex)
             end
-            regex = /#{r}/m
-            expect(result.stdout).to (regex)
           end
         end
 
