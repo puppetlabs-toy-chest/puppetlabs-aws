@@ -19,3 +19,5 @@ infrastructure.
   tools like rspec-puppet to test your AWS code
 * [Virtual Private Cloud](vpc-example) - a simple example of using the
   Puppet DSL to manage a AWS VPC environment
+* [Using IAM permissions](iam-profile) - an example IAM profile for
+  controlling the API permissions required by the module
