@@ -32,39 +32,64 @@ describe "ec2_autoscalinggroup" do
     alarm.first
   end
 
-  describe 'should create a new autoscaling group' do
+  describe 'autoscaling_group and related types' do
 
     before(:all) do
-      @name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
-      @config = {
-        :name => @name,
-        :ensure => 'present',
-        :min_size => 2,
-        :max_size => 4,
-        :image_id => 'ami-67a60d7a',
-        :metric => 'CPUUtilization',
-        :namespace => 'AWS/EC2',
-        :statistic => 'Average',
-        :period => 120,
-        :threshold => 70,
-        :comparison_operator => 'GreaterThanOrEqualToThreshold',
-        :evaluation_periods => 2,
-        :adjustment_type => 'PercentChangeInCapacity',
-        :scaling_adjustment => 30,
+      name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
+      @asg_template = 'autoscaling_configurable.pp.tmpl'
+      @asg_template_delete = 'autoscaling_configurable_delete.pp.tmpl'
+      @duplicate_asg_template = 'autoscaling_duplicate.pp.tmpl'
+      @sg_delete = 'sg_delete.pp.tmpl'
+      # launch asg and related resources
+      @asg_config = {
+        :ensure               => 'present',
+        :region               => @default_region,
+        :sg_name              => "#{name}-sg",
+        :lc_name              => "#{name}-lc",
+        :sg_setting           => "#{name}-sg",
+        :asg_name             => "#{name}-asg",
+        :min_size             => 2,
+        :max_size             => 6,
+        :lc_setting           => "#{name}-lc",
+        :availability_zones   => ["#{@default_region}a", "#{@default_region}b"],
+        :policy_name          => "#{name}-policy",
+        :second_policy_name   => "#{name}-second_policy",
+        :asg_setting          => "#{name}-asg",
+        :scaling_adjustment   => 30,
+        :adjustment_type      => 'PercentChangeInCapacity',
+        :alarm_name           => "#{name}-cw_alarm",
+        :metric               => 'CPUUtilization',
+        :namespace            => 'AWS/EC2',
+        :statistic            => 'Average',
+        :period               => 120,
+        :threshold            => 70,
+        :comparison_operator  => 'GreaterThanOrEqualToThreshold',
+        :asg_setting          => "#{name}-asg",
+        :evaluation_periods   => 2,
+        :alarm_actions        => "#{name}-policy",
       }
-      @config[:optional] = {:key_name => ENV['AWS_KEY_PAIR']} if ENV['AWS_KEY_PAIR']
-
-      @template = 'autoscaling.pp.tmpl'
-      PuppetManifest.new(@template, @config).apply
+      r = PuppetManifest.new(@asg_template, @asg_config).apply
+      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      # launch duplicate resources
+      @duplicate_asg_config = {
+        :region       => @default_region,
+        :sg_name      => "#{name}-sg2",
+        :lc_name      => "#{name}-lc2",
+      }
+      r2 = PuppetManifest.new(@duplicate_asg_template, @duplicate_asg_config).apply
+      expect(r2[:output].any?{ |o| o.include?('Error:')}).to eq(false)
     end
 
     after(:all) do
-      new_config = @config.update({:ensure => 'absent'})
-      template = 'autoscaling_delete.pp.tmpl'
-      PuppetManifest.new(template, new_config).apply
-      # wait for all instances under ASG to be terminated
+      #audit this entire teardown
+      @asg_config[:ensure] = 'absent'
+      @duplicate_asg_config[:ensure] = 'absent'
+      duplicate_delete = 'duplicate_asg_delete.pp.tmpl'
+      r = PuppetManifest.new(@asg_template_delete, @asg_config).apply
+      # assert that none of the results contain 'Error:'
+      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
       response = @aws.autoscaling_client.describe_auto_scaling_groups(
-        auto_scaling_group_names: ["#{@name}-asg"],
+        auto_scaling_group_names: [@asg_config[:asg_name]],
       )
       id = Array.new
       response.to_h[:auto_scaling_groups].first[:instances].each do |x|
@@ -72,87 +97,97 @@ describe "ec2_autoscalinggroup" do
       end
       @aws.ec2_client.wait_until(:instance_terminated, instance_ids: id)
       # delete the security group
-      sg_template = 'sg_delete.pp.tmpl'
-      sg_config = {
+      options = {
         :ensure   => 'absent',
-        :name     => @name,
+        :name     => @asg_config[:sg_name],
         :region   => @default_region
       }
-      PuppetManifest.new(sg_template, sg_config).apply
+      ENV['AWS_REGION'] = @default_region
+      r2 = TestExecutor.puppet_resource('ec2_securitygroup', options, '--modulepath ../')
+      expect(r2.stdout).not_to match(/Error:/)
+      # terminate duplicate resources
+      r3 = PuppetManifest.new(duplicate_delete, @duplicate_asg_config).apply
+      expect(r3[:output].any?{ |o| o.include?('Error:')}).to eq(false)
     end
 
     it 'should run idempotently' do
-      success = PuppetManifest.new(@template, @config).apply[:exit_status].success?
+      success = PuppetManifest.new(@asg_template, @asg_config).apply[:exit_status].success?
       expect(success).to eq(true)
     end
 
-    context 'should create an auto scaling group' do
-      before(:all) do
-        @group = find_autoscaling_group("#{@name}-asg")
-      end
-      it 'with the correct properties' do
-        expect(@group.min_size).to eq(@config[:min_size])
-        expect(@group.max_size).to eq(@config[:max_size])
-        expect(@group.launch_configuration_name).to eq("#{@name}-lc")
-        expect(@group.availability_zones).to eq(['sa-east-1a', 'sa-east-1b'])
-      end
+    context 'should create' do
 
-    end
+      context 'an auto scaling group' do
 
-    context 'should create a launch configuration' do
-      before(:all) do
-        @lc = find_launch_config("#{@name}-lc")
-      end
-      it 'with the correct properties' do
-        expect(@lc.image_id).to eq('ami-67a60d7a')
-        expect(@lc.instance_type).to eq('t1.micro')
-      end
-    end
+        before(:all) do
+          @group = find_autoscaling_group(@asg_config[:asg_name])
+        end
 
-    context 'should create CloudWatch alarms' do
-      before(:all) do
-        @alarm = find_alarm("#{@name}-AddCapacity")
+        it 'with the correct properties' do
+          expect(@group.min_size).to eq(@asg_config[:min_size])
+          expect(@group.max_size).to eq(@asg_config[:max_size])
+          expect(@group.launch_configuration_name).to eq(@asg_config[:lc_setting])
+          expect(@group.availability_zones).to eq(['sa-east-1a', 'sa-east-1b'])
+        end
+
       end
 
-      it 'with the correct properties' do
-        expect(@alarm.namespace).to eq(@config[:namespace])
-        expect(@alarm.statistic).to eq(@config[:statistic])
-        expect(@alarm.period).to eq(@config[:period])
-        expect(@alarm.threshold).to eq(@config[:threshold])
-        expect(@alarm.comparison_operator).to eq(@config[:comparison_operator])
-        expect(@alarm.evaluation_periods).to eq(@config[:evaluation_periods])
+      context 'a launch configuration' do
+
+        before(:all) do
+          @lc = find_launch_config(@asg_config[:lc_name])
+        end
+
+        it 'with the correct properties' do
+          expect(@lc.image_id).to eq('ami-67a60d7a')
+          expect(@lc.instance_type).to eq('t1.micro')
+        end
+
       end
 
-    end
+      context 'a CloudWatch alarm' do
 
-    context 'should create scaling policies' do
-      before(:all) do
-        @policy = find_scaling_policy("#{@name}-scaleout", "#{@name}-asg")
+        before(:all) do
+          @alarm = find_alarm(@asg_config[:alarm_name])
+        end
+
+        it 'with the correct properties' do
+          expect(@alarm.namespace).to eq(@asg_config[:namespace])
+          expect(@alarm.statistic).to eq(@asg_config[:statistic])
+          expect(@alarm.period).to eq(@asg_config[:period])
+          expect(@alarm.threshold).to eq(@asg_config[:threshold])
+          expect(@alarm.comparison_operator).to eq(@asg_config[:comparison_operator])
+          expect(@alarm.evaluation_periods).to eq(@asg_config[:evaluation_periods])
+        end
+
       end
 
-      it 'with the correct properties' do
-        expect(@policy.adjustment_type).to eq(@config[:adjustment_type])
-        expect(@policy.scaling_adjustment).to eq(@config[:scaling_adjustment])
-        expect(@policy.auto_scaling_group_name).to eq("#{@name}-asg")
+      context 'should create scaling policies' do
+
+        before(:all) do
+          @policy = find_scaling_policy(@asg_config[:policy_name], @asg_config[:asg_name])
+        end
+
+        it 'with the correct properties' do
+          expect(@policy.adjustment_type).to eq(@asg_config[:adjustment_type])
+          expect(@policy.scaling_adjustment).to eq(@asg_config[:scaling_adjustment])
+          expect(@policy.auto_scaling_group_name).to eq(@asg_config[:asg_name])
+        end
+
       end
 
     end
 
     context 'using puppet resource to describe' do
 
-      before(:all) do
-        #reset to known state
-         r = PuppetManifest.new(@template, @config).apply
-         expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
-      end
-
       context 'CloudWatch alarm' do
 
         before(:all) do
           ENV['AWS_REGION'] = @default_region
-          options = {:name => "#{@config[:name]}-AddCapacity"}
+          name = @asg_config[:alarm_name]
+          options = {:name => name}
           @result = TestExecutor.puppet_resource('cloudwatch_alarm', options, '--modulepath ../')
-          @cw = find_alarm("#{@config[:name]}-AddCapacity")
+          @cw = find_alarm(name)
         end
 
         it 'metric is correct' do
@@ -200,9 +235,10 @@ describe "ec2_autoscalinggroup" do
 
         before(:all) do
           ENV['AWS_REGION'] = @default_region
-          options = {:name => "#{@config[:name]}-asg"}
+          name = @asg_config[:asg_name]
+          options = {:name => name}
           @result = TestExecutor.puppet_resource('ec2_autoscalinggroup', options, '--modulepath ../')
-          @asg = find_autoscaling_group("#{@config[:name]}-asg")
+          @asg = find_autoscaling_group(name)
         end
 
         it 'min_size' do
@@ -238,9 +274,10 @@ describe "ec2_autoscalinggroup" do
 
         before(:all) do
           ENV['AWS_REGION'] = @default_region
-          options = {:name => "#{@config[:name]}-lc"}
+          name = @asg_config[:lc_name]
+          options = {:name => name}
           @result = TestExecutor.puppet_resource('ec2_launchconfiguration', options, '--modulepath ../')
-          @lc = find_launch_config("#{@config[:name]}-lc")
+          @lc = find_launch_config(name)
         end
 
         it 'security_groups' do
@@ -280,9 +317,11 @@ describe "ec2_autoscalinggroup" do
 
         before(:all) do
           ENV['AWS_REGION'] = @default_region
-          options = {:name => "#{@config[:name]}-scaleout"}
+          name = @asg_config[:policy_name]
+          asg_name = @asg_config[:asg_name]
+          options = {:name => name}
           @result = TestExecutor.puppet_resource('ec2_scalingpolicy', options, '--modulepath ../')
-          @sp = find_scaling_policy("#{@config[:name]}-scaleout", "#{@config[:name]}-asg")
+          @sp = find_scaling_policy(name, asg_name)
         end
 
         it 'scaling_adjustment' do
@@ -304,71 +343,6 @@ describe "ec2_autoscalinggroup" do
 
     end
 
-  end
-
-  describe 'create an autoscaling_group' do
-
-    before(:all) do
-      name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
-      @asg_template = 'autoscaling_configurable.pp.tmpl'
-      @asg_template_delete = 'autoscaling_configurable_delete.pp.tmpl'
-      @duplicate_asg_template = 'autoscaling_duplicate.pp.tmpl'
-      @sg_delete = 'sg_delete.pp.tmpl'
-      # launch configurable stack
-      @asg_config = {
-        :ensure               => 'present',
-        :region               => @default_region,
-        :sg_name              => "#{name}-sg",
-        :lc_name              => "#{name}-lc",
-        :sg_setting           => "#{name}-sg",
-        :asg_name             => "#{name}-asg",
-        :min_size             => 2,
-        :max_size             => 6,
-        :lc_setting           => "#{name}-lc",
-        :availability_zones   => ["#{@default_region}a", "#{@default_region}b"],
-        :policy_name          => "#{name}-policy",
-        :second_policy_name   => "#{name}-second_policy",
-        :asg_setting          => "#{name}-asg",
-        :scaling_adjustment   => 30,
-        :adjustment_type      => 'PercentChangeInCapacity',
-        :alarm_name           => "#{name}-cw_alarm",
-        :metric               => 'CPUUtilization',
-        :namespace            => 'AWS/EC2',
-        :statistic            => 'Average',
-        :period               => 120,
-        :threshold            => 70,
-        :comparison_operator  => 'GreaterThanOrEqualToThreshold',
-        :asg_setting          => "#{name}-asg",
-        :evaluation_periods   => 2,
-        :alarm_actions        => "#{name}-policy",
-      }
-      r = PuppetManifest.new(@asg_template, @asg_config).apply
-      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
-      # launch duplicate resources
-      @duplicate_asg_config = {
-        :region       => @default_region,
-        :sg_name      => "#{name}-sg2",
-        :lc_name      => "#{name}-lc2",
-        :alarm_name   => "#{name}-cw_alarm2",
-        :asg_name     => "#{name}-asg_name2",
-        :policy_name  => "#{name}-policy_name2",
-      }
-      r2 = PuppetManifest.new(@duplicate_asg_template, @duplicate_asg_config).apply
-      expect(r2[:output].any?{ |o| o.include?('Error:')}).to eq(false)
-    end
-
-    after(:all) do
-      @asg_config[:ensure] = 'absent'
-      @duplicate_asg_config[:ensure] = 'absent'
-      r = PuppetManifest.new(@asg_template_delete, @asg_config).apply
-      r2 = PuppetManifest.new(@asg_template_delete, @duplicate_asg_config).apply
-      # assert that none of the results contain 'Error:'
-      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
-      expect(r2[:output].any?{ |o| o.include?('Error:')}).to eq(false)
-      # TODO add logic to wait for ec2instances to teardown
-      # TODO add teardown of security groups
-    end
-
     context 'modify cloudwatch property' do
 
       it 'metric' do
@@ -381,8 +355,15 @@ describe "ec2_autoscalinggroup" do
       end
 
       it 'namespace and metric' do
-        # TODO complicated
 
+        config = @asg_config.clone
+        config[:metric] = 'AWS/ELB'
+        config[:namespace] = 'HealthyHostCount'
+        r = PuppetManifest.new(@asg_template, config).apply
+        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        cloudwatch = find_alarm(@asg_config[:alarm_name])
+        expect(cloudwatch.metric_name).to eq('AWS/ELB')
+        expect(cloudwatch.namespace).to eq('HealthyHostCount')
       end
 
       it 'statistic' do
@@ -430,26 +411,6 @@ describe "ec2_autoscalinggroup" do
         expect(cloudwatch.comparison_operator).to eq('GreaterThanThreshold')
       end
 
-      it 'dimensions' do
-        pending('CLOUD-216')
-        config = @asg_config.clone
-        config[:asg_setting] = @duplicate_asg_config[:asg_name]
-        r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
-        cloudwatch = find_alarm(@asg_config[:alarm_name])
-        expect(cloudwatch.dimensions.any?{ |d| d.value == @duplicate_asg_config[:asg_name]}).to eq(true)
-      end
-
-      it 'alarm_actions' do
-        pending('CLOUD-217')
-        config = @asg_config.clone
-        config[:alarm_actions] = @asg_config[:second_policy_name]
-        r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
-        cloudwatch = find_alarm(@asg_config[:alarm_name])
-        expect(cloudwatch.alarm_actions.any?{ |a| a.include? @asg_config[:second_policy_name]}).to eq(true)
-      end
-
     end
 
     context 'modify ec2_scalingpolicy' do
@@ -470,16 +431,6 @@ describe "ec2_autoscalinggroup" do
         expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
         policy = find_scaling_policy(@asg_config[:policy_name], @asg_config[:asg_name])
         expect(policy.adjustment_type).to eq('ExactCapacity')
-      end
-
-      it 'auto_scaling_group' do
-        pending('shouldnt be possible??? CLOUD-218')
-        config = @asg_config.clone
-        config[:asg_setting] = @duplicate_asg_config[:asg_name]
-        r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
-        policy = find_scaling_policy(@asg_config[:policy_name], @asg_config[:asg_name])
-        expect(policy.auto_scaling_group_name).to eq(@duplicate_asg_config[:asg_name])
       end
 
     end
