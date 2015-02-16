@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:ec2_vpc_vpn) do
   @doc = 'Type representing an AWS Virtual Private Networks.'
 
@@ -48,7 +50,7 @@ Puppet::Type.newtype(:ec2_vpc_vpn) do
     end
   end
 
-  newproperty(:tags) do
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'The tags for the VPN.'
   end
 

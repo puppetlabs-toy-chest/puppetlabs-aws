@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
   @doc = 'Type representing a DHCP option set for AWS VPC.'
 
@@ -10,7 +12,7 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
     end
   end
 
-  newproperty(:tags) do
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'Tags for the DHCP option set.'
   end
 

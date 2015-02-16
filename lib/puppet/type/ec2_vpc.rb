@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:ec2_vpc) do
   @doc = 'A type representing an AWS VPC.'
 
@@ -31,7 +33,7 @@ Puppet::Type.newtype(:ec2_vpc) do
     newvalues('default', 'dedicated')
   end
 
-  newproperty(:tags) do
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'The tags to assign to the VPC.'
   end
 

@@ -10,7 +10,7 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
     regions.collect do |region|
       response = ec2_client(region).describe_vpcs()
       vpcs = []
-        response.data.vpcs.each do |vpc|
+      response.data.vpcs.each do |vpc|
         hash = vpc_to_hash(region, vpc)
         vpcs << new(hash) if hash[:name]
       end

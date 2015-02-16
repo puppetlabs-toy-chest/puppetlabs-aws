@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:ec2_vpc_vpn_gateway) do
   @doc = 'A type representing a VPN gateway.'
 
@@ -10,7 +12,7 @@ Puppet::Type.newtype(:ec2_vpc_vpn_gateway) do
     end
   end
 
-  newproperty(:tags) do
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'The tags to assign to the VPN gateway.'
   end
 

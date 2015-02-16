@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:ec2_vpc_routetable) do
   @doc = 'Type representing a VPC route table.'
 
@@ -28,7 +30,7 @@ Puppet::Type.newtype(:ec2_vpc_routetable) do
     end
   end
 
-  newproperty(:tags) do
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'Tags to assign to the route table.'
   end
 

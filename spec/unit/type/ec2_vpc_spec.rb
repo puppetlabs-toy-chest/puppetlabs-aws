@@ -60,4 +60,13 @@ describe type_class do
     }.to raise_error(Puppet::ResourceError, /region should not contain spaces/)
   end
 
+  it 'should order tags on output' do
+    tags = {'b' => 1, 'a' => 2}
+    reverse = {'a' => 2, 'b' => 1}
+    srv = type_class.new(:name => 'sample', :tags => tags )
+    expect(srv.property(:tags).insync?(tags)).to be true
+    expect(srv.property(:tags).insync?(reverse)).to be true
+    expect(srv.property(:tags).should_to_s(tags).to_s).to eq(reverse.to_s)
+  end
+
 end

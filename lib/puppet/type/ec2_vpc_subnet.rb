@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:ec2_vpc_subnet) do
   @doc = 'Type representing a VPC Subnet.'
 
@@ -29,7 +31,7 @@ Puppet::Type.newtype(:ec2_vpc_subnet) do
     desc 'The availability zone in which to launch the subnet.'
   end
 
-  newproperty(:tags) do
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'Tags to assign to the subnet.'
   end
 

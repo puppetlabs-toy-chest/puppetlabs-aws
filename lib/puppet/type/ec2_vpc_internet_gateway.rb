@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:ec2_vpc_internet_gateway) do
   @doc = 'Type representing an EC2 VPC Internet Gateway.'
 
@@ -10,7 +12,7 @@ Puppet::Type.newtype(:ec2_vpc_internet_gateway) do
 
   ensurable
 
-  newproperty(:tags) do
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'Tags to assign to the internet gateway.'
   end
 

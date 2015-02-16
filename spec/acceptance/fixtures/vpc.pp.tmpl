@@ -1,62 +1,102 @@
 ec2_vpc { '{{name}}-vpc':
   ensure           => {{ensure}},
-  region           => 'sa-east-1',
-  cidr_block       => '10.0.0.0/16',
+  region           => '{{region}}',
+  cidr_block       => '{{vpc_cidr}}',
   dhcp_options     => '{{name}}-options',
-  instance_tenancy => 'default',
+  instance_tenancy => '{{vpc_instance_tenancy}}',
+  tags             => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
 }
 
 ec2_vpc_dhcp_options { '{{name}}-options':
   ensure            => {{ensure}},
-  region            => 'sa-east-1',
-  netbios_node_type => 2,
+  region            => '{{region}}',
+  netbios_node_type => {{netbios_node_type}},
+  tags              => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
 }
 
 ec2_vpc_routetable { '{{name}}-routes':
   ensure => {{ensure}},
-  region => 'sa-east-1',
+  region => '{{region}}',
   vpc    => '{{name}}-vpc',
   routes => [
-    { destination_cidr_block => '10.0.0.0/16', gateway => 'local' },
+    { destination_cidr_block => '{{vpc_cidr}}', gateway => 'local' },
   ],
+  tags   => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
 }
 
 ec2_vpc_subnet { '{{name}}-subnet':
   ensure            => {{ensure}},
-  region            => 'sa-east-1',
+  region            => '{{region}}',
   vpc               => '{{name}}-vpc',
-  cidr_block        => '10.0.0.0/24',
-  availability_zone => 'sa-east-1a',
+  cidr_block        => '{{subnet_cidr}}',
+  availability_zone => '{{subnet_availability_zone}}',
   route_table       => '{{name}}-routes',
+  tags              => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
 }
 
 ec2_vpc_internet_gateway { '{{name}}-igw':
   ensure => {{ensure}},
-  region => 'sa-east-1',
+  region => '{{region}}',
   vpcs   => '{{name}}-vpc',
+  tags   => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
 }
 
 ec2_vpc_customer_gateway { '{{name}}-cgw':
   ensure     => {{ensure}},
-  region     => 'sa-east-1',
-  ip_address => '173.255.197.131',
-  bgp_asn    => 65000,
-  type       => 'ipsec.1',
+  region     => '{{region}}',
+  ip_address => '{{customer_ip_address}}',
+  bgp_asn    => {{bgp_asn}},
+  type       => '{{vpn_type}}',
+  tags       => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
 }
 
 ec2_vpc_vpn { '{{name}}-vpn':
   ensure           => {{ensure}},
-  region           => 'sa-east-1',
+  region           => '{{region}}',
   vpn_gateway      => '{{name}}-vgw',
   customer_gateway => '{{name}}-cgw',
-  type             => 'ipsec.1',
-  routes           => ['0.0.0.0/0'],
-  static_routes    => true,
+  type             => '{{vpn_type}}',
+  routes           => ['{{vpn_route}}'],
+  static_routes    => {{static_routes}},
+  tags             => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
 }
 
 ec2_vpc_vpn_gateway { '{{name}}-vgw':
   ensure => {{ensure}},
-  region => 'sa-east-1',
+  region => '{{region}}',
   vpc    => '{{name}}-vpc',
-  type   => 'ipsec.1',
+  type   => '{{vpn_type}}',
+  tags   => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
 }

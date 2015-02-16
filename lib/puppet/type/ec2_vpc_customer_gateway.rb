@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:ec2_vpc_customer_gateway) do
   @doc = 'Type representing an AWS VPC customer gateways.'
 
@@ -24,7 +26,7 @@ Puppet::Type.newtype(:ec2_vpc_customer_gateway) do
     end
   end
 
-  newproperty(:tags) do
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'The tags for the customer gateway.'
   end
 
