@@ -1,0 +1,21 @@
+route53_a_record { '{{a_record_name}}':
+  ensure => absent,
+  zone   => '{{name}}',
+  before => Route53_zone['{{name}}'],
+}
+
+route53_txt_record { '{{txt_record_name}}':
+  ensure => absent,
+  zone   => '{{name}}',
+  before => Route53_zone['{{name}}'],
+}
+
+route53_ns_record { '{{ns_record_name}}':
+  ensure  => absent,
+  zone    => '{{name}}',
+  before => Route53_zone['{{name}}'],
+}
+
+route53_zone { '{{name}}':
+  ensure => absent,
+}

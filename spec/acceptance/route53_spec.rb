@@ -151,4 +151,83 @@ describe "route53_zone" do
     end
   end
 
+  describe 'create new zone' do
+
+    before(:all) do
+      @template = 'route53_with_ns_create.pp.tmpl'
+      @name = "#{SecureRandom.uuid}.com."
+      @config = {
+        :name             => @name,
+        :a_record_name    => "local.#{@name}",
+        :a_ttl            => 3000,
+        :a_values         => ['127.0.0.1', '127.0.0.2', '127.0.0.3'],
+        :txt_record_name  => "local.#{@name}",
+        :txt_ttl          => 4000,
+        :txt_values       => ['This is a test', 'Test all the things!', 'Very wow much test'],
+        :ns_record_name   => "local.#{@name}",
+        :ns_ttl           => 6000,
+        :ns_values         => ['ns1.example.com','ns2.example.com','ns3.example.com'],
+      }
+      PuppetManifest.new(@template, @config).apply
+      @zone = find_zone(@name)
+    end
+
+    after(:all) do
+      template = 'route53_with_ns_delete.pp.tmpl'
+      PuppetManifest.new(template, @config).apply
+      expect(@aws.get_dns_zones(@name)).to be_empty
+    end
+
+    context 'mutate the properties' do
+
+      context 'ns record' do
+
+        it 'ttl' do
+          config = @config.clone
+          config[:ns_ttl] = 4000
+          r = PuppetManifest.new(@template, config).apply
+          expect(r[:output].any?{|x| x.include? 'Error'}).to eq(false)
+          record = find_record(config[:ns_record_name], @zone, 'NS')
+          expect(record.ttl).to eq(config[:ns_ttl])
+        end
+
+        it 'value' do
+          pending('This test is blocked by CLOUD-230')
+          config = @config.clone
+          config[:ns_value] = ['ns1.example.com','ns5.example.com','ns3.example.com']
+          r = PuppetManifest.new(@template, config).apply
+          expect(r[:output].any?{|x| x.include? 'Error'}).to eq(false)
+          record = find_record(config[:a_record_name], @zone, 'NS')
+          expect(record.resource_records.map(&:value)).to eq(config[:ns_value])
+        end
+
+      end
+
+      context 'txt record' do
+
+        it 'ttl' do
+          config = @config.clone
+          config[:txt_ttl] = 7000
+          r = PuppetManifest.new(@template, config).apply
+          expect(r[:output].any?{|x| x.include? 'Error'}).to eq(false)
+          record = find_record(config[:a_record_name], @zone, 'TXT')
+          expect(record.ttl).to eq(config[:txt_ttl])
+        end
+
+        it 'value' do
+          config = @config.clone
+          config[:txt_values] = ['This is a test', 'Test all the other things!', 'Very wow much test']
+          r = PuppetManifest.new(@template, config).apply
+          expect(r[:output].any?{|x| x.include? 'Error'}).to eq(false)
+          record = find_record(config[:a_record_name], @zone, 'TXT')
+          require 'pry'; binding.pry
+          expect(record.resource_records.map{|x| x.value.delete('/"')}).to eq(config[:txt_values])
+        end
+
+      end
+
+    end
+
+  end
+
 end
