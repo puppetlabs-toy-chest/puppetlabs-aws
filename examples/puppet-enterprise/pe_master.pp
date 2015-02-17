@@ -1,6 +1,12 @@
-$pe_username = 'admin@puppetlabs.com'
-$pe_password = 'puppetlabs'
 $pe_version_string = '3.7.0'
+$pe_password = 'puppetlabs'
+
+if versioncmp($pe_version_string, '3.7.0') >= 0 {
+  # PE > 3.7 doesn't like email usernames
+  $pe_username = 'admin'
+else {
+  $pe_username = 'admin@puppetlabs.com'
+}
 
 ec2_securitygroup { 'puppet':
   ensure           => present,
