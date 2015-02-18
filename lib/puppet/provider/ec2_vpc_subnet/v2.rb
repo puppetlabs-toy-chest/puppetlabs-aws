@@ -1,4 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
+require 'retries'
 
 Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
@@ -73,10 +74,12 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
       vpc_id: vpc_response.data.vpcs.first.vpc_id,
     )
     subnet_id = response.data.subnet.subnet_id
-    ec2.create_tags(
-      resources: [subnet_id],
-      tags: tags_for_resource,
-    )
+    with_retries(:max_tries => 5) do
+      ec2.create_tags(
+        resources: [subnet_id],
+        tags: tags_for_resource,
+      )
+    end
     route_table_name = resource[:route_table]
     if route_table_name
       table_response = ec2.describe_route_tables(filters: [

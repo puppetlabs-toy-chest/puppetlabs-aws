@@ -1,4 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
+require 'retries'
 
 Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
@@ -68,10 +69,12 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
       dhcp_configurations: options
     )
 
-    ec2.create_tags(
-      resources: [response.data.dhcp_options.dhcp_options_id],
-      tags: tags_for_resource
-    )
+    with_retries(:max_tries => 5) do
+      ec2.create_tags(
+        resources: [response.data.dhcp_options.dhcp_options_id],
+        tags: tags_for_resource
+      )
+    end
 
     @property_hash[:ensure] = :present
   end

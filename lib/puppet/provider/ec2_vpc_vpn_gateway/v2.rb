@@ -85,10 +85,12 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
       vpc_id: vpc_response.data.vpcs.first.vpc_id,
     )
 
-    ec2.create_tags(
-      resources: [response.data.vpn_gateway.vpn_gateway_id],
-      tags: tags_for_resource,
-    )
+    with_retries(:max_tries => 5) do
+      ec2.create_tags(
+        resources: [response.data.vpn_gateway.vpn_gateway_id],
+        tags: tags_for_resource,
+      )
+    end
 
     @property_hash[:ensure] = :present
   end

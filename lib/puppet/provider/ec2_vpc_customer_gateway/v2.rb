@@ -1,4 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
+require 'retries'
 
 Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
@@ -59,10 +60,12 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
       bgp_asn: resource[:bgp_asn],
     )
 
-    ec2.create_tags(
-      resources: [response.data.customer_gateway.customer_gateway_id],
-      tags: tags_for_resource
-    )
+    with_retries(:max_tries => 5) do
+      ec2.create_tags(
+        resources: [response.data.customer_gateway.customer_gateway_id],
+        tags: tags_for_resource
+      )
+    end
 
     @property_hash[:ensure] = :present
   end

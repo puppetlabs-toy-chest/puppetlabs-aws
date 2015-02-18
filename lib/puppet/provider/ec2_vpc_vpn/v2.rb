@@ -1,4 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
+require 'retries'
 
 Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
@@ -107,10 +108,12 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
 
     vpn_connection_id = response.data.vpn_connection.vpn_connection_id
 
-    ec2.create_tags(
-      resources: [vpn_connection_id],
-      tags: tags_for_resource,
-    )
+    with_retries(:max_tries => 5) do
+      ec2.create_tags(
+        resources: [vpn_connection_id],
+        tags: tags_for_resource,
+      )
+    end
 
     ec2.wait_until(:vpn_connection_available, vpn_connection_ids: [vpn_connection_id]) unless resource[:routes].empty?
 
