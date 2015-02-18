@@ -17,3 +17,5 @@ infrastructure.
   other tools
 * [Unit Testing](unit-testing) - how to make use of the Puppet testing
   tools like rspec-puppet to test your AWS code
+* [Virtual Private Cloud](vpc-example) - a simple example of using the
+  Puppet DSL to manage a AWS VPC environment
