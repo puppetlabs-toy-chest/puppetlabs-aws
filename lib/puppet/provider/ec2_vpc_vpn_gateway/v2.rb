@@ -1,4 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
+require 'retries'
 
 Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
@@ -101,10 +102,15 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
       vpn_gateway_id: @property_hash[:id],
       vpc_id: vpc_id,
     ) if vpc_id
-    sleep 60 # TODO should be able to wait for detachment
-    ec2.delete_vpn_gateway(
-      vpn_gateway_id: @property_hash[:id]
-    )
+    with_retries(:max_tries => 6,
+                 :rescue => Aws::EC2::Errors::IncorrectState,
+                 :base_sleep_seconds => 10,
+                 :max_sleep_seconds => 20) do |attempt|
+                   Puppet.debug("Attempt #{attempt} destroying the VPN gateway at #{Time.new}")
+      ec2.delete_vpn_gateway(
+        vpn_gateway_id: @property_hash[:id]
+      )
+    end
     @property_hash[:ensure] = :absent
   end
 end
