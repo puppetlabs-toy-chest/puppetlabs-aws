@@ -92,7 +92,7 @@ describe "ec2_autoscalinggroup" do
         auto_scaling_group_names: [@asg_config[:asg_name]],
       )
       id = Array.new
-      response.to_h[:auto_scaling_groups].first[:instances].each do |x|
+      response.data[:auto_scaling_groups].first[:instances].each do |x|
         id.push(x[:instance_id])
       end
       @aws.ec2_client.wait_until(:instance_terminated, instance_ids: id)
