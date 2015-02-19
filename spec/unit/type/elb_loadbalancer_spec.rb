@@ -32,6 +32,7 @@ describe type_class do
       :availability_zones,
       :instances,
       :listeners,
+      :tags,
     ]
   end
 

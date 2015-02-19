@@ -172,8 +172,7 @@ describe "ec2_loadbalancer" do
         end
 
         it 'tags' do
-          pending('This test is blocked by CLOUD-207')
-          @elb_config[:tags].each do |tag, value|
+          @lb_config[:tags].each do |tag, value|
             regex = /('#{tag}')(\s*)(=>)(\s*)('#{value}')/
             expect(@result.stdout).to match(regex)
           end
