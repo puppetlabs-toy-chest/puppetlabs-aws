@@ -265,15 +265,14 @@ describe "ec2_securitygroup" do
     end
 
     it 'that can have tags changed' do
-      pending 'changing tags not yet supported for security groups'
       expect(@aws.tag_difference(@group, @config[:tags])).to be_empty
 
       tags = {:created_by => 'aws-tests', :foo => 'bar'}
       @config[:tags].update(tags)
 
       PuppetManifest.new(@template, @config).apply
-      @group = get_group(@config[:name])
-      expect(@aws.tag_difference(@group, @config[:tags])).to be_empty
+      group = get_group(@config[:name])
+      expect(@aws.tag_difference(group, @config[:tags])).to be_empty
     end
   end
 
@@ -353,7 +352,6 @@ describe "ec2_securitygroup" do
       end
 
       it 'tags are correct' do
-        pending('This test is blocked by CLOUD-203')
         @config[:tags].each do |tag, value|
           regex = /('#{tag.to_s}')(\s*)(=>)(\s*)('#{value}')/
           expect(@response.stdout).to match(regex)

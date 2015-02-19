@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:ec2_securitygroup) do
   @doc = 'type representing an EC2 security group'
 
@@ -38,7 +40,7 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
-  newparam(:tags, :array_matching => :all) do
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'the tags for the security group'
   end
 

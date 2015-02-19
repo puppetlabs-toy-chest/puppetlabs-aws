@@ -4,6 +4,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   confine feature: :aws
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances
     regions.collect do |region|
@@ -69,6 +70,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
       end
     end
     {
+      id: group.group_id,
       name: group[:group_name],
       id: group[:group_id],
       description: group[:description],
@@ -76,6 +78,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
       ingress: format_ingress_rules(ec2, group),
       vpc: vpc_name,
       region: region,
+      tags: tags_for(group),
     }
   end
 
@@ -88,7 +91,6 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   def create
     Puppet.info("Creating security group #{name} in region #{resource[:region]}")
     ec2 = ec2_client(resource[:region])
-    tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
     config = {
       group_name: name,
       description: resource[:description]
@@ -109,8 +111,8 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
     ec2.create_tags(
       resources: [response.group_id],
-      tags: tags
-    ) unless tags.empty?
+      tags: tags_for_resource
+    ) if resource[:tags]
 
     @property_hash[:id] = response.group_id
     rules = resource[:ingress]
