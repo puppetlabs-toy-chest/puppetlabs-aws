@@ -250,7 +250,7 @@ describe "ec2_instance" do
         :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
         :instance_type => 't1.micro',
         :region => @default_region,
-        :image_id => 'ami-41e85d5c',
+        :image_id => 'ami-67a60d7a',
         :ensure => 'present',
         :monitoring => false,
         :availability_zone => @default_availability_zone,
