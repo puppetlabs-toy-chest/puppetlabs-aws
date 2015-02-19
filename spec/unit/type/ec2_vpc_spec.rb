@@ -1,0 +1,72 @@
+require 'spec_helper'
+
+type_class = Puppet::Type.type(:ec2_vpc)
+
+describe type_class do
+
+  let :params do
+    [
+      :name,
+      :dhcp_options,
+    ]
+  end
+
+  let :properties do
+    [
+      :ensure,
+      :cidr_block,
+      :region,
+      :instance_tenancy,
+    ]
+  end
+
+  it 'should have expected properties' do
+    properties.each do |property|
+      expect(type_class.properties.map(&:name)).to be_include(property)
+    end
+  end
+
+  it 'should have expected parameters' do
+    params.each do |param|
+      expect(type_class.parameters).to be_include(param)
+    end
+  end
+
+  it 'should require a name' do
+    expect {
+      type_class.new({})
+    }.to raise_error(Puppet::Error, 'Title or name must be provided')
+  end
+
+  it 'should default instance tenancy to default' do
+    srv = type_class.new(:name => 'sample')
+    expect(srv[:instance_tenancy]).to eq(:default)
+  end
+
+  it 'should be able to set instance tenancy to dedicated' do
+    srv = type_class.new(:name => 'sample', :instance_tenancy => 'dedicated')
+    expect(srv[:instance_tenancy]).to eq(:dedicated)
+  end
+
+  it 'should not be able to set instance tenancy to arbitrary values' do
+    expect {
+      type_class.new(:name => 'sample', :instance_tenancy => 'invalid')
+    }.to raise_error(Puppet::ResourceError, /Invalid value "invalid"/)
+  end
+
+  it 'region should not contain spaces' do
+    expect {
+      type_class.new(:name => 'sample', :region => 'sa east 1')
+    }.to raise_error(Puppet::ResourceError, /region should not contain spaces/)
+  end
+
+  it 'should order tags on output' do
+    tags = {'b' => 1, 'a' => 2}
+    reverse = {'a' => 2, 'b' => 1}
+    srv = type_class.new(:name => 'sample', :tags => tags )
+    expect(srv.property(:tags).insync?(tags)).to be true
+    expect(srv.property(:tags).insync?(reverse)).to be true
+    expect(srv.property(:tags).should_to_s(tags).to_s).to eq(reverse.to_s)
+  end
+
+end

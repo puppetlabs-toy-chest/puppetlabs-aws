@@ -100,15 +100,69 @@ class AwsHelper
     response = @ec2_client.describe_security_groups(
       group_names: [name]
     )
-
     response.data.security_groups
+  end
+
+  def get_vpcs(name)
+    response = @ec2_client.describe_vpcs(filters: [
+      {name: 'tag:Name', values: [name]},
+    ])
+    response.data.vpcs
+  end
+
+  def get_dhcp_options(name)
+    response = @ec2_client.describe_dhcp_options(filters: [
+      {name: 'tag:Name', values: [name]},
+    ])
+    response.data.dhcp_options
+  end
+
+  def get_route_tables(name)
+    response = @ec2_client.describe_route_tables(filters: [
+      {name: 'tag:Name', values: [name]},
+    ])
+    response.data.route_tables
+  end
+
+  def get_subnets(name)
+    response = @ec2_client.describe_subnets(filters: [
+      {name: 'tag:Name', values: [name]},
+    ])
+    response.data.subnets
+  end
+
+  def get_vpn_gateways(name)
+    response = @ec2_client.describe_vpn_gateways(filters: [
+      {name: 'tag:Name', values: [name]},
+    ])
+    response.data.vpn_gateways
+  end
+
+  def get_internet_gateways(name)
+    response = @ec2_client.describe_internet_gateways(filters: [
+      {name: 'tag:Name', values: [name]},
+    ])
+    response.data.internet_gateways
+  end
+
+  def get_customer_gateways(name)
+    response = @ec2_client.describe_customer_gateways(filters: [
+      {name: 'tag:Name', values: [name]},
+    ])
+    response.data.customer_gateways
+  end
+
+  def get_vpn(name)
+    response = @ec2_client.describe_vpn_connections(filters: [
+      {name: 'tag:Name', values: [name]},
+    ])
+    response.data.vpn_connections
   end
 
   def get_loadbalancers(name)
     response = @elb_client.describe_load_balancers(
       load_balancer_names: [name]
     )
-
     response.data.load_balancer_descriptions
   end
 
