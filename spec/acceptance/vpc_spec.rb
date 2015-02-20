@@ -46,6 +46,18 @@ describe "The AWS module" do
     finder(name, 'get_vpn')
   end
 
+  def generate_ip
+    # This generates a resolvable IP address within
+    # a specific well populated range
+    ip = "173.255.197.#{rand(255)}"
+    begin
+      Resolv.new.getname(ip)
+      ip
+    rescue
+      generate_ip
+    end
+  end
+
   describe 'when creating a new VPC environment' do
 
     before(:all) do
@@ -61,7 +73,7 @@ describe "The AWS module" do
         :subnet_cidr => '10.0.0.0/24',
         :subnet_availability_zone => "#{region}a",
         :vpn_type => 'ipsec.1',
-        :customer_ip_address => '173.255.197.131',
+        :customer_ip_address => generate_ip,
         :bgp_asn => '65000',
         :vpn_route => '0.0.0.0/0',
         :static_routes => true,
