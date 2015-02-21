@@ -7,6 +7,7 @@ describe type_class do
   let :params do
     [
       :name,
+      :instance_initiated_shutdown_behavior,
     ]
   end
 
@@ -21,6 +22,7 @@ describe type_class do
       :monitoring,
       :key_name,
       :subnet,
+      :ebs_optimized,
     ]
   end
 
@@ -42,6 +44,21 @@ describe type_class do
 
   it 'should support :running as a value to :ensure' do
     type_class.new(:name => 'sample', :ensure => :running)
+  end
+
+  it 'should default monitoring to false' do
+    srv = type_class.new(:name => 'sample')
+    expect(srv[:monitoring]).to eq(:false)
+  end
+
+  it 'should default ebs obtimized to false' do
+    srv = type_class.new(:name => 'sample')
+    expect(srv[:monitoring]).to eq(:false)
+  end
+
+  it 'should default instance_initiated_shutdown_behavior to stop' do
+    srv = type_class.new(:name => 'sample')
+    expect(srv[:instance_initiated_shutdown_behavior]).to eq(:stop)
   end
 
   it 'should order tags on output' do
