@@ -70,7 +70,13 @@ ec2_instance { 'db-1':
     department => 'engineering',
     project    => 'cloud',
     created_by => $::id,
-  }
+  },
+  block_devices => [
+    {
+      device_name => '/dev/sda1',
+      volume_size => 8,
+    }
+  ]
 }
 
 elb_loadbalancer { 'lb-1':

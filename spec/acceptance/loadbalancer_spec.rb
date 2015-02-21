@@ -21,16 +21,18 @@ describe "ec2_loadbalancer" do
 
     before(:all) do
       @instance_config = {
-          :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
-          :instance_type => 't1.micro',
-          :region => @default_region,
-          :image_id => 'ami-67a60d7a',
-          :ensure => 'present',
-          :tags => {
-              :department => 'engineering',
-              :project    => 'cloud',
-              :created_by => 'aws-acceptance'
-          }
+        :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :instance_type => 't1.micro',
+        :region => @default_region,
+        :image_id => 'ami-67a60d7a',
+        :ensure => 'present',
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
       }
 
       PuppetManifest.new(@instance_template, @instance_config).apply
@@ -106,10 +108,12 @@ describe "ec2_loadbalancer" do
           :image_id => 'ami-67a60d7a',
           :ensure => 'present',
           :tags => {
-              :department => 'engineering',
-              :project    => 'cloud',
-              :created_by => 'aws-acceptance'
-          }
+            :department => 'engineering',
+            :project    => 'cloud',
+            :created_by => 'aws-acceptance'
+          },
+          :device_name => '/dev/sda1',
+          :volume_size => 8,
         }
 
         PuppetManifest.new(@instance_template, @instance_config).apply
@@ -130,10 +134,10 @@ describe "ec2_loadbalancer" do
             }
           ],
           :tags                 => {
-              :department => 'engineering',
-              :project    => 'cloud',
-              :created_by => 'aws-acceptance',
-              :marco      => 'polo',
+            :department => 'engineering',
+            :project    => 'cloud',
+            :created_by => 'aws-acceptance',
+            :marco      => 'polo',
           }
         }
         @lb_template = 'loadbalancer.pp.tmpl'
