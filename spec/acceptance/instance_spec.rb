@@ -74,6 +74,10 @@ describe "ec2_instance" do
       expect(@instance.virtualization_type).to eq('paravirtual')
     end
 
+    it "and return whether we are using an ebs optimized volume" do
+      expect(@instance.ebs_optimized).to eq(false)
+    end
+
     it "and return public_dns_name, private_dns_name,
       public_ip_address, private_ip_address" do
       @aws.ec2_client.wait_until(:instance_running, instance_ids: [@instance.instance_id])
@@ -133,11 +137,12 @@ describe "ec2_instance" do
       expect_failed_apply(@config)
     end
 
+    context 'do' do
     read_only = [
       {:instance_id => 'foo'}, {:hypervisor => 'foo'},
       {:virtualization_type => 'foo'}, {:private_ip_address => 'foo'},
       {:public_ip_address => 'foo'}, {:private_dns_name => 'foo'},
-      {:public_dns_name => 'foo'},
+      {:public_dns_name => 'foo'}, {:kernel_id => 'foo'}
     ]
 
     read_only.each do |new_config_value|
@@ -147,6 +152,7 @@ describe "ec2_instance" do
 
         expect_failed_apply(new_config)
       end
+    end
     end
   end
 
@@ -305,6 +311,19 @@ describe "ec2_instance" do
     it 'security_groups is correct' do
       regex = /(security_groups)(\s*)(=>)(\s*)(\['default'\])/
       expect(@result.stdout).to match(regex)
+    end
+
+    context 'stuff' do
+
+    it 'ebs_obtimized is correct' do
+      regex = /(ebs_optimized)(\s*)(=>)(\s*)('false')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'kernel_id is reported' do
+      regex = /(kernel_id)(\s*)(=>)(\s*)/
+      expect(@result.stdout).to match(regex)
+    end
     end
 
     it 'virtualization_type is correct' do

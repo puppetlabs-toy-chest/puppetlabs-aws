@@ -26,7 +26,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   read_only(:instance_id, :instance_type, :region, :user_data, :key_name,
-            :availability_zones, :security_groups, :monitoring, :subnet)
+            :availability_zones, :security_groups, :monitoring, :subnet,
+            :ebs_optimized)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -65,6 +66,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       virtualization_type: instance.virtualization_type,
       security_groups: instance.security_groups.collect(&:group_name),
       subnet: subnet_name,
+      ebs_optimized: instance.ebs_optimized,
+      kernel_id: instance.kernel_id,
     }
     if instance.state.name == 'running'
       config[:public_dns_name] = instance.public_dns_name
@@ -195,6 +198,8 @@ Found #{matching_groups.length}:
         max_count: 1,
         instance_type: resource[:instance_type],
         user_data: data,
+        ebs_optimized: resource[:ebs_optimized].to_s,
+        instance_initiated_shutdown_behavior: resource[:instance_initiated_shutdown_behavior].to_s,
         placement: {
           availability_zone: resource[:availability_zone]
         },
