@@ -38,6 +38,12 @@ describe type_class do
     end
   end
 
+  it 'should require a name' do
+    expect {
+      type_class.new({})
+    }.to raise_error(Puppet::Error, 'Title or name must be provided')
+  end
+
   it 'should support :stopped as a value to :ensure' do
     type_class.new(:name => 'sample', :ensure => :stopped)
   end
@@ -59,6 +65,32 @@ describe type_class do
   it 'should default instance_initiated_shutdown_behavior to stop' do
     srv = type_class.new(:name => 'sample')
     expect(srv[:instance_initiated_shutdown_behavior]).to eq(:stop)
+  end
+
+  it 'if block device included must include a device name' do
+    expect {
+      type_class.new({:name => 'sample', :block_devices => [
+        {'volume_size' => 8}
+      ]})
+    }.to raise_error(Puppet::Error, /block device must include device_name/)
+  end
+
+  it 'if block device included must include a volume size' do
+    expect {
+      type_class.new({:name => 'sample', :block_devices => [
+        {'device_name' => '/dev/sda1'}
+      ]})
+    }.to raise_error(Puppet::Error, /block device must include volume_size/)
+  end
+
+  it 'if a provisioned iops block device included must include iops' do
+    expect {
+      type_class.new({:name => 'sample', :block_devices => [{
+        'device_name' => '/dev/sda1',
+        'volume_size' => 8,
+        'volume_type' => 'io1',
+      }]})
+    }.to raise_error(Puppet::Error, /must specify iops if using provisioned iops/)
   end
 
   it 'should order tags on output' do

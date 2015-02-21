@@ -27,7 +27,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   read_only(:instance_id, :instance_type, :region, :user_data, :key_name,
             :availability_zones, :security_groups, :monitoring, :subnet,
-            :ebs_optimized)
+            :ebs_optimized, :block_devices)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -50,6 +50,13 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       subnet_name_tag = subnet_response.data.subnets.first.tags.detect { |tag| tag.key == 'Name' }
     end
     subnet_name = subnet_name_tag ? subnet_name_tag.value : nil
+
+    devices = instance.block_device_mappings.collect do |mapping|
+      {
+        device_name: mapping.device_name,
+        delete_on_termination: mapping.ebs.delete_on_termination,
+      }
+    end
 
     config = {
       name: name_tag ? name_tag.value : nil,
@@ -75,6 +82,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       config[:public_ip_address] = instance.public_ip_address
       config[:private_ip_address] = instance.private_ip_address
     end
+    config[:block_devices] = devices unless devices.empty?
     config
   end
 
@@ -183,6 +191,32 @@ Found #{matching_groups.length}:
     config
   end
 
+  def config_with_devices(config)
+    devices = resource[:block_devices]
+    devices = [devices] unless devices.is_a?(Array)
+    devices = devices.reject(&:nil?)
+    mappings = devices.collect do |device|
+      {
+        device_name: device['device_name'],
+        ebs: {
+          volume_size: device['volume_size'],
+          delete_on_termination: device['delete_on_termination'] || true,
+          volume_type: device['volume_type'] || 'standard',
+          iops: device['iops'],
+          encrypted: device['encrypted'] ? true : nil
+        },
+      }
+    end
+    config['block_device_mappings'] = mappings unless mappings.empty?
+    config
+  end
+
+  def config_with_key_details(config)
+    key = resource[:key_name] ? resource[:key_name] : false
+    config['key_name'] = key if key
+    config
+  end
+
   def create
     if stopped?
       restart
@@ -208,8 +242,8 @@ Found #{matching_groups.length}:
         }
       }
 
-      key = resource[:key_name] ? resource[:key_name] : false
-      config['key_name'] = key if key
+      config = config_with_key_details(config)
+      config = config_with_devices(config)
       config = config_with_network_details(config)
 
       response = ec2.run_instances(config)

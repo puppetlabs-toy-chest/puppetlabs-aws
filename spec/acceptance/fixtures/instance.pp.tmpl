@@ -9,6 +9,10 @@ ec2_instance { '{{name}}':
     {{k}} => '{{v}}',
   {{/tags}}
   },
+  block_devices => [{
+    device_name => '{{device_name}}',
+    volume_size => {{volume_size}},
+  }],
   {{#optional}}
   {{k}} => '{{v}}',
   {{/optional}}

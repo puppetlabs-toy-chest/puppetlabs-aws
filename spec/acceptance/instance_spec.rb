@@ -30,7 +30,9 @@ describe "ec2_instance" do
           :department => 'engineering',
           :project    => 'cloud',
           :created_by => 'aws-acceptance'
-        }
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
       }
 
       PuppetManifest.new(@template, @config).apply
@@ -78,6 +80,13 @@ describe "ec2_instance" do
       expect(@instance.ebs_optimized).to eq(false)
     end
 
+    it "with the specified block device mapping" do
+      @aws.ec2_client.wait_until(:instance_running, instance_ids: [@instance.instance_id])
+      instance = get_instance(@config[:name])
+      expect(instance.block_device_mappings.size).to eq(1)
+      expect(instance.block_device_mappings.first.device_name).to eq(@config[:device_name])
+    end
+
     it "and return public_dns_name, private_dns_name,
       public_ip_address, private_ip_address" do
       @aws.ec2_client.wait_until(:instance_running, instance_ids: [@instance.instance_id])
@@ -102,7 +111,9 @@ describe "ec2_instance" do
           :department => 'engineering',
           :project    => 'cloud',
           :created_by => 'aws-acceptance'
-        }
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
       }
     end
 
@@ -169,7 +180,9 @@ describe "ec2_instance" do
           :department => 'engineering',
           :project    => 'cloud',
           :created_by => 'aws-acceptance'
-        }
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
       }
 
       PuppetManifest.new(@template, @config).apply
@@ -220,7 +233,9 @@ describe "ec2_instance" do
           :department => 'engineering',
           :project    => 'cloud',
           :created_by => 'aws-acceptance'
-        }
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
       }
     end
 
@@ -313,8 +328,6 @@ describe "ec2_instance" do
       expect(@result.stdout).to match(regex)
     end
 
-    context 'stuff' do
-
     it 'ebs_obtimized is correct' do
       regex = /(ebs_optimized)(\s*)(=>)(\s*)('false')/
       expect(@result.stdout).to match(regex)
@@ -323,7 +336,6 @@ describe "ec2_instance" do
     it 'kernel_id is reported' do
       regex = /(kernel_id)(\s*)(=>)(\s*)/
       expect(@result.stdout).to match(regex)
-    end
     end
 
     it 'virtualization_type is correct' do
@@ -406,4 +418,3 @@ describe "ec2_instance" do
   end
 
 end
-

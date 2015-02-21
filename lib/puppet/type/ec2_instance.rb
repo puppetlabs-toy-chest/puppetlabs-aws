@@ -172,6 +172,26 @@ Puppet::Type.newtype(:ec2_instance) do
     end
   end
 
+  newproperty(:block_devices, :array_matching => :all) do
+    desc 'A list of block devices to associate with the instance'
+    validate do |value|
+      devices = value.is_a?(Array) ? value : [value]
+      devices.each do |device|
+        ['device_name', 'volume_size'].each do |key|
+          fail "block device must include #{key}" unless value.keys.include?(key)
+        end
+        if value['volume_type'] == 'io1'
+          fail 'must specify iops if using provisioned iops volumes' unless value.keys.include?('iops')
+        end
+      end
+    end
+    def insync?(is)
+      existing_devices = is.collect { |device| device[:device_name] }
+      specified_devices = should.collect { |device| device['device_name'] }
+      existing_devices.to_set == specified_devices.to_set
+    end
+  end
+
   autorequire(:ec2_securitygroup) do
     groups = self[:security_groups]
     groups.is_a?(Array) ? groups : [groups]
