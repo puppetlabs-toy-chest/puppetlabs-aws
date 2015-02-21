@@ -27,7 +27,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   read_only(:instance_id, :instance_type, :region, :user_data, :key_name,
             :availability_zones, :security_groups, :monitoring, :subnet,
-            :ebs_optimized, :block_devices)
+            :ebs_optimized, :block_devices, :private_ip_address)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -217,6 +217,11 @@ Found #{matching_groups.length}:
     config
   end
 
+  def config_with_private_ip(config)
+    config['private_ip_address'] = resource['private_ip_address'] if resource['private_ip_address'] && using_vpc?
+    config
+  end
+
   def create
     if stopped?
       restart
@@ -245,6 +250,7 @@ Found #{matching_groups.length}:
       config = config_with_key_details(config)
       config = config_with_devices(config)
       config = config_with_network_details(config)
+      config = config_with_private_ip(config)
 
       response = ec2.run_instances(config)
 

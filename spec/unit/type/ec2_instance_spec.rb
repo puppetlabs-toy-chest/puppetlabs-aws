@@ -83,6 +83,12 @@ describe type_class do
     }.to raise_error(Puppet::Error, /block device must include volume_size/)
   end
 
+  it 'if private IP included must be a valid IP' do
+    expect {
+      type_class.new({:name => 'sample', :private_ip_address => 'invalid'})
+    }.to raise_error(Puppet::Error, /private ip address must be a valid ipv4 address/)
+  end
+
   it 'if a provisioned iops block device included must include iops' do
     expect {
       type_class.new({:name => 'sample', :block_devices => [{
