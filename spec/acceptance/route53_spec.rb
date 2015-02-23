@@ -219,7 +219,7 @@ describe "route53_zone" do
           r = PuppetManifest.new(@template, config).apply
           expect(r[:output].any?{|x| x.include? 'Error'}).to eq(false)
           record = find_record(config[:txt_record_name], @zone, 'TXT')
-          expect(record.resource_records.map{|x| x.value.delete('/"')}).to eq(config[:txt_values])
+          expect(record.resource_records.map{|x| x.value.delete('/"')}.to_set).to eq(config[:txt_values].to_set)
         end
 
       end

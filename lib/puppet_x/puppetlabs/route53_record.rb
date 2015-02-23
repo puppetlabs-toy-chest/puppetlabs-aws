@@ -35,6 +35,9 @@ module PuppetX
           validate do |value|
             fail 'The value of the record must not be blank' if value.empty?
           end
+          def insync?(is)
+            is.to_set == should.to_set
+          end
         end
 
         autorequire(:route53_zone) do
