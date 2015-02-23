@@ -128,6 +128,19 @@ describe "route53_zone" do
       end
     end
 
+    describe 'using puppet resource on the route53_zone' do
+      before(:all) do
+        ENV['AWS_REGION'] = @default_region
+        options = {:name => @config[:name]}
+        @result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath ../')
+      end
+
+      it 'should show the zone as present' do
+        regex = /ensure\s*=>\s*'present'/
+        expect(@result.stdout).to match(regex)
+      end
+    end
+
     it 'should create an TXT record with the relevant ttl' do
       expect(@txt_record.ttl).to eq(@config[:txt_ttl])
     end
@@ -221,7 +234,71 @@ describe "route53_zone" do
           record = find_record(config[:txt_record_name], @zone, 'TXT')
           expect(record.resource_records.map{|x| x.value.delete('/"')}).to eq(config[:txt_values])
         end
+      end
+    end
+  end
 
+  describe 'create route53 zone' do
+
+    before(:all) do
+      @name = "#{SecureRandom.uuid}.com."
+      @config = {
+        :name => @name,
+        :a_record_name => "local.#{@name}",
+        :a_ttl => 3000,
+        :a_values => ['127.0.0.1'],
+        :txt_record_name => "local.#{@name}",
+        :txt_ttl => 17000,
+        :txt_value => 'message',
+      }
+      @template = 'route53_create.pp.tmpl'
+    end
+
+    it 'with puppet resource' do
+      options = {:name => @config[:name], :ensure => 'present'}
+      result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath ../')
+      expect(result.stderr).not_to match(/Error:/)
+      expect{ find_zone(@config[:name]) }.not_to raise_error
+    end
+
+    it 'add records to the zone with a manifest' do
+      result = PuppetManifest.new(@template, @config).apply
+      expect(result[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      zone = find_zone(@config[:name])
+      expect{find_record(@config[:txt_record_name], zone, 'TXT')}.not_to raise_error
+      expect{find_record(@config[:a_record_name], zone, 'A')}.not_to raise_error
+    end
+
+    context 'deleting resources' do
+
+      it 'attempt to delete the zone first' do
+        options = {:name => @config[:name], :ensure => 'absent'}
+        result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath ../')
+        regex = /Could not set 'absent' on ensure/
+        expect(result.stderr).to match(regex)
+      end
+
+      it 'a_record' do
+        options = {:name => @config[:a_record_name], :ensure => 'absent'}
+        result = TestExecutor.puppet_resource('route53_a_record', options, '--modulepath ../')
+        expect(result.stderr).not_to match(/Error:/)
+        zone = find_zone(@config[:name])
+        expect{ find_record(@config[:a_record_name], zone, 'A')}.to raise_error
+      end
+
+      it 'txt_record' do
+        options = {:name => @config[:txt_record_name], :ensure => 'absent'}
+        result = TestExecutor.puppet_resource('route53_txt_record', options, '--modulepath ../')
+        expect(result.stderr).not_to match(/Error:/)
+        zone = find_zone(@config[:name])
+        expect{ find_record(@config[:txt_record_name], zone, 'TXT')}.to raise_error
+      end
+
+      it 'route53_zone' do
+        options = {:name => @config[:name], :ensure => 'absent'}
+        result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath ../')
+        expect(result.stderr).not_to match(/Error:/)
+        expect{ find_zone(@config[:name])}.to raise_error
       end
 
     end
