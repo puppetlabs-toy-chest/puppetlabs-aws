@@ -209,7 +209,7 @@ class AwsHelper
 
   def get_dns_records(name, zone, type)
     records = @route53_client.list_resource_record_sets(hosted_zone_id: zone.id)
-    records.data.resource_record_sets.select { |r| r.type == type }
+    records.data.resource_record_sets.select { |r| r.type == type && r.name == name}
   end
 
 end
