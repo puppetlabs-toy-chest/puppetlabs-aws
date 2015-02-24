@@ -46,13 +46,21 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def self.security_group_to_hash(region, group)
-    {
+    sg_hash = {
       name: group[:group_name],
+      id: group[:group_id],
       description: group[:description],
       ensure: :present,
       ingress: format_ingress_rules(group),
       region: region,
     }
+    if group[:vpc_id]
+      # Is it possible to get a vpc_id that points nowhere, and get no response?
+      if vpcs = ec2_client(region).describe_vpcs(vpc_ids: [group[:vpc_id]]).first.vpcs
+        sg_hash[:vpc_name] = name_from_tag(vpcs.first)
+      end
+    end
+    sg_hash
   end
 
   def exists?
@@ -65,12 +73,21 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     Puppet.info("Creating security group #{name} in region #{resource[:region]}")
     ec2 = ec2_client(resource[:region])
     tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
-    response = ec2.create_security_group(
+    vpc_id = nil
+    if resource[:vpc_name]
+      if ! vpc_id = vpc_id_from_name(resource[:vpc_name])
+        raise Puppet::Error, "The vpc '#{resource[:vpc_name]}' was not found"
+      end
+    end
+    create_hash = {
       group_name: name,
       description: resource[:description]
-    )
+    }
+    create_hash[:vpc_id] = vpc_id if vpc_id
+    response = ec2.create_security_group(create_hash)
 
     @property_hash[:ensure] = :present
+    @property_hash[:id] = response.group_id
 
     ec2.create_tags(
       resources: [response.group_id],
@@ -91,12 +108,12 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     to_create.reject(&:nil?).each do |rule|
       if rule.key? 'security_group'
         ec2.authorize_security_group_ingress(
-          group_name: name,
+          group_id: id,
           source_security_group_name: rule['security_group']
         )
       else
         ec2.authorize_security_group_ingress(
-          group_name: name,
+          group_id: id,
           ip_permissions: [{
             ip_protocol: rule['protocol'],
             to_port: rule['port'].to_i,
@@ -112,12 +129,12 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     to_delete.reject(&:nil?).each do |rule|
       if rule.key? 'security_group'
          ec2.revoke_security_group_ingress(
-          group_name: name,
+          group_id: id,
           source_security_group_name: rule['security_group']
         )
       else
         ec2.revoke_security_group_ingress(
-          group_name: name,
+          group_id: id,
           ip_permissions: [{
             ip_protocol: rule['protocol'],
             to_port: rule['port'].to_i,
@@ -136,11 +153,31 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     authorize_ingress(value, @property_hash[:ingress])
   end
 
+  def vpc_name=(value)
+    raise Puppet::Error, "vpc_name may only be set upon create"
+  end
+
   def destroy
     Puppet.info("Deleting security group #{name} in region #{resource[:region]}")
     ec2_client(resource[:region]).delete_security_group(
-      group_name: name
+      group_id: id
     )
     @property_hash[:ensure] = :absent
+  end
+
+  def vpc_id_from_name(name)
+    vpc_ids = ec2_client(resource[:region]).describe_vpcs(filters: [
+      {name: 'tag-key',   values: ['Name']},
+      {name: 'tag-value', values: [name]},
+    ]).collect do |response|
+      response.vpcs.collect do |vpc|
+        vpc.vpc_id if vpc.vpc_id
+      end
+    end.flatten
+    p vpc_ids
+    if vpc_ids.length > 1
+      Puppet.warning "Ambiguous VPC name '#{name}' resolves to VPC IDs #{vpc_ids.join(', ')} - using #{vpc_ids.first}"
+    end
+    vpc_ids.first
   end
 end

@@ -49,6 +49,17 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
+  newproperty(:vpc_name) do
+    desc 'The name of the virtual private cloud (VPC) the security group belongs to, if applicable.'
+  end
+
+  newproperty(:id) do
+    desc 'The AWS ID of the security group'
+    validate do |value|
+      fail "id is read-only"
+    end
+  end
+
   def should_autorequire?(rule)
     !rule.nil? and rule.key? 'security_group' and rule['security_group'] != name
   end
