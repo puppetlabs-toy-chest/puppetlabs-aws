@@ -11,6 +11,27 @@ ec2_vpc { '{{name}}-vpc':
   },
 }
 
+ec2_securitygroup { '{{name}}-sg':
+  ensure      => {{ensure}},
+  description => 'VPC accceptance test',
+  region      => '{{region}}',
+  vpc         => '{{name}}-vpc',
+  ingress     => [
+    {{#security_group_ingress}}
+      {
+        {{#values}}
+          {{k}} => '{{v}}',
+        {{/values}}
+      },
+    {{/security_group_ingress}}
+  ],
+  tags        => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  }
+}
+
 ec2_vpc_dhcp_options { '{{name}}-options':
   ensure            => {{ensure}},
   region            => '{{region}}',

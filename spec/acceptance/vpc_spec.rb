@@ -46,6 +46,15 @@ describe "The AWS module" do
     finder(name, 'get_vpn')
   end
 
+  def find_security_group(name)
+    group_response = @aws.ec2_client.describe_security_groups(filters: [
+      {name: 'group-name', values: [name]}
+    ])
+    items = group_response.data.security_groups
+    expect(items.count).to eq(1)
+    items.first
+  end
+
   def generate_ip
     # This generates a resolvable IP address within
     # a specific well populated range
@@ -77,6 +86,11 @@ describe "The AWS module" do
         :bgp_asn => '65000',
         :vpn_route => '0.0.0.0/0',
         :static_routes => true,
+        :security_group_ingress => [{
+          :protocol => 'tcp',
+          :port     => 22,
+          :cidr     => '0.0.0.0/0'
+        }],
         :tags => {
           :department => 'engineering',
           :project => 'cloud',
@@ -92,6 +106,7 @@ describe "The AWS module" do
       @subnet = find_subnet("#{@name}-subnet")
       @vgw = find_vpn_gateway("#{@name}-vgw")
       @cgw = find_customer_gateway("#{@name}-cgw")
+      @sg = find_security_group("#{@name}-sg")
     end
 
     after(:all) do
@@ -121,6 +136,12 @@ describe "The AWS module" do
       expect(@option).not_to be_nil
       expect(node_type.values.first.value.to_i).to eq(@config[:netbios_node_type])
       expect(@aws.tag_difference(@option, @config[:tags])).to be_empty
+    end
+
+    it 'should create a VPC associated security group' do
+      expect(@sg).not_to be_nil
+      expect(@sg.vpc_id).to eq(@vpc.vpc_id)
+      expect(@aws.tag_difference(@sg, @config[:tags])).to be_empty
     end
 
     it 'should create a route table' do

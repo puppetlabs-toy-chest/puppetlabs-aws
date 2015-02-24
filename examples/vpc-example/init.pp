@@ -4,6 +4,16 @@ ec2_vpc { 'sample-vpc':
   cidr_block   => '10.0.0.0/16',
 }
 
+ec2_securitygroup { 'sample-sg':
+  ensure      => present,
+  region      => 'sa-east-1',
+  vpc         => 'sample-vpc',
+  description => 'Security group for VPC',
+  ingress     => [{
+    security_group => 'sample-sg',
+  }],
+}
+
 ec2_vpc_subnet { 'sample-subnet':
   ensure            => present,
   region            => 'sa-east-1',
