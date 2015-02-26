@@ -33,6 +33,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       name: group.auto_scaling_group_name,
       launch_configuration: group.launch_configuration_name,
       availability_zones: group.availability_zones,
+      load_balancers: group.load_balancers,
       min_size: group.min_size,
       max_size: group.max_size,
       instance_count: group.instances.count,
@@ -51,11 +52,14 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     Puppet.info("Starting auto scaling group #{name} in region #{resource[:region]}")
     zones = resource[:availability_zones]
     zones = [zones] unless zones.is_a?(Array)
+    balancers = resource[:load_balancers]
+    balancers = [balancers] unless balancers.is_a?(Array)
     autoscaling_client(resource[:region]).create_auto_scaling_group(
       auto_scaling_group_name: name,
       min_size: resource[:min_size],
       max_size: resource[:max_size],
       availability_zones: zones,
+      load_balancers: balancers,
       launch_configuration_name: resource[:launch_configuration],
     )
     @property_hash[:ensure] = :present
@@ -80,6 +84,14 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     autoscaling_client(resource[:region]).update_auto_scaling_group(
       auto_scaling_group_name: name,
       availability_zones: zones,
+    )
+  end
+
+  def load_balancers=(value)
+    balancers = value.is_a?(Array) ? value : [value]
+    autoscaling_client(resource[:region]).update_auto_scaling_group(
+      auto_scaling_group_name: name,
+      load_balancers: balancers,
     )
   end
 
