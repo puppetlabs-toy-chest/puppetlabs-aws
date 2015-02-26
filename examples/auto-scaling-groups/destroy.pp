@@ -18,4 +18,3 @@ ec2_launchconfiguration { 'test-lc':
   ensure => absent,
   region => 'sa-east-1',
 }
-

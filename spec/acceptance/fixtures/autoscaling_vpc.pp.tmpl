@@ -1,0 +1,32 @@
+ec2_vpc { '{{name}}-vpc':
+  ensure           => {{ensure}},
+  region           => '{{region}}',
+  cidr_block       => '{{vpc_cidr}}',
+}
+
+ec2_vpc_subnet { '{{name}}-subnet':
+  ensure            => {{ensure}},
+  region            => '{{region}}',
+  vpc               => '{{name}}-vpc',
+  cidr_block        => '{{subnet_cidr}}',
+  availability_zone => 'sa-east-1a',
+}
+
+ec2_launchconfiguration { '{{name}}-lc':
+  ensure          => {{ensure}},
+  security_groups => ['default'],
+  region          => 'sa-east-1',
+  image_id        => 'ami-67a60d7a',
+  instance_type   => 't1.micro',
+  vpc             => '{{name}}-vpc'
+}
+
+ec2_autoscalinggroup { '{{name}}-asg':
+  ensure               => {{ensure}},
+  min_size             => {{min_size}},
+  max_size             => {{max_size}},
+  region               => 'sa-east-1',
+  launch_configuration => '{{name}}-lc',
+  availability_zones   => ['sa-east-1a'],
+  subnets              => '{{name}}-subnet'
+}

@@ -62,7 +62,19 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     end
   end
 
+  newproperty(:subnets, :array_matching => :all) do
+    desc 'The subnets to associate the autoscaling group.'
+    def insync?(is)
+      is.to_set == should.to_set
+    end
+  end
+
   autorequire(:ec2_launchconfiguration) do
     self[:launch_configuration]
+  end
+
+  autorequire(:ec2_vpc_subnet) do
+    subnets = self[:subnets]
+    subnets.is_a?(Array) ? subnets : [subnets]
   end
 end

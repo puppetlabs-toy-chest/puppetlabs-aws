@@ -18,6 +18,7 @@ describe type_class do
     [
       :name,
       :user_data,
+      :vpc,
     ]
   end
 

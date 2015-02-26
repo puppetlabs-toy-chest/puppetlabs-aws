@@ -29,6 +29,7 @@ describe type_class do
       :launch_configuration,
       :instance_count,
       :availability_zones,
+      :subnets,
     ]
   end
 

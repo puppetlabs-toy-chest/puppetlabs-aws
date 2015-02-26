@@ -1,0 +1,19 @@
+ec2_autoscalinggroup { '{{name}}-asg':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_launchconfiguration { '{{name}}-lc':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
+ec2_vpc_subnet { '{{name}}-subnet':
+  ensure => {{ensure}},
+  region => '{{region}}',
+} ~>
+
+ec2_vpc { '{{name}}-vpc':
+  ensure => {{ensure}},
+  region => '{{region}}',
+}
