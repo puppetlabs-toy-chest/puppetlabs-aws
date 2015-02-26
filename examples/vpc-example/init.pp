@@ -33,3 +33,24 @@ ec2_vpc_routetable { 'sample-routes':
     },
   ],
 }
+
+ec2_securitygroup { 'sample-sg':
+  ensure      => present,
+  description => 'Sample VPC security group to allow ssh',
+  vpc_name    => 'sample-vpc',
+  region      => 'sa-east-1',
+  ingress     => [{
+    protocol => 'tcp',
+    port     => 22,
+    cidr     => '0.0.0.0/0',
+  }],
+}
+
+ec2_instance { 'sample-instance':
+  ensure          => present,
+  region          => 'sa-east-1',
+  image_id        => 'ami-e08efbd0',
+  instance_type   => 'm3.large',
+  security_groups => 'sample-sg',
+  subnet          => 'sample-subnet',
+}

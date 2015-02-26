@@ -152,4 +152,8 @@ Puppet::Type.newtype(:ec2_instance) do
     groups.is_a?(Array) ? groups : [groups]
   end
 
+  autorequire(:ec2_vpc_subnet) do
+    self[:subnet]
+  end
+
 end

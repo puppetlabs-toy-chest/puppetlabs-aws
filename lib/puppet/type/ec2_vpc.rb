@@ -37,6 +37,13 @@ Puppet::Type.newtype(:ec2_vpc) do
     desc 'The tags to assign to the VPC.'
   end
 
+  newproperty(:id) do
+    desc 'The AWS ID of the VPC'
+    validate do |value|
+      fail "id is read-only"
+    end
+  end
+
   autorequire(:ec2_vpc_dhcp_options) do
     self[:dhcp_options]
   end
