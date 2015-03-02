@@ -3,6 +3,11 @@ ec2_instance { '{{name}}-instance':
   region => 'sa-east-1',
 } ~>
 
+elb_loadbalancer { '{{lb_name}}':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
 ec2_vpc_internet_gateway { '{{name}}-igw':
   ensure => {{ensure}},
   region => 'sa-east-1',
@@ -47,3 +52,5 @@ ec2_vpc_dhcp_options { '{{name}}-options':
   ensure => {{ensure}},
   region => 'sa-east-1',
 }
+
+

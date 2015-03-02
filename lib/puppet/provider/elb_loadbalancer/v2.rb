@@ -18,7 +18,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     end.flatten
   end
 
-  read_only(:region, :availability_zones, :listeners)
+  read_only(:region, :scheme, :availability_zones, :listeners)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -62,6 +62,19 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         tags[tag.key.to_sym] = tag.value unless tag.key == 'Name'
       end
     end
+    subnet_names = []
+    unless load_balancer.subnets.nil? || load_balancer.subnets.empty?
+      response = ec2_client(region).describe_subnets(subnet_ids: load_balancer.subnets)
+      subnet_names = response.data.subnets.collect do |subnet|
+        subnet_name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
+        subnet_name_tag ? subnet_name_tag.value : nil
+      end.reject(&:nil?)
+    end
+    security_group_names = []
+    unless load_balancer.security_groups.nil? || load_balancer.security_groups.empty?
+      group_response = ec2_client(region).describe_security_groups(group_ids: load_balancer.security_groups)
+      security_group_names = group_response.data.security_groups.collect(&:group_name)
+    end
     {
       name: load_balancer.load_balancer_name,
       ensure: :present,
@@ -70,6 +83,9 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       instances: instance_names,
       listeners: listeners,
       tags: tags,
+      subnets: subnet_names,
+      security_groups: security_group_names,
+      scheme: load_balancer.scheme,
     }
   end
 
@@ -81,6 +97,8 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
   def create
     Puppet.info("Creating load balancer #{name} in region #{resource[:region]}")
+    subnets = subnet_ids_from_names(resource[:subnets])
+    security_groups = security_group_ids_from_names(resource[:security_groups])
     zones = resource[:availability_zones]
     zones = [zones] unless zones.is_a?(Array)
 
@@ -103,7 +121,10 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       load_balancer_name: name,
       listeners: listeners_for_api,
       availability_zones: zones,
-      tags: tags
+      security_groups: security_groups,
+      subnets: subnets,
+      scheme: resource['scheme'],
+      tags: tags,
     )
 
     @property_hash[:ensure] = :present
@@ -126,15 +147,66 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     instance_ids = response.reservations.map(&:instances).
       flatten.map(&:instance_id)
 
-    instance_input = []
-    instance_ids.each do |id|
-      instance_input << { instance_id: id }
+    instance_input = instance_ids.collect do |id|
+      { instance_id: id }
     end
 
     elb_client(region).register_instances_with_load_balancer(
       load_balancer_name: load_balancer_name,
       instances: instance_input
     )
+  end
+
+  def security_group_ids_from_names(names)
+    unless names.empty?
+      names = [names] unless names.is_a?(Array)
+      response = ec2_client(resource[:region]).describe_security_groups(filters: [
+        {name: 'group-name', values: names}
+      ])
+      response.data.security_groups.map(&:group_id)
+    else
+      []
+    end
+  end
+
+  def subnet_ids_from_names(names)
+    unless names.empty?
+      names = [names] unless names.is_a?(Array)
+      response = ec2_client(resource[:region]).describe_subnets(filters: [
+        {name: 'tag:Name', values: names}
+      ])
+      response.data.subnets.map(&:subnet_id)
+    else
+      []
+    end
+  end
+
+  def security_groups=(value)
+    ids = security_group_ids_from_names(value)
+    elb_client(resource[:region]).apply_security_groups_to_load_balancer(
+      load_balancer_name: name,
+      security_groups: ids,
+    )
+  end
+
+  def subnets=(value)
+    to_create = value - @property_hash[:subnets]
+    to_delete = @property_hash[:subnets] - value
+    elb = elb_client(resource[:region])
+    unless to_delete.empty?
+      delete_ids = subnet_ids_from_names(to_delete)
+      elb.detach_load_balancer_from_subnets(
+        load_balancer_name: name,
+        subnets: delete_ids,
+      )
+    end
+    unless to_create.empty?
+      create_ids = subnet_ids_from_names(to_create)
+      elb.attach_load_balancer_to_subnets(
+        load_balancer_name: name,
+        subnets: create_ids,
+      )
+    end
   end
 
   def destroy

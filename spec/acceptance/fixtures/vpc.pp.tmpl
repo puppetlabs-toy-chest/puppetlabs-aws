@@ -134,3 +134,20 @@ ec2_instance { '{{name}}-instance':
   {{/tags}}
   },
 }
+
+elb_loadbalancer { '{{lb_name}}':
+  ensure    => {{ensure}},
+  region    => '{{region}}',
+  subnets   => '{{name}}-subnet',
+  scheme    => '{{lb_scheme}}',
+  instances => '{{name}}-instance',
+  listeners => [{
+    protocol => 'tcp',
+    port => 80,
+  }],
+  tags      => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
+}
