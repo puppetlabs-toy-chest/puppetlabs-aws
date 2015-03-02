@@ -23,25 +23,37 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
     end
   end
 
-  newproperty(:domain_name) do
+  newproperty(:domain_name, :array_matching => :all) do
     desc 'The domain name for the DHCP options.'
     validate do |value|
       unless value =~ /^[\w\.-]+$/
         fail "'%s' is not a valid domain_name" % value
       end
     end
+    def insync?(is)
+      is.to_set == should.to_set
+    end
   end
 
   newproperty(:domain_name_servers, :array_matching => :all) do
     desc 'A list of domain name servers to use for the DHCP options set.'
+    def insync?(is)
+      is.to_set == should.to_set
+    end
   end
 
   newproperty(:ntp_servers, :array_matching => :all) do
     desc 'A list of NTP servers to use for the DHCP options set.'
+    def insync?(is)
+      is.to_set == should.to_set
+    end
   end
 
   newproperty(:netbios_name_servers, :array_matching => :all) do
     desc 'A list of netbios name servers to use for the DHCP options set.'
+    def insync?(is)
+      is.to_set == should.to_set
+    end
   end
 
   newproperty(:netbios_node_type) do

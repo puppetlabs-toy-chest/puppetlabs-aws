@@ -33,8 +33,9 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
   def self.dhcp_option_to_hash(region, option)
     config = {}
     option.dhcp_configurations.each do |conf|
-      config[conf[:key]] = conf[:values].first[:value]
+      config[conf[:key]] = conf[:values].collect(&:value)
     end
+    node_type = config.keys.include?('netbios-node-type') ? config['netbios-node-type'].first : nil
     {
       name: name_from_tag(option),
       id: option.dhcp_options_id,
@@ -44,7 +45,7 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
       ntp_servers: config['ntp-servers'],
       domain_name_servers: config['domain-name-servers'],
       netbios_name_servers: config['netbios-name-servers'],
-      netbios_node_type: config['netbios-node-type'],
+      netbios_node_type: node_type,
       tags: tags_for(option),
     }
   end
