@@ -25,8 +25,13 @@ Puppet::Type.newtype(:ec2_vpc_routetable) do
 
   newproperty(:routes, :array_matching => :all) do
     desc 'Individual routes for the routing table.'
+    validate do |value|
+      ['destination_cidr_block', 'gateway'].each do |key|
+        fail "routes must include a #{key}" unless value.keys.include?(key)
+      end
+    end
     def insync?(is)
-      is.sort_by { |route| route['gateway'] } == should.sort_by { |route| route['gateway'] }
+      is.to_set == should.to_set
     end
   end
 

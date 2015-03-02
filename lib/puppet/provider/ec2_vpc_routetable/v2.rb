@@ -77,11 +77,18 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
     Puppet.info("Creating Route table #{name}")
     ec2 = ec2_client(resource[:region])
 
+    routes = resource[:routes]
+    routes = [routes] unless routes.is_a?(Array)
+
+    uniq_gateways = routes.collect { |a| a['gateway'] }.uniq
+
+    fail 'Only one route per gateway allowed' unless uniq_gateways.size == routes.size
+
     vpc_response = ec2.describe_vpcs(filters: [
       {name: "tag:Name", values: [resource[:vpc]]},
     ])
-    fail("Multiple VPCs with name #{resource[:vpc]}") if vpc_response.data.vpcs.count > 1
-    fail("No VPCs with name #{resource[:vpc]}") if vpc_response.data.vpcs.empty?
+    fail "Multiple VPCs with name #{resource[:vpc]}" if vpc_response.data.vpcs.count > 1
+    fail "No VPCs with name #{resource[:vpc]}" if vpc_response.data.vpcs.empty?
 
     response = ec2.create_route_table(
       vpc_id: vpc_response.data.vpcs.first.vpc_id,
@@ -93,7 +100,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
         tags: tags_for_resource,
       )
     end
-    resource[:routes].each do |route|
+    routes.each do |route|
       gateway_response = ec2.describe_internet_gateways(filters: [
         {name: "tag:Name", values: [route['gateway']]},
       ])
@@ -102,7 +109,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
         destination_cidr_block: route['destination_cidr_block'],
         gateway_id: gateway_response.data.internet_gateways.first.internet_gateway_id,
       ) unless gateway_response.data.internet_gateways.empty?
-    end if resource[:routes]
+    end
     @property_hash[:ensure] = :present
   end
 
