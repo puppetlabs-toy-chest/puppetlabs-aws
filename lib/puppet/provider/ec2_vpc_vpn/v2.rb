@@ -10,12 +10,12 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   def self.instances()
     regions.collect do |region|
       connections = []
-      ec2_client(region).describe_vpn_connections.each do |response|
+      ec2_client(region).describe_vpn_connections(filters: [
+        {:name => 'state', :values => ['pending', 'available']}
+      ]).each do |response|
         response.data.vpn_connections.each do |connection|
           hash = connection_to_hash(region, connection)
-          if hash[:name]
-            connections << new(hash) unless (connection.state == "deleting" or connection.state == "deleted")
-          end
+          connections << new(hash) if hash[:name]
         end
       end
       connections
@@ -60,6 +60,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
     end
 
     routes = connection.routes.collect { |route| route.destination_cidr_block }
+    static_routes = connection.options.nil? ? nil : connection.options.static_routes_only
 
     {
       :name             => name_from_tag(connection),
@@ -70,7 +71,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
       :type             => connection.type,
       :vpn_gateway      => vpn_gateway_name,
       :routes           => routes,
-      :static_routes    => connection.options.static_routes_only,
+      :static_routes    => static_routes,
       :tags             => tags_for(connection),
     }
   end
