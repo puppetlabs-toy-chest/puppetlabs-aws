@@ -104,11 +104,6 @@ describe type_class do
     }])).to be true
   end
 
-  it 'should default security groups to a blank array' do
-    elb = type_class.new({:name => 'sample'})
-    expect(elb[:security_groups]).to eq([])
-  end
-
   it 'should default subnets to a blank array' do
     elb = type_class.new({:name => 'sample'})
     expect(elb[:subnets]).to eq([])

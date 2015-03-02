@@ -124,7 +124,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       security_groups: security_groups,
       subnets: subnets,
       scheme: resource['scheme'],
-      tags: tags,
+      tags: tags_for_resource,
     )
 
     @property_hash[:ensure] = :present
@@ -158,15 +158,32 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def security_group_ids_from_names(names)
-    unless names.empty?
+    unless names.nil? || names.empty?
+      vpc_id = if resource[:subnets]
+        subnets = resource[:subnets]
+        subnets = [subnets] unless subnets.is_a?(Array)
+        vpc_id_from_subnet_name(subnets.first)
+      else
+        nil
+      end
+
+      filters = [{name: 'group-name', values: names}]
+      filters << {name: 'vpc-id', values: [vpc_id]} if vpc_id
+
       names = [names] unless names.is_a?(Array)
-      response = ec2_client(resource[:region]).describe_security_groups(filters: [
-        {name: 'group-name', values: names}
-      ])
+      response = ec2_client(resource[:region]).describe_security_groups(filters: filters)
       response.data.security_groups.map(&:group_id)
     else
       []
     end
+  end
+
+  def vpc_id_from_subnet_name(name)
+    response = ec2_client(resource[:region]).describe_subnets(filters: [
+      {name: 'tag:Name', values: [name]}
+    ])
+    fail("No subnet with name #{name}") if response.data.subnets.empty?
+    response.data.subnets.map(&:vpc_id).first
   end
 
   def subnet_ids_from_names(names)
@@ -182,11 +199,13 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def security_groups=(value)
-    ids = security_group_ids_from_names(value)
-    elb_client(resource[:region]).apply_security_groups_to_load_balancer(
-      load_balancer_name: name,
-      security_groups: ids,
-    )
+    unless value.empty?
+      ids = security_group_ids_from_names(value)
+      elb_client(resource[:region]).apply_security_groups_to_load_balancer(
+        load_balancer_name: name,
+        security_groups: ids,
+      ) unless ids.empty?
+    end
   end
 
   def subnets=(value)

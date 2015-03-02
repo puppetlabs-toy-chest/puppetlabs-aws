@@ -53,7 +53,6 @@ Puppet::Type.newtype(:elb_loadbalancer) do
   end
 
   newproperty(:security_groups, :array_matching => :all) do
-    defaultto []
     desc 'The security groups to associate the load balancer (VPC only).'
     def insync?(is)
       is.to_set == should.to_set
