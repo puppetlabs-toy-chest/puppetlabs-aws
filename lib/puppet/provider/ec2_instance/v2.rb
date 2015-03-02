@@ -119,10 +119,6 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       Puppet.warning "Ambiguous subnet name '#{resource[:subnet]}' resolves to subnets #{subnet_map} - using #{subnet.subnet_id}"
     end
 
-    if subnet.nil?
-      raise Puppet::Error,
-        "Security groups '#{groups.join(', ')}' not found in VPCs '#{vpc_groups.keys.join(', ')}'"
-    end
     subnet
   end
 
@@ -155,8 +151,11 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
         raise Puppet::Error,
           "When specifying a subnet you must specify a security group associated with a VPC"
       end
-
       subnet = determine_subnet(vpc_groups.keys)
+      if subnet.nil?
+        raise Puppet::Error,
+          "Security groups '#{groups.join(', ')}' not found in VPCs '#{vpc_groups.keys.join(', ')}'"
+      end
       config[:subnet_id] = subnet.subnet_id
       vpc_groups[subnet.vpc_id]
     end

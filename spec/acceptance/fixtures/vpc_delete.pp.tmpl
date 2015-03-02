@@ -28,12 +28,17 @@ ec2_vpc_routetable { '{{name}}-routes':
   region => 'sa-east-1',
 } ~>
 
+ec2_securitygroup { '{{name}}-sg':
+  ensure => {{ensure}},
+  region => 'sa-east-1',
+} ~>
+
 ec2_vpc { '{{name}}-vpc':
   ensure => {{ensure}},
   region => 'sa-east-1',
 } ~>
 
 ec2_vpc_dhcp_options { '{{name}}-options':
-  ensure            => {{ensure}},
-  region            => 'sa-east-1',
+  ensure => {{ensure}},
+  region => 'sa-east-1',
 }

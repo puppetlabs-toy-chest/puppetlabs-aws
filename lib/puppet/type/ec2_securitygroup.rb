@@ -49,6 +49,10 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
+  newproperty(:vpc) do
+    desc 'A VPC to which the group should be associated'
+  end
+
   def should_autorequire?(rule)
     !rule.nil? and rule.key? 'security_group' and rule['security_group'] != name
   end
@@ -59,5 +63,9 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     rules.collect do |rule|
       rule['security_group'] if should_autorequire?(rule)
     end
+  end
+
+  autorequire(:ec2_vpc) do
+    self[:vpc]
   end
 end

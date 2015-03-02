@@ -5,16 +5,24 @@
         uri: "https://ec2.sa-east-1.amazonaws.com/"
         body: 
           encoding: UTF-8
-          string: "AWSAccessKeyId=redacted&Action=DescribeSecurityGroups&Signature=redacted%2Fao2118kWdJH%2F%2FYfRpDmC76cJFgI2epdXg03pzw%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-03T13%3A02%3A53Z&Version=2014-06-15"
+          string: "Action=DescribeSecurityGroups&Version=2014-09-01"
         headers: 
           Content-Type: 
             - "application/x-www-form-urlencoded; charset=utf-8"
           Accept-Encoding: 
             - ""
           User-Agent: 
-            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180912Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "5d21a760e19d65e1362145b2d52df2569bac924f2eaee44aefe25f75ead4e7e2"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=b1d0d2994c4ea3dee0da7598d402dca7b413e01c71bc5102b8e239a54a7fcb63"
           Content-Length: 
-            - "228"
+            - "48"
           Accept: 
             - "*/*"
       response: 
@@ -29,19 +37,21 @@
           Vary: 
             - Accept-Encoding
           Date: 
-            - "Fri, 03 Oct 2014 13:02:54 GMT"
+            - "Tue, 24 Feb 2015 18:09:13 GMT"
+          Cneonction: 
+            - close
           Server: 
             - AmazonEC2
         body: 
           encoding: UTF-8
           string: |-
             <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
-                <requestId>159b66d4-4a56-4926-8967-d88426c00d20</requestId>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>45ad9967-9030-48b5-a993-605fd99968e7</requestId>
                 <securityGroupInfo>
                     <item>
                         <ownerId>482693910459</ownerId>
-                        <groupId>sg-d9d0f4c4</groupId>
+                        <groupId>sg-9917aa86</groupId>
                         <groupName>lb-sg</groupName>
                         <groupDescription>Security group for load balancer</groupDescription>
                         <ipPermissions>
@@ -59,295 +69,33 @@
                         </ipPermissions>
                         <ipPermissionsEgress/>
                     </item>
-                    <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-d3d0f4ce</groupId>
-                        <groupName>puppet-sg</groupName>
-                        <groupDescription>Puppet master security group</groupDescription>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d1d0f4cc</groupId>
-                                        <groupName>db-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>udp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d1d0f4cc</groupId>
-                                        <groupName>db-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>icmp</ipProtocol>
-                                <fromPort>-1</fromPort>
-                                <toPort>-1</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d1d0f4cc</groupId>
-                                        <groupName>db-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>22</fromPort>
-                                <toPort>22</toPort>
-                                <groups/>
-                                <ipRanges>
-                                    <item>
-                                        <cidrIp>0.0.0.0/0</cidrIp>
-                                    </item>
-                                </ipRanges>
-                            </item>
-                        </ipPermissions>
-                        <ipPermissionsEgress/>
-                    </item>
-                    <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-d1d0f4cc</groupId>
-                        <groupName>db-sg</groupName>
-                        <groupDescription>Security group for database servers</groupDescription>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>udp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>icmp</ipProtocol>
-                                <fromPort>-1</fromPort>
-                                <toPort>-1</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>22</fromPort>
-                                <toPort>22</toPort>
-                                <groups/>
-                                <ipRanges>
-                                    <item>
-                                        <cidrIp>0.0.0.0/0</cidrIp>
-                                    </item>
-                                </ipRanges>
-                            </item>
-                        </ipPermissions>
-                        <ipPermissionsEgress/>
-                    </item>
-                    <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-d5d0f4c8</groupId>
-                        <groupName>web-sg</groupName>
-                        <groupDescription>Security group for web servers</groupDescription>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d9d0f4c4</groupId>
-                                        <groupName>lb-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>udp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d9d0f4c4</groupId>
-                                        <groupName>lb-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>icmp</ipProtocol>
-                                <fromPort>-1</fromPort>
-                                <toPort>-1</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d9d0f4c4</groupId>
-                                        <groupName>lb-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>22</fromPort>
-                                <toPort>22</toPort>
-                                <groups/>
-                                <ipRanges>
-                                    <item>
-                                        <cidrIp>0.0.0.0/0</cidrIp>
-                                    </item>
-                                </ipRanges>
-                            </item>
-                        </ipPermissions>
-                        <ipPermissionsEgress/>
-                    </item>
-                    <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-2e409f33</groupId>
-                        <groupName>default</groupName>
-                        <groupDescription>default group</groupDescription>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>0</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-2e409f33</groupId>
-                                        <groupName>default</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>udp</ipProtocol>
-                                <fromPort>0</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-2e409f33</groupId>
-                                        <groupName>default</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>icmp</ipProtocol>
-                                <fromPort>-1</fromPort>
-                                <toPort>-1</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-2e409f33</groupId>
-                                        <groupName>default</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                        </ipPermissions>
-                        <ipPermissionsEgress/>
-                    </item>
-                    <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-c809f1ad</groupId>
-                        <groupName>default</groupName>
-                        <groupDescription>default VPC security group</groupDescription>
-                        <vpcId>vpc-9204b9f7</vpcId>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>-1</ipProtocol>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-c809f1ad</groupId>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                        </ipPermissions>
-                        <ipPermissionsEgress>
-                            <item>
-                                <ipProtocol>-1</ipProtocol>
-                                <groups/>
-                                <ipRanges>
-                                    <item>
-                                        <cidrIp>0.0.0.0/0</cidrIp>
-                                    </item>
-                                </ipRanges>
-                            </item>
-                        </ipPermissionsEgress>
-                    </item>
-                </securityGroupInfo>
+               </securityGroupInfo>
             </DescribeSecurityGroupsResponse>
         http_version: 
-      recorded_at: "Fri, 03 Oct 2014 13:02:55 GMT"
+      recorded_at: "Tue, 24 Feb 2015 18:09:14 GMT"
     - request: 
         method: post
         uri: "https://ec2.sa-east-1.amazonaws.com/"
         body: 
           encoding: UTF-8
-          string: "AWSAccessKeyId=redacted&Action=DescribeSecurityGroups&Signature=redacted&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-03T13%3A02%3A55Z&Version=2014-06-15"
+          string: "Action=DescribeVpcs&Version=2014-09-01&VpcId.1=vpc-bd9a16d8"
         headers: 
           Content-Type: 
             - "application/x-www-form-urlencoded; charset=utf-8"
           Accept-Encoding: 
             - ""
           User-Agent: 
-            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180914Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "6be63b442b739fff8026512888983019d34f6a43b7daad573209dc8a5f3d018d"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=2f7c482f3d559a24a78a9d73f563dd1f17bd267268a30bb508928ec81255a5fd"
           Content-Length: 
-            - "228"
+            - "59"
           Accept: 
             - "*/*"
       response: 
@@ -362,308 +110,804 @@
           Vary: 
             - Accept-Encoding
           Date: 
-            - "Fri, 03 Oct 2014 13:02:56 GMT"
+            - "Tue, 24 Feb 2015 18:09:14 GMT"
           Server: 
             - AmazonEC2
         body: 
           encoding: UTF-8
           string: |-
             <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
-                <requestId>82bae91f-b697-418a-bce3-4c729f7a2b51</requestId>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>46203d78-c199-45ef-916a-a07cdf414776</requestId>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:15 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeSecurityGroups&GroupId.1=sg-06a27263&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180915Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - c1c0f505cc429502bf01376e90d82644d96c7e615cceb3d57cd12b734f508855
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=b65b143d953fbd11b317a79b88c59e1ee26eb4d8a8598f7b1292a9dea1bf4394"
+          Content-Length: 
+            - "70"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:15 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>25f6b630-a8a9-4003-8e52-62df92f1f245</requestId>
+            </DescribeSecurityGroupsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:16 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeVpcs&Version=2014-09-01&VpcId.1=vpc-35c25750"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180916Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "728ca83d7c54feaeb7681e8b63230f80abe011185116c65d91ff763d8bec748e"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=c12342053852c533904db6401c2a441a1955c753136ba88ce88b35db48a9b3c0"
+          Content-Length: 
+            - "59"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:16 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>55427f92-78c1-4f71-9054-07514a9a1c14</requestId>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:17 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeSecurityGroups&GroupId.1=sg-03904a66&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180917Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "2b8897b8eb97470085add5732874ed823cd6d7e2613f638f0bafdc54c5f6ec49"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=a1003ea8bfd72ad434da1999ab8386c4a6a9313f554f257b7ecc40fceeadbce8"
+          Content-Length: 
+            - "70"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:18 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>8a69bc6e-596a-4727-8304-b370acaae335</requestId>
+            </DescribeSecurityGroupsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:18 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeVpcs&Version=2014-09-01&VpcId.1=vpc-35c25750"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180918Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "728ca83d7c54feaeb7681e8b63230f80abe011185116c65d91ff763d8bec748e"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=9324d745d82555078e6d68dbf7c12ec7e438a1c43beeda470063f37630a0d4cf"
+          Content-Length: 
+            - "59"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:19 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>8e690d66-5a3e-424c-bbc5-c229cbe4bffd</requestId>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:19 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeSecurityGroups&GroupId.1=sg-3d954f58&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180919Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - b15501a6ac86d302df4485109afc2045837bed0813c75441d1605c7177d58cb5
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=22cb585c541754a36f71941ade71077a4a49931c8d7f3cbfe10d9db78bdf7442"
+          Content-Length: 
+            - "70"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:20 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>d96df6cb-0101-4320-8ff3-d03394180848</requestId>
+            </DescribeSecurityGroupsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:20 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeSecurityGroups&GroupId.1=sg-3d954f58&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180920Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - b15501a6ac86d302df4485109afc2045837bed0813c75441d1605c7177d58cb5
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=5b7fd06e227a7c337c718ed2118d8200d0532ff3b4a874b055e3675e99053f0b"
+          Content-Length: 
+            - "70"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:21 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>8f2a643e-d2fb-4ebb-89ff-7196c32d29e6</requestId>
+            </DescribeSecurityGroupsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:22 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeSecurityGroups&GroupId.1=sg-3d954f58&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180922Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - b15501a6ac86d302df4485109afc2045837bed0813c75441d1605c7177d58cb5
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=0d796c0936e9ef370448d2a6f78b9031db76a8675a99d951ebe76097682aedf8"
+          Content-Length: 
+            - "70"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:22 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>47843238-d454-454b-84d8-54d5c5deca7a</requestId>
+            </DescribeSecurityGroupsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:23 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeSecurityGroups&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180923Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "5d21a760e19d65e1362145b2d52df2569bac924f2eaee44aefe25f75ead4e7e2"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=f65bd82c8fc889d21de846aea470e607e029b18af5cbf5391e0b33b121bf317a"
+          Content-Length: 
+            - "48"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:23 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>089103cc-fedf-4bf6-9805-8e26f1ec2085</requestId>
+            </DescribeSecurityGroupsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:24 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeVpcs&Version=2014-09-01&VpcId.1=vpc-bd9a16d8"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180924Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "6be63b442b739fff8026512888983019d34f6a43b7daad573209dc8a5f3d018d"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=3b0676a3f494b853baeeccd850df03187eef382687fd6fa010bc85858f932cea"
+          Content-Length: 
+            - "59"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:25 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>f147399c-9d7c-495d-b676-e44c96c84b05</requestId>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:25 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeSecurityGroups&GroupId.1=sg-06a27263&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180925Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - c1c0f505cc429502bf01376e90d82644d96c7e615cceb3d57cd12b734f508855
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=ddf135dfd9dba1f8fb351bb1aa10f40d512256a8a71b9f4504330a2128a64407"
+          Content-Length: 
+            - "70"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:26 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>fe3fa7d1-2ff0-4e8e-afef-1d7dcd3ec08b</requestId>
+            </DescribeSecurityGroupsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:27 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeVpcs&Version=2014-09-01&VpcId.1=vpc-35c25750"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180927Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "728ca83d7c54feaeb7681e8b63230f80abe011185116c65d91ff763d8bec748e"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=9861425543b65bb93b8b754965e37ad473a05dbe0bcfd2ad927e84e15fcd8f3e"
+          Content-Length: 
+            - "59"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:27 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>109885dd-7ba8-4840-8465-456047385407</requestId>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:28 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeSecurityGroups&GroupId.1=sg-03904a66&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180928Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "2b8897b8eb97470085add5732874ed823cd6d7e2613f638f0bafdc54c5f6ec49"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=15c2b70a64438c92af8baf1cce74fed0db39954bb61724be325954de4093029e"
+          Content-Length: 
+            - "70"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:29 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>e81de141-9959-4381-af57-663b6551b2ce</requestId>
+            </DescribeSecurityGroupsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:29 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeVpcs&Version=2014-09-01&VpcId.1=vpc-35c25750"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180929Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "728ca83d7c54feaeb7681e8b63230f80abe011185116c65d91ff763d8bec748e"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=94bd807cedb59daaef44aa9ae488f7e65a8ad28bcdbee51d2d46d7bfc9dc8acb"
+          Content-Length: 
+            - "59"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:29 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>67e4d75b-c2fc-4bf3-9029-3cd1a6460c46</requestId>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:30 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeSecurityGroups&GroupId.1=sg-3d954f58&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180930Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - b15501a6ac86d302df4485109afc2045837bed0813c75441d1605c7177d58cb5
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=e535782d27a9ff082624a23458bec1a51a0016f9dd59efbbb9efbe7cfa8ca974"
+          Content-Length: 
+            - "70"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:30 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>95ae4a9b-0ab6-4bef-930e-f2c5cca613b0</requestId>
                 <securityGroupInfo>
-                    <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-d9d0f4c4</groupId>
-                        <groupName>lb-sg</groupName>
-                        <groupDescription>Security group for load balancer</groupDescription>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>80</fromPort>
-                                <toPort>80</toPort>
-                                <groups/>
-                                <ipRanges>
-                                    <item>
-                                        <cidrIp>0.0.0.0/0</cidrIp>
-                                    </item>
-                                </ipRanges>
-                            </item>
-                        </ipPermissions>
-                        <ipPermissionsEgress/>
-                    </item>
-                    <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-d3d0f4ce</groupId>
-                        <groupName>puppet-sg</groupName>
-                        <groupDescription>Puppet master security group</groupDescription>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d1d0f4cc</groupId>
-                                        <groupName>db-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>udp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d1d0f4cc</groupId>
-                                        <groupName>db-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>icmp</ipProtocol>
-                                <fromPort>-1</fromPort>
-                                <toPort>-1</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d1d0f4cc</groupId>
-                                        <groupName>db-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>22</fromPort>
-                                <toPort>22</toPort>
-                                <groups/>
-                                <ipRanges>
-                                    <item>
-                                        <cidrIp>0.0.0.0/0</cidrIp>
-                                    </item>
-                                </ipRanges>
-                            </item>
-                        </ipPermissions>
-                        <ipPermissionsEgress/>
-                    </item>
-                    <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-d1d0f4cc</groupId>
-                        <groupName>db-sg</groupName>
-                        <groupDescription>Security group for database servers</groupDescription>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>udp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>icmp</ipProtocol>
-                                <fromPort>-1</fromPort>
-                                <toPort>-1</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>22</fromPort>
-                                <toPort>22</toPort>
-                                <groups/>
-                                <ipRanges>
-                                    <item>
-                                        <cidrIp>0.0.0.0/0</cidrIp>
-                                    </item>
-                                </ipRanges>
-                            </item>
-                        </ipPermissions>
-                        <ipPermissionsEgress/>
-                    </item>
-                    <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-d5d0f4c8</groupId>
-                        <groupName>web-sg</groupName>
-                        <groupDescription>Security group for web servers</groupDescription>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d9d0f4c4</groupId>
-                                        <groupName>lb-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>udp</ipProtocol>
-                                <fromPort>1</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d9d0f4c4</groupId>
-                                        <groupName>lb-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>icmp</ipProtocol>
-                                <fromPort>-1</fromPort>
-                                <toPort>-1</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-d9d0f4c4</groupId>
-                                        <groupName>lb-sg</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>22</fromPort>
-                                <toPort>22</toPort>
-                                <groups/>
-                                <ipRanges>
-                                    <item>
-                                        <cidrIp>0.0.0.0/0</cidrIp>
-                                    </item>
-                                </ipRanges>
-                            </item>
-                        </ipPermissions>
-                        <ipPermissionsEgress/>
-                    </item>
-                    <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-2e409f33</groupId>
-                        <groupName>default</groupName>
-                        <groupDescription>default group</groupDescription>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>0</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-2e409f33</groupId>
-                                        <groupName>default</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>udp</ipProtocol>
-                                <fromPort>0</fromPort>
-                                <toPort>65535</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-2e409f33</groupId>
-                                        <groupName>default</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                            <item>
-                                <ipProtocol>icmp</ipProtocol>
-                                <fromPort>-1</fromPort>
-                                <toPort>-1</toPort>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-2e409f33</groupId>
-                                        <groupName>default</groupName>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                        </ipPermissions>
-                        <ipPermissionsEgress/>
-                    </item>
-                    <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-c809f1ad</groupId>
-                        <groupName>default</groupName>
-                        <groupDescription>default VPC security group</groupDescription>
-                        <vpcId>vpc-9204b9f7</vpcId>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>-1</ipProtocol>
-                                <groups>
-                                    <item>
-                                        <userId>482693910459</userId>
-                                        <groupId>sg-c809f1ad</groupId>
-                                    </item>
-                                </groups>
-                                <ipRanges/>
-                            </item>
-                        </ipPermissions>
-                        <ipPermissionsEgress>
-                            <item>
-                                <ipProtocol>-1</ipProtocol>
-                                <groups/>
-                                <ipRanges>
-                                    <item>
-                                        <cidrIp>0.0.0.0/0</cidrIp>
-                                    </item>
-                                </ipRanges>
-                            </item>
-                        </ipPermissionsEgress>
-                    </item>
+               </securityGroupInfo>
+            </DescribeSecurityGroupsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:31 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeSecurityGroups&GroupId.1=sg-3d954f58&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180931Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - b15501a6ac86d302df4485109afc2045837bed0813c75441d1605c7177d58cb5
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=edcfd1db2e386a0d609818bdda352c47ef7c34aba331bb62f71f1065fe76ca5d"
+          Content-Length: 
+            - "70"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:32 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>3d69b08c-0fe9-4adc-b09c-689bf5cb1d69</requestId>
+                <securityGroupInfo>
                 </securityGroupInfo>
             </DescribeSecurityGroupsResponse>
         http_version: 
-      recorded_at: "Fri, 03 Oct 2014 13:02:56 GMT"
+      recorded_at: "Tue, 24 Feb 2015 18:09:32 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribeSecurityGroups&GroupId.1=sg-3d954f58&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150224T180932Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - b15501a6ac86d302df4485109afc2045837bed0813c75441d1605c7177d58cb5
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=992ee138545e9b20a2f940e5f2416891a91520d41206f225fa30e35668bfa92e"
+          Content-Length: 
+            - "70"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Tue, 24 Feb 2015 18:09:33 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>b601563a-f3e9-455b-a701-515597316c47</requestId>
+            </DescribeSecurityGroupsResponse>
+        http_version: 
+      recorded_at: "Tue, 24 Feb 2015 18:09:33 GMT"
   recorded_with: "VCR 2.9.3"
