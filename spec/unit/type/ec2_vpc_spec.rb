@@ -7,7 +7,6 @@ describe type_class do
   let :params do
     [
       :name,
-      :dhcp_options,
     ]
   end
 
@@ -15,6 +14,7 @@ describe type_class do
     [
       :ensure,
       :cidr_block,
+      :dhcp_options,
       :region,
       :instance_tenancy,
     ]
