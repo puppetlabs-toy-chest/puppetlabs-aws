@@ -39,6 +39,26 @@ Puppet::Type.newtype(:ec2_vpc_routetable) do
     desc 'Tags to assign to the route table.'
   end
 
+  validate do
+    routes = self[:routes]
+    if routes
+      uniq_gateways = Array(routes).collect { |route| route['gateway'] }.uniq
+      uniq_blocks = Array(routes).collect { |route| route['destination_cidr_block'] }.uniq
+      fail 'Only one route per gateway allowed' unless uniq_gateways.size == Array(routes).size
+      fail 'destination_cidr_block must be unique' unless uniq_blocks.size == Array(routes).size
+    end
+  end
+
+  autorequire(:ec2_vpc_vpn_gateway) do
+    routes = self[:routes]
+    routes ? Array(routes).collect { |route| route['gateway'] } : nil
+  end
+
+  autorequire(:ec2_vpc_internet_gateway) do
+    routes = self[:routes]
+    routes ? Array(routes).collect { |route| route['gateway'] } : nil
+  end
+
   autorequire(:ec2_vpc) do
     self[:vpc]
   end

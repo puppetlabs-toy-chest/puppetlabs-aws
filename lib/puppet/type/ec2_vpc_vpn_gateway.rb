@@ -42,6 +42,6 @@ Puppet::Type.newtype(:ec2_vpc_vpn_gateway) do
   end
 
   autorequire(:ec2_vpc) do
-   self[:vpc]
+    self[:vpc]
   end
 end
