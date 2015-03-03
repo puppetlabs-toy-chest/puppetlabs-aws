@@ -121,3 +121,16 @@ ec2_vpc_vpn_gateway { '{{name}}-vgw':
   {{/tags}}
   },
 }
+
+ec2_instance { '{{name}}-instance':
+  ensure        => {{ensure}},
+  region        => '{{region}}',
+  image_id      => 'ami-67a60d7a',
+  subnet        => '{{name}}-subnet',
+  instance_type => 't1.micro',
+  tags          => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
+}

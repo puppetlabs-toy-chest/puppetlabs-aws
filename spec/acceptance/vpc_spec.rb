@@ -46,6 +46,10 @@ describe "The AWS module" do
     finder(name, 'get_vpn')
   end
 
+  def find_instance(name)
+    finder(name, 'get_instances')
+  end
+
   def find_security_group(name)
     group_response = @aws.ec2_client.describe_security_groups(filters: [
       {name: 'group-name', values: [name]}
@@ -194,6 +198,12 @@ describe "The AWS module" do
       expect(vpn.routes.first.destination_cidr_block).to eq(@config[:vpn_route])
       expect(vpn.options.static_routes_only).to eq(@config[:static_routes])
       expect(@aws.tag_difference(vpn, @config[:tags])).to be_empty
+    end
+
+    it 'should create an instance in the VPC' do
+      instance = find_instance("#{@name}-instance")
+      expect(instance.subnet_id).to eq(@subnet.subnet_id)
+      expect(instance.vpc_id).to eq(@vpc.vpc_id)
     end
 
     it 'should allow tags to be changed' do
