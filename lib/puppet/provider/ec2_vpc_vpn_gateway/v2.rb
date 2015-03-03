@@ -104,7 +104,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
       vpn_gateway_id: @property_hash[:id],
       vpc_id: vpc_id,
     ) if vpc_id
-    with_retries(:max_tries => 6,
+    with_retries(:max_tries => 10,
                  :rescue => Aws::EC2::Errors::IncorrectState,
                  :base_sleep_seconds => 10,
                  :max_sleep_seconds => 20) do |attempt|
