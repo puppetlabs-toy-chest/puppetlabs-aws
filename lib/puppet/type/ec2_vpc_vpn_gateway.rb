@@ -32,7 +32,7 @@ Puppet::Type.newtype(:ec2_vpc_vpn_gateway) do
   end
 
   newproperty(:type) do
-    desc 'The type of customer gateway, defaults to ipsec.1.'
+    desc 'The type of VPN gateway, defaults to ipsec.1.'
     defaultto 'ipsec.1'
     validate do |value|
       unless value =~ /^ipsec\.1$/

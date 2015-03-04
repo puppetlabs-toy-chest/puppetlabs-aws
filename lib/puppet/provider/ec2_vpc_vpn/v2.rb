@@ -22,7 +22,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
     end.flatten
   end
 
-  read_only(:vpc_gateway, :customer_gateway, :type, :routing, :static_routes, :region)
+  read_only(:vpn_gateway, :customer_gateway, :type, :routing, :static_routes, :region)
 
   def self.prefetch(resources)
     instances.each do |prov|
