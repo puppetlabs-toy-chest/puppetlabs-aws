@@ -160,7 +160,7 @@ describe "route53_zone" do
       new_config = @config.update({:a_values => ['127.0.0.2', '127.0.0.3']})
       PuppetManifest.new(@template, new_config).apply
       record = find_record(@config[:a_record_name], @zone, 'A')
-      expect(record.resource_records.map(&:value)).to eq(new_config[:a_values])
+      expect(record.resource_records.map(&:value).to_set).to eq(new_config[:a_values].to_set)
     end
   end
 
