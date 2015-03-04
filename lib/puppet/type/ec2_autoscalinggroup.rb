@@ -62,6 +62,13 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     end
   end
 
+  newproperty(:load_balancers_names, :array_matching => :all) do
+    desc 'Optionally specify load balancers with which to associate the instances.'
+    def insync?(is)
+      is.to_set == should.to_set
+    end
+  end
+
   autorequire(:ec2_launchconfiguration) do
     self[:launch_configuration]
   end
