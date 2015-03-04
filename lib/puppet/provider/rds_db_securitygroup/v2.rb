@@ -10,8 +10,11 @@ Puppet::Type.type(:rds_db_securitygroup).provide(:v2, :parent => PuppetX::Puppet
       instances = []
       rds_client(region).describe_db_security_groups.each do |response|
         response.data.db_security_groups.each do |db_security_group|
-          hash = db_security_group_to_hash(region, db_security_group)
-          instances << new(hash) if hash[:name]
+          # There's always a default class
+          unless db_security_group.db_security_group_name =~ /^default$/
+            hash = db_security_group_to_hash(region, db_security_group)
+            instances << new(hash) if hash[:name]
+          end
         end
       end
       instances
@@ -34,6 +37,7 @@ Puppet::Type.type(:rds_db_securitygroup).provide(:v2, :parent => PuppetX::Puppet
       :name => db_security_group.db_security_group_name,
       :db_security_group_description => db_security_group.db_security_group_description,
       :owner_id => db_security_group.owner_id,
+      :ec2_security_groups => ec2_security_group_to_array_of_hashes(db_security_group.ec2_security_groups),
     }
   end
 
@@ -62,6 +66,17 @@ Puppet::Type.type(:rds_db_securitygroup).provide(:v2, :parent => PuppetX::Puppet
     }
     rds.delete_db_instance(config)
     @property_hash[:ensure] = :absent
+  end
+
+  def self.ec2_security_group_to_array_of_hashes(ec2_security_groups)
+    ec2_security_groups.collect do |group|
+      {
+        :status => group.status,
+        :ec2_security_group_name => group.ec2_security_group_name,
+        :ec2_security_group_owner_id => group.ec2_security_group_owner_id,
+        :ec2_security_group_id => group.ec2_security_group_id,
+      }
+    end
   end
 
 end

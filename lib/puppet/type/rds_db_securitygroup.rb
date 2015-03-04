@@ -14,4 +14,12 @@ Puppet::Type.newtype(:rds_db_securitygroup) do
     end
   end
 
+  newproperty(:owner_id) do
+    desc 'the ID of the owner of this DB Security Group'
+  end
+
+  newproperty(:ec2_security_groups, :array_matching => :all) do
+    desc 'the EC2 Security Groups assigned to this RDS DB security group'
+  end
+
 end
