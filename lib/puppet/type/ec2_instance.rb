@@ -1,7 +1,7 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
 
 Puppet::Type.newtype(:ec2_instance) do
-  @doc = 'type representing an EC2 instance'
+  @doc = 'Type representing an EC2 instance.'
 
   newproperty(:ensure) do
     newvalue(:present) do
@@ -29,33 +29,33 @@ Puppet::Type.newtype(:ec2_instance) do
   end
 
   newparam(:name, namevar: true) do
-    desc 'the name of the instance'
+    desc 'The name of the instance.'
     validate do |value|
       fail 'Instances must have a name' if value == ''
     end
   end
 
   newproperty(:security_groups, :array_matching => :all) do
-    desc 'the security groups to associate the instance'
+    desc 'The security groups to associate the instance.'
     def insync?(is)
       is.to_set == should.to_set
     end
   end
 
   newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
-    desc 'the tags for the instance'
+    desc 'The tags for the instance.'
   end
 
   newparam(:user_data) do
-    desc 'user data script to execute on new instance'
+    desc 'User data script to execute on new instance.'
   end
 
   newproperty(:key_name) do
-    desc 'the name of the key pair associated with this instance'
+    desc 'The name of the key pair associated with this instance.'
   end
 
   newproperty(:monitoring) do
-    desc 'whether or not monitoring is enabled for this instance'
+    desc 'Whether or not monitoring is enabled for this instance.'
     defaultto :false
     newvalues(:true, :'false')
     def insync?(is)
@@ -64,14 +64,14 @@ Puppet::Type.newtype(:ec2_instance) do
   end
 
   newproperty(:region) do
-    desc 'the region in which to launch the instance'
+    desc 'The region in which to launch the instance.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
     end
   end
 
   newproperty(:image_id) do
-    desc 'the image id to use for the instance'
+    desc 'The image id to use for the instance.'
     validate do |value|
       fail 'image_id should not contain spaces' if value =~ /\s/
       fail 'image_id should not be blank' if value == ''
@@ -79,7 +79,7 @@ Puppet::Type.newtype(:ec2_instance) do
   end
 
   newproperty(:availability_zone) do
-    desc 'the availability zone in which to place the instance'
+    desc 'The availability zone in which to place the instance.'
     validate do |value|
       fail 'availability_zone should not contain spaces' if value =~ /\s/
       fail 'availability_zone should not be blank' if value == ''
@@ -87,7 +87,7 @@ Puppet::Type.newtype(:ec2_instance) do
   end
 
   newproperty(:instance_type) do
-    desc 'the type to use for the instance'
+    desc 'The type to use for the instance.'
     validate do |value|
       fail 'instance type should not contains spaces' if value =~ /\s/
       fail 'instance_type should not be blank' if value == ''
@@ -95,56 +95,101 @@ Puppet::Type.newtype(:ec2_instance) do
   end
 
   newproperty(:instance_id) do
-    desc 'the AWS generated id for the instance'
+    desc 'The AWS generated id for the instance.'
     validate do |value|
-      fail "instance_id is read-only"
+      fail 'instance_id is read-only'
     end
   end
 
   newproperty(:hypervisor) do
-    desc 'the type of hypervisor running the instance'
+    desc 'The type of hypervisor running the instance.'
     validate do |value|
-      fail "hypervisor is read-only"
+      fail 'hypervisor is read-only'
     end
   end
 
   newproperty(:virtualization_type) do
-    desc 'the underlying virtualization of the instance'
+    desc 'The underlying virtualization of the instance.'
     validate do |value|
-      fail "virtualization_type is read-only"
+      fail 'virtualization_type is read-only'
     end
   end
 
   newproperty(:private_ip_address) do
-    desc 'the private IP address for the instance'
+    desc 'The private IP address for the instance.'
     validate do |value|
-      fail "instance_id is read-only"
+      fail 'private ip address must be a valid ipv4 address' unless value =~ Resolv::IPv4::Regex
     end
   end
 
   newproperty(:public_ip_address) do
-    desc 'the public IP address for the instance'
+    desc 'The public IP address for the instance.'
     validate do |value|
-      fail "public_ip_address is read-only"
+      fail 'public_ip_address is read-only'
     end
   end
 
   newproperty(:private_dns_name) do
-    desc 'the internal DNS name for the instance'
+    desc 'The internal DNS name for the instance.'
     validate do |value|
-      fail "private_dns_name is read-only"
+      fail 'private_dns_name is read-only'
     end
   end
 
   newproperty(:public_dns_name) do
-    desc 'the publicly available DNS name for the instance'
+    desc 'The publicly available DNS name for the instance.'
     validate do |value|
-      fail "public_dns_name is read-only"
+      fail 'public_dns_name is read-only'
     end
   end
 
   newproperty(:subnet) do
-    desc 'the VPC subnet to attach the instance to'
+    desc 'The VPC subnet to attach the instance to.'
+  end
+
+  newproperty(:ebs_optimized) do
+    desc 'Whether or not to use obtimized storage for the instance.'
+    defaultto :false
+    newvalues(:true, :'false')
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
+  newparam(:instance_initiated_shutdown_behavior) do
+    desc 'Whether the instance stops or terminates when you initiate shutdown from the instance.'
+    defaultto :stop
+    newvalues(:stop, :terminate)
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
+  newproperty(:kernel_id) do
+    desc 'The ID of the kernel in use by the instance.'
+    validate do |value|
+      fail 'kernel_id is read-only'
+    end
+  end
+
+  newproperty(:block_devices, :array_matching => :all) do
+    desc 'A list of block devices to associate with the instance'
+    validate do |value|
+      devices = value.is_a?(Array) ? value : [value]
+      devices.each do |device|
+        ['device_name', 'volume_size'].each do |key|
+          fail "block device must include #{key}" unless value.keys.include?(key)
+        end
+        if value['volume_type'] == 'io1'
+          fail 'must specify iops if using provisioned iops volumes' unless value.keys.include?('iops')
+        end
+      end
+    end
+    def insync?(is)
+      existing_devices = is.collect { |device| device[:device_name] }
+      specified_devices = should.collect { |device| device['device_name'] }
+      existing_devices.to_set == specified_devices.to_set
+    end
   end
 
   autorequire(:ec2_securitygroup) do

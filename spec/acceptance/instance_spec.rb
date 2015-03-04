@@ -30,7 +30,9 @@ describe "ec2_instance" do
           :department => 'engineering',
           :project    => 'cloud',
           :created_by => 'aws-acceptance'
-        }
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
       }
 
       PuppetManifest.new(@template, @config).apply
@@ -74,6 +76,17 @@ describe "ec2_instance" do
       expect(@instance.virtualization_type).to eq('paravirtual')
     end
 
+    it "and return whether we are using an ebs optimized volume" do
+      expect(@instance.ebs_optimized).to eq(false)
+    end
+
+    it "with the specified block device mapping" do
+      @aws.ec2_client.wait_until(:instance_running, instance_ids: [@instance.instance_id])
+      instance = get_instance(@config[:name])
+      expect(instance.block_device_mappings.size).to eq(1)
+      expect(instance.block_device_mappings.first.device_name).to eq(@config[:device_name])
+    end
+
     it "and return public_dns_name, private_dns_name,
       public_ip_address, private_ip_address" do
       @aws.ec2_client.wait_until(:instance_running, instance_ids: [@instance.instance_id])
@@ -98,7 +111,9 @@ describe "ec2_instance" do
           :department => 'engineering',
           :project    => 'cloud',
           :created_by => 'aws-acceptance'
-        }
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
       }
     end
 
@@ -133,11 +148,12 @@ describe "ec2_instance" do
       expect_failed_apply(@config)
     end
 
+    context 'do' do
     read_only = [
       {:instance_id => 'foo'}, {:hypervisor => 'foo'},
       {:virtualization_type => 'foo'}, {:private_ip_address => 'foo'},
       {:public_ip_address => 'foo'}, {:private_dns_name => 'foo'},
-      {:public_dns_name => 'foo'},
+      {:public_dns_name => 'foo'}, {:kernel_id => 'foo'}
     ]
 
     read_only.each do |new_config_value|
@@ -147,6 +163,7 @@ describe "ec2_instance" do
 
         expect_failed_apply(new_config)
       end
+    end
     end
   end
 
@@ -163,7 +180,9 @@ describe "ec2_instance" do
           :department => 'engineering',
           :project    => 'cloud',
           :created_by => 'aws-acceptance'
-        }
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
       }
 
       PuppetManifest.new(@template, @config).apply
@@ -214,7 +233,9 @@ describe "ec2_instance" do
           :department => 'engineering',
           :project    => 'cloud',
           :created_by => 'aws-acceptance'
-        }
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
       }
     end
 
@@ -307,6 +328,16 @@ describe "ec2_instance" do
       expect(@result.stdout).to match(regex)
     end
 
+    it 'ebs_obtimized is correct' do
+      regex = /(ebs_optimized)(\s*)(=>)(\s*)('false')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'kernel_id is reported' do
+      regex = /(kernel_id)(\s*)(=>)(\s*)/
+      expect(@result.stdout).to match(regex)
+    end
+
     it 'virtualization_type is correct' do
       regex = /(virtualization_type)(\s*)(=>)(\s*)('paravirtual')/
       expect(@result.stdout).to match(regex)
@@ -387,4 +418,3 @@ describe "ec2_instance" do
   end
 
 end
-

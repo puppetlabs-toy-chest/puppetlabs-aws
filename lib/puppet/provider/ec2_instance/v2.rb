@@ -26,7 +26,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   read_only(:instance_id, :instance_type, :region, :user_data, :key_name,
-            :availability_zones, :security_groups, :monitoring, :subnet)
+            :availability_zones, :security_groups, :monitoring, :subnet,
+            :ebs_optimized, :block_devices, :private_ip_address)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -50,6 +51,13 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end
     subnet_name = subnet_name_tag ? subnet_name_tag.value : nil
 
+    devices = instance.block_device_mappings.collect do |mapping|
+      {
+        device_name: mapping.device_name,
+        delete_on_termination: mapping.ebs.delete_on_termination,
+      }
+    end
+
     config = {
       name: name_tag ? name_tag.value : nil,
       instance_type: instance.instance_type,
@@ -65,6 +73,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       virtualization_type: instance.virtualization_type,
       security_groups: instance.security_groups.collect(&:group_name),
       subnet: subnet_name,
+      ebs_optimized: instance.ebs_optimized,
+      kernel_id: instance.kernel_id,
     }
     if instance.state.name == 'running'
       config[:public_dns_name] = instance.public_dns_name
@@ -72,6 +82,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       config[:public_ip_address] = instance.public_ip_address
       config[:private_ip_address] = instance.private_ip_address
     end
+    config[:block_devices] = devices unless devices.empty?
     config
   end
 
@@ -180,6 +191,37 @@ Found #{matching_groups.length}:
     config
   end
 
+  def config_with_devices(config)
+    devices = resource[:block_devices]
+    devices = [devices] unless devices.is_a?(Array)
+    devices = devices.reject(&:nil?)
+    mappings = devices.collect do |device|
+      {
+        device_name: device['device_name'],
+        ebs: {
+          volume_size: device['volume_size'],
+          delete_on_termination: device['delete_on_termination'] || true,
+          volume_type: device['volume_type'] || 'standard',
+          iops: device['iops'],
+          encrypted: device['encrypted'] ? true : nil
+        },
+      }
+    end
+    config['block_device_mappings'] = mappings unless mappings.empty?
+    config
+  end
+
+  def config_with_key_details(config)
+    key = resource[:key_name] ? resource[:key_name] : false
+    config['key_name'] = key if key
+    config
+  end
+
+  def config_with_private_ip(config)
+    config['private_ip_address'] = resource['private_ip_address'] if resource['private_ip_address'] && using_vpc?
+    config
+  end
+
   def create
     if stopped?
       restart
@@ -195,6 +237,8 @@ Found #{matching_groups.length}:
         max_count: 1,
         instance_type: resource[:instance_type],
         user_data: data,
+        ebs_optimized: resource[:ebs_optimized].to_s,
+        instance_initiated_shutdown_behavior: resource[:instance_initiated_shutdown_behavior].to_s,
         placement: {
           availability_zone: resource[:availability_zone]
         },
@@ -203,9 +247,10 @@ Found #{matching_groups.length}:
         }
       }
 
-      key = resource[:key_name] ? resource[:key_name] : false
-      config['key_name'] = key if key
+      config = config_with_key_details(config)
+      config = config_with_devices(config)
       config = config_with_network_details(config)
+      config = config_with_private_ip(config)
 
       response = ec2.run_instances(config)
 

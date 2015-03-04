@@ -21,16 +21,18 @@ describe "ec2_loadbalancer" do
 
     before(:all) do
       @instance_config = {
-          :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
-          :instance_type => 't1.micro',
-          :region => @default_region,
-          :image_id => 'ami-67a60d7a',
-          :ensure => 'present',
-          :tags => {
-              :department => 'engineering',
-              :project    => 'cloud',
-              :created_by => 'aws-acceptance'
-          }
+        :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :instance_type => 't1.micro',
+        :region => @default_region,
+        :image_id => 'ami-67a60d7a',
+        :ensure => 'present',
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
       }
 
       PuppetManifest.new(@instance_template, @instance_config).apply
@@ -39,17 +41,17 @@ describe "ec2_loadbalancer" do
       @instance = instances.first
 
       @lb_config = {
-          :name => "#{PuppetManifest.env_dns_id}#{SecureRandom.uuid}".gsub('-', '')[0...31], # loadbalancer has name length limit
-          :region => @default_region,
-          :availability_zones => [@default_availability_zone],
-          :instances => [@instance_config[:name]],
-          :listeners => [],
-          :ensure => 'present',
-          :tags => {
-              :department => 'engineering',
-              :project    => 'cloud',
-              :created_by => 'aws-acceptance'
-          }
+        :name => "#{PuppetManifest.env_dns_id}#{SecureRandom.uuid}".gsub('-', '')[0...31], # loadbalancer has name length limit
+        :region => @default_region,
+        :availability_zones => [@default_availability_zone],
+        :instances => [@instance_config[:name]],
+        :listeners => [],
+        :ensure => 'present',
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        }
       }
       PuppetManifest.new(@lb_template, @lb_config).apply
       @loadbalancer = get_loadbalancer(@lb_config[:name])
@@ -99,10 +101,12 @@ describe "ec2_loadbalancer" do
           :image_id => 'ami-67a60d7a',
           :ensure => 'present',
           :tags => {
-              :department => 'engineering',
-              :project    => 'cloud',
-              :created_by => 'aws-acceptance'
-          }
+            :department => 'engineering',
+            :project    => 'cloud',
+            :created_by => 'aws-acceptance'
+          },
+          :device_name => '/dev/sda1',
+          :volume_size => 8,
         }
 
         PuppetManifest.new(@instance_template, @instance_config).apply
@@ -121,10 +125,10 @@ describe "ec2_loadbalancer" do
             }
           ],
           :tags                 => {
-              :department => 'engineering',
-              :project    => 'cloud',
-              :created_by => 'aws-acceptance',
-              :marco      => 'polo',
+            :department => 'engineering',
+            :project    => 'cloud',
+            :created_by => 'aws-acceptance',
+            :marco      => 'polo',
           }
         }
         @lb2_template = 'loadbalancer2.pp.tmpl'
