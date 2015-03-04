@@ -87,9 +87,12 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
       {name: 'association.main', values: ['true']},
     ])
 
+    resources = route_response.data.route_tables.collect(&:route_table_id)
+    resources << vpc_id
+
     with_retries(:max_retries => 5) do
       ec2.create_tags(
-        resources: [route_response.data.route_tables.first.route_table_id, vpc_id],
+        resources: resources,
         tags: tags_for_resource
       )
     end
