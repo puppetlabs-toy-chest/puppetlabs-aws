@@ -10,11 +10,13 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
   def self.instances()
     regions.collect do |region|
       gateways = []
-      ec2_client(region).describe_vpn_gateways.each do |response|
+      ec2_client(region).describe_vpn_gateways(filters: [
+        {:name => 'state', :values => ['pending', 'available']}
+      ]).each do |response|
         response.data.vpn_gateways.each do |gateway|
           hash = gateway_to_hash(region, gateway)
           if hash[:name]
-            gateways << new(hash) unless (gateway.state == "deleting" or gateway.state == "deleted")
+            gateways << new(hash)
           end
         end
       end

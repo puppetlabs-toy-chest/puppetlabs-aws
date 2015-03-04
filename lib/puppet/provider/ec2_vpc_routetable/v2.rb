@@ -38,13 +38,19 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
         igw_response = ec2.describe_internet_gateways(internet_gateway_ids: [route.gateway_id])
         name_from_tag(igw_response.data.internet_gateways.first)
       rescue Aws::EC2::Errors::InvalidInternetGatewayIDNotFound
-        nil
+        begin
+          vgw_response = ec2.describe_vpn_gateways(vpn_gateway_ids: [route.gateway_id])
+          name_from_tag(vgw_response.data.vpn_gateways.first)
+        rescue Aws::EC2::Errors::InvalidVpcGatewayIDNotFound
+          nil
+        end
       end
     end
-    {
+    hash = {
       'destination_cidr_block' => route.destination_cidr_block,
       'gateway' => gateway,
     }
+    gateway.nil? ? nil : hash
   end
 
   def self.route_table_to_hash(region, table)
@@ -61,7 +67,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
       id: table.route_table_id,
       vpc: vpc_name_tag ? vpc_name_tag.value : nil,
       ensure: :present,
-      routes: routes,
+      routes: routes.reject(&:nil?),
       region: region,
       tags: tags_for(table),
     }
@@ -77,11 +83,14 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
     Puppet.info("Creating Route table #{name}")
     ec2 = ec2_client(resource[:region])
 
+    routes = resource[:routes]
+    routes = [routes] unless routes.is_a?(Array)
+
     vpc_response = ec2.describe_vpcs(filters: [
       {name: "tag:Name", values: [resource[:vpc]]},
     ])
-    fail("Multiple VPCs with name #{resource[:vpc]}") if vpc_response.data.vpcs.count > 1
-    fail("No VPCs with name #{resource[:vpc]}") if vpc_response.data.vpcs.empty?
+    fail "Multiple VPCs with name #{resource[:vpc]}" if vpc_response.data.vpcs.count > 1
+    fail "No VPCs with name #{resource[:vpc]}" if vpc_response.data.vpcs.empty?
 
     response = ec2.create_route_table(
       vpc_id: vpc_response.data.vpcs.first.vpc_id,
@@ -93,16 +102,33 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
         tags: tags_for_resource,
       )
     end
-    resource[:routes].each do |route|
-      gateway_response = ec2.describe_internet_gateways(filters: [
-        {name: "tag:Name", values: [route['gateway']]},
+    routes.each do |route|
+      internet_gateway_response = ec2.describe_internet_gateways(filters: [
+        {name: 'tag:Name', values: [route['gateway']]},
       ])
+      found_internet_gateway = !internet_gateway_response.data.internet_gateways.empty?
+
+      unless found_internet_gateway
+        vpn_gateway_response = ec2.describe_vpn_gateways(filters: [
+          {name: 'tag:Name', values: [route['gateway']]},
+        ])
+        found_vpn_gateway = !vpn_gateway_response.data.vpn_gateways.empty?
+      end
+
+      gateway_id = if found_internet_gateway
+                     internet_gateway_response.data.internet_gateways.first.internet_gateway_id
+                   elsif found_vpn_gateway
+                     vpn_gateway_response.data.vpn_gateways.first.vpn_gateway_id
+                   else
+                     nil
+                   end
+
       ec2.create_route(
         route_table_id: id,
         destination_cidr_block: route['destination_cidr_block'],
-        gateway_id: gateway_response.data.internet_gateways.first.internet_gateway_id,
-      ) unless gateway_response.data.internet_gateways.empty?
-    end if resource[:routes]
+        gateway_id: gateway_id,
+      ) if gateway_id
+    end
     @property_hash[:ensure] = :present
   end
 

@@ -52,6 +52,24 @@ describe type_class do
     expect(srv[:netbios_node_type]).to eq('2')
   end
 
+  it 'compare a list of domain names with an array correctly' do
+    domains = ['valid1', 'valid2']
+    set = type_class.new(:name => 'sample', :domain_name => domains)
+    expect(set.property(:domain_name).insync?(domains.reverse)).to be true
+  end
+
+  it 'should spot invalid domain names' do
+    expect {
+      type_class.new(:name => 'sample', :domain_name => 'inval id')
+    }.to raise_error(Puppet::ResourceError, /is not a valid domain_name/)
+  end
+
+  it 'should spot invalid domain names in lists' do
+    expect {
+      type_class.new(:name => 'sample', :domain_name => ['valid', 'inval id'])
+    }.to raise_error(Puppet::ResourceError, /is not a valid domain_name/)
+  end
+
   [1,2,4,8].each do |value|
     it "should be able to set node type to a valid value of #{value}" do
       expect {

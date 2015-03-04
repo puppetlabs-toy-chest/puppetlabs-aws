@@ -23,7 +23,7 @@ Puppet::Type.newtype(:ec2_vpc) do
     desc 'The IP range for the VPC.'
   end
 
-  newparam(:dhcp_options) do
+  newproperty(:dhcp_options) do
     desc 'The DHCP option set to use for this VPC.'
   end
 

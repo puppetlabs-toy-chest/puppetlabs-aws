@@ -7,6 +7,7 @@ describe type_class do
   let :params do
     [
       :name,
+      :availability_zone,
     ]
   end
 
@@ -17,7 +18,6 @@ describe type_class do
       :vpc,
       :type,
       :region,
-      :availability_zone,
     ]
   end
 
