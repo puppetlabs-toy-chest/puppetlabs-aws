@@ -52,9 +52,17 @@ Puppet::Type.newtype(:ec2_launchconfiguration) do
     end
   end
 
+  newparam(:vpc) do
+    desc 'A hint to specify the VPC, useful when detecting ambiguously named security groups like default.'
+  end
+
   autorequire(:ec2_securitygroup) do
     groups = self[:security_groups]
     groups.is_a?(Array) ? groups : [groups]
+  end
+
+  autorequire(:ec2_vpc) do
+    self[:vpc]
   end
 
 end

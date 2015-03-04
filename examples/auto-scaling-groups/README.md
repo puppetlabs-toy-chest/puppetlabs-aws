@@ -41,8 +41,32 @@ security group with:
 
 ## Discussion
 
-The instances managed by the auto scaling group is not directly
+The instances managed by the auto scaling group are not directly
 accessible via `puppet resource`. This is by design. However you can
 check on the number of instances currently managed by a group with:
 
    puppet resource ec2_autoscalinggroup test-asg
+
+The auto scaling resources also support launching in a VPC. First
+provide the name of a subnet to attach the auto scaling group to:
+
+```puppet
+ec2_autoscalinggroup { 'test-asg':
+  ...
+  subnets => 'subnet-name',
+}
+```
+
+Note that the security groups attached to the launch configuration must
+be associated with the same subnet. In cases where multiple security
+groups exist with the same name, typically the case for the default
+security group, you can provide a hint to the launch configuration like
+so:
+
+```
+ec2_launchconfiguration { 'test-lc':
+  security_groups => ['default'],
+  vpc             => 'subnet-acceptance',
+}
+```
+

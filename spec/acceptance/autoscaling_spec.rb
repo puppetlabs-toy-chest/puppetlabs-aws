@@ -281,8 +281,10 @@ describe "ec2_autoscalinggroup" do
         end
 
         it 'security_groups' do
-          @lc.security_groups.each do |sg|
-            expect(@result.stdout).to match(/#{sg}/)
+          response = @aws.ec2_client.describe_security_groups(group_ids: @lc.security_groups)
+          names = response.data.security_groups.collect(&:group_name)
+          names.each do |name|
+            expect(@result.stdout).to match(/#{name}/)
           end
         end
 
@@ -475,6 +477,45 @@ describe "ec2_autoscalinggroup" do
 
     end
 
+  end
+
+  describe 'an autoscaling group in a VPC' do
+
+    before(:all) do
+      @template = 'autoscaling_vpc.pp.tmpl'
+      @template_delete = 'autoscaling_vpc_delete.pp.tmpl'
+      @config = {
+        :ensure      => 'present',
+        :region      => @default_region,
+        :name        => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :min_size    => 0,
+        :max_size    => 6,
+        :vpc_cidr    => '10.0.0.0/16',
+        :subnet_cidr => '10.0.0.0/24',
+      }
+      r = PuppetManifest.new(@template, @config).apply
+      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+    end
+
+    after(:all) do
+      @config[:ensure] = 'absent'
+      r = PuppetManifest.new(@template_delete, @config).apply
+      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+    end
+
+    it 'should run idempotently' do
+      success = PuppetManifest.new(@template, @config).apply[:exit_status].success?
+      expect(success).to eq(true)
+    end
+
+    context 'should create' do
+      context 'an auto scaling group' do
+        it 'associated with a VPC' do
+          group = find_autoscaling_group("#{@config[:name]}-asg")
+          expect(group.vpc_zone_identifier).not_to be_nil
+        end
+      end
+    end
   end
 
 end
