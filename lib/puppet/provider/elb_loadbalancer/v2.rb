@@ -18,7 +18,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     end.flatten
   end
 
-  read_only(:region, :security_groups, :availability_zones)
+  read_only(:region, :availability_zones, :listeners)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -29,10 +29,47 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def self.load_balancer_to_hash(region, load_balancer)
+    instance_ids = load_balancer.instances.map(&:instance_id)
+    instance_names = []
+    unless instance_ids.empty?
+      instances = ec2_client(region).describe_instances(instance_ids: instance_ids).collect do |response|
+        response.data.reservations.collect do |reservation|
+          reservation.instances.collect do |instance|
+            instance
+          end
+        end.flatten
+      end.flatten
+      instances.each do |instance|
+        name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
+        name = name_tag ? name_tag.value : nil
+        instance_names << name if name
+      end
+    end
+    listeners = load_balancer.listener_descriptions.collect do |listener|
+      {
+        'protocol' => listener.listener.protocol,
+        'load_balancer_port' => listener.listener.load_balancer_port,
+        'instance_protocol' => listener.listener.instance_protocol,
+        'instance_port' => listener.listener.instance_port,
+      }
+    end
+    tag_response = elb_client(region).describe_tags(
+      load_balancer_names: [load_balancer.load_balancer_name]
+    )
+    tags = {}
+    unless tag_response.tag_descriptions.nil? || tag_response.tag_descriptions.empty?
+      tag_response.tag_descriptions.first.tags.each do |tag|
+        tags[tag.key.to_sym] = tag.value unless tag.key == 'Name'
+      end
+    end
     {
       name: load_balancer.load_balancer_name,
       ensure: :present,
-      region: region
+      region: region,
+      availability_zones: load_balancer.availability_zones,
+      instances: instance_names,
+      listeners: listeners,
+      tags: tags,
     }
   end
 
@@ -44,33 +81,28 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
   def create
     Puppet.info("Creating load balancer #{name} in region #{resource[:region]}")
-    groups = resource[:security_groups]
-
-    if groups.nil?
-      security_groups = []
-    else
-      groups = [groups] unless groups.is_a?(Array)
-      response = ec2_client(resource[:region]).describe_security_groups(group_names: groups.map(&:title))
-      security_groups = response.data.security_groups.map(&:group_id)
-    end
-
     zones = resource[:availability_zones]
     zones = [zones] unless zones.is_a?(Array)
 
     tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
     tags << {key: 'Name', value: name}
+
+    listeners = resource[:listeners]
+    listeners = [listeners] unless listeners.is_a?(Array)
+
+    listeners_for_api = listeners.collect do |listener|
+      {
+        protocol: listener['protocol'],
+        load_balancer_port: listener['load_balancer_port'],
+        instance_protocol: listener['instanceprotocol'],
+        instance_port: listener['instance_port'],
+      }
+    end
+
     elb_client(resource[:region]).create_load_balancer(
       load_balancer_name: name,
-      listeners: [
-        {
-          protocol: 'tcp',
-          load_balancer_port: 80,
-          instance_protocol: 'tcp',
-          instance_port: 80,
-        },
-      ],
+      listeners: listeners_for_api,
       availability_zones: zones,
-      security_groups: security_groups,
       tags: tags
     )
 

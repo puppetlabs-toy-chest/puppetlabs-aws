@@ -1,50 +1,60 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:elb_loadbalancer) do
-  @doc = 'type representing an ELB load balancer'
+  @doc = 'Type representing an ELB load balancer.'
 
   ensurable
 
   newparam(:name, namevar: true) do
-    desc 'the name of the load balancer'
+    desc 'The name of the load balancer.'
     validate do |value|
-      fail Puppet::Error, 'Load Balancers must have a name' if value == ''
+      fail 'Load Balancers must have a name' if value == ''
     end
   end
 
   newproperty(:region) do
-    desc 'the region in which to launch the load balancer'
+    desc 'The region in which to launch the load balancer.'
     validate do |value|
-      fail Puppet::Error, 'region must not contain spaces' if value =~ /\s/
+      fail 'region must not contain spaces' if value =~ /\s/
     end
   end
 
-  newparam(:security_groups, :array_matching => :all) do
-    desc 'the security groups to associate the load balancer'
+  newproperty(:availability_zones, :array_matching => :all) do
+    desc 'The availability zones in which to launch the load balancer.'
   end
 
-  newparam(:availability_zones, :array_matching => :all) do
-    desc 'the availability zones in which to launch the load balancer'
+  newproperty(:instances, :array_matching => :all) do
+    desc 'The instances to associate with the load balancer.'
   end
 
-  newparam(:instances, :array_matching => :all) do
-    desc 'the instances to associate with the load balancer'
+  newproperty(:listeners, :array_matching => :all) do
+    desc 'The ports and protocols the load balancer listens to.'
+    def insync?(is)
+      normalise(is).to_set == normalise(should).to_set
+    end
+    def normalise(listeners)
+      listeners.collect do |obj|
+        obj.each { |k,v| obj[k] = v.to_s.downcase }
+      end
+    end
+    validate do |value|
+      value = [value] unless value.is_a?(Array)
+      fail "you must provide a set if listeners for the load balancer" if value.empty?
+      value.each do |listener|
+        ['protocol', 'load_balancer_port', 'instance_protocol', 'instance_port'].each do |key|
+          fail "listeners must include #{key}" unless listener.keys.include?(key)
+        end
+      end
+    end
   end
 
-  newparam(:listeners, :array_matching => :all) do
-    desc 'the ports and protocols the load balancer listens to'
-  end
-
-  newparam(:tags, :array_matching => :all) do
-    desc 'the tags for the securitygroup'
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
+    desc 'The tags for the load balancer.'
   end
 
   autorequire(:ec2_instance) do
     instances = self[:instances]
     instances.is_a?(Array) ? instances : [instances]
-  end
-
-  autorequire(:ec2_securitygroup) do
-    groups = self[:security_groups]
-    groups.is_a?(Array) ? groups : [groups]
   end
 
 end

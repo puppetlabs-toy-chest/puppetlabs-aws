@@ -43,7 +43,14 @@ describe "ec2_loadbalancer" do
           :region => @default_region,
           :availability_zones => [@default_availability_zone],
           :instances => [@instance_config[:name]],
-          :listeners => [],
+          :listeners => [
+            {
+              :protocol           => 'TCP',
+              :load_balancer_port => 80,
+              :instance_protocol  => 'TCP',
+              :instance_port      => 80,
+            }
+          ],
           :ensure => 'present',
           :tags => {
               :department => 'engineering',
@@ -116,8 +123,10 @@ describe "ec2_loadbalancer" do
           :instances            => [@instance_config[:name]],
           :listeners            => [
             {
-              :protocol => 'tcp',
-              :port     => 80,
+              :protocol           => 'TCP',
+              :load_balancer_port => 80,
+              :instance_protocol  => 'TCP',
+              :instance_port      => 80,
             }
           ],
           :tags                 => {
@@ -127,8 +136,8 @@ describe "ec2_loadbalancer" do
               :marco      => 'polo',
           }
         }
-        @lb2_template = 'loadbalancer2.pp.tmpl'
-        PuppetManifest.new(@lb2_template, @lb_config).apply
+        @lb_template = 'loadbalancer.pp.tmpl'
+        PuppetManifest.new(@lb_template, @lb_config).apply
       end
 
       context 'using puppet resource to describe' do
@@ -142,22 +151,12 @@ describe "ec2_loadbalancer" do
           expect(@result.stdout).to match(regex)
         end
 
-        it 'security_groups' do
-          pending('This test is blocked by CLOUD-211')
-          regex = /(security_groups)(\s*)(=>)(\s*)('default')/
+        it 'availablity_zones' do
+          regex = /(availability_zones)(\s*)(=>)(\s*)(\[\'sa\-east\-1a\', \'sa\-east\-1b\'\])/
           expect(@result.stdout).to match(regex)
         end
 
-        it 'availablity_zones' do
-          pending('This test is blocked by CLOUD-210')
-          @lb_config[:availability_zones].each do |listener, value|
-            regex = /('#{listener}')(\s*)(=>)(\s*)('#{value}')/
-            expect(@result.stdout).to match(regex)
-          end
-        end
-
         it 'instances' do
-          pending('This test is blocked by CLOUD-209')
           @lb_config[:instances].each do |i|
             regex = /('#{i}')/
             expect(@result.stdout).to match(regex)
@@ -165,21 +164,16 @@ describe "ec2_loadbalancer" do
         end
 
         it 'listeners' do
-          pending('This test is blocked by CLOUD-208')
-          # this needs to be tested once fixed
           @lb_config[:listeners].each do |l|
-            r = String.new
             l.each do |k, v|
-              r << "('#{k}')(\\s*)(=>)(\\s*)('#{v}')(\\s*)"
+              regex = "('#{k}')(\\s*)(=>)(\\s*)('#{v}')(\\s*)"
+              expect(@result.stdout).to match(regex)
             end
-            regex = /#{r}/m
-            expect(result.stdout).to (regex)
           end
         end
 
         it 'tags' do
-          pending('This test is blocked by CLOUD-207')
-          @elb_config[:tags].each do |tag, value|
+          @lb_config[:tags].each do |tag, value|
             regex = /('#{tag}')(\s*)(=>)(\s*)('#{value}')/
             expect(@result.stdout).to match(regex)
           end

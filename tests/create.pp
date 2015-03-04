@@ -78,7 +78,9 @@ elb_loadbalancer { 'lb-1':
   availability_zones => ['sa-east-1a'],
   instances          => ['web-1', 'web-2'],
   listeners          => [{
-    protocol => 'tcp',
-    port     => 80,
+    protocol           => 'tcp',
+    load_balancer_port => 80,
+    instance_protocol  => 'tcp',
+    instance_port      => 80,
   }],
 }
