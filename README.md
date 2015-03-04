@@ -45,7 +45,7 @@ to model the relationships between different components.
 
 ###Installing the aws module
 
-1. Install the retries gem and the Amazon AWS Ruby SDK gem. 
+1. Install the retries gem and the Amazon AWS Ruby SDK gem.
 
     * If you're using open source Puppet, the SDK gem should be installed into the same Ruby used by Puppet. Install the gems with these commands:
 
@@ -243,7 +243,7 @@ puppet apply tests/destroy.pp --test
 
 ### Managing resources from the command line
 
-The module has basic `puppet resource` support, so you can manage AWS resources from the command line. 
+The module has basic `puppet resource` support, so you can manage AWS resources from the command line.
 
 For example, the following command lists all the security groups:
 
@@ -300,6 +300,9 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `ec2_vpc_subnet`: Sets up a VPC subnet.
 * `ec2_vpc_vpn`: Sets up an AWS Virtual Private Network.
 * `ec2_vpc_vpn_gateway`: Sets up a VPN gateway.
+* `rds_db_parameter_group`: Allows read access to DB Parameter Groups.
+* `rds_db_securitygroup`: Sets up an RDS DB Security Group.
+* `rds_instance`: Sets up an RDS Database instance.
 * `route53_a_record`: Sets up a Route53 DNS record.
 * `route53_aaaa_record`: Sets up a Route53 DNS AAAA record.
 * `route53_cname_record`: Sets up a Route53 CNAME record.
@@ -315,7 +318,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 ####Type: ec2_instance
 
 #####`ensure`
-Specifies the basic state of the resource. Valid values are 'present', 'absent', 'running', 'stopped'. 
+Specifies the basic state of the resource. Valid values are 'present', 'absent', 'running', 'stopped'.
 
 #####`name`
 *Required* The name of the instance. This is the value of the AWS Name tag.
@@ -336,10 +339,10 @@ The name of the key pair associated with this instance. This must be an existing
 *Optional* Whether or not monitoring is enabled for this instance. This parameter is set at creation only; it is not affected by updates. Valid values are 'true', 'false'. Defaults to 'false'.
 
 #####`region`
-*Required* The region in which to launch the instance. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region). 
+*Required* The region in which to launch the instance. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 #####`image_id`
-*Required* The image id to use for the instance. This parameter is set at creation only; it is not affected by updates. For more information, see AWS documentation on finding your [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html). 
+*Required* The image id to use for the instance. This parameter is set at creation only; it is not affected by updates. For more information, see AWS documentation on finding your [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html).
 
 #####`availability_zone`
 *Optional* The availability zone in which to place the instance. This parameter is set at creation only; it is not affected by updates. For valid availability zone codes, see [AWS Regions and Availability Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html).
@@ -348,13 +351,13 @@ The name of the key pair associated with this instance. This must be an existing
 *Required* The type to use for the instance. This parameter is set at creation only; it is not affected by updates. See [Amazon EC2 Instances](http://aws.amazon.com/ec2/instance-types/) for available types.
 
 #####`private_ip_addresS`
-*Optional* The private IP address for the instance. This parameter is set at creation only; it is not affected by updates. Must be a valid IPv4 address. 
+*Optional* The private IP address for the instance. This parameter is set at creation only; it is not affected by updates. Must be a valid IPv4 address.
 
 #####`associate_public_ip_address`
 *Optional* Whether to assign a public interface in a VPC. This parameter is set at creation only; it is not affected by updates. Valid values are 'true', 'false'. Defaults to 'false'.
 
 #####`subnet`
-*Optional* The VPC subnet to attach the instance to. This parameter is set at creation only; it is not affected by updates. Accepts the name of the subnet; this is the value of the Name tag for the subnet. If you're describing the subnet in Puppet, then this value is the name of the resource. 
+*Optional* The VPC subnet to attach the instance to. This parameter is set at creation only; it is not affected by updates. Accepts the name of the subnet; this is the value of the Name tag for the subnet. If you're describing the subnet in Puppet, then this value is the name of the resource.
 
 #####`ebs_optimized`
 *Optional* Whether or not to use optimized storage for the instance.  This parameter is set at creation only; it is not affected by updates. Valid values are 'true', 'false'. Defaults to 'false'.
@@ -362,8 +365,8 @@ The name of the key pair associated with this instance. This must be an existing
 #####`instance_initiated_shutdown_behavior`
 *Optional* Whether the instance stops or terminates when you initiate shutdown from the instance. This parameter is set at creation only; it is not affected by updates. Valid values are 'stop', 'terminate'. Defaults to 'stop'.
 
-#####`block_devices` 
-*Optional* A list of block devices to associate with the instance. This parameter is set at creation only; it is not affected by updates. Accepts an array of hashes with the device name and volume size specified: 
+#####`block_devices`
+*Optional* A list of block devices to associate with the instance. This parameter is set at creation only; it is not affected by updates. Accepts an array of hashes with the device name and volume size specified:
 
 ~~~
 block_devices => [
@@ -371,7 +374,7 @@ block_devices => [
     device_name  => '/dev/sda1',
     volume_size  => 8,
   }
-] 
+]
 ~~~
 
 #####`instance_id`
@@ -412,7 +415,7 @@ The Amazon Resource Name for the associated IAM profile.
 
 ##### `ingress`
 *Optional* Rules for ingress traffic. Accepts an array.
- 
+
 ##### `tags`
 *Optional* The tags for the security group. Accepts a 'key => value' hash of tags.
 
@@ -445,7 +448,7 @@ The Amazon Resource Name for the associated IAM profile.
 *Optional* The subnet in which the load balancer should be launched. This parameter is set at creation only; it is not affected by updates. Accepts an array of subnet names, i.e., the Name tags on the subnets.
 
 
-#####`security_groups` 
+#####`security_groups`
 *Optional* The security groups to associate with the load balancer (VPC only). Accepts an array of security group names, i.e., the Name tag on the security groups.
 
 #####`availability_zones`
@@ -498,7 +501,7 @@ The Amazon Resource Name for the associated IAM profile.
 *Required* The name of the auto scaling group. This is the value of the AWS Name tag.
 
 ##### `min_size`
-*Required* The minimum number of instances in the group. 
+*Required* The minimum number of instances in the group.
 
 ##### `max_size`
 *Required* The maximum number of instances in the group.
@@ -521,7 +524,7 @@ The Amazon Resource Name for the associated IAM profile.
 Specifies that basic state of the resource. Valid values are 'attached', 'detached'.
 
 #####`name`
-*Required* The IP address of the Elastic IP. Accepts a valid IPv4 address of an already existing elastic IP.  
+*Required* The IP address of the Elastic IP. Accepts a valid IPv4 address of an already existing elastic IP.
 
 #####`region`
 *Required* The region in which the Elastic IP is found. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
@@ -551,7 +554,7 @@ Specifies that basic state of the resource. Valid values are 'attached', 'detach
 *Required* The type to use for the instances. This parameter is set at creation only; it is not affected by updates. See [Amazon EC2 Instances](http://aws.amazon.com/ec2/instance-types/) for available types.
 
 #####`image_id`
-*Required* The image id to use for the instances. This parameter is set at creation only; it is not affected by updates. For more information, see AWS documentation on finding your [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html). 
+*Required* The image id to use for the instances. This parameter is set at creation only; it is not affected by updates. For more information, see AWS documentation on finding your [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html).
 
 #####`vpc`
 *Optional* A hint to specify the VPC. This is useful when detecting ambiguously named security groups that might exist in different VPCs, such as 'default'. This parameter is set at creation only; it is not affected by updates.
@@ -562,13 +565,13 @@ Specifies that basic state of the resource. Valid values are 'attached', 'detach
 *Required* The name of the scaling policy. This is the value of the AWS Name tag.
 
 #####`scaling_adjustment`
-*Required* The amount to adjust the size of the group by. Valid values depend on `adjustment_type` chosen. See [AWS Dynamic Scaling](http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-scale-based-on-demand.html) documentation. 
+*Required* The amount to adjust the size of the group by. Valid values depend on `adjustment_type` chosen. See [AWS Dynamic Scaling](http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-scale-based-on-demand.html) documentation.
 
 #####`region`
 *Required* The region in which to launch the policy. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 #####`adjustment_type`
-*Required* The type of policy. Accepts a string specifying the policy adjustment type. For valid values, see AWS [Adjustment Type](http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_AdjustmentType.html) documentation. 
+*Required* The type of policy. Accepts a string specifying the policy adjustment type. For valid values, see AWS [Adjustment Type](http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_AdjustmentType.html) documentation.
 
 #####`auto_scaling_group`
 *Required* The name of the auto scaling group to attach the policy to. This is the value of the AWS Name tag. This parameter is set at creation only; it is not affected by updates.
@@ -587,7 +590,7 @@ Specifies that basic state of the resource. Valid values are 'attached', 'detach
 #####`dhcp_options`
 *Optional* The name of DHCP option set to use for this VPC. This parameter is set at creation only; it is not affected by updates.
 
-#####`instance_tenancy` 
+#####`instance_tenancy`
 *Optional* The supported tenancy options for instances in this VPC. This parameter is set at creation only; it is not affected by updates. Valid values are 'default', 'dedicated'. Defaults to 'default'.
 
 #####`tags`
@@ -625,10 +628,10 @@ The type of customer gateway. The only currently supported value --- and the def
 *Optional* The region in which to assign the DHCP option set. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 #####`domain_name`
-*Optional* The domain name for the DHCP options. This parameter is set at creation only; it is not affected by updates. Accepts any valid domain. 
+*Optional* The domain name for the DHCP options. This parameter is set at creation only; it is not affected by updates. Accepts any valid domain.
 
-#####`domain_name_servers` 
-*Optional* A list of domain name servers to use for the DHCP options set. This parameter is set at creation only; it is not affected by updates. Accepts an array of domain server names. 
+#####`domain_name_servers`
+*Optional* A list of domain name servers to use for the DHCP options set. This parameter is set at creation only; it is not affected by updates. Accepts an array of domain server names.
 
 #####`ntp_servers`
 *Optional* A list of NTP servers to use for the DHCP options set. This parameter is set at creation only; it is not affected by updates. Accepts an array of NTP server names.
@@ -644,7 +647,7 @@ The type of customer gateway. The only currently supported value --- and the def
 
 #####`name`
 *Required* The name of the internet gateway. This is the value of the AWS Name tag.
- 
+
 #####`tags`
 *Optional* Tags to assign to the internet gateway. Accepts a 'key => value' hash of tags.
 
@@ -668,7 +671,7 @@ The type of customer gateway. The only currently supported value --- and the def
 
 #####`routes`
 *Optional* Individual routes for the routing table. This parameter is set at creation only; it is not affected by updates. Accepts an array of 'destination_cidr_block' and 'gateway' values:
- 
+
 ~~~
 routes => [
     {
@@ -745,7 +748,7 @@ routes => [
 #####`type`
 *Optional* The type of VPN gateway. This parameter is set at creation only; it is not affected by updates. The only currently supported value --- and the default --- is 'ipsec.1'.
 
-#####`routes` 
+#####`routes`
 *Optional* The list of routes for the VPN. This parameter is set at creation only; it is not affected by updates. Valid values are IP ranges like: `routes           => ['0.0.0.0/0']`
 
 #####`static_routes`
@@ -777,11 +780,140 @@ routes => [
 #####`type`
 *Optional* The type of VPN gateway. This parameter is set at creation only; it is not affected by updates. The only currently supported value --- and the default --- is 'ipsec.1'.
 
-#### Type: route53*
+#### Type: rds_db_parameter_group
+
+Note that currently, this type can only be listed via puppet resource,
+but cannot be created by Puppet.
+
+#####`name`
+*Required* The name of the parameter group.
+
+#####`region`
+*Required* The region in which to launch the parameter group. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
+
+#####`description`
+A description of the parameter group. Should be a string.
+
+#####`family`
+The name of the database family with which the parameter group is
+compatible; for instance, 'mysql5.1'.
+
+#### Type: rds_db_securitygroup
+
+#####`name`
+*Required* The name of the RDS DB security group.
+
+#####`description`
+A description of the RDS DB security group. Should be a string. This
+parameter is set at creation only; it is not affected by updates.
+
+#####`region`
+*Required* The region in which to launch the parameter group. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
+
+#####`owner_id`
+The internal AWS id of the owner of the security group. Read-only.
+
+#####`security_groups`
+Details of any EC2 security groups attached to the RDS security group. Read-only.
+
+#####`ip_ranges`
+Details of any ip_ranges attached to the RDS security group and their current state. Read-only.
+
+#### Type: rds_instance
+
+#####`name`
+*Required* The name of the RDS Instance.
+
+#####`db_name`
+Generally the name of database to be created. For Oracle this is the SID.
+Should not be set for MSSQL.
+
+#####`region`
+*Required* The region in which to launch the parameter group. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
+
+#####`db_instance_class`
+*Required* The size of the database instance. See [the AWS
+documentation](http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html)
+for the list of sizes.
+
+#####`availability_zone`
+*Optional* The availability zone in which to place the instance. For valid availability zone codes, see [AWS Regions and Availability Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html).
+
+#####`engine`
+*Required* The type of database to use. Current options can be found
+using the `rds-describe-db-engine-versions` command from the AWS CLI.
+This parameter is set at creation only; it is not affected by updates.
+
+#####`engine_version`
+The version of the database to use. Current options can be found
+using the `rds-describe-db-engine-versions` command from the AWS CLI.
+This parameter is set at creation only; it is not affected by updates.
+
+#####`allocated_storage`
+The size of the database in gigabytes. Note that minimum size constraints
+exist, which vary depending on the database engine selected.
+This parameter is set at creation only; it is not affected by updates.
+
+#####`license_model`
+The nature of the license for commercial database products. Currently
+supported values are license-included, bring-your-own-license or
+general-public-license. This parameter is set at creation only; it is
+not affected by updates.
+
+#####`storage_type`
+The type of storage to back the database with. Currently supported
+values are standard, gp2 or io1. This parameter is set at creation only;
+it is not affected by updates.
+
+#####`iops`
+The number of provisioned IOPS (input/output operations per second) to
+be initially allocated for the instance. This parameter is set at
+creation only; it is not affected by updates.
+
+#####`master_username`
+The name of the master user for the database instance. This parameter is
+set at creation only; it is not affected by updates.
+
+#####`master_user_password`
+The password for the master user. This parameter is set at creation
+only; it is not affected by updates.
+
+#####`multi_az`
+Boolean. Required if you intend to run the instance across multiple
+availability zones. This parameter is set at creation only; it is not
+affected by updates.
+
+#####`db_subnet`
+The name of an existing DB Subnet, for launching RDS instances in VPC.
+This parameter is set at creation only; it is not affected by updates.
+
+#####`db_security_groups`
+Names of the database security groups to associate with the instance.
+This parameter is set at creation only; it is not affected by updates.
+
+#####`endpoint`
+The DNS address of the database. Read-only.
+
+#####`port`
+The port that the database is listening on. Read-only.
+
+#####`skip_final_snapshot`
+Determines whether a final DB snapshot is created before the DB instance
+is deleted. Defaults to false.
+
+#####`db_parameter_group`
+The name of an associated DB parameter group. Should be a string. This
+parameter is set at creation only; it is not affected by updates.
+
+#####`final_db_snapshot_identifier`
+The name of the snapshot created when the instance is terminated. Note
+that skip_final_snapshot must be set to false.
+
+#### Type: route53
 
 The route53 types set up various types of Route53 records:
 
-* `route53_a_record`: Sets up a Route53 DNS record. 
+* `route53_a_record`: Sets up a Route53 DNS record.
 
 * `route53_aaaa_record`: Sets up a Route53 DNS AAAA record.
 
@@ -809,7 +941,7 @@ All Route53 record types use the same parameters:
 
 #####`ttl`
 *Optional* The time to live for the record. Accepts an integer.
- 
+
 #####`values`
 *Required* The values of the record. Accepts an array.
 
