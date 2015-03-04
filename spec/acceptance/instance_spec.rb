@@ -62,10 +62,11 @@ describe "ec2_instance" do
       expect(@instance.image_id).to eq(@config[:image_id])
     end
 
-    it "not associated with a VPC" do
-      skip('VPC only accounts will fail here')
-      expect(@instance.subnet_id).to be_nil
-      expect(@instance.vpc_id).to be_nil
+    it "not associated with a VPC (EC2-Classic accounts only)" do
+      unless @aws.vpc_only?
+        expect(@instance.subnet_id).to be_nil
+        expect(@instance.vpc_id).to be_nil
+      end
     end
 
     it "and return hypervisor, virtualization_type properties" do

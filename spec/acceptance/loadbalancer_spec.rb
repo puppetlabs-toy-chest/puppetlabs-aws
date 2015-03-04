@@ -71,22 +71,22 @@ describe "ec2_loadbalancer" do
       expect(@loadbalancer.availability_zones).to eq(@lb_config[:availability_zones])
     end
 
-    it "not part of a VPC" do
-      skip('VPC only accounts will fail here')
-      expect(@loadbalancer.vpc_id).to be_nil
-      expect(@loadbalancer.subnets).to be_empty
+    it "not part of a VPC (EC2-Classic accounts only)" do
+      unless @aws.vpc_only?
+        expect(@loadbalancer.vpc_id).to be_nil
+        expect(@loadbalancer.subnets).to be_empty
+      end
     end
 
     it "with one associated instance" do
       expect(@loadbalancer.instances.count).to eq(1)
     end
 
-    it "with no associated security groups" do
-      expect(@loadbalancer.security_groups).to be_empty
+    it "with no associated security groups (EC2-Classic accounts only)" do
+      expect(@loadbalancer.security_groups).to be_empty unless @aws.vpc_only?
     end
 
   end
-
 
   describe 'create a load balancer' do
 

@@ -98,9 +98,8 @@ describe "ec2_securitygroup" do
       expect(@group.group_name).to eq(@config[:name])
     end
 
-    it "isn't attached to a VPC" do
-      skip('VPC only accounts will fail here')
-      expect(@group.vpc_id).to eq(nil)
+    it "isn't attached to a VPC (EC2-Classic accounts only)" do
+      expect(@group.vpc_id).to eq(nil) unless @aws.vpc_only?
     end
 
     it "with the specified tags" do

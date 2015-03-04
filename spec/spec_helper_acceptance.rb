@@ -166,6 +166,13 @@ class AwsHelper
     response.data.load_balancer_descriptions
   end
 
+  def vpc_only?
+    response = @ec2_client.describe_account_attributes(
+      attribute_names: ['supported-platforms']
+    )
+    response.data.account_attributes.first.attribute_values.size == 1
+  end
+
   def tag_difference(item, tags)
     item_tags = {}
     item.tags.each { |s| item_tags[s.key.to_sym] = s.value if s.key != 'Name' }
