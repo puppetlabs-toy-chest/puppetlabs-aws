@@ -7,7 +7,6 @@ describe type_class do
   let :params do
     [
       :name,
-      :tags,
     ]
   end
 
@@ -17,6 +16,7 @@ describe type_class do
       :description,
       :region,
       :ingress,
+      :tags,
     ]
   end
 
@@ -31,4 +31,9 @@ describe type_class do
       expect(type_class.parameters).to be_include(param)
     end
   end
+
+  it 'should order tags on output' do
+    expect(type_class).to order_tags_on_output
+  end
+
 end

@@ -37,19 +37,14 @@ describe type_class do
   end
 
   it 'should support :stopped as a value to :ensure' do
-    Puppet::Type.type(:ec2_instance).new(:name => 'sample', :ensure => :stopped)
+    type_class.new(:name => 'sample', :ensure => :stopped)
   end
 
   it 'should support :running as a value to :ensure' do
-    Puppet::Type.type(:ec2_instance).new(:name => 'sample', :ensure => :running)
+    type_class.new(:name => 'sample', :ensure => :running)
   end
 
   it 'should order tags on output' do
-    tags = {'b' => 1, 'a' => 2}
-    reverse = {'a' => 2, 'b' => 1}
-    srv = Puppet::Type.type(:ec2_instance).new(:name => 'sample', :tags => tags )
-    expect(srv.property(:tags).insync?(tags)).to be true
-    expect(srv.property(:tags).insync?(reverse)).to be true
-    expect(srv.property(:tags).should_to_s(tags).to_s).to eq(reverse.to_s)
+    expect(type_class).to order_tags_on_output
   end
 end
