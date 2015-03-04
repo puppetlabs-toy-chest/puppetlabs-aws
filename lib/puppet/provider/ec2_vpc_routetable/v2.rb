@@ -41,7 +41,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
         begin
           vgw_response = ec2.describe_vpn_gateways(vpn_gateway_ids: [route.gateway_id])
           name_from_tag(vgw_response.data.vpn_gateways.first)
-        rescue Aws::EC2::Errors::InvalidVpcGatewayIDNotFound
+        rescue Aws::EC2::Errors::InvalidVpnGatewayIDNotFound
           nil
         end
       end
