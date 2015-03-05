@@ -40,9 +40,10 @@ module PuppetX
       end
 
       def vpc_only_account?
-        # this is a stub for detecting VPC only accounts
-        # it currently maintains the existing functionality
-        false
+        response = ec2_client.describe_account_attributes(
+          attribute_names: ['supported-platforms']
+        )
+        response.data.account_attributes.first.attribute_values.size == 1
       end
 
       def self.elb_client(region = default_region)

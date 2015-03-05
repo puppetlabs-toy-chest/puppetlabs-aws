@@ -15,11 +15,13 @@ describe "ec2_securitygroup" do
     groups.first
   end
 
-  def get_group_permission(ip_permissions, group, protocol)
+  def get_group_permission(ip_permissions, group_name, protocol)
+    group = get_group(group_name)
     ip_permissions.detect do |perm|
       pairs = perm[:user_id_group_pairs]
+      # group name is nil in VPC only
       pairs.any? do |pair|
-        pair.group_name == group && perm[:ip_protocol] == protocol
+        pair.group_id == group.group_id && perm[:ip_protocol] == protocol
       end
     end
   end

@@ -116,7 +116,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
     # then find the name in the VPC subnets that we have
     subnets = subnet_response.data.subnets.select do |s|
-      if resource[:subnet].empty?
+      if resource[:subnet].nil? || resource[:subnet].empty?
         ! s.tags.any? { |t| t.key == 'Name' }
       else
         s.tags.any? { |t| t.key == 'Name' && t.value == resource[:subnet] }
