@@ -43,7 +43,9 @@ module PuppetX
         response = ec2_client.describe_account_attributes(
           attribute_names: ['supported-platforms']
         )
-        response.data.account_attributes.first.attribute_values.size == 1
+
+        account_types = response.account_attributes.map(&:attribute_values).flatten.map(&:attribute_value)
+        account_types == ['VPC']
       end
 
       def self.elb_client(region = default_region)
