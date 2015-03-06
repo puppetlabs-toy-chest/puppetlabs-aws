@@ -31,23 +31,25 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
 
   def self.subnet_to_hash(region, subnet)
     ec2 = ec2_client(region)
-    vpc_response = ec2.describe_vpcs(vpc_ids: [subnet.vpc_id])
-    vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
+    vpc_response = ec2.describe_vpcs(filters: [
+      {name: 'vpc-id', values: [subnet.vpc_id]}
+    ])
+
+    vpc_name = vpc_response.data.vpcs.empty? ? nil : name_from_tag(vpc_response.data.vpcs.first)
 
     table_response = ec2.describe_route_tables(filters: [
       {name: 'association.subnet-id', values: [subnet.subnet_id]},
       {name: 'vpc-id', values: [subnet.vpc_id]},
     ])
-    tables = table_response.data.route_tables
-    table_name_tag = tables.empty? ? nil : tables.first.tags.detect { |tag| tag.key == 'Name' }
+    table_name = table_response.data.route_tables.empty? ? nil : name_from_tag(table_response.data.route_tables.first)
 
     {
       name: name_from_tag(subnet),
-      route_table: table_name_tag ? table_name_tag.value : nil,
+      route_table: table_name,
       id: subnet.subnet_id,
       cidr_block: subnet.cidr_block,
       availability_zone: subnet.availability_zone,
-      vpc: vpc_name_tag ? vpc_name_tag.value : nil,
+      vpc: vpc_name,
       ensure: :present,
       region: region,
       tags: tags_for(subnet),

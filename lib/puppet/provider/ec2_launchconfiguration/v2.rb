@@ -30,14 +30,10 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
   read_only(:region, :image_id, :instance_type, :key_name, :security_groups)
 
   def self.config_to_hash(region, config)
-    # It appears possible to get launch configurations manually to a state where
-    # they return the identifier of an invalid or a non-existent security groups
-    security_group_names = begin
-      group_response = ec2_client(region).describe_security_groups(group_ids: config.security_groups)
-      group_response.data.security_groups.collect(&:group_name)
-    rescue Aws::EC2::Errors::InvalidGroupIdMalformed, Aws::EC2::Errors::InvalidGroupNotFound
-      []
-    end
+    group_response = ec2_client(region).describe_security_groups(filters: [
+      {name: 'group-id', values: config.security_groups}
+    ])
+    security_group_names = group_response.data.security_groups.collect(&:group_name)
     {
       name: config.launch_configuration_name,
       security_groups: security_group_names,

@@ -40,26 +40,31 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
         rule.user_id_group_pairs.collect do |security_group|
           name = security_group.group_name
           if name.nil?
-            group_response = client.describe_security_groups(
-              group_ids: [security_group.group_id]
-            )
-            name = group_response.data.security_groups.first.group_name
+            group_response = client.describe_security_groups(filters: [
+              {name: 'group-id', values: [security_group.group_id]}
+            ])
+            groups = group_response.data.security_groups
+            name = groups.empty? ? nil : groups.first.group_name
           end
-          {
-            'security_group' => name
-          }
+          if name
+            {
+              'security_group' => name
+            }
+          else
+            nil
+          end
         end
       end
-    end.flatten.uniq
+    end.flatten.uniq.compact
   end
 
   def self.security_group_to_hash(region, group)
     ec2 = ec2_client(region)
     vpc_name = nil
     if group.vpc_id
-      vpc_response = ec2.describe_vpcs(
-        vpc_ids: [group.vpc_id]
-      )
+      vpc_response = ec2.describe_vpcs(filters: [
+        {name: 'vpc-id', values: [group.vpc_id]}
+      ])
       vpc_name = if vpc_response.data.vpcs.empty?
         nil
       elsif vpc_response.data.vpcs.first.to_hash.keys.include?(:group_name)
