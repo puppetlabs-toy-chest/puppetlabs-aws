@@ -31,22 +31,23 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
 
   def self.gateway_to_hash(region, gateway)
     assigned_name = name_from_tag(gateway)
-    vpcs = []
-    vpc_ids = []
-    if assigned_name
-      vpc_response = ec2_client(region).describe_vpcs(vpc_ids: gateway.attachments.map(&:vpc_id))
-      vpc_response.data.vpcs.each do |vpc|
-        vpc_name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
-        if vpc_name_tag
-          vpcs << vpc_name_tag.value
-          vpc_ids << vpc.vpc_id
-        end
+    vpc_name = nil
+    vpc_id = nil
+    attachments = gateway.attachments.map(&:vpc_id)
+    if assigned_name and ! attachments.empty?
+      vpc_response = ec2_client(region).describe_vpcs(vpc_ids: attachments)
+      vpc = vpc_response.data.vpcs.first
+      vpc_name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
+      if vpc_name_tag
+        vpc_name = vpc_name_tag.value
+        vpc_id = vpc.vpc_id
       end
     end
+
     {
       name: assigned_name,
-      vpcs: vpcs,
-      vpc_ids: vpc_ids,
+      vpc: vpc_name,
+      vpc_id: vpc_id,
       id: gateway.internet_gateway_id,
       ensure: :present,
       region: region,
@@ -64,7 +65,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
     Puppet.info("Creating internet gateway #{name} in #{resource[:region]}")
     ec2 = ec2_client(resource[:region])
     vpc_response = ec2.describe_vpcs(filters: [
-      {name: "tag:Name", values: resource[:vpcs]},
+      {name: "tag:Name", values: [resource[:vpc]]},
     ])
     response = ec2.create_internet_gateway()
     id = response.data.internet_gateway.internet_gateway_id
@@ -87,10 +88,10 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
     region = @property_hash[:region]
     Puppet.info("Deleting internet gateway #{name} in #{region}")
     ec2 = ec2_client(region)
-    @property_hash[:vpc_ids].each do |vpc_id|
+    if @property_hash[:vpc_id]
       ec2.detach_internet_gateway(
         internet_gateway_id: @property_hash[:id],
-        vpc_id: vpc_id,
+        vpc_id: @property_hash[:vpc_id],
       )
     end
     ec2.delete_internet_gateway(internet_gateway_id: @property_hash[:id])

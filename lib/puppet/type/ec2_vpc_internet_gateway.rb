@@ -23,12 +23,11 @@ Puppet::Type.newtype(:ec2_vpc_internet_gateway) do
     end
   end
 
-  newproperty(:vpcs, :array_matching => :all) do
-    desc 'The vpcs to assign this internet gateway to.'
+  newproperty(:vpc) do
+    desc 'The vpc to assign this internet gateway to.'
   end
 
   autorequire(:ec2_vpc) do
-    vpcs = self[:vpcs]
-    vpcs.is_a?(Array) ? vpcs : [vpcs]
+    self[:vpc]
   end
 end

@@ -26,7 +26,7 @@ ec2_vpc_subnet { 'sample-subnet':
 ec2_vpc_internet_gateway { 'sample-igw':
   ensure => present,
   region => 'sa-east-1',
-  vpcs   => 'sample-vpc',
+  vpc    => 'sample-vpc',
 }
 
 ec2_vpc_routetable { 'sample-routes':

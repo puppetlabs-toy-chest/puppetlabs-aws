@@ -13,7 +13,7 @@ describe type_class do
   let :properties do
     [
       :ensure,
-      :vpcs,
+      :vpc,
       :region,
     ]
   end
