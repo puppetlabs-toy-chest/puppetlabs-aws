@@ -32,6 +32,21 @@ describe "route53_zone" do
         :txt_record_name => "local.#{@name}",
         :txt_ttl => 17000,
         :txt_value => 'message',
+        :spf_record_name => "local.#{@name}",
+        :spf_ttl => 300,
+        :spf_value => 'v=spf1 a -all',
+        :cname_record_name => "local2.#{@name}",
+        :cname_ttl => 304,
+        :cname_values => ["local3.#{@name}"],
+        :mx_record_name => "local.#{@name}",
+        :mx_ttl => 303,
+        :mx_values => ["10 mail.local.#{@name}", "20 mail.local.#{@name}"],
+        :aaaa_record_name => "local.#{@name}",
+        :aaaa_ttl => 302,
+        :aaaa_values => ['2001:0db8:85a3:0:0:8a2e:0370:7334'],
+        :srv_record_name => "local.#{@name}",
+        :srv_ttl => 301,
+        :srv_values => ["1 10 5269 xmpp-server.#{@name}",  "2 12 5060 sip-server.#{@name}"],
       }
 
       @template = 'route53_create.pp.tmpl'
@@ -41,6 +56,11 @@ describe "route53_zone" do
       @ns_record = find_record(@config[:name], @zone, 'NS')
       @soa_record = find_record(@config[:name], @zone, 'SOA')
       @txt_record = find_record(@config[:txt_record_name], @zone, 'TXT')
+      @spf_record = find_record(@config[:spf_record_name], @zone, 'SPF')
+      @cname_record = find_record(@config[:cname_record_name], @zone, 'CNAME')
+      @mx_record = find_record(@config[:mx_record_name], @zone, 'MX')
+      @aaaa_record = find_record(@config[:aaaa_record_name], @zone, 'AAAA')
+      @srv_record = find_record(@config[:srv_record_name], @zone, 'SRV')
     end
 
     after(:all) do
@@ -97,6 +117,126 @@ describe "route53_zone" do
       end
     end
 
+    it 'should create an MX record with the relevant ttl' do
+      expect(@mx_record.ttl).to eq(@config[:mx_ttl])
+    end
+
+    it 'should create an MX record with the relevant values' do
+      expect(@mx_record.resource_records.map(&:value)).to eq(@config[:mx_values])
+    end
+
+    describe 'using puppet resource on the MX record' do
+      before(:all) do
+        ENV['AWS_REGION'] = @default_region
+        options = {:name => @config[:mx_record_name]}
+        @result = TestExecutor.puppet_resource('route53_mx_record', options, '--modulepath ../')
+      end
+
+      it 'should show the correct TTL' do
+        regex = /ttl\s*=>\s*'#{@config[:mx_ttl]}'/
+        expect(@result.stdout).to match(regex)
+      end
+
+      it 'should show the correct zone' do
+        regex = /zone\s*=>\s*'#{@config[:name]}'/
+        expect(@result.stdout).to match(regex)
+      end
+
+      it 'should show the correct values' do
+        regex = /values\s*=>\s*\['#{@config[:mx_values].first}', '#{@config[:mx_values][1]}'\]/
+        expect(@result.stdout).to match(regex)
+      end
+    end
+
+    it 'should create a CNAME record with the relevant ttl' do
+      expect(@cname_record.ttl).to eq(@config[:cname_ttl])
+    end
+
+    it 'should create a CNAME record with the relevant values' do
+      expect(@cname_record.resource_records.map(&:value)).to eq(@config[:cname_values])
+    end
+
+    describe 'using puppet resource on the CNAME record' do
+      before(:all) do
+        ENV['AWS_REGION'] = @default_region
+        options = {:name => @config[:cname_record_name]}
+        @result = TestExecutor.puppet_resource('route53_cname_record', options, '--modulepath ../')
+      end
+
+      it 'should show the correct TTL' do
+        regex = /ttl\s*=>\s*'#{@config[:cname_ttl]}'/
+        expect(@result.stdout).to match(regex)
+      end
+
+      it 'should show the correct zone' do
+        regex = /zone\s*=>\s*'#{@config[:name]}'/
+        expect(@result.stdout).to match(regex)
+      end
+
+      it 'should show the correct values' do
+        regex = /values\s*=>\s*\['#{@config[:cname_values].first}'\]/
+        expect(@result.stdout).to match(regex)
+      end
+    end
+
+    it 'should create an SRV record with the relevant ttl' do
+      expect(@srv_record.ttl).to eq(@config[:srv_ttl])
+    end
+
+    it 'should create an SRV record with the relevant values' do
+      expect(@srv_record.resource_records.map(&:value)).to eq(@config[:srv_values])
+    end
+
+    describe 'using puppet resource on the SRV record' do
+      before(:all) do
+        ENV['AWS_REGION'] = @default_region
+        options = {:name => @config[:srv_record_name]}
+        @result = TestExecutor.puppet_resource('route53_srv_record', options, '--modulepath ../')
+      end
+
+      it 'should show the correct TTL' do
+        regex = /ttl\s*=>\s*'#{@config[:srv_ttl]}'/
+        expect(@result.stdout).to match(regex)
+      end
+
+      it 'should show the correct zone' do
+        regex = /zone\s*=>\s*'#{@config[:name]}'/
+        expect(@result.stdout).to match(regex)
+      end
+
+    end
+
+    it 'should create an AAAA record with the relevant ttl' do
+      expect(@aaaa_record.ttl).to eq(@config[:aaaa_ttl])
+    end
+
+    it 'should create an AAAA record with the relevant values' do
+      expect(@aaaa_record.resource_records.map(&:value)).to eq(@config[:aaaa_values])
+    end
+
+    describe 'using puppet resource on the AAAA record' do
+      before(:all) do
+        ENV['AWS_REGION'] = @default_region
+        options = {:name => @config[:aaaa_record_name]}
+        @result = TestExecutor.puppet_resource('route53_aaaa_record', options, '--modulepath ../')
+      end
+
+      it 'should show the correct TTL' do
+        regex = /ttl\s*=>\s*'#{@config[:aaaa_ttl]}'/
+        expect(@result.stdout).to match(regex)
+      end
+
+      it 'should show the correct zone' do
+        regex = /zone\s*=>\s*'#{@config[:name]}'/
+        expect(@result.stdout).to match(regex)
+      end
+
+      it 'should show the correct values' do
+        regex = /values\s*=>\s*\['#{@config[:aaaa_values].first}'\]/
+        expect(@result.stdout).to match(regex)
+      end
+    end
+
     describe 'using puppet resource on the TXT record' do
       before(:all) do
         ENV['AWS_REGION'] = @default_region
@@ -106,6 +246,32 @@ describe "route53_zone" do
 
       it 'should show the correct TTL' do
         regex = /ttl\s*=>\s*'#{@config[:txt_ttl]}'/
+        expect(@result.stdout).to match(regex)
+      end
+
+      it 'should show the correct zone' do
+        regex = /zone\s*=>\s*'#{@config[:name]}'/
+        expect(@result.stdout).to match(regex)
+      end
+    end
+
+    it 'should create an SPF record with the relevant ttl' do
+      expect(@spf_record.ttl).to eq(@config[:spf_ttl])
+    end
+
+    it 'should create an SPF record with the relevant values' do
+      expect(@spf_record.resource_records.map(&:value)).to eq(["\"v=spf1 a -all\""])
+    end
+
+    describe 'using puppet resource on the SPF record' do
+      before(:all) do
+        ENV['AWS_REGION'] = @default_region
+        options = {:name => @config[:spf_record_name]}
+        @result = TestExecutor.puppet_resource('route53_spf_record', options, '--modulepath ../')
+      end
+
+      it 'should show the correct TTL' do
+        regex = /ttl\s*=>\s*'#{@config[:spf_ttl]}'/
         expect(@result.stdout).to match(regex)
       end
 
@@ -251,7 +417,7 @@ describe "route53_zone" do
         :txt_ttl => 17000,
         :txt_value => 'message',
       }
-      @template = 'route53_create.pp.tmpl'
+      @template = 'route53_create_minimal.pp.tmpl'
     end
 
     it 'with puppet resource' do

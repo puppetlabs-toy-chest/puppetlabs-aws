@@ -1,0 +1,17 @@
+route53_zone { '{{name}}':
+  ensure => present,
+}
+
+route53_a_record { '{{a_record_name}}':
+  ensure => present,
+  zone   => '{{name}}',
+  ttl    => {{a_ttl}},
+  values => [{{#a_values}}'{{.}}',{{/a_values}}],
+}
+
+route53_txt_record { '{{txt_record_name}}':
+  ensure => present,
+  zone   => '{{name}}',
+  ttl    => {{txt_ttl}},
+  values => '{{txt_value}}',
+}
