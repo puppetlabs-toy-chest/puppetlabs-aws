@@ -142,8 +142,10 @@ elb_loadbalancer { '{{lb_name}}':
   scheme    => '{{lb_scheme}}',
   instances => '{{name}}-instance',
   listeners => [{
-    protocol => 'tcp',
-    port => 80,
+    protocol           => 'tcp',
+    load_balancer_port => 80,
+    instance_protocol  => 'tcp',
+    instance_port      => 80,
   }],
   tags      => {
   {{#tags}}

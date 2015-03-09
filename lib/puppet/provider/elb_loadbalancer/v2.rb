@@ -18,7 +18,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     end.flatten
   end
 
-  read_only(:region, :scheme, :availability_zones, :listeners)
+  read_only(:region, :scheme, :availability_zones, :listeners, :tags)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -59,7 +59,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     tags = {}
     unless tag_response.tag_descriptions.nil? || tag_response.tag_descriptions.empty?
       tag_response.tag_descriptions.first.tags.each do |tag|
-        tags[tag.key.to_sym] = tag.value unless tag.key == 'Name'
+        tags[tag.key] = tag.value unless tag.key == 'Name'
       end
     end
     subnet_names = []
