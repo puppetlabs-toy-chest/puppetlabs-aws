@@ -37,14 +37,13 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
     assigned_name = name_from_tag(gateway)
     vpc_name = nil
     vpc_id = nil
-    attachments = gateway.attachments.map(&:vpc_id)
-    if assigned_name and ! attachments.empty?
-      vpc_response = ec2_client(region).describe_vpcs(vpc_ids: attachments)
-      vpc = vpc_response.data.vpcs.first
-      vpc_name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
-      if vpc_name_tag
-        vpc_name = vpc_name_tag.value
-        vpc_id = vpc.vpc_id
+    if assigned_name
+      gateway.attachments.each do |attachment|
+        name = vpc_name_from_id(region, attachment.vpc_id)
+        unless name.nil?
+          vpc_name = name
+          vpc_id = attachment.vpc_id
+        end
       end
     end
 
@@ -60,14 +59,13 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if internet gateway #{name} exists in #{dest_region || region}")
+    Puppet.info("Checking if internet gateway #{name} exists in #{target_region}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating internet gateway #{name} in #{resource[:region]}")
-    ec2 = ec2_client(resource[:region])
+    Puppet.info("Creating internet gateway #{name} in #{target_region}")
+    ec2 = ec2_client(target_region)
     vpc_response = ec2.describe_vpcs(filters: [
       {name: "tag:Name", values: [resource[:vpc]]},
     ])
@@ -89,9 +87,8 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def destroy
-    region = @property_hash[:region]
-    Puppet.info("Deleting internet gateway #{name} in #{region}")
-    ec2 = ec2_client(region)
+    Puppet.info("Deleting internet gateway #{name} in #{target_region}")
+    ec2 = ec2_client(target_region)
     if @property_hash[:vpc_id]
       ec2.detach_internet_gateway(
         internet_gateway_id: @property_hash[:id],

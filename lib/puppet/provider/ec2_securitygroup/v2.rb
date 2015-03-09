@@ -33,7 +33,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     end
   end
 
-  def self.prepare_ingress_rule_for_puppet(client, rule, group = nil, cidr = nil)
+  def self.prepare_ingress_rule_for_puppet(region, rule, group = nil, cidr = nil)
     config = {
       'protocol' => rule.ip_protocol,
       'from_port' => rule.from_port.to_i,
@@ -42,11 +42,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     if group
       name = group.group_name
       if name.nil?
-        group_response = client.describe_security_groups(filters: [
-          {name: 'group-id', values: [group.group_id]}
-        ])
-        groups = group_response.data.security_groups
-        name = groups.empty? ? nil : groups.first.group_name
+        name = security_group_name_from_id(region, group.group_id)
       end
       config['security_group'] = name
     end
@@ -54,45 +50,30 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     config
   end
 
-  def self.format_ingress_rules(client, group)
+  def self.format_ingress_rules(region, group)
     rules = []
     group[:ip_permissions].each do |rule|
       addition = []
       rule.user_id_group_pairs.each do |security_group|
-        addition << prepare_ingress_rule_for_puppet(client, rule, security_group)
+        addition << prepare_ingress_rule_for_puppet(region, rule, security_group)
       end
       rule.ip_ranges.each do |cidr|
-        addition << prepare_ingress_rule_for_puppet(client, rule, nil, cidr)
+        addition << prepare_ingress_rule_for_puppet(region, rule, nil, cidr)
       end
-      addition << prepare_ingress_rule_for_puppet(client, rule) if addition.empty?
+      addition << prepare_ingress_rule_for_puppet(region, rule) if addition.empty?
       rules << addition
     end
     rules.flatten.uniq.compact
   end
 
   def self.security_group_to_hash(region, group)
-    ec2 = ec2_client(region)
-    vpc_name = nil
-    if group.vpc_id
-      vpc_response = ec2.describe_vpcs(
-        vpc_ids: [group.vpc_id]
-      )
-      vpc_name = if vpc_response.data.vpcs.empty?
-        nil
-      elsif vpc_response.data.vpcs.first.to_hash.keys.include?(:group_name)
-        vpc_response.data.vpcs.first.group_name
-      elsif vpc_response.data.vpcs.first.to_hash.keys.include?(:tags)
-        vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
-        vpc_name_tag ? vpc_name_tag.value : nil
-      end
-    end
     {
       id: group.group_id,
       name: group.group_name,
       description: group.description,
       ensure: :present,
-      ingress: format_ingress_rules(ec2, group),
-      vpc: vpc_name,
+      ingress: format_ingress_rules(region, group),
+      vpc: vpc_name_from_id(region, group.vpc_id),
       vpc_id: group.vpc_id,
       region: region,
       tags: tags_for(group),
@@ -100,14 +81,16 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if security group #{name} exists in region #{dest_region || region}")
+    Puppet.info("Checking if security group #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 
+  def ec2
+    ec2_client(target_region)
+  end
+
   def create
-    Puppet.info("Creating security group #{name} in region #{resource[:region]}")
-    ec2 = ec2_client(resource[:region])
+    Puppet.info("Creating security group #{name} in region #{target_region}")
     config = {
       group_name: name,
       description: resource[:description]
@@ -211,8 +194,8 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def destroy
-    Puppet.info("Deleting security group #{name} in region #{resource[:region]}")
-    ec2_client(resource[:region]).delete_security_group(
+    Puppet.info("Deleting security group #{name} in region #{target_region}")
+    ec2.delete_security_group(
       group_id: @property_hash[:id]
     )
     @property_hash[:ensure] = :absent

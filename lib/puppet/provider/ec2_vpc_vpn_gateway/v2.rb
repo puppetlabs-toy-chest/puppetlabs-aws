@@ -38,17 +38,11 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
 
   def self.gateway_to_hash(region, gateway)
     attached = gateway.vpc_attachments.detect { |vpc| vpc.state == 'attached' }
+    vpc_name = nil
+    vpc_id = nil
     if attached
-      vpc_id = attached.vpc_id
-      vpc_response = ec2_client(region).describe_vpcs(
-        vpc_ids: [vpc_id]
-      )
-      vpc = vpc_response.data.vpcs.first
-      vpc_name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
-      vpc_name = vpc_name_tag ? vpc_name_tag.value : nil
-    else
-      vpc_name = nil
-      vpc_id = nil
+      vpc_name = vpc_name_from_id(region, attached.vpc_id)
+      vpc_id = vpc_name.nil? ? nil : attached.vpc_id
     end
     {
       :name   => name_from_tag(gateway),
@@ -64,14 +58,13 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if VPN gateway #{name} exists in region #{dest_region || region}")
+    Puppet.info("Checking if VPN gateway #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating VPN gateway #{name} in region #{resource[:region]}")
-    ec2 = ec2_client(resource[:region])
+    Puppet.info("Creating VPN gateway #{name} in region #{target_region}")
+    ec2 = ec2_client(target_region)
 
     vpc_response = ec2.describe_vpcs(filters: [
       {name: "tag:Name", values: [resource[:vpc]]},
@@ -117,9 +110,8 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def destroy
-    region = @property_hash[:region]
-    Puppet.info("Destroying VPN gateway #{name} in #{region}")
-    ec2 = ec2_client(region)
+    Puppet.info("Destroying VPN gateway #{name} in #{target_region}")
+    ec2 = ec2_client(target_region)
     vpc_id = @property_hash[:vpc_id]
     ec2.detach_vpn_gateway(
       vpn_gateway_id: @property_hash[:id],
@@ -165,4 +157,3 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
     end
 
 end
-

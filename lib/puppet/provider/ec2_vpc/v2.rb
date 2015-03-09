@@ -34,14 +34,6 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   end
 
   def self.vpc_to_hash(region, vpc)
-    options_name = unless vpc.dhcp_options_id.nil? || vpc.dhcp_options_id.empty?
-      response = ec2_client(region).describe_dhcp_options(
-        dhcp_options_ids: [vpc.dhcp_options_id]
-      )
-      name_from_tag(response.dhcp_options.first)
-    else
-      nil
-    end
     {
       name: name_from_tag(vpc),
       id: vpc.vpc_id,
@@ -50,19 +42,18 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
       ensure: :present,
       region: region,
       tags: tags_for(vpc),
-      dhcp_options: options_name,
+      dhcp_options: options_name_from_id(region, vpc.dhcp_options_id),
     }
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if VPC #{name} exists in #{dest_region || region}")
+    Puppet.info("Checking if VPC #{name} exists in #{target_region}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating VPC #{name}")
-    ec2 = ec2_client(resource[:region])
+    Puppet.info("Creating VPC #{name} in #{target_region}")
+    ec2 = ec2_client(target_region)
     response = ec2.create_vpc(
       cidr_block: resource[:cidr_block],
       instance_tenancy: resource[:instance_tenancy]
@@ -103,9 +94,8 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   end
 
   def destroy
-    region = @property_hash[:region]
-    Puppet.info("Deleting VPC #{name} in #{region}")
-    ec2_client(region).delete_vpc(
+    Puppet.info("Deleting VPC #{name} in #{target_region}")
+    ec2_client(target_region).delete_vpc(
       vpc_id: @property_hash[:id]
     )
     @property_hash[:ensure] = :absent

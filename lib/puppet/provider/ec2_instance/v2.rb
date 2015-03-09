@@ -6,6 +6,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   confine feature: :retries
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances
     regions.collect do |region|
@@ -67,6 +68,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       instance_type: instance.instance_type,
       image_id: instance.image_id,
       instance_id: instance.instance_id,
+      id: instance.instance_id,
       monitoring: monitoring,
       key_name: instance.key_name,
       availability_zone: instance.placement.availability_zone,
@@ -92,20 +94,17 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if instance #{name} exists in region #{dest_region || region}")
+    Puppet.info("Checking if instance #{name} exists in region #{target_region}")
     running? || stopped?
   end
 
   def running?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if instance #{name} is running in region #{dest_region || region}")
+    Puppet.info("Checking if instance #{name} is running in region #{target_region}")
     [:present, :pending, :running].include? @property_hash[:ensure]
   end
 
   def stopped?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if instance #{name} is stopped in region #{dest_region || region}")
+    Puppet.info("Checking if instance #{name} is stopped in region #{target_region}")
     [:stopping, :stopped].include? @property_hash[:ensure]
   end
 
@@ -280,11 +279,9 @@ Found #{matching_groups.length}:
       instance_ids = response.instances.map(&:instance_id)
 
       with_retries(:max_tries => 5) do
-        tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
-        tags << {key: 'Name', value: name}
         ec2.create_tags(
           resources: instance_ids,
-          tags: tags
+          tags: tags_for_resource
         )
       end
 
@@ -302,8 +299,8 @@ Found #{matching_groups.length}:
 
   def stop
     create unless exists?
-    Puppet.info("Stopping instance #{name} in region #{resource[:region]}")
-    ec2 = ec2_client(resource[:region])
+    Puppet.info("Stopping instance #{name} in region #{target_region}")
+    ec2 = ec2_client(target_region)
     # Can't stop an instance that hasn't started yet
     ec2.wait_until(:instance_running, instance_ids: [@property_hash[:instance_id]])
     ec2.stop_instances(
@@ -312,23 +309,9 @@ Found #{matching_groups.length}:
     @property_hash[:ensure] = :stopped
   end
 
-  def tags=(value)
-    Puppet.info("Updating tags for #{name} in region #{region}")
-    ec2 = ec2_client(resource[:region])
-    ec2.create_tags(
-      resources: [instance_id],
-      tags: value.collect { |k,v| { :key => k, :value => v } }
-    ) unless value.empty?
-    missing_tags = tags.keys - value.keys
-    ec2.delete_tags(
-      resources: [instance_id],
-      tags: missing_tags.collect { |k| { :key => k } }
-    ) unless missing_tags.empty?
-  end
-
   def destroy
-    Puppet.info("Deleting instance #{name} in region #{resource[:region]}")
-    ec2 = ec2_client(resource[:region])
+    Puppet.info("Deleting instance #{name} in region #{target_region}")
+    ec2 = ec2_client(target_region)
     ec2.terminate_instances(instance_ids: [instance_id])
     ec2.wait_until(:instance_terminated, instance_ids: [instance_id])
     @property_hash[:ensure] = :absent
