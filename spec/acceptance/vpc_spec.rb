@@ -59,6 +59,10 @@ describe "The AWS module" do
     items.first
   end
 
+  def find_load_balancer(name)
+    finder(name, 'get_loadbalancers')
+  end
+
   def generate_ip
     # This generates a resolvable IP address within
     # a specific well populated range
@@ -78,6 +82,7 @@ describe "The AWS module" do
       region = 'sa-east-1'
       @config = {
         :name => @name,
+        :lb_name => "#{PuppetManifest.env_dns_id}#{SecureRandom.uuid}".gsub('-', '')[0...31], # loadbalancer has name length limit
         :region => region,
         :ensure => 'present',
         :netbios_node_type => 2,
@@ -95,6 +100,7 @@ describe "The AWS module" do
           :port     => 22,
           :cidr     => '0.0.0.0/0'
         }],
+        :lb_scheme => 'internal',
         :tags => {
           :department => 'engineering',
           :project => 'cloud',
@@ -165,6 +171,16 @@ describe "The AWS module" do
       expect(@subnet.map_public_ip_on_launch).to be_falsy
       expect(@subnet.default_for_az).to be_falsy
       expect(@aws.tag_difference(@subnet, @config[:tags])).to be_empty
+    end
+
+    it 'should create a load balancer in the VPC' do
+      lb = find_load_balancer(@config[:lb_name])
+      expect(lb.vpc_id).to eq(@vpc.vpc_id)
+      expect(lb.subnets).to eq([@subnet.subnet_id])
+      expect(lb.availability_zones).to eq([@config[:subnet_availability_zone]])
+      expect(lb.instances.size).to eq(1)
+      expect(lb.security_groups).not_to be_empty
+      expect(lb.scheme).to eq(@config[:lb_scheme])
     end
 
     it 'should create a VPN gateway' do

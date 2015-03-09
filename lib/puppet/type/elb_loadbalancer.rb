@@ -19,14 +19,6 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     end
   end
 
-  newproperty(:availability_zones, :array_matching => :all) do
-    desc 'The availability zones in which to launch the load balancer.'
-  end
-
-  newproperty(:instances, :array_matching => :all) do
-    desc 'The instances to associate with the load balancer.'
-  end
-
   newproperty(:listeners, :array_matching => :all) do
     desc 'The ports and protocols the load balancer listens to.'
     def insync?(is)
@@ -52,9 +44,58 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     desc 'The tags for the load balancer.'
   end
 
+  newproperty(:subnets, :array_matching => :all) do
+    defaultto []
+    desc 'The region in which to launch the load balancer.'
+    def insync?(is)
+      is.to_set == should.to_set
+    end
+  end
+
+  newproperty(:security_groups, :array_matching => :all) do
+    desc 'The security groups to associate the load balancer (VPC only).'
+    def insync?(is)
+      is.to_set == should.to_set
+    end
+  end
+
+  newproperty(:availability_zones, :array_matching => :all) do
+    desc 'The availability zones in which to launch the load balancer.'
+    defaultto []
+  end
+
+  newproperty(:instances, :array_matching => :all) do
+    desc 'The instances to associate with the load balancer.'
+  end
+
+  newproperty(:scheme) do
+    desc 'Whether the load balancer is internal or public facing.'
+    defaultto :'internet-facing'
+    newvalues(:'internet-facing', :internal)
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
+  validate do
+    subnets = self[:subnets]
+    zones = self[:availability_zones]
+    fail "You can specify either subnets or availability_zones for the ELB #{self[:name]}" if !zones.empty? && !subnets.empty?
+  end
+
   autorequire(:ec2_instance) do
     instances = self[:instances]
     instances.is_a?(Array) ? instances : [instances]
+  end
+
+  autorequire(:ec2_securitygroup) do
+    groups = self[:security_groups]
+    groups.is_a?(Array) ? groups : [groups]
+  end
+
+  autorequire(:ec2_vpc_subnet) do
+    subnets = self[:subnets]
+    subnets.is_a?(Array) ? subnets : [subnets]
   end
 
 end

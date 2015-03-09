@@ -33,6 +33,9 @@ describe type_class do
       :instances,
       :listeners,
       :tags,
+      :security_groups,
+      :subnets,
+      :scheme,
     ]
   end
 
@@ -61,12 +64,7 @@ describe type_class do
   end
 
   it 'should order tags on output' do
-    tags = {'b' => 1, 'a' => 2}
-    reverse = {'a' => 2, 'b' => 1}
-    elb = type_class.new(:name => 'sample', :tags => tags )
-    expect(elb.property(:tags).insync?(tags)).to be true
-    expect(elb.property(:tags).insync?(reverse)).to be true
-    expect(elb.property(:tags).should_to_s(tags).to_s).to eq(reverse.to_s)
+    expect(type_class).to order_tags_on_output
   end
 
   it "should require a non-empty valid listener" do
@@ -104,6 +102,49 @@ describe type_class do
       'instance_protocol' => 'TCP',
       'instance_port' => '80',
     }])).to be true
+  end
+
+  it 'should default subnets to a blank array' do
+    elb = type_class.new({:name => 'sample'})
+    expect(elb[:subnets]).to eq([])
+  end
+
+  it 'should default availability zones to a blank array' do
+    elb = type_class.new({:name => 'sample'})
+    expect(elb[:availability_zones]).to eq([])
+  end
+
+  it 'should default scheme to public' do
+    elb = type_class.new({:name => 'sample'})
+    expect(elb[:scheme]).to eq(:'internet-facing')
+  end
+
+  it 'should not allow invalid values for scheme' do
+    expect {
+      type_class.new({:name => 'sample', :scheme => 'invalid'})
+    }.to raise_error(Puppet::Error)
+  end
+
+  it 'should allow valid values for scheme' do
+    elb = type_class.new({:name => 'sample', :scheme => 'internal'})
+    expect(elb[:scheme]).to eq(:internal)
+  end
+
+  ['subnets', 'security_groups'].each do |property|
+    it "should ignore the order of #{property} for matching" do
+      values = ['a', 'b']
+      config = {:name => 'sample'}
+      config[property.to_sym] = values
+      elb = type_class.new(config)
+      expect(elb.property(property.to_sym).insync?(values)).to be true
+      expect(elb.property(property.to_sym).insync?(values.reverse)).to be true
+    end
+  end
+
+  it "should disallow passing both a subnet and an availability zone" do
+    expect {
+      type_class.new({:name => 'sample', :subnets => ['subnet'], :availability_zones => ['zones']})
+    }.to raise_error(Puppet::Error)
   end
 
 end

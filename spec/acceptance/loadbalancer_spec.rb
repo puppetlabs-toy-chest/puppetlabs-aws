@@ -87,6 +87,10 @@ describe "ec2_loadbalancer" do
       end
     end
 
+    it "with the default scheme" do
+      expect(@loadbalancer.scheme).to eq('internet-facing')
+    end
+
     it "with one associated instance" do
       expect(@loadbalancer.instances.count).to eq(1)
     end
