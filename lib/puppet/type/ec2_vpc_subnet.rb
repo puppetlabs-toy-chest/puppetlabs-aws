@@ -53,6 +53,15 @@ Puppet::Type.newtype(:ec2_vpc_subnet) do
     end
   end
 
+  newproperty(:map_public_ip_on_launch) do
+    desc 'Indicates whether instances launched in this subnet receive a public IP address.'
+    defaultto :false
+    newvalues(:true, :false)
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
   autorequire(:ec2_vpc) do
     self[:vpc]
   end

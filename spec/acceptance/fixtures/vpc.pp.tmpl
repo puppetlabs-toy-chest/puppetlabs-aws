@@ -58,13 +58,14 @@ ec2_vpc_routetable { '{{name}}-routes':
 }
 
 ec2_vpc_subnet { '{{name}}-subnet':
-  ensure            => {{ensure}},
-  region            => '{{region}}',
-  vpc               => '{{name}}-vpc',
-  cidr_block        => '{{subnet_cidr}}',
-  availability_zone => '{{subnet_availability_zone}}',
-  route_table       => '{{name}}-routes',
-  tags              => {
+  ensure                  => {{ensure}},
+  region                  => '{{region}}',
+  vpc                     => '{{name}}-vpc',
+  cidr_block              => '{{subnet_cidr}}',
+  availability_zone       => '{{subnet_availability_zone}}',
+  map_public_ip_on_launch => {{map_public_ip_on_launch}},
+  route_table             => '{{name}}-routes',
+  tags                    => {
   {{#tags}}
     {{k}} => '{{v}}',
   {{/tags}}
