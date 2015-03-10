@@ -70,8 +70,8 @@ aws_secret_access_key = your_secret_access_key
 
 If you're running the examples in AWS you can instead use [IAM](http://aws.amazon.com/iam/).
 Simply assign the correct role to the instance from which you're running
-the examples. We'll provide more details of the exact profiles for
-different Puppet resources in the future.
+the examples. For a sample profile with all the required permissions see
+the [IAM profile example](examples/iam-profile/).
 
 And finally you can install the module with:
 
