@@ -8,6 +8,7 @@ describe type_class do
     [
       :name,
       :instance_initiated_shutdown_behavior,
+      :iam_instance_profile_name,
     ]
   end
 
@@ -23,7 +24,6 @@ describe type_class do
       :key_name,
       :subnet,
       :ebs_optimized,
-      :iam_instance_profile_name,
       :iam_instance_profile_arn,
     ]
   end

@@ -42,7 +42,7 @@ Puppet::Type.newtype(:ec2_instance) do
     end
   end
 
-  newproperty(:iam_instance_profile_name) do
+  newparam(:iam_instance_profile_name) do
     desc 'The name of the amazon IAM role you want the ec2 instance to operate under'
   end
 
