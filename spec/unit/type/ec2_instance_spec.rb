@@ -104,4 +104,10 @@ describe type_class do
   it 'should order tags on output' do
     expect(type_class).to order_tags_on_output
   end
+
+  it "should disallow passing both an IAM role name and an IAM role ARN" do
+    expect {
+      type_class.new({:name => 'sample', :iam_instance_profile_arn => '1234::ARN', :iam_instance_profile_name => 'foobar'})
+    }.to raise_error(Puppet::Error)
+  end
 end
