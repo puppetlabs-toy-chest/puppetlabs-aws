@@ -13,7 +13,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
       subnets = []
       response.data.subnets.each do |subnet|
         hash = subnet_to_hash(region, subnet)
-        subnets << new(hash) if hash[:name]
+        subnets << new(hash) if has_name?(hash)
       end
       subnets
     end.flatten
