@@ -35,6 +35,13 @@ describe "ec2_instance" do
         :volume_size => 8,
       }
 
+
+      # The value for this ENV var must be an existing IAM role in your Amazon account
+      # the IAM role must be available in the acceptance test region.
+      #
+      # When testing IAM roles you need to provide the IAM role name and the coresponding ARN.
+      @config[:iam_instance_profile_name] = ENV['IAM_ROLE_NAME'] if ENV['IAM_ROLE_NAME'] && ENV['IAM_ROLE_ARN']
+
       PuppetManifest.new(@template, @config).apply
       @instance = get_instance(@config[:name])
     end
@@ -62,6 +69,14 @@ describe "ec2_instance" do
 
     it "with the specified AMI" do
       expect(@instance.image_id).to eq(@config[:image_id])
+    end
+
+    it "with the specified IAM ROLE" do
+      if ENV['IAM_ROLE_ARN']
+        expect(@instance.iam_instance_profile_arn).to eq(ENV['IAM_ROLE_ARN'])
+      else
+        expect(@instance.iam_instance_profile_arn).to be_nil
+      end
     end
 
     it "not associated with a VPC (EC2-Classic accounts only)" do

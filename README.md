@@ -241,3 +241,19 @@ else you would like to be able to do with the module.
 
 Note that this module also requires at least Ruby 1.9 and is only tested on Puppet
 versions from 3.4. If this is too limiting please let us know.
+
+##Acceptance Tests
+
+Rather than hardcode account specific information for acceptance tests in certain
+instances you can provide these values via Environment variables.
+
+### ec2_instance
+
+####IAM Roles
+
+To test provisioning an ec2 instance with an IAM role you can set:
+* ENV['IAM_ROLE_NAME'] - This is the friendly IAM role name.
+* ENV['IAM_ROLE_ARN] - This is the ARN allocated to the IAM role
+
+*Note* when setting the IAM environment variables it is important that you set
+both variables.  The ARN must corespond to the friendly IAM role name.
