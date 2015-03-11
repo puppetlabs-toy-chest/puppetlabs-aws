@@ -80,19 +80,46 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
       availability_zone: resource[:availability_zone],
     )
 
-    ec2.attach_vpn_gateway(
-      vpn_gateway_id: response.data.vpn_gateway.vpn_gateway_id,
-      vpc_id: vpc_response.data.vpcs.first.vpc_id,
-    )
+    gateway_id = response.data.vpn_gateway.vpn_gateway_id
 
     with_retries(:max_tries => 5) do
       ec2.create_tags(
-        resources: [response.data.vpn_gateway.vpn_gateway_id],
+        resources: [gateway_id],
         tags: tags_for_resource,
       )
     end
 
+    ec2.attach_vpn_gateway(
+      vpn_gateway_id: gateway_id,
+      vpc_id: vpc_response.data.vpcs.first.vpc_id,
+    )
+
+    # Due to the possibility of dependent resources failing because the gateway
+    # hasn't attached yet, we wait for attachment.
+
+    @property_hash[:id] = gateway_id
+
+    attempt = 1
+    until attached?
+      Puppet.debug("Waiting for VPN gateway to attach attempt #{attempt} at #{Time.new}")
+      attempt += 1
+      sleep 5
+      if attempt > 30
+        Puppet.warning("VPN gateway not attached but continuing")
+        break
+      end
+    end
+
     @property_hash[:ensure] = :present
+  end
+
+  def attached?
+    ec2 = ec2_client(resource[:region])
+    state_response = ec2.describe_vpn_gateways(filters: [
+      {name: 'attachment.state', values: ['attached']},
+      {name: 'vpn-gateway-id', values: [@property_hash[:id]]},
+    ])
+    !state_response.data.vpn_gateways.empty?
   end
 
   def destroy
