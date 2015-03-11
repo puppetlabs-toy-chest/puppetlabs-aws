@@ -6,7 +6,7 @@
 4. [Usage - Configuration options and additional functionality](#usage)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 6. [Limitations - OS compatibility, etc.](#limitations)
-7. [Acceptance test configuration](#Acceptance tests)
+7. [Acceptance test configuration](#Acceptance Tests)
 
 ##Overview
 

@@ -4,6 +4,7 @@ ec2_instance { '{{name}}':
   image_id => '{{image_id}}',
   instance_type => '{{instance_type}}',
   security_groups => ['default'],
+  iam_instance_profile_name => '{{iam_instance_profile_name}}',
   tags            => {
   {{#tags}}
     {{k}} => '{{v}}',
