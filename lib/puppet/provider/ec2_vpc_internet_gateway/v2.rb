@@ -35,7 +35,9 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
     vpc_id = nil
     attachments = gateway.attachments.map(&:vpc_id)
     if assigned_name and ! attachments.empty?
-      vpc_response = ec2_client(region).describe_vpcs(vpc_ids: attachments)
+      vpc_response = ec2_client(region).describe_vpcs(filters: [
+        {name: 'vpc-id', values: attachments}
+      ])
       vpc = vpc_response.data.vpcs.first
       vpc_name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
       if vpc_name_tag
@@ -43,7 +45,6 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
         vpc_id = vpc.vpc_id
       end
     end
-
     {
       name: assigned_name,
       vpc: vpc_name,
