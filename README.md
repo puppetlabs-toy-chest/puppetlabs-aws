@@ -1,11 +1,12 @@
 ####Table of Contents
 
 1. [Overview](#overview)
-2. [Description - What the module does and why it is useful](#module-description)
+2. [Description - What the module does and why it is useful](#description)
 3. [Setup - Getting started](#setup)
 4. [Usage - Configuration options and additional functionality](#usage)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
+6. [Limitations - OS compatibility, etc.](#limitations)
+7. [Acceptance test configuration](#Acceptance tests)
 
 ##Overview
 
@@ -255,5 +256,5 @@ To test provisioning an ec2 instance with an IAM role you can set:
 * ENV['IAM_ROLE_NAME'] - This is the friendly IAM role name.
 * ENV['IAM_ROLE_ARN] - This is the ARN allocated to the IAM role
 
-*Note* when setting the IAM environment variables it is important that you set
+**Note:** when setting the IAM environment variables it is important that you set
 both variables.  The ARN must corespond to the friendly IAM role name.
