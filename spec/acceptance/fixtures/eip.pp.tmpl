@@ -1,0 +1,5 @@
+ec2_elastic_ip { '{{ip_address}}':
+  ensure   => {{ensure_eip}},
+  region   => '{{region}}',
+  instance => '{{name}}',
+}

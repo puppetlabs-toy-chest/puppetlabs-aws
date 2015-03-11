@@ -1,0 +1,53 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DisassociateAddress&PublicIp=177.71.189.57&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150225T115645Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "8afd8d4319909610206de338bebbff027221ab128e355718b35cb61f0e715ca6"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150225/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=8d08658c7033f33925f0ad4ae624eec85e73dbc364658573b2142f72160a2006"
+          Content-Length: 
+            - "68"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Wed, 25 Feb 2015 11:56:45 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DisassociateAddressResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>add50e46-cb6f-4df1-96fc-0d22fd894b66</requestId>
+                <return>true</return>
+            </DisassociateAddressResponse>
+        http_version: 
+      recorded_at: "Wed, 25 Feb 2015 11:56:46 GMT"
+  recorded_with: "VCR 2.9.3"

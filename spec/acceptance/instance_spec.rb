@@ -417,4 +417,50 @@ describe "ec2_instance" do
     end
   end
 
+  describe 'with an associated elastic ip should create a new instance' do
+
+    before(:each) do
+      @config = {
+        :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :instance_type => 't1.micro',
+        :region => 'sa-east-1',
+        :image_id => 'ami-67a60d7a',
+        :ensure => 'present',
+        :ensure_eip => 'attached',
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
+      }
+
+      @eip_template = 'eip.pp.tmpl'
+      @eip = @aws.ec2_client.allocate_address(
+        domain: @aws.vpc_only? ? 'vpc' : 'standard'
+      )
+      @config[:ip_address] = @eip.public_ip
+
+      PuppetManifest.new(@template, @config).apply
+      PuppetManifest.new(@eip_template, @config).apply
+      @instance = get_instance(@config[:name])
+    end
+
+    after(:each) do
+      @config[:ensure] = 'absent'
+      @config[:ensure_eip] = 'detached'
+      PuppetManifest.new(@template, @config).apply
+      PuppetManifest.new(@eip_template, @config).apply
+
+      instructions = @aws.vpc_only? ? {allocation_id: @eip.allocation_id} : {public_ip: @eip.public_ip}
+      @aws.ec2_client.release_address(instructions)
+      @aws.ec2_client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id])
+    end
+
+    it "associated with a elastic IP" do
+      expect(@instance.public_ip_address).to eq(@eip.public_ip)
+    end
+  end
+
 end

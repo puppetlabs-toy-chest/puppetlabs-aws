@@ -21,3 +21,5 @@ infrastructure.
   Puppet DSL to manage a AWS VPC environment
 * [Using IAM permissions](iam-profile) - an example IAM profile for
   controlling the API permissions required by the module
+* [Elastic IP Addresses](elastic-ip-addresses/) - attach existing elastic
+  IP addresses to instances managed by Puppet
