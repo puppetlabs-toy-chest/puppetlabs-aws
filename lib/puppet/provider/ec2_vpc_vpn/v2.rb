@@ -37,6 +37,9 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   end
 
   def self.connection_to_hash(region, connection)
+    name = name_from_tag(connection)
+    return {} unless name
+
     customer_gateway_name = customer_gateway_name_from_id(region, connection.customer_gateway_id)
     vpn_gateway_name = vpn_gateway_name_from_id(region, connection.vpn_gateway_id)
 
@@ -44,7 +47,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
     static_routes = connection.options.nil? ? nil : connection.options.static_routes_only
 
     {
-      :name             => name_from_tag(connection),
+      :name             => name,
       :id               => connection.vpn_connection_id,
       :customer_gateway => customer_gateway_name,
       :ensure           => :present,

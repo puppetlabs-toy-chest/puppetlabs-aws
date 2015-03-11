@@ -37,6 +37,8 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def self.gateway_to_hash(region, gateway)
+    name = name_from_tag(gateway)
+    return {} unless name
     attached = gateway.vpc_attachments.detect { |vpc| vpc.state == 'attached' }
     vpc_name = nil
     vpc_id = nil
@@ -45,7 +47,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
       vpc_id = vpc_name.nil? ? nil : attached.vpc_id
     end
     {
-      :name   => name_from_tag(gateway),
+      :name   => name,
       :id     => gateway.vpn_gateway_id,
       :vpc    => vpc_name,
       :vpc_id => vpc_id,

@@ -43,13 +43,15 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def self.instance_to_hash(region, instance)
-    name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
-    monitoring = instance.monitoring.state == "enabled" ? true : false
+    name = name_from_tag(instance)
+    return {} unless name
+
     tags = {}
+    subnet_name = nil
+    monitoring = instance.monitoring.state == "enabled" ? true : false
     instance.tags.each do |tag|
       tags[tag.key] = tag.value unless tag.key == 'Name'
     end
-    subnet_name = nil
     if instance.subnet_id
       subnet_response = ec2_client(region).describe_subnets(subnet_ids: [instance.subnet_id])
       subnet_name_tag = subnet_response.data.subnets.first.tags.detect { |tag| tag.key == 'Name' }
@@ -64,7 +66,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end
 
     config = {
-      name: name_tag ? name_tag.value : nil,
+      name: name,
       instance_type: instance.instance_type,
       image_id: instance.image_id,
       instance_id: instance.instance_id,

@@ -34,8 +34,10 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   end
 
   def self.vpc_to_hash(region, vpc)
+    name = name_from_tag(vpc)
+    return {} unless name
     {
-      name: name_from_tag(vpc),
+      name: name,
       id: vpc.vpc_id,
       cidr_block: vpc.cidr_block,
       instance_tenancy: vpc.instance_tenancy,

@@ -43,11 +43,13 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
   end
 
   def self.route_table_to_hash(region, table)
+    name = name_from_tag(table)
+    return {} unless name
     routes = table.routes.collect do |route|
       route_to_hash(region, route)
     end.compact
     {
-      name: name_from_tag(table),
+      name: name,
       id: table.route_table_id,
       vpc: vpc_name_from_id(region, table.vpc_id),
       ensure: :present,

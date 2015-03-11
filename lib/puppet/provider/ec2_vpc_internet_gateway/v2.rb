@@ -35,6 +35,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
 
   def self.gateway_to_hash(region, gateway)
     assigned_name = name_from_tag(gateway)
+    return {} unless assigned_name
     vpc_name = nil
     vpc_id = nil
     if assigned_name

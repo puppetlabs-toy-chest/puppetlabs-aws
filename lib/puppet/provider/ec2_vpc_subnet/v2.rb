@@ -34,6 +34,8 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
   end
 
   def self.subnet_to_hash(region, subnet)
+    name = name_from_tag(subnet)
+    return {} unless name
     ec2 = ec2_client(region)
     table_response = ec2.describe_route_tables(filters: [
       {name: 'association.subnet-id', values: [subnet.subnet_id]},
@@ -42,8 +44,8 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
     table_name = table_response.data.route_tables.empty? ? nil : name_from_tag(table_response.data.route_tables.first)
 
     {
-      name: name_from_tag(subnet),
-      route_table: table_name_tag ? table_name_tag.value : nil,
+      name: name,
+      route_table: table_name,
       id: subnet.subnet_id,
       cidr_block: subnet.cidr_block,
       availability_zone: subnet.availability_zone,
