@@ -14,13 +14,13 @@
           User-Agent: 
             - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
           X-Amz-Date: 
-            - "20150225T121426Z"
+            - "20150312T115135Z"
           Host: 
             - ec2.sa-east-1.amazonaws.com
           X-Amz-Content-Sha256: 
             - "42b7590d6fcede8c09f9f599a1f522a8e8169bd2235e1a36288abc85ecbddd2c"
           Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150225/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=155d1a70595ab9e1dba87156054282b44462187d0bdae691ee65b6d3427f8f94"
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150312/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=469236e9e3cdf05ae2543589f339b881f03f4af4c10a7c479a8f1ca727a79c65"
           Content-Length: 
             - "91"
           Accept: 
@@ -37,7 +37,7 @@
           Vary: 
             - Accept-Encoding
           Date: 
-            - "Wed, 25 Feb 2015 12:14:28 GMT"
+            - "Thu, 12 Mar 2015 11:51:36 GMT"
           Server: 
             - AmazonEC2
         body: 
@@ -45,32 +45,32 @@
           string: |-
             <?xml version="1.0" encoding="UTF-8"?>
             <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>687f5a9e-3981-43d7-8e91-9abe3db4e643</requestId>
+                <requestId>737f57eb-539b-4f17-8f5c-db40f7cc82bb</requestId>
                 <reservationSet>
                     <item>
-                        <reservationId>r-16e7ae03</reservationId>
+                        <reservationId>r-45396950</reservationId>
                         <ownerId>482693910459</ownerId>
                         <groupSet>
                             <item>
-                                <groupId>sg-9717aa88</groupId>
+                                <groupId>sg-0b75ca14</groupId>
                                 <groupName>web-sg</groupName>
                             </item>
                         </groupSet>
                         <instancesSet>
                             <item>
-                                <instanceId>i-bea189ab</instanceId>
+                                <instanceId>i-773e0c62</instanceId>
                                 <imageId>ami-67a60d7a</imageId>
                                 <instanceState>
                                     <code>16</code>
                                     <name>running</name>
                                 </instanceState>
-                                <privateDnsName>ip-10-252-13-184.sa-east-1.compute.internal</privateDnsName>
-                                <dnsName>ec2-54-232-33-160.sa-east-1.compute.amazonaws.com</dnsName>
+                                <privateDnsName>ip-10-252-11-68.sa-east-1.compute.internal</privateDnsName>
+                                <dnsName>ec2-54-94-84-106.sa-east-1.compute.amazonaws.com</dnsName>
                                 <reason/>
                                 <amiLaunchIndex>0</amiLaunchIndex>
                                 <productCodes/>
                                 <instanceType>t1.micro</instanceType>
-                                <launchTime>2015-02-25T08:15:47.000Z</launchTime>
+                                <launchTime>2015-03-09T14:40:46.000Z</launchTime>
                                 <placement>
                                     <availabilityZone>sa-east-1a</availabilityZone>
                                     <groupName/>
@@ -80,11 +80,11 @@
                                 <monitoring>
                                     <state>disabled</state>
                                 </monitoring>
-                                <privateIpAddress>10.252.13.184</privateIpAddress>
-                                <ipAddress>54.232.33.160</ipAddress>
+                                <privateIpAddress>10.252.11.68</privateIpAddress>
+                                <ipAddress>54.94.84.106</ipAddress>
                                 <groupSet>
                                     <item>
-                                        <groupId>sg-9717aa88</groupId>
+                                        <groupId>sg-0b75ca14</groupId>
                                         <groupName>web-sg</groupName>
                                     </item>
                                 </groupSet>
@@ -95,9 +95,9 @@
                                     <item>
                                         <deviceName>/dev/sda1</deviceName>
                                         <ebs>
-                                            <volumeId>vol-6f2ae073</volumeId>
+                                            <volumeId>vol-d903d0c5</volumeId>
                                             <status>attached</status>
-                                            <attachTime>2015-02-25T08:15:51.000Z</attachTime>
+                                            <attachTime>2015-03-09T14:40:49.000Z</attachTime>
                                             <deleteOnTermination>true</deleteOnTermination>
                                         </ebs>
                                     </item>
@@ -110,12 +110,12 @@
                                         <value>web-1</value>
                                     </item>
                                     <item>
-                                        <key>project</key>
-                                        <value>cloud</value>
-                                    </item>
-                                    <item>
                                         <key>created_by</key>
                                         <value>garethr</value>
+                                    </item>
+                                    <item>
+                                        <key>project</key>
+                                        <value>cloud</value>
                                     </item>
                                     <item>
                                         <key>department</key>
@@ -131,13 +131,13 @@
                 </reservationSet>
             </DescribeInstancesResponse>
         http_version: 
-      recorded_at: "Wed, 25 Feb 2015 12:14:28 GMT"
+      recorded_at: "Thu, 12 Mar 2015 11:51:37 GMT"
     - request: 
         method: post
         uri: "https://ec2.sa-east-1.amazonaws.com/"
         body: 
           encoding: UTF-8
-          string: "Action=AssociateAddress&InstanceId=i-bea189ab&PublicIp=177.71.189.57&Version=2014-09-01"
+          string: "Action=DescribeInstances&InstanceId.1=i-773e0c62&Version=2014-09-01"
         headers: 
           Content-Type: 
             - "application/x-www-form-urlencoded; charset=utf-8"
@@ -146,13 +146,145 @@
           User-Agent: 
             - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
           X-Amz-Date: 
-            - "20150225T121428Z"
+            - "20150312T115137Z"
           Host: 
             - ec2.sa-east-1.amazonaws.com
           X-Amz-Content-Sha256: 
-            - "09e0ef7c48c9af8625c29f7e8d2ad0b882d2f1b7e66f7e2507102bd24d202ee0"
+            - "4d7653ec4723ea8ab8bf425ce172a79c0feafee90b505880786dc368655742f1"
           Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150225/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=0e798c5dd4d1d7364eaf6acb453e9d341708511640a45fed419b09590a9c91d0"
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150312/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=27d157a61f3b2d870b526c37f8dc7c463e9cbe26f986dadfc909678efe7061eb"
+          Content-Length: 
+            - "67"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Thu, 12 Mar 2015 11:51:37 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>89891a73-c93f-461c-9d97-f98250af244e</requestId>
+                <reservationSet>
+                    <item>
+                        <reservationId>r-45396950</reservationId>
+                        <ownerId>482693910459</ownerId>
+                        <groupSet>
+                            <item>
+                                <groupId>sg-0b75ca14</groupId>
+                                <groupName>web-sg</groupName>
+                            </item>
+                        </groupSet>
+                        <instancesSet>
+                            <item>
+                                <instanceId>i-773e0c62</instanceId>
+                                <imageId>ami-67a60d7a</imageId>
+                                <instanceState>
+                                    <code>16</code>
+                                    <name>running</name>
+                                </instanceState>
+                                <privateDnsName>ip-10-252-11-68.sa-east-1.compute.internal</privateDnsName>
+                                <dnsName>ec2-54-94-84-106.sa-east-1.compute.amazonaws.com</dnsName>
+                                <reason/>
+                                <amiLaunchIndex>0</amiLaunchIndex>
+                                <productCodes/>
+                                <instanceType>t1.micro</instanceType>
+                                <launchTime>2015-03-09T14:40:46.000Z</launchTime>
+                                <placement>
+                                    <availabilityZone>sa-east-1a</availabilityZone>
+                                    <groupName/>
+                                    <tenancy>default</tenancy>
+                                </placement>
+                                <kernelId>aki-5553f448</kernelId>
+                                <monitoring>
+                                    <state>disabled</state>
+                                </monitoring>
+                                <privateIpAddress>10.252.11.68</privateIpAddress>
+                                <ipAddress>54.94.84.106</ipAddress>
+                                <groupSet>
+                                    <item>
+                                        <groupId>sg-0b75ca14</groupId>
+                                        <groupName>web-sg</groupName>
+                                    </item>
+                                </groupSet>
+                                <architecture>x86_64</architecture>
+                                <rootDeviceType>ebs</rootDeviceType>
+                                <rootDeviceName>/dev/sda1</rootDeviceName>
+                                <blockDeviceMapping>
+                                    <item>
+                                        <deviceName>/dev/sda1</deviceName>
+                                        <ebs>
+                                            <volumeId>vol-d903d0c5</volumeId>
+                                            <status>attached</status>
+                                            <attachTime>2015-03-09T14:40:49.000Z</attachTime>
+                                            <deleteOnTermination>true</deleteOnTermination>
+                                        </ebs>
+                                    </item>
+                                </blockDeviceMapping>
+                                <virtualizationType>paravirtual</virtualizationType>
+                                <clientToken/>
+                                <tagSet>
+                                    <item>
+                                        <key>Name</key>
+                                        <value>web-1</value>
+                                    </item>
+                                    <item>
+                                        <key>created_by</key>
+                                        <value>garethr</value>
+                                    </item>
+                                    <item>
+                                        <key>project</key>
+                                        <value>cloud</value>
+                                    </item>
+                                    <item>
+                                        <key>department</key>
+                                        <value>engineering</value>
+                                    </item>
+                                </tagSet>
+                                <hypervisor>xen</hypervisor>
+                                <networkInterfaceSet/>
+                                <ebsOptimized>false</ebsOptimized>
+                            </item>
+                        </instancesSet>
+                    </item>
+                </reservationSet>
+            </DescribeInstancesResponse>
+        http_version: 
+      recorded_at: "Thu, 12 Mar 2015 11:51:38 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=AssociateAddress&InstanceId=i-773e0c62&PublicIp=177.71.189.57&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150312T115138Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - d627e406663bced61bba6323cbd68564bbbd6dc68ec72b8dc2bf4f012ba58e62
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150312/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=d75ad1c0dded85ef7c53aaea7a341098cc8ecc2644de74aa7471b4c060c276a2"
           Content-Length: 
             - "87"
           Accept: 
@@ -169,7 +301,7 @@
           Vary: 
             - Accept-Encoding
           Date: 
-            - "Wed, 25 Feb 2015 12:14:29 GMT"
+            - "Thu, 12 Mar 2015 11:51:39 GMT"
           Server: 
             - AmazonEC2
         body: 
@@ -177,9 +309,9 @@
           string: |-
             <?xml version="1.0" encoding="UTF-8"?>
             <AssociateAddressResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>a6d2bb10-6da4-448d-8d65-6580a60c8674</requestId>
+                <requestId>47d5daa6-1e61-4957-932f-65e9dfe64285</requestId>
                 <return>true</return>
             </AssociateAddressResponse>
         http_version: 
-      recorded_at: "Wed, 25 Feb 2015 12:14:30 GMT"
+      recorded_at: "Thu, 12 Mar 2015 11:51:39 GMT"
   recorded_with: "VCR 2.9.3"
