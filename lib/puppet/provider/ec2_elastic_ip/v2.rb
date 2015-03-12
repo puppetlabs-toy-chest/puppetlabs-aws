@@ -74,7 +74,8 @@ Puppet::Type.type(:ec2_elastic_ip).provide(:v2, :parent => PuppetX::Puppetlabs::
       }
     end
 
-    ec2_client(resource[:region]).associate_address(config)
+    ec2.wait_until(:instance_running, instance_ids: [instance_ids.first])
+    ec2.associate_address(config)
     @property_hash[:instance] = resource[:instance]
     @property_hash[:ensure] = :attached
   end
