@@ -827,12 +827,12 @@ describe "The AWS module" do
       result = TestExecutor.puppet_resource('ec2_vpc_customer_gateway', options, '--modulepath ../')
       expect(result.stderr).not_to match(/Error/), error_message
       expect(@aws.send('get_customer_gateways', cgw_name)).to be_empty
-      # vpn
+      # vpn gateway
       vgw_name = "#{@delete_me[:name]}-vgw"
       options = {:name => vgw_name, :region => @default_region, :ensure => 'absent'}
       result = TestExecutor.puppet_resource('ec2_vpc_vpn_gateway', options, '--modulepath ../')
       expect(result.stderr).not_to match(/Error/), error_message
-      expect(@aws.send('get_vpn', vpn_name)).to be_empty
+      expect(@aws.send('get_vpn_gateways', vgw_name)).to be_empty
       # subnet
       subnet_name = "#{@delete_me[:name]}-subnet"
       options = {:name => subnet_name, :region => @default_region, :ensure => 'absent'}
