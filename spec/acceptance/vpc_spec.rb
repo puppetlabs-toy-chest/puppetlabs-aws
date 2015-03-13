@@ -773,7 +773,7 @@ describe "The AWS module" do
       expect(result[:output].any? { |x| x.include? 'Only one route per gateway allowed'}).to eq(true)
     end
 
-    it 'attempt to add a route that has an invalid cidr block ' do
+    it 'attempt to add a route that has an invalid CIDR block, AWS will coerce to a valid CIDR' do
       @negative_config[:route_settings] = [
         {
           # this is the bad one
@@ -789,9 +789,13 @@ describe "The AWS module" do
           :gateway                => 'local',
         },
       ]
+      # apply once expect no error
       result = PuppetManifest.new(@template, @negative_config).apply
-      require 'pry'; binding.pry
-      expect(result[:output].any? { |x| /The CIDR.*conflicts with another subnet/.match(x)}).to eq(true)
+      expect(result[:output].any?{ |x| x.include? 'Error:'}).to eq(false)
+      # apply again looking for puppet error on attempted change
+      result2 = PuppetManifest.new(@template, @negative_config).apply
+      regex = /Error: routes property is read-only once ec2_vpc_routetable created/
+      expect(result2[:output].any? { |x| regex.match(x)}).to eq(true)
     end
 
   end
