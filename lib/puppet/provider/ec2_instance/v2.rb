@@ -239,7 +239,6 @@ Found #{matching_groups.length}:
         min_count: 1,
         max_count: 1,
         instance_type: resource[:instance_type],
-        iam_instance_profile: !resource[:iam_instance_profile_name] ? 'name => ' + resource[:iam_instance_profile_name] : 'arn => ' + resource[:iam_instance_profile_arn],
         user_data: data,
         ebs_optimized: resource[:ebs_optimized].to_s,
         instance_initiated_shutdown_behavior: resource[:instance_initiated_shutdown_behavior].to_s,

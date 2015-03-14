@@ -481,6 +481,8 @@ describe "ec2_instance" do
   describe 'should create a new instance with specified IAM role ARN' do
 
     before(:all) do
+      @iam_arn_template = 'instance_iam_arn.pp.tmpl'
+      
       @config = {
         :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
         :instance_type => 't1.micro',
@@ -502,7 +504,7 @@ describe "ec2_instance" do
       # When testing IAM roles you need to provide the IAM role name and the coresponding ARN.
       @config[:iam_instance_profile_arn] = ENV['IAM_ROLE_ARN'] if ENV['IAM_ROLE_NAME'] && ENV['IAM_ROLE_ARN']
 
-      PuppetManifest.new(@template, @config).apply
+      PuppetManifest.new(@iam_arn_template, @config).apply
       @instance = get_instance(@config[:name])
     end
 
@@ -510,7 +512,7 @@ describe "ec2_instance" do
       @aws.ec2_client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
 
       new_config = @config.update({:ensure => 'absent'})
-      PuppetManifest.new(@template, new_config).apply
+      PuppetManifest.new(@iam_arn_template, @new_config).apply
 
       @aws.ec2_client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id])
     end
