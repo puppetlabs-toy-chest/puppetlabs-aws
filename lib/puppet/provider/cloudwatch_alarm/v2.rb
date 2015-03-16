@@ -29,6 +29,10 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
   read_only(:region, :alarm_actions)
 
   def self.alarm_to_hash(region, alarm)
+    response = autoscaling_client(region).describe_policies(
+      policy_names: alarm.alarm_actions
+    )
+    actions = response.scaling_policies.collect(&:policy_name)
     {
       name: alarm.alarm_name,
       metric: alarm.metric_name,
@@ -39,6 +43,7 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
       evaluation_periods: alarm.evaluation_periods,
       comparison_operator: alarm.comparison_operator,
       ensure: :present,
+      alarm_actions: actions,
       region: region,
       dimensions: alarm.dimensions.collect { |v| { v.name => v.value} }
     }

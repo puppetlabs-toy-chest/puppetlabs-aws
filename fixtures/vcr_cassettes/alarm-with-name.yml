@@ -14,13 +14,13 @@
           User-Agent: 
             - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
           X-Amz-Date: 
-            - "20150121T110514Z"
+            - "20150316T110923Z"
           Host: 
             - monitoring.sa-east-1.amazonaws.com
           X-Amz-Content-Sha256: 
             - "57c3d9c7d24b342f02bb6f04344888c8b2f5edb728e610a68d0d1665454dde11"
           Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150121/sa-east-1/monitoring/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=f3d8611791fa09e9ccb8a15f7099f3448d1a1480b23f85125182b399ebb88d7c"
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150316/sa-east-1/monitoring/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=6a5036e00d9f012e5610b0faac518987258657a0a6f177b37b0a7a145f210ffc"
           Content-Length: 
             - "40"
           Accept: 
@@ -31,16 +31,102 @@
           message: OK
         headers: 
           X-Amzn-Requestid: 
-            - "5f5e17fc-a15d-11e4-98d7-1544e8f09411"
+            - e7dfd3b5-cbcc-11e4-8a1d-e970fe3712ce
           Content-Type: 
             - text/xml
           Content-Length: 
-            - "2850"
+            - "3608"
           Date: 
-            - "Wed, 21 Jan 2015 11:05:12 GMT"
+            - "Mon, 16 Mar 2015 11:09:24 GMT"
         body: 
           encoding: UTF-8
-          string: "<DescribeAlarmsResponse xmlns=\x22http://monitoring.amazonaws.com/doc/2010-08-01/\x22>\n  <DescribeAlarmsResult>\n    <MetricAlarms>\n      <member>\n        <StateUpdatedTimestamp>2015-01-21T11:04:52.486Z</StateUpdatedTimestamp>\n        <InsufficientDataActions/>\n        <AlarmArn>arn:aws:cloudwatch:sa-east-1:482693910459:alarm:AddCapacity</AlarmArn>\n        <AlarmConfigurationUpdatedTimestamp>2015-01-21T11:04:53.236Z</AlarmConfigurationUpdatedTimestamp>\n        <AlarmName>AddCapacity</AlarmName>\n        <Period>120</Period>\n        <StateValue>INSUFFICIENT_DATA</StateValue>\n        <OKActions/>\n        <ActionsEnabled>true</ActionsEnabled>\n        <EvaluationPeriods>2</EvaluationPeriods>\n        <Threshold>60.0</Threshold>\n        <Namespace>AWS/EC2</Namespace>\n        <Statistic>Average</Statistic>\n        <AlarmActions>\n          <member>arn:aws:autoscaling:sa-east-1:482693910459:scalingPolicy:9ecb8876-0557-4e69-8b5c-1df92ed8859e:autoScalingGroupName/test-asg:policyName/scaleout</member>\n        </AlarmActions>\n        <StateReason>Unchecked: Initial alarm creation</StateReason>\n        <Dimensions>\n          <member>\n            <Name>AutoScalingGroupName</Name>\n            <Value>test-asg</Value>\n          </member>\n        </Dimensions>\n        <ComparisonOperator>GreaterThanOrEqualToThreshold</ComparisonOperator>\n        <MetricName>CPUUtilization</MetricName>\n      </member>\n      <member>\n        <StateUpdatedTimestamp>2015-01-21T11:04:50.326Z</StateUpdatedTimestamp>\n        <InsufficientDataActions/>\n        <AlarmArn>arn:aws:cloudwatch:sa-east-1:482693910459:alarm:RemoveCapacity</AlarmArn>\n        <AlarmConfigurationUpdatedTimestamp>2015-01-21T11:04:51.029Z</AlarmConfigurationUpdatedTimestamp>\n        <AlarmName>RemoveCapacity</AlarmName>\n        <Period>120</Period>\n        <StateValue>INSUFFICIENT_DATA</StateValue>\n        <OKActions/>\n        <ActionsEnabled>true</ActionsEnabled>\n        <EvaluationPeriods>2</EvaluationPeriods>\n        <Threshold>40.0</Threshold>\n        <Namespace>AWS/EC2</Namespace>\n        <Statistic>Average</Statistic>\n        <AlarmActions>\n          <member>arn:aws:autoscaling:sa-east-1:482693910459:scalingPolicy:db7b3c33-c1f3-4d5c-9392-2f50a201d9e4:autoScalingGroupName/test-asg:policyName/scalein</member>\n        </AlarmActions>\n        <StateReason>Unchecked: Initial alarm creation</StateReason>\n        <Dimensions>\n          <member>\n            <Name>AutoScalingGroupName</Name>\n            <Value>test-asg</Value>\n          </member>\n        </Dimensions>\n        <ComparisonOperator>LessThanOrEqualToThreshold</ComparisonOperator>\n        <MetricName>CPUUtilization</MetricName>\n      </member>\n    </MetricAlarms>\n  </DescribeAlarmsResult>\n  <ResponseMetadata>\n    <RequestId>5f5e17fc-a15d-11e4-98d7-1544e8f09411</RequestId>\n  </ResponseMetadata>\n</DescribeAlarmsResponse>\n"
+          string: "<DescribeAlarmsResponse xmlns=\x22http://monitoring.amazonaws.com/doc/2010-08-01/\x22>\n  <DescribeAlarmsResult>\n    <MetricAlarms>\n      <member>\n        <StateUpdatedTimestamp>2015-03-16T10:53:54.394Z</StateUpdatedTimestamp>\n        <StateReasonData>{&quot;version&quot;:&quot;1.0&quot;,&quot;queryDate&quot;:&quot;2015-03-16T10:53:54.382+0000&quot;,&quot;startDate&quot;:&quot;2015-03-16T10:51:00.000+0000&quot;,&quot;statistic&quot;:&quot;Average&quot;,&quot;period&quot;:120,&quot;recentDatapoints&quot;:[16.64],&quot;threshold&quot;:70.0}</StateReasonData>\n        <InsufficientDataActions/>\n        <AlarmArn>arn:aws:cloudwatch:sa-east-1:482693910459:alarm:AddCapacity</AlarmArn>\n        <AlarmConfigurationUpdatedTimestamp>2015-03-16T10:51:36.847Z</AlarmConfigurationUpdatedTimestamp>\n        <AlarmName>AddCapacity</AlarmName>\n        <Period>120</Period>\n        <StateValue>OK</StateValue>\n        <OKActions/>\n        <ActionsEnabled>true</ActionsEnabled>\n        <EvaluationPeriods>2</EvaluationPeriods>\n        <Namespace>AWS/EC2</Namespace>\n        <Threshold>70.0</Threshold>\n        <Statistic>Average</Statistic>\n        <AlarmActions>\n          <member>arn:aws:autoscaling:sa-east-1:482693910459:scalingPolicy:73acc988-cdc0-4570-98a5-02c3e115bf3b:autoScalingGroupName/test-asg:policyName/scaleout</member>\n        </AlarmActions>\n        <StateReason>Threshold Crossed: 1 datapoint (16.64) was not greater than or equal to the threshold (70.0).</StateReason>\n        <Dimensions>\n          <member>\n            <Name>AutoScalingGroupName</Name>\n            <Value>test-asg</Value>\n          </member>\n        </Dimensions>\n        <ComparisonOperator>GreaterThanOrEqualToThreshold</ComparisonOperator>\n        <MetricName>CPUUtilization</MetricName>\n      </member>\n      <member>\n        <StateUpdatedTimestamp>2015-03-16T10:53:54.880Z</StateUpdatedTimestamp>\n        <StateReasonData>{&quot;version&quot;:&quot;1.0&quot;,&quot;queryDate&quot;:&quot;2015-03-16T10:53:54.863+0000&quot;,&quot;startDate&quot;:&quot;2015-03-16T10:51:00.000+0000&quot;,&quot;statistic&quot;:&quot;Average&quot;,&quot;period&quot;:120,&quot;recentDatapoints&quot;:[16.64],&quot;threshold&quot;:40.0}</StateReasonData>\n        <InsufficientDataActions/>\n        <AlarmArn>arn:aws:cloudwatch:sa-east-1:482693910459:alarm:RemoveCapacity</AlarmArn>\n        <AlarmConfigurationUpdatedTimestamp>2015-03-16T10:51:34.736Z</AlarmConfigurationUpdatedTimestamp>\n        <AlarmName>RemoveCapacity</AlarmName>\n        <Period>120</Period>\n        <StateValue>ALARM</StateValue>\n        <OKActions/>\n        <ActionsEnabled>true</ActionsEnabled>\n        <EvaluationPeriods>2</EvaluationPeriods>\n        <Namespace>AWS/EC2</Namespace>\n        <Threshold>40.0</Threshold>\n        <Statistic>Average</Statistic>\n        <AlarmActions>\n          <member>arn:aws:autoscaling:sa-east-1:482693910459:scalingPolicy:20307cfc-7689-4fd5-8429-a5964f7858df:autoScalingGroupName/test-asg:policyName/scalein</member>\n        </AlarmActions>\n        <StateReason>Threshold Crossed: 1 datapoint (16.64) was less than or equal to the threshold (40.0).</StateReason>\n        <Dimensions>\n          <member>\n            <Name>AutoScalingGroupName</Name>\n            <Value>test-asg</Value>\n          </member>\n        </Dimensions>\n        <ComparisonOperator>LessThanOrEqualToThreshold</ComparisonOperator>\n        <MetricName>CPUUtilization</MetricName>\n      </member>\n    </MetricAlarms>\n  </DescribeAlarmsResult>\n  <ResponseMetadata>\n    <RequestId>e7dfd3b5-cbcc-11e4-8a1d-e970fe3712ce</RequestId>\n  </ResponseMetadata>\n</DescribeAlarmsResponse>\n"
         http_version: 
-      recorded_at: "Wed, 21 Jan 2015 11:05:15 GMT"
+      recorded_at: "Mon, 16 Mar 2015 11:09:25 GMT"
+    - request: 
+        method: post
+        uri: "https://autoscaling.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribePolicies&PolicyNames.member.1=arn%3Aaws%3Aautoscaling%3Asa-east-1%3A482693910459%3AscalingPolicy%3A73acc988-cdc0-4570-98a5-02c3e115bf3b%3AautoScalingGroupName%2Ftest-asg%3ApolicyName%2Fscaleout&Version=2011-01-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150316T110925Z"
+          Host: 
+            - autoscaling.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "9c51f73cd49871da989b15eef324b8d2aea964d21c296012f438a6d6a17bc62f"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150316/sa-east-1/autoscaling/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=64ee2edf7a2f56660d9f61ccf68c1c54e3d63f377ff9e1763fa7560e9a2abe18"
+          Content-Length: 
+            - "227"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - e8c4b5bf-cbcc-11e4-a5ed-6bcdaa944db0
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "958"
+          Date: 
+            - "Mon, 16 Mar 2015 11:09:26 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<DescribePoliciesResponse xmlns=\x22http://autoscaling.amazonaws.com/doc/2011-01-01/\x22>\n  <DescribePoliciesResult>\n    <ScalingPolicies>\n      <member>\n        <PolicyARN>arn:aws:autoscaling:sa-east-1:482693910459:scalingPolicy:73acc988-cdc0-4570-98a5-02c3e115bf3b:autoScalingGroupName/test-asg:policyName/scaleout</PolicyARN>\n        <AdjustmentType>PercentChangeInCapacity</AdjustmentType>\n        <ScalingAdjustment>30</ScalingAdjustment>\n        <PolicyName>scaleout</PolicyName>\n        <AutoScalingGroupName>test-asg</AutoScalingGroupName>\n        <Alarms>\n          <member>\n            <AlarmName>AddCapacity</AlarmName>\n            <AlarmARN>arn:aws:cloudwatch:sa-east-1:482693910459:alarm:AddCapacity</AlarmARN>\n          </member>\n        </Alarms>\n      </member>\n    </ScalingPolicies>\n  </DescribePoliciesResult>\n  <ResponseMetadata>\n    <RequestId>e8c4b5bf-cbcc-11e4-a5ed-6bcdaa944db0</RequestId>\n  </ResponseMetadata>\n</DescribePoliciesResponse>\n"
+        http_version: 
+      recorded_at: "Mon, 16 Mar 2015 11:09:26 GMT"
+    - request: 
+        method: post
+        uri: "https://autoscaling.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=DescribePolicies&PolicyNames.member.1=arn%3Aaws%3Aautoscaling%3Asa-east-1%3A482693910459%3AscalingPolicy%3A20307cfc-7689-4fd5-8429-a5964f7858df%3AautoScalingGroupName%2Ftest-asg%3ApolicyName%2Fscalein&Version=2011-01-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.1.4 x86_64-darwin14.0"
+          X-Amz-Date: 
+            - "20150316T110926Z"
+          Host: 
+            - autoscaling.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - "03d638e520db96a5ed12fe1b9f7b9e09496196396da3348edb51cc320b7007b5"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150316/sa-east-1/autoscaling/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=57e9aa4a0c684e5f4c6354a8e15d26f7f87cfb5f2820ee7f5cb33179dd09db19"
+          Content-Length: 
+            - "226"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          X-Amzn-Requestid: 
+            - e9619228-cbcc-11e4-9910-cfbacb854748
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "955"
+          Date: 
+            - "Mon, 16 Mar 2015 11:09:27 GMT"
+        body: 
+          encoding: UTF-8
+          string: "<DescribePoliciesResponse xmlns=\x22http://autoscaling.amazonaws.com/doc/2011-01-01/\x22>\n  <DescribePoliciesResult>\n    <ScalingPolicies>\n      <member>\n        <PolicyARN>arn:aws:autoscaling:sa-east-1:482693910459:scalingPolicy:20307cfc-7689-4fd5-8429-a5964f7858df:autoScalingGroupName/test-asg:policyName/scalein</PolicyARN>\n        <AdjustmentType>ChangeInCapacity</AdjustmentType>\n        <ScalingAdjustment>-2</ScalingAdjustment>\n        <PolicyName>scalein</PolicyName>\n        <AutoScalingGroupName>test-asg</AutoScalingGroupName>\n        <Alarms>\n          <member>\n            <AlarmName>RemoveCapacity</AlarmName>\n            <AlarmARN>arn:aws:cloudwatch:sa-east-1:482693910459:alarm:RemoveCapacity</AlarmARN>\n          </member>\n        </Alarms>\n      </member>\n    </ScalingPolicies>\n  </DescribePoliciesResult>\n  <ResponseMetadata>\n    <RequestId>e9619228-cbcc-11e4-9910-cfbacb854748</RequestId>\n  </ResponseMetadata>\n</DescribePoliciesResponse>\n"
+        http_version: 
+      recorded_at: "Mon, 16 Mar 2015 11:09:27 GMT"
   recorded_with: "VCR 2.9.3"
