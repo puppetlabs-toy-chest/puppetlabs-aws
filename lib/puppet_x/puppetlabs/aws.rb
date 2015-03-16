@@ -55,8 +55,16 @@ This could be because some other process is modifying AWS at the same time."""
         end
       end
 
+      def self.logger
+        if ENV['PUPPET_AWS_DEBUG_LOG'] and not ENV['PUPPET_AWS_DEBUG_LOG'].empty?
+          Logger.new('puppet-aws-debug.log')
+        else
+          nil
+        end
+      end
+
       def self.ec2_client(region = default_region)
-        ::Aws::EC2::Client.new({region: region})
+        ::Aws::EC2::Client.new({region: region, logger: logger})
       end
 
       def ec2_client(region = default_region)
@@ -73,7 +81,7 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def self.elb_client(region = default_region)
-        ::Aws::ElasticLoadBalancing::Client.new({region: region})
+        ::Aws::ElasticLoadBalancing::Client.new({region: region, logger: logger})
       end
 
       def elb_client(region = default_region)
@@ -81,7 +89,7 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def self.autoscaling_client(region = default_region)
-        ::Aws::AutoScaling::Client.new({region: region})
+        ::Aws::AutoScaling::Client.new({region: region, logger: logger})
       end
 
       def autoscaling_client(region = default_region)
@@ -89,7 +97,7 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def self.cloudwatch_client(region = default_region)
-        ::Aws::CloudWatch::Client.new({region: region})
+        ::Aws::CloudWatch::Client.new({region: region, logger: logger})
       end
 
       def cloudwatch_client(region = default_region)
@@ -97,7 +105,7 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def self.route53_client(region = default_region)
-        ::Aws::Route53::Client.new({region: region})
+        ::Aws::Route53::Client.new({region: region, logger: logger})
       end
 
       def route53_client(region = default_region)
