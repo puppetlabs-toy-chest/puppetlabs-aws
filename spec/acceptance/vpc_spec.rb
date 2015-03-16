@@ -678,60 +678,124 @@ describe "The AWS module" do
 
     end
 
-    context 'Negative cases' do
+  end
 
-      before(:all) do
-        new_name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
-        @negative_config = @config.clone
-        @negative_config[:name] = new_name
-      end
+  describe 'Negative cases for VPC' do
 
-      after(:all) do
-        template = 'vpc_complete_delete.pp.tmpl'
-        config = {:name => @negative_config[:name], :region => @config[:region], :ensure => 'absent'}
-        result = PuppetManifest.new(template, config).apply
-        expect(result[:output].any?{ |x| x.include? 'Error:'}).to eq(false)
-      end
-
-      it 'attempt to add two routes that point to the same gateway' do
-        @negative_config[:route_settings] = [
+    before(:all) do
+      @template = 'vpc_complete.pp.tmpl'
+      name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
+      region = @default_region
+      ip_address = generate_ip
+      @negative_config = {
+        # shared properties
+        :name                       => name,
+        :region                     => region,
+        :ensure                     => 'present',
+        :tags                       => {
+          :department     => 'engineering',
+          :project        => 'cloud',
+          :created_by     => 'aws-acceptance',
+        },
+        :vpn_type                   => 'ipsec.1',
+        # ec2_vpc properties
+        :vpc_cidr                   => '10.0.0.0/16',
+        :dhcp_options_setting       => "#{name}-options",
+        :vpc_instance_tenancy       => 'default',
+        # ec2_vpc_dhcp_options properties
+        :netbios_node_type          => 2,
+        :netbios_name_servers       => ['172.16.48.16', '172.16.48.32','172.16.48.48'],
+        :ntp_servers                => ['172.16.32.16', '172.16.32.32','172.16.32.48'],
+        :domain_name_servers        => ['172.16.16.16', '172.16.16.32','172.16.16.48'],
+        :domain_name                => ['example.com', 'example2.com', 'example3.com'],
+        # ec2_vpc_routetable properties
+        :routetable_vpc_setting     => "#{name}-vpc",
+        :route_settings             => [
           {
+            # igw
             :destination_cidr_block => '10.50.50.50/31',
-            :gateway                => "local",
+            :gateway                => "#{name}-igw",
           },
           {
+            # vgw
             :destination_cidr_block => '10.20.20.20/30',
-            :gateway                => "local",
+            :gateway                => "#{name}-vgw",
           },
           {
             :destination_cidr_block => '10.0.0.0/16',
             :gateway                => 'local',
           },
-        ]
-        result = PuppetManifest.new(@template, @negative_config).apply
-        expect(result[:output].any? { |x| x.include? 'Only one route per gateway allowed'}).to eq(true)
-      end
+        ],
+        # ec2_vpc_subnet properties
+        :subnet_vpc_setting         => "#{name}-vpc",
+        :subnet_cidr                => '10.0.0.0/24',
+        :subnet_availability_zone   => "#{region}a",
+        :subnet_route_table_setting => "#{name}-routes",
+        # ec2_vpc_internet_gateway properties
+        :igw_vpc_setting            => "#{name}-vpc",
+        # ec2_vpc_customer_gateway properties
+        :customer_ip_address        => ip_address,
+        :bgp_asn                    => '65000',
+        # ec2_vpc_vpn properties
+        :vpn_vgw_setting            => "#{name}-vgw",
+        :vpn_cgw_setting            => "#{name}-cgw",
+        :vpn_routes                 => ['0.0.0.0/0', '0.0.0.50/31'],
+        :static_routes              => true,
+        # ec2_vpc_vpn_gateway properites
+        :vgw_vpc_setting            => "#{name}-vpc",
+        :vgw_availability_zone      => "#{region}a",
+      }
+    end
 
-      it 'attempt to add a route that has an invalid cidr block ' do
-        @negative_config[:route_settings] = [
-          {
-            # this is the bad one
-            :destination_cidr_block => '10.113.0.0/14',
-            :gateway                => "#{@name}-igw",
-          },
-          {
-            :destination_cidr_block => '10.20.20.20/30',
-            :gateway                => "#{@name}-vgw",
-          },
-          {
-            :destination_cidr_block => '10.0.0.0/16',
-            :gateway                => 'local',
-          },
-        ]
-        result = PuppetManifest.new(@template, @negative_config).apply
-        expect(result[:output].any? { |x| /The CIDR.*conflicts with another subnet/.match(x)}).to eq(true)
-      end
+    after(:each) do
+      template = 'vpc_complete_delete.pp.tmpl'
+      config = {:name => @negative_config[:name], :region => @negative_config[:region], :ensure => 'absent'}
+      result = PuppetManifest.new(template, config).apply
+      expect(result[:output].any?{ |x| x.include? 'Error:'}).to eq(false)
+    end
 
+    it 'attempt to add two routes that point to the same gateway' do
+      @negative_config[:route_settings] = [
+        {
+          :destination_cidr_block => '10.50.50.50/31',
+          :gateway                => "local",
+        },
+        {
+          :destination_cidr_block => '10.20.20.20/30',
+          :gateway                => "local",
+        },
+        {
+          :destination_cidr_block => '10.0.0.0/16',
+          :gateway                => 'local',
+        },
+      ]
+      result = PuppetManifest.new(@template, @negative_config).apply
+      expect(result[:output].any? { |x| x.include? 'Only one route per gateway allowed'}).to eq(true)
+    end
+
+    it 'attempt to add a route that has an invalid CIDR block, AWS will coerce to a valid CIDR' do
+      @negative_config[:route_settings] = [
+        {
+          # this is the bad one
+          :destination_cidr_block => '10.113.0.0/14',
+          :gateway                => "#{@negative_config[:name]}-igw",
+        },
+        {
+          :destination_cidr_block => '10.20.20.20/30',
+          :gateway                => "#{@negative_config[:name]}-vgw",
+        },
+        {
+          :destination_cidr_block => '10.0.0.0/16',
+          :gateway                => 'local',
+        },
+      ]
+      # apply once expect no error
+      result = PuppetManifest.new(@template, @negative_config).apply
+      expect(result[:output].any?{ |x| x.include? 'Error:'}).to eq(false)
+      # apply again looking for puppet error on attempted change
+      result2 = PuppetManifest.new(@template, @negative_config).apply
+      regex = /Error: routes property is read-only once ec2_vpc_routetable created/
+      expect(result2[:output].any? { |x| regex.match(x)}).to eq(true)
     end
 
   end
