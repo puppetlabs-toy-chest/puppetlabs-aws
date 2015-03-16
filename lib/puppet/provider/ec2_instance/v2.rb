@@ -223,6 +223,20 @@ Found #{matching_groups.length}:
     config
   end
 
+  def config_with_public_interface(config)
+    if resource[:associate_public_ip_address] == :true
+      config[:network_interfaces] = [{
+        device_index: 0,
+        subnet_id: config[:subnet_id],
+        groups: config[:security_group_ids],
+        associate_public_ip_address: true,
+      }]
+      config[:subnet_id] = nil
+      config[:security_group_ids] = nil
+    end
+    config
+  end
+
   def create
     if stopped?
       restart
@@ -252,6 +266,7 @@ Found #{matching_groups.length}:
       config = config_with_devices(config)
       config = config_with_network_details(config)
       config = config_with_private_ip(config)
+      config = config_with_public_interface(config)
 
       response = ec2.run_instances(config)
 

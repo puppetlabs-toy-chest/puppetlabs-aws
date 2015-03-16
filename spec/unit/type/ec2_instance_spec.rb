@@ -8,6 +8,7 @@ describe type_class do
     [
       :name,
       :instance_initiated_shutdown_behavior,
+      :associate_public_ip_address,
     ]
   end
 
@@ -55,6 +56,11 @@ describe type_class do
   it 'should default monitoring to false' do
     srv = type_class.new(:name => 'sample')
     expect(srv[:monitoring]).to eq(:false)
+  end
+
+  it 'should default allocating a public ip to false' do
+    srv = type_class.new(:name => 'sample')
+    expect(srv[:associate_public_ip_address]).to eq(:false)
   end
 
   it 'should default ebs obtimized to false' do

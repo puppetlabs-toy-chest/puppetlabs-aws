@@ -216,10 +216,11 @@ describe "The AWS module" do
       expect(@aws.tag_difference(vpn, @config[:tags])).to be_empty
     end
 
-    it 'should create an instance in the VPC' do
+    it 'should create a private instance in the VPC' do
       instance = find_instance("#{@name}-instance")
       expect(instance.subnet_id).to eq(@subnet.subnet_id)
       expect(instance.vpc_id).to eq(@vpc.vpc_id)
+      expect(instance.public_ip_address).to be_nil
     end
 
     context 'change tags' do
@@ -326,23 +327,24 @@ describe "The AWS module" do
           },
         ],
         # ec2_vpc_subnet properties
-        :subnet_vpc_setting         => "#{@name}-vpc",
-        :subnet_cidr                => '10.0.0.0/24',
-        :subnet_availability_zone   => "#{region}a",
-        :subnet_route_table_setting => "#{@name}-routes",
+        :subnet_vpc_setting          => "#{@name}-vpc",
+        :subnet_cidr                 => '10.0.0.0/24',
+        :subnet_availability_zone    => "#{region}a",
+        :subnet_route_table_setting  => "#{@name}-routes",
         # ec2_vpc_internet_gateway properties
-        :igw_vpc_setting            => "#{@name}-vpc",
+        :igw_vpc_setting             => "#{@name}-vpc",
         # ec2_vpc_customer_gateway properties
-        :customer_ip_address        => ip_address,
-        :bgp_asn                    => '65000',
+        :customer_ip_address         => ip_address,
+        :bgp_asn                     => '65000',
         # ec2_vpc_vpn properties
-        :vpn_vgw_setting            => "#{@name}-vgw",
-        :vpn_cgw_setting            => "#{@name}-cgw",
-        :vpn_routes                 => ['0.0.0.0/0', '0.0.0.50/31'],
-        :static_routes              => true,
+        :vpn_vgw_setting             => "#{@name}-vgw",
+        :vpn_cgw_setting             => "#{@name}-cgw",
+        :vpn_routes                  => ['0.0.0.0/0', '0.0.0.50/31'],
+        :static_routes               => true,
         # ec2_vpc_vpn_gateway properites
-        :vgw_vpc_setting            => "#{@name}-vpc",
-        :vgw_availability_zone      => "#{region}a",
+        :vgw_vpc_setting             => "#{@name}-vpc",
+        :vgw_availability_zone       => "#{region}a",
+        :associate_public_ip_address => true,
       }
       @template = 'vpc_complete.pp.tmpl'
       result = PuppetManifest.new(@template, @config).apply
@@ -355,6 +357,13 @@ describe "The AWS module" do
       config = {:name => @config[:name], :region => @config[:region], :ensure => 'absent'}
       result = PuppetManifest.new(template, config).apply
       expect(result[:output].any?{ |x| x.include? 'Error:'}).to eq(false)
+    end
+
+    it 'should create a public instance in the VPC' do
+      instance = find_instance("#{@name}-instance")
+      @aws.ec2_client.wait_until(:instance_running, instance_ids: [instance.instance_id])
+      running_instance = find_instance("#{@name}-instance")
+      expect(running_instance.public_ip_address).not_to be_nil
     end
 
     context 'using puppet resource' do
@@ -799,6 +808,7 @@ describe "The AWS module" do
         # ec2_vpc_vpn_gateway properites
         :vgw_vpc_setting            => "#{name}-vpc",
         :vgw_availability_zone      => "#{region}a",
+        :associate_public_ip_address => false,
       }
       template = 'vpc_complete.pp.tmpl'
       result = PuppetManifest.new(template, @delete_me).apply
@@ -807,9 +817,15 @@ describe "The AWS module" do
 
     it 'should delete without error' do
       # These types must be deleted in order
-      # igw
       ENV['AWS_REGION'] = @default_region
       error_message = 'An unexpected error was raised with puppet resource'
+      # instance
+      instance_name = "#{@delete_me[:name]}-instance"
+      options = {:name => instance_name, :region => @default_region, :ensure => 'absent'}
+      result = TestExecutor.puppet_resource('ec2_instance', options, '--modulepath ../')
+      expect(result.stderr).not_to match(/Error/), error_message
+      expect(@aws.send('get_instances', instance_name).first.state.name).to eq('terminated')
+      # igw
       igw_name = "#{@delete_me[:name]}-igw"
       options = {:name => igw_name, :region => @default_region, :ensure => 'absent'}
       result = TestExecutor.puppet_resource('ec2_vpc_internet_gateway', options, '--modulepath ../')
