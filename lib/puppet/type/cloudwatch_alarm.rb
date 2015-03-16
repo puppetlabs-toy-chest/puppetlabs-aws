@@ -78,9 +78,12 @@ Puppet::Type.newtype(:cloudwatch_alarm) do
 
   newproperty(:dimensions, :array_matching => :all) do
     desc 'The dimensions to filter the alarm by.'
+    def insync?(is)
+      is.to_set == should.to_set
+    end
   end
 
-  newparam(:alarm_actions, :array_matching => :all) do
+  newproperty(:alarm_actions, :array_matching => :all) do
     desc 'The actions to trigger when the alarm triggers.'
   end
 
