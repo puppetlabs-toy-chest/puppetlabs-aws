@@ -131,9 +131,13 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     to_create.reject(&:nil?).each do |rule|
       if rule.key? 'security_group'
         source_group_name = rule['security_group']
-        group_response = ec2.describe_security_groups(filters: [
-          {name: 'group-name', values: [source_group_name]},
-        ])
+        filters = [ {name: 'group-name', values: [source_group_name]} ]
+        if vpc_only_account?
+          response = ec2.describe_security_groups(group_ids: [@property_hash[:id]])
+          vpc_id = response.data.security_groups.first.vpc_id
+          filters.push( {name: 'vpc-id', values: [vpc_id]} )
+        end
+        group_response = ec2.describe_security_groups(filters: filters)
         fail("No groups found called #{source_group_name}") if group_response.data.security_groups.count == 0
         source_group_id = group_response.data.security_groups.first.group_id
         Puppet.warning "Multiple groups found called #{source_group_name}, using #{source_group_id}" if group_response.data.security_groups.count > 1
