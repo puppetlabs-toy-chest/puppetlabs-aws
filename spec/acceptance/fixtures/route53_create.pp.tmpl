@@ -9,9 +9,44 @@ route53_a_record { '{{a_record_name}}':
   values => [{{#a_values}}'{{.}}',{{/a_values}}],
 }
 
+route53_mx_record { '{{mx_record_name}}':
+  ensure => present,
+  zone   => '{{name}}',
+  ttl    => {{mx_ttl}},
+  values => [{{#mx_values}}'{{.}}',{{/mx_values}}],
+}
+
+route53_aaaa_record { '{{aaaa_record_name}}':
+  ensure => present,
+  zone   => '{{name}}',
+  ttl    => {{aaaa_ttl}},
+  values => [{{#aaaa_values}}'{{.}}',{{/aaaa_values}}],
+}
+
+route53_cname_record { '{{cname_record_name}}':
+  ensure => present,
+  zone   => '{{name}}',
+  ttl    => {{cname_ttl}},
+  values => [{{#cname_values}}'{{.}}',{{/cname_values}}],
+}
+
+route53_srv_record { '{{srv_record_name}}':
+  ensure => present,
+  zone   => '{{name}}',
+  ttl    => {{srv_ttl}},
+  values => [{{#srv_values}}'{{.}}',{{/srv_values}}],
+}
+
 route53_txt_record { '{{txt_record_name}}':
   ensure => present,
   zone   => '{{name}}',
   ttl    => {{txt_ttl}},
   values => '{{txt_value}}',
+}
+
+route53_spf_record { '{{spf_record_name}}':
+  ensure => present,
+  zone   => '{{name}}',
+  ttl    => {{spf_ttl}},
+  values => '{{spf_value}}',
 }

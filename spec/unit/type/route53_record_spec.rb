@@ -4,6 +4,11 @@ require 'spec_helper'
   :route53_a_record,
   :route53_txt_record,
   :route53_ns_record,
+  :route53_aaaa_record,
+  :route53_cname_record,
+  :route53_mx_record,
+  :route53_spf_record,
+  :route53_srv_record,
 ].each do |type|
 
   type_class = Puppet::Type.type(type)

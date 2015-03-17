@@ -10,6 +10,36 @@ route53_txt_record { '{{txt_record_name}}':
   before => Route53_zone['{{name}}'],
 }
 
+route53_aaaa_record { '{{aaaa_record_name}}':
+  ensure => absent,
+  zone   => '{{name}}',
+  before => Route53_zone['{{name}}'],
+}
+
+route53_mx_record { '{{mx_record_name}}':
+  ensure => absent,
+  zone   => '{{name}}',
+  before => Route53_zone['{{name}}'],
+}
+
+route53_cname_record { '{{cname_record_name}}':
+  ensure => absent,
+  zone   => '{{name}}',
+  before => Route53_zone['{{name}}'],
+}
+
+route53_srv_record { '{{srv_record_name}}':
+  ensure => absent,
+  zone   => '{{name}}',
+  before => Route53_zone['{{name}}'],
+}
+
+route53_spf_record { '{{spf_record_name}}':
+  ensure => absent,
+  zone   => '{{name}}',
+  before => Route53_zone['{{name}}'],
+}
+
 route53_zone { '{{name}}':
   ensure => absent,
 }
