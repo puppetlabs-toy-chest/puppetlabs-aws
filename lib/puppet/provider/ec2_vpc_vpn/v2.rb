@@ -35,9 +35,9 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   def self.connection_to_hash(region, connection)
     ec2 = ec2_client(region)
 
-    customer_response = ec2.describe_customer_gateways(filters: [
-      {name: 'customer-gateway-id', values: [connection.customer_gateway_id]}
-    ])
+    customer_response = ec2.describe_customer_gateways(
+      customer_gateway_ids: [connection.customer_gateway_id]
+    )
 
     customer_gateways = customer_response.data.customer_gateways
     customer_gateway_name = unless customer_gateways.empty?
@@ -47,9 +47,9 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
       nil
     end
 
-    vpn_response = ec2.describe_vpn_gateways(filters: [
-      {name: 'vpn-gateway-id', values: [connection.vpn_gateway_id]}
-    ])
+    vpn_response = ec2.describe_vpn_gateways(
+      vpn_gateway_ids: [connection.vpn_gateway_id]
+    )
 
     vpn_gateways = vpn_response.data.vpn_gateways
     vpn_gateway_name = unless vpn_gateways.empty?

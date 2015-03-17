@@ -32,9 +32,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     instance_ids = load_balancer.instances.map(&:instance_id)
     instance_names = []
     unless instance_ids.empty?
-      instances = ec2_client(region).describe_instances(filters: [
-        {name: 'instance-id', values: instance_ids}
-      ]).collect do |response|
+      instances = ec2_client(region).describe_instances(instance_ids: instance_ids).collect do |response|
         response.data.reservations.collect do |reservation|
           reservation.instances.collect do |instance|
             instance

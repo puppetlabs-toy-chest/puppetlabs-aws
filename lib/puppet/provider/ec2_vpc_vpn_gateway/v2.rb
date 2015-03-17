@@ -38,10 +38,12 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
     attached = gateway.vpc_attachments.detect { |vpc| vpc.state == 'attached' }
     if attached
       vpc_id = attached.vpc_id
-      vpc_response = ec2_client(region).describe_vpcs(filters: [
-        {name: 'vpc-id', values: [vpc_id]}
-      ])
-      vpc_name = vpc_response.data.vpcs.empty? ? nil : name_from_tag(vpc_response.data.vpcs.first)
+      vpc_response = ec2_client(region).describe_vpcs(
+        vpc_ids: [vpc_id]
+      )
+      vpc = vpc_response.data.vpcs.first
+      vpc_name_tag = vpc.tags.detect { |tag| tag.key == 'Name' }
+      vpc_name = vpc_name_tag ? vpc_name_tag.value : nil
     else
       vpc_name = nil
       vpc_id = nil

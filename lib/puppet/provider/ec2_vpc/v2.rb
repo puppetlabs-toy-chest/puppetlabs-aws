@@ -31,10 +31,10 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
 
   def self.vpc_to_hash(region, vpc)
     options_name = unless vpc.dhcp_options_id.nil? || vpc.dhcp_options_id.empty?
-      response = ec2_client(region).describe_dhcp_options(filters: [
-        {name: 'dhcp-options-id', values: [vpc.dhcp_options_id]}
-      ])
-      response.data.dhcp_options.empty? ? nil : name_from_tag(response.data.dhcp_options.first)
+      response = ec2_client(region).describe_dhcp_options(
+        dhcp_options_ids: [vpc.dhcp_options_id]
+      )
+      name_from_tag(response.dhcp_options.first)
     else
       nil
     end

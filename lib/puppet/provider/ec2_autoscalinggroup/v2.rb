@@ -31,9 +31,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
   def self.group_to_hash(region, group)
     subnet_names = []
     unless group.vpc_zone_identifier.nil? || group.vpc_zone_identifier.empty?
-      response = ec2_client(region).describe_subnets(filters: [
-        {name: 'subnet-id', values: group.vpc_zone_identifier.to_s.split(',')}
-      ])
+      response = ec2_client(region).describe_subnets(subnet_ids: group.vpc_zone_identifier.to_s.split(','))
       subnet_names = response.data.subnets.collect do |subnet|
         subnet_name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
         subnet_name_tag ? subnet_name_tag.value : nil

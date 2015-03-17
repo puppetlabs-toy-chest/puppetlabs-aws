@@ -55,11 +55,8 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
 
   def self.route_table_to_hash(region, table)
     ec2 = ec2_client(region)
-    vpc_response = ec2.describe_vpcs(filters: [
-      {name: 'vpc-id', values: [table.vpc_id]}
-    ])
-
-    vpc_name = vpc_response.data.vpcs.empty? ? nil : name_from_tag(vpc_response.data.vpcs.first)
+    vpc_response = ec2.describe_vpcs(vpc_ids: [table.vpc_id])
+    vpc_name_tag = vpc_response.data.vpcs.first.tags.detect { |tag| tag.key == 'Name' }
 
     routes = table.routes.collect do |route|
       route_to_hash(region, route)
@@ -68,7 +65,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
     {
       name: name_from_tag(table),
       id: table.route_table_id,
-      vpc: vpc_name,
+      vpc: vpc_name_tag ? vpc_name_tag.value : nil,
       ensure: :present,
       routes: routes.reject(&:nil?),
       region: region,
