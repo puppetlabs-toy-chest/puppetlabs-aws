@@ -4,7 +4,7 @@ require 'securerandom'
 describe "ec2_securitygroup" do
 
   before(:all) do
-    @default_region = 'sa-east-1'
+    @default_region = ENV['AWS_REGION'] || 'sa-east-1'
     @aws = AwsHelper.new(@default_region)
     @template = 'securitygroup.pp.tmpl'
   end
@@ -15,13 +15,16 @@ describe "ec2_securitygroup" do
     groups.first
   end
 
-  def get_group_permission(ip_permissions, group_name, protocol)
+  def get_group_permission(ip_permissions, group_name, protocol, from_port, to_port)
     group = get_group(group_name)
     ip_permissions.detect do |perm|
       pairs = perm[:user_id_group_pairs]
       # group name is nil in VPC only
       pairs.any? do |pair|
-        pair.group_id == group.group_id && perm[:ip_protocol] == protocol
+        pair.group_id == group.group_id &&
+        perm[:ip_protocol] == protocol
+        perm[:from_port] == from_port
+        perm[:to_port] == to_port
       end
     end
   end
@@ -31,20 +34,25 @@ describe "ec2_securitygroup" do
   def check_ingress_rule(rule, ip_permissions)
     if (rule.has_key? :security_group)
       group_name = rule[:security_group]
-      # a match occurs when AWS has a TCP / UDP / ICMP perm setup for group
-      tcp_perm = get_group_permission(ip_permissions, group_name, 'tcp')
-      udp_perm = get_group_permission(ip_permissions, group_name, 'udp')
-      icmp_perm = get_group_permission(ip_permissions, group_name, 'icmp')
-      match = !tcp_perm.nil? && !udp_perm.nil? && !icmp_perm.nil?
+      protocols = rule[:protocol] || ['tcp', 'udp', 'icmp']
+      match = Array(protocols).all? do |protocol|
+        from_port = rule[:port] || rule[:from_port] || (protocol == 'icmp' ? -1 : 1)
+        to_port = rule[:port] || rule[:to_port] || (protocol == 'icmp' ? -1 : 65535)
+        get_group_permission(ip_permissions, group_name, protocol, from_port, to_port)
+      end
       msg = "Could not find ingress rule for #{group_name}"
     else
+      protocol = rule[:protocol] || 'tcp'
+      from_port = rule[:port] || rule[:from_port] || (protocol == 'icmp' ? -1 : 1)
+      to_port = rule[:port] || rule[:to_port] || (protocol == 'icmp' ? -1 : 65535)
       match = ip_permissions.any? do |perm|
-        rule[:protocol] == perm[:ip_protocol] &&
-        rule[:port] == perm[:from_port] &&
-        rule[:port] == perm[:to_port] &&
+        protocol == perm[:ip_protocol] &&
+        from_port == perm[:from_port] &&
+        to_port == perm[:to_port] &&
         perm[:ip_ranges].any? { |ip| ip[:cidr_ip] == rule[:cidr] }
       end
-      msg = "Could not find ingress rule for #{rule[:protocol]} port #{rule[:port]} and CIDR #{rule[:cidr]}"
+
+      msg = "Could not find ingress rule for #{protocol} from port #{from_port} to #{to_port} with CIDR #{rule[:cidr]}"
     end
     [match, msg]
   end
@@ -362,8 +370,11 @@ describe "ec2_securitygroup" do
       it 'ingress rules are correct' do
         @config[:ingress].each do |i|
           i.each do |key, value|
-            regex = /('#{key}')(\s*)(=>)(\s*)('#{value}')/
-            expect(@response.stdout).to match(regex)
+            keys = key == :port ? ['from_port', 'to_port'] : [key]
+            keys.each do |new_key|
+              regex = /('#{new_key}')(\s*)(=>)(\s*)('#{value}')/
+              expect(@response.stdout).to match(regex)
+            end
           end
         end
       end
@@ -378,4 +389,90 @@ describe "ec2_securitygroup" do
 
   end
 
+  describe 'should create a new security group' do
+
+    before(:all) do
+      @name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
+      @config = {
+        :name => @name,
+        :ensure => 'present',
+        :description => 'aws acceptance securitygroup',
+        :region => @default_region,
+        :ingress => [
+          {
+            :protocol  => 'tcp',
+            :from_port => 22,
+            :to_port => 1000,
+            :cidr      => '0.0.0.0/0'
+          }
+        ],
+      }
+
+      PuppetManifest.new(@template, @config).apply
+      @group = get_group(@config[:name])
+    end
+
+    after(:all) do
+      new_config = @config.update({:ensure => 'absent'})
+      PuppetManifest.new(@template, new_config).apply
+
+      expect { get_group(@config[:name]) }.to raise_error(::Aws::EC2::Errors::InvalidGroupNotFound)
+    end
+
+    it "with the specified ingress rules" do
+      @config[:ingress].all? { |rule| has_ingress_rule(rule, @group.ip_permissions)}
+    end
+
+    rules_to_test = [
+      [{
+        :protocol  => 'udp',
+        :from_port => 80,
+        :to_port   => 100,
+        :cidr      => '0.0.0.0/0'
+      }],
+      [{
+        :port => 22,
+        :cidr => '0.0.0.0/0'
+      }],
+      [{
+        :protocol => 'tcp',
+        :port     => 22,
+        :cidr     => '0.0.0.0/0'
+      },{
+        :protocol  => 'udp',
+        :from_port => 80,
+        :to_port   => 100,
+        :cidr      => '0.0.0.0/0'
+      }],
+      [{
+        :protocol => 'tcp',
+        :security_group => '<<name>>',
+      }],
+      [{
+        :protocol => 'udp',
+        :from_port => 100,
+        :to_port   => 120,
+        :security_group => '<<name>>',
+      }]
+    ]
+
+    rules_to_test.each_with_index do |rules, i|
+      it "should be able to modify the ingress rules protocol and ports: #{i+1}" do
+        new_rules = []
+        rules.each do |rule|
+          rule[:security_group] = @name if rule.keys.include?(:security_group)
+          new_rules << rule
+        end
+        new_config = @config.dup.update({:ingress => new_rules})
+        exit_status = PuppetManifest.new(@template, new_config).apply[:exit_status]
+        expect(exit_status.exitstatus).to eq(2)
+
+        @group = get_group(@config[:name])
+
+        new_rules.all? { |rule| has_ingress_rule(rule, @group.ip_permissions)}
+        @config[:ingress].all? { |rule| doesnt_have_ingress_rule(rule, @group.ip_permissions)}
+      end
+    end
+
+  end
 end

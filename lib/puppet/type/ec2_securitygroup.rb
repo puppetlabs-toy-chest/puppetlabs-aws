@@ -22,21 +22,23 @@ Puppet::Type.newtype(:ec2_securitygroup) do
   newproperty(:ingress, :array_matching => :all) do
     desc 'rules for ingress traffic'
     def insync?(is)
-      order_ingress(should) == order_ingress(stringify_values(is))
+      order_ingress(stringify_values(should)) == order_ingress(stringify_values(is))
     end
 
     def order_ingress(rules)
-      groups, ports = rules.partition { |rule| rule['security_group'] }
-      groups.sort_by! { |group| group['security_group'] }
-      ports.sort! { |a, b| [a['protocol'], a['port']] <=> [b['protocol'], b['port']] }
+      cidrs, groups = rules.partition { |rule| rule['cidr'] }
+      groups.sort_by! do |g|
+        %w{security_group protocol port}.map{|k| g[k] || ' '}.flatten.join '!'
+      end
+      cidrs.sort_by! do |g|
+        %w{cidr protocol port}.map{|k| g[k] || ' '}.flatten.join '!'
+      end
 
-      groups + ports
+      groups + cidrs
     end
 
     def stringify_values(rules)
-      rules.collect do |obj|
-        obj.each { |k,v| obj[k] = v.to_s }
-      end
+      rules.map {|rule| rule.inject({}) { |h,kv| h.merge!(Hash[*kv]) } }
     end
   end
 
