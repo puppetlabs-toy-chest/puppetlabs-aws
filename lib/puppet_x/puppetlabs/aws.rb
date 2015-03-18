@@ -1,5 +1,13 @@
 require 'aws-sdk-core'
 
+if ENV['AWS_DEBUG'] == '1'
+  require 'logger'
+  logger = Logger.new($stdout)
+  logger.formatter = proc {|severity, datetime, progname, msg| msg }
+  Aws.config[:logger] = logger
+  Aws.config[:log_formatter] = Seahorse::Client::Logging::Formatter.colored
+end
+
 module PuppetX
   module Puppetlabs
     class Aws < Puppet::Provider
@@ -91,11 +99,11 @@ module PuppetX
       end
 
       def self.tags_for(item)
-        tags = {}
-        item.tags.each do |tag|
-          tags[tag.key] = tag.value unless tag.key == 'Name'
-        end
-        tags
+        tags_from_data(item.tags)
+      end
+
+      def self.tags_from_data(tags)
+        tags.inject({}){|th,kv| th.merge!(kv.key => kv.value)}
       end
 
       def tags=(value)
