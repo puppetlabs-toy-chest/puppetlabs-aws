@@ -7,6 +7,7 @@ Puppet::Type.newtype(:ec2_vpc_internet_gateway) do
     desc 'The name of the internet gateway.'
     validate do |value|
       fail 'Empty values are not allowed' if value == ''
+      fail 'name should be a String' unless value.is_a?(String)
     end
   end
 
@@ -20,11 +21,15 @@ Puppet::Type.newtype(:ec2_vpc_internet_gateway) do
     desc 'The region in which to launch the internet gateway.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 
   newproperty(:vpc) do
     desc 'The vpc to assign this internet gateway to.'
+    validate do |value|
+      fail 'vpc should be a String' unless value.is_a?(String)
+    end
   end
 
   autorequire(:ec2_vpc) do

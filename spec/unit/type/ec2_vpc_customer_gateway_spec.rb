@@ -70,4 +70,17 @@ describe type_class do
     expect(srv[:type]).to eq('ipsec.1')
   end
 
+  [
+    'name',
+    'region',
+  ].each do |property|
+    it "should require #{property} to be a string" do
+      expect(type_class).to require_string_for(property)
+    end
+  end
+
+  it "should require tags to be a hash" do
+    expect(type_class).to require_hash_for('tags')
+  end
+
 end

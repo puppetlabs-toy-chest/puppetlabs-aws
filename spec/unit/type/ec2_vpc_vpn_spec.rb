@@ -68,4 +68,20 @@ describe type_class do
     }.to raise_error(Puppet::ResourceError, /region should not contain spaces/)
   end
 
+  [
+    'name',
+    'vpn_gateway',
+    'customer_gateway',
+    'routes',
+    'region',
+  ].each do |property|
+    it "should require #{property} to be a string" do
+      expect(type_class).to require_string_for(property)
+    end
+  end
+
+  it "should require tags to be a hash" do
+    expect(type_class).to require_hash_for('tags')
+  end
+
 end

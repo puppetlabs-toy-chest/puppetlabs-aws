@@ -51,6 +51,18 @@ describe type_class do
     }.to raise_error(Puppet::Error, 'Title or name must be provided')
   end
 
+  [
+    'subnets',
+    'availability_zones',
+    'launch_configuration',
+    'name',
+    'region',
+  ].each do |property|
+    it "should require #{property} to be a string" do
+      expect(type_class).to require_string_for(property)
+    end
+  end
+
   asg_config.keys.each do |key|
     it "should require a value for #{key}" do
       modified_config = asg_config

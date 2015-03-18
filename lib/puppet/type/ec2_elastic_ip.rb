@@ -22,6 +22,7 @@ Puppet::Type.newtype(:ec2_elastic_ip) do
   newproperty(:region) do
     desc 'The name of the region in which the Elastic IP is found.'
     validate do |value|
+      fail 'region should be a String' unless value.is_a?(String)
       fail 'You must provide a region for Elastic IPs.' if value.nil? || value.empty?
     end
   end
@@ -29,6 +30,7 @@ Puppet::Type.newtype(:ec2_elastic_ip) do
   newproperty(:instance) do
     desc 'The name of the instance associated with the Elastic IP.'
     validate do |value|
+      fail 'instance should be a String' unless value.is_a?(String)
       fail 'You must provide an instance for the Elastic IP association' if value.nil? || value.empty?
     end
   end

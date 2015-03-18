@@ -9,6 +9,7 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     desc 'The name of the load balancer.'
     validate do |value|
       fail 'Load Balancers must have a name' if value == ''
+      fail 'name should be a String' unless value.is_a?(String)
     end
   end
 
@@ -16,6 +17,7 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     desc 'The region in which to launch the load balancer.'
     validate do |value|
       fail 'region must not contain spaces' if value =~ /\s/
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 
@@ -47,6 +49,9 @@ Puppet::Type.newtype(:elb_loadbalancer) do
   newproperty(:subnets, :array_matching => :all) do
     defaultto []
     desc 'The region in which to launch the load balancer.'
+    validate do |value|
+      fail 'subnets should be a String' unless value.is_a?(String)
+    end
     def insync?(is)
       is.to_set == should.to_set
     end
@@ -54,6 +59,9 @@ Puppet::Type.newtype(:elb_loadbalancer) do
 
   newproperty(:security_groups, :array_matching => :all) do
     desc 'The security groups to associate the load balancer (VPC only).'
+    validate do |value|
+      fail 'security_groups should be a String' unless value.is_a?(String)
+    end
     def insync?(is)
       is.to_set == should.to_set
     end
@@ -66,6 +74,9 @@ Puppet::Type.newtype(:elb_loadbalancer) do
 
   newproperty(:instances, :array_matching => :all) do
     desc 'The instances to associate with the load balancer.'
+    validate do |value|
+      fail 'instances should be a String' unless value.is_a?(String)
+    end
   end
 
   newproperty(:scheme) do

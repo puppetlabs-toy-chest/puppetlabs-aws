@@ -9,17 +9,22 @@ Puppet::Type.newtype(:ec2_vpc_routetable) do
     desc 'The name of the route table.'
     validate do |value|
       fail 'route tables must have a name' if value == ''
+      fail 'name should be a String' unless value.is_a?(String)
     end
   end
 
   newproperty(:vpc) do
     desc 'VPC to assign the route table to.'
+    validate do |value|
+      fail 'vpc should be a String' unless value.is_a?(String)
+    end
   end
 
   newproperty(:region) do
     desc 'Region in which to launch the route table.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 

@@ -32,6 +32,37 @@ describe type_class do
     end
   end
 
+  it 'should require a name' do
+    expect {
+      type_class.new({})
+    }.to raise_error(Puppet::Error, 'Title or name must be provided')
+  end
+
+  it 'should require region to not contain spaces' do
+    expect {
+      type_class.new({name: 'name', region: 'invalid region'})
+    }.to raise_error(Puppet::Error, /region should not contain spaces/)
+  end
+
+  [
+    'vpc',
+    'name',
+    'description',
+    'region',
+  ].each do |property|
+    it "should require #{property} to be a string" do
+      expect(type_class).to require_string_for(property)
+    end
+  end
+
+  it "should require ingress to be a hash" do
+    expect(type_class).to require_hash_for('ingress')
+  end
+
+   it "should require tags to be a hash" do
+    expect(type_class).to require_hash_for('tags')
+  end
+
   it 'should order tags on output' do
     expect(type_class).to order_tags_on_output
   end

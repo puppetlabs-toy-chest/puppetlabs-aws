@@ -66,7 +66,17 @@ describe type_class do
     it 'should convert scaling adjustment values to an Integer' do
       expect(@instance[:scaling_adjustment].kind_of?(Integer)).to be true
     end
+  end
 
+  [
+    'name',
+    'region',
+    'adjustment_type',
+    'auto_scaling_group',
+  ].each do |property|
+    it "should require #{property} to be a string" do
+      expect(type_class).to require_string_for(property)
+    end
   end
 
 end

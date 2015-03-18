@@ -9,6 +9,7 @@ Puppet::Type.newtype(:ec2_vpc_vpn_gateway) do
     desc 'The name of the VPN gateway.'
     validate do |value|
       fail 'VPN gateways must have a name' if value == ''
+      fail 'name should be a String' unless value.is_a?(String)
     end
   end
 
@@ -18,17 +19,24 @@ Puppet::Type.newtype(:ec2_vpc_vpn_gateway) do
 
   newproperty(:vpc) do
     desc 'The VPN to attach the VPN gateway to.'
+    validate do |value|
+      fail 'vpc should be a String' unless value.is_a?(String)
+    end
   end
 
   newproperty(:region) do
     desc 'The region in which to launch the VPN gateway.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 
   newparam(:availability_zone) do
     desc 'The availability zone in which to launch the VPN gateway.'
+    validate do |value|
+      fail 'availability_zone should be a String' unless value.is_a?(String)
+    end
   end
 
   newproperty(:type) do
