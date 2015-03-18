@@ -138,9 +138,10 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
           filters.push( {name: 'vpc-id', values: [vpc_id]} )
         end
         group_response = ec2.describe_security_groups(filters: filters)
-        fail("No groups found called #{source_group_name}") if group_response.data.security_groups.count == 0
+        match_count = group_response.data.security_groups.count
+        fail("No groups found called #{source_group_name}") if match_count == 0
         source_group_id = group_response.data.security_groups.first.group_id
-        Puppet.warning "Multiple groups found called #{source_group_name}, using #{source_group_id}" if group_response.data.security_groups.count > 1
+        Puppet.warning "#{match_count} groups found called #{source_group_name}, using #{source_group_id}" if match_count > 1
 
         permissions = ['tcp', 'udp', 'icmp'].collect do |protocol|
           {
