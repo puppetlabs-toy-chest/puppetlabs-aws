@@ -50,10 +50,12 @@ describe "The AWS module" do
     finder(name, 'get_instances')
   end
 
-  def find_security_group(name)
-    group_response = @aws.ec2_client.describe_security_groups(filters: [
+  def find_security_group(name, vpc_id=nil)
+    filters = [
       {name: 'group-name', values: [name]}
-    ])
+    ]
+    filters << {name: 'vpc-id', values: [vpc_id]} unless vpc_id.nil?
+    group_response = @aws.ec2_client.describe_security_groups(filters: filters)
     items = group_response.data.security_groups
     expect(items.count).to eq(1)
     items.first
@@ -118,6 +120,7 @@ describe "The AWS module" do
       @vgw = find_vpn_gateway("#{@name}-vgw")
       @cgw = find_customer_gateway("#{@name}-cgw")
       @sg = find_security_group("#{@name}-sg")
+      @dsg = find_security_group('default', @vpc.vpc_id)
     end
 
     after(:all) do
@@ -153,6 +156,12 @@ describe "The AWS module" do
       expect(@sg).not_to be_nil
       expect(@sg.vpc_id).to eq(@vpc.vpc_id)
       expect(@aws.tag_difference(@sg, @config[:tags])).to be_empty
+    end
+
+    it 'should manage the default VPC security group' do
+      expect(@dsg).not_to be_nil
+      expect(@dsg.vpc_id).to eq(@vpc.vpc_id)
+      expect(@aws.tag_difference(@dsg, @config[:tags])).to be_empty
     end
 
     it 'should create a route table' do

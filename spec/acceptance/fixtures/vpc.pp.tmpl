@@ -11,6 +11,27 @@ ec2_vpc { '{{name}}-vpc':
   },
 }
 
+ec2_securitygroup { '{{name}}-vpc::default':
+  ensure      => {{ensure}},
+  region      => '{{region}}',
+  description => 'default VPC security group',
+  ingress     => [
+    {{#security_group_ingress}}
+      {
+        {{#values}}
+          {{k}} => '{{v}}',
+        {{/values}}
+      },
+    {{/security_group_ingress}}
+  ],
+  tags        => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
+  require     => Ec2_vpc['{{name}}-vpc'],
+}
+
 ec2_securitygroup { '{{name}}-sg':
   ensure      => {{ensure}},
   description => 'VPC accceptance test',

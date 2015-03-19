@@ -18,6 +18,19 @@ ec2_securitygroup { 'sample-sg':
   }]
 }
 
+ec2_securitygroup { 'sample-vpc::default':
+  ensure      => present,
+  region      => 'sa-east-1',
+  description => 'default VPC security group',
+  ingress     => [{
+    protocol => 'tcp',
+    port     => 22,
+    cidr     => '0.0.0.0/0'
+  },{
+    security_group => 'default',
+  }],
+}
+
 ec2_vpc_subnet { 'sample-subnet':
   ensure            => present,
   region            => 'sa-east-1',
