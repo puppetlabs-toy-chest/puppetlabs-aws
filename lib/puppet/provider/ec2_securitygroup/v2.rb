@@ -1,4 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
+require_relative '../../../puppet_x/puppetlabs/aws_ingress_rules_parser.rb'
 
 Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
@@ -28,38 +29,10 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     end
   end
 
-  def self.id_to_name(ec2, group_id)
-    group_response = ec2.describe_security_groups(
-      filters: [{name: 'group-id', values: [group_id]}])
-
-    group_response.data.security_groups.first.group_name
-  end
-
   def self.format_ingress_rules(ec2, group)
     group[:ip_permissions].collect do |rule|
-      {}.tap do |h|
-        h['protocol'] = rule.ip_protocol
-
-        h['cidr'] = rule.ip_ranges.map(&:cidr_ip)
-        case h['cidr'].size
-        when 0 then h.delete('cidr')
-        when 1 then h['cidr'] = h['cidr'].first
-        end
-
-        h['port'] = [rule.from_port, rule.to_port].compact.map(&:to_s).uniq
-        case h['port'].size
-        when 0 then h.delete('port')
-        when 1 then h['port'] = h['port'].first
-        end
-
-        h['security_group'] = rule.user_id_group_pairs.
-          map {|ug| ug[:group_name] || id_to_name(ec2, ug[:group_id]) }.compact.
-          reject {|g| group.group_name == g}
-        case h['security_group'].size
-        when 0 then h.delete('security_group')
-        when 1 then h['security_group'] = h['security_group'].first
-        end
-      end
+      PuppetX::Puppetlabs::AwsIngressRulesParser.ip_permission_to_rule(
+        ec2, rule, group.group_name)
     end.flatten.uniq.compact
   end
 
@@ -130,37 +103,6 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     @property_hash[:ensure] = :present
   end
 
-  def id_or_name_to_id(group_id_or_name)
-    return group_id_or_name if group_id_or_name =~ /^sg-/
-    return @property_hash[:id] if group_id_or_name == @property_hash[:group_name]
-
-    ec2 = ec2_client(resource[:region])
-
-    group_response = ec2.describe_security_groups(
-      filters: [{name: 'group-name', values: [group_id_or_name]}])
-
-    if group_response.data.security_groups.count == 0
-      fail("No groups found with name: '#{group_id_or_name}'")
-    elsif group_response.data.security_groups.count > 1
-      Puppet.warning "Multiple groups found called #{group_id_or_name}"
-    end
-
-    group_response.data.security_groups.first.group_id
-  end
-
-  def rule_to_permission(rule)
-    # fallback to current group id if cidr is absent
-    sg = rule['security_group'] || (rule['cidr'] ? nil : @property_hash[:id])
-
-    { ip_protocol: rule['protocol'] || '-1',
-      from_port: Array(rule['port']).first,
-      to_port: Array(rule['port']).last,
-      ip_ranges: Array(rule['cidr']).map {|c| {cidr_ip: c}},
-      user_id_group_pairs: Array(sg).map{|s| {group_id: id_or_name_to_id(s)}} }.
-        delete_if {|k,v| v.is_a?(Array) && v.empty?}.
-        delete_if {|k,v| v.nil?}
-  end
-
   def authorize_ingress(new_rules, existing_rules=[])
     ec2 = ec2_client(resource[:region])
     new_rules = [new_rules] unless new_rules.is_a?(Array)
@@ -171,13 +113,15 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     to_create.compact.each do |rule|
       ec2.authorize_security_group_ingress(
         group_id: @property_hash[:id],
-        ip_permissions: [rule_to_permission(rule)])
+        ip_permissions: PuppetX::Puppetlabs::AwsIngressRulesParser.rule_to_permission_list(
+          ec2, rule, @property_hash[:id], @property_hash[:name]))
     end
 
     to_delete.compact.each do |rule|
       ec2.revoke_security_group_ingress(
         group_id: @property_hash[:id],
-        ip_permissions: [rule_to_permission(rule)])
+        ip_permissions: PuppetX::Puppetlabs::AwsIngressRulesParser.rule_to_permission_list(
+          ec2, rule, @property_hash[:id], @property_hash[:name]))
     end
   end
 

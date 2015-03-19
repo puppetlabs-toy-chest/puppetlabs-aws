@@ -1,6 +1,8 @@
 require 'spec_helper_acceptance'
 require 'securerandom'
 
+require_relative '../../lib/puppet_x/puppetlabs/aws_ingress_rules_parser.rb'
+
 describe "ec2_securitygroup" do
 
   before(:all) do
@@ -15,46 +17,17 @@ describe "ec2_securitygroup" do
     groups.first
   end
 
-  def get_group_permission(ip_permissions, group_name, protocol, from_port, to_port)
-    group = get_group(group_name)
-    ip_permissions.detect do |perm|
-      pairs = perm[:user_id_group_pairs]
-      # group name is nil in VPC only
-      pairs.any? do |pair|
-        pair.group_id == group.group_id &&
-        perm[:ip_protocol] == protocol
-        perm[:from_port] == from_port
-        perm[:to_port] == to_port
-      end
-    end
-  end
-
-  # a fairly naive matching algorithm, since the shape of ip_permissions is
-  # quite different than the shape of our ingress rules
   def check_ingress_rule(rule, ip_permissions)
-    if (rule.has_key? :security_group)
-      group_name = rule[:security_group]
-      protocols = rule[:protocol] || ['tcp', 'udp', 'icmp']
-      match = Array(protocols).all? do |protocol|
-        from_port = rule[:port] || rule[:from_port] || (protocol == 'icmp' ? -1 : 1)
-        to_port = rule[:port] || rule[:to_port] || (protocol == 'icmp' ? -1 : 65535)
-        get_group_permission(ip_permissions, group_name, protocol, from_port, to_port)
-      end
-      msg = "Could not find ingress rule for #{group_name}"
-    else
-      protocol = rule[:protocol] || 'tcp'
-      from_port = rule[:port] || rule[:from_port] || (protocol == 'icmp' ? -1 : 1)
-      to_port = rule[:port] || rule[:to_port] || (protocol == 'icmp' ? -1 : 65535)
-      match = ip_permissions.any? do |perm|
-        protocol == perm[:ip_protocol] &&
-        from_port == perm[:from_port] &&
-        to_port == perm[:to_port] &&
-        perm[:ip_ranges].any? { |ip| ip[:cidr_ip] == rule[:cidr] }
-      end
+    require 'pry'
+    binding.pry
 
-      msg = "Could not find ingress rule for #{protocol} from port #{from_port} to #{to_port} with CIDR #{rule[:cidr]}"
+    rules = ip_permissions.map do |ipp|
+      PuppetX::Puppetlabs::AwsIngressRulesParser.ip_permission_to_rule(
+        @aws.ec2_client, ipp, @group[:group_name])
     end
-    [match, msg]
+
+    [ rules.all? {|member| rule.include? member},
+      "#{rule.inspect} in #{ip_permissions.inspect}"]
   end
 
   def has_ingress_rule(rule, ip_permissions)
@@ -78,20 +51,14 @@ describe "ec2_securitygroup" do
         :description => 'aws acceptance securitygroup',
         :region => @default_region,
         :ingress => [
-          {
-            :security_group => @name,
-          },{
-            :protocol => 'tcp',
-            :port     => 22,
-            :cidr     => '0.0.0.0/0'
-          }
-        ],
+          { }, # all traffic, current group
+          { 'protocol' => 'tcp',
+            'port'     => 22,
+            'cidr'     => '0.0.0.0/0' } ],
         :tags => {
           :department => 'engineering',
           :project    => 'cloud',
-          :created_by => 'aws-acceptance'
-        }
-      }
+          :created_by => 'aws-acceptance' } }
 
       PuppetManifest.new(@template, @config).apply
       @group = get_group(@config[:name])
@@ -121,7 +88,6 @@ describe "ec2_securitygroup" do
     end
 
     it "with the specified ingress rules" do
-      # perform a naive match
       @config[:ingress].all? { |rule| has_ingress_rule(rule, @group.ip_permissions)}
     end
 
