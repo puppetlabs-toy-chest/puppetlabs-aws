@@ -1,5 +1,13 @@
 require 'aws-sdk-core'
 
+if ENV['AWS_DEBUG'] == '1'
+  require 'logger'
+  logger = Logger.new($stdout)
+  logger.formatter = proc {|severity, datetime, progname, msg| msg }
+  Aws.config[:logger] = logger
+  Aws.config[:log_formatter] = Seahorse::Client::Logging::Formatter.colored
+end
+
 module PuppetX
   module Puppetlabs
     class Aws < Puppet::Provider
