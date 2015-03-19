@@ -134,7 +134,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     return group_id_or_name if group_id_or_name =~ /^sg-/
     return @property_hash[:id] if group_id_or_name == @property_hash[:group_name]
 
-    ec2 = ec2_client(@property_hash[:region])
+    ec2 = ec2_client(resource[:region])
 
     group_response = ec2.describe_security_groups(
       filters: [{name: 'group-name', values: [group_id_or_name]}])
@@ -152,7 +152,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     # fallback to current group id if cidr is absent
     sg = rule['security_group'] || (rule['cidr'] ? nil : @property_hash[:id])
 
-    { ip_protocol: rule['protocol'],
+    { ip_protocol: rule['protocol'] || '-1',
       from_port: Array(rule['port']).first,
       to_port: Array(rule['port']).last,
       ip_ranges: Array(rule['cidr']).map {|c| {cidr_ip: c}},
