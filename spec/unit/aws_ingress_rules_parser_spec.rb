@@ -16,6 +16,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
     sg_self_port:           { 'port' => 10 },
     sg_self_port_range:     { 'port' => [10, 100] },
     cidr:                   { 'cidr' => '0.0.0.0/8' },
+    cidr_cidr:              { 'cidr' => ['0.0.0.0/8', '1.1.1.1/8'] },
     cidr_tcp:               { 'protocol' => 'tcp', 'cidr' => '0.0.0.0/8' },
     cidr_tcp_port:          { 'port' => 10, 'protocol' => 'tcp', 'cidr' => '0.0.0.0/8' },
     cidr_tcp_port_range:    { 'port' => [10, 100], 'protocol' => 'tcp', 'cidr' => '0.0.0.0/8' },
@@ -50,6 +51,10 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
 
     cidr:                   [ { ip_protocol: -1,
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] } ],
+
+    cidr_cidr:              [ { ip_protocol: -1,
+                                ip_ranges: [ { cidr_ip: '0.0.0.0/8' },
+                                             { cidr_ip: '1.1.1.1/8' } ] } ],
 
     cidr_tcp:               [ { ip_protocol: 'tcp',
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] } ],
@@ -120,6 +125,16 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] },
                               { ip_protocol: 'icmp',
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] } ],
+
+    cidr_cidr:              [ { ip_protocol: 'tcp',
+                                ip_ranges: [ { cidr_ip: '0.0.0.0/8' },
+                                             { cidr_ip: '1.1.1.1/8' } ] },
+                              { ip_protocol: 'udp',
+                                ip_ranges: [ { cidr_ip: '0.0.0.0/8' },
+                                             { cidr_ip: '1.1.1.1/8' } ] },
+                              { ip_protocol: 'icmp',
+                                ip_ranges: [ { cidr_ip: '0.0.0.0/8' },
+                                             { cidr_ip: '1.1.1.1/8' } ] } ],
 
     cidr_tcp:               [ { ip_protocol: 'tcp',
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] } ],
