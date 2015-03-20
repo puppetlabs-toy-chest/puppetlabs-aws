@@ -49,11 +49,11 @@ module PuppetX
       def self.rule_to_ip_permission(ec2, rule, group_id, group_name)
         # fallback to current group id if cidr is also absent
         security_group = rule['security_group'] ||
-          (rule['cidr'] ? nil : group_id)
+          (rule['cidr'] ? nil : group_name)
         ports = Array(rule['port'])
 
         {
-          ip_protocol: rule['protocol'] || '-1',
+          ip_protocol: rule['protocol'] || -1,
           from_port: ports.first,
           to_port: ports.last,
           ip_ranges: Array(rule['cidr']).map {|c| {cidr_ip: c}},
@@ -65,15 +65,17 @@ module PuppetX
 
       def self.ip_permission_to_rule(ec2, ipp, group_name)
         h = {
-          'protocol' => ipp[:ip_protocol],
-          'cidr'     => ipp[:ip_ranges].map{|ipr| ipr[:cidr_ip]},
+          'protocol' => ipp[:ip_protocol] == -1 ? nil : ipp[:ip_protocol],
+          'cidr'     => (ipp[:ip_ranges] || []).map{|ipr| ipr[:cidr_ip]},
           'port'     => [ipp[:from_port], ipp[:to_port]].compact.map(&:to_s).uniq,
           'security_group' => (ipp[:user_id_group_pairs] || []).
             map {|ug| ug[:group_name] || id_to_name(ec2, ug[:group_id]) }.
             compact.reject {|g| group_name == g}
-        }
+        }.delete_if {|k,v| v.nil? || (v.is_a?(Array) && v.empty?)}
 
         %w{cidr port security_group}.each do |at|
+          next unless h[at]
+
           case h[at].size
           when 0 then h.delete(at)
           when 1 then h[at] = h[at].first

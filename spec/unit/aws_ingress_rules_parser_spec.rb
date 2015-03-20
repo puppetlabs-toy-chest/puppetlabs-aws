@@ -7,19 +7,19 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
 
   RULES = {
     empty:                  {},
-    sg_self:                { security_group: "self" },
-    sg_test:                { security_group: "test" },
-    sg_self_tcp:            { protocol: 'tcp' },
-    sg_self_tcp_port:       { port: 10, protocol: 'tcp' },
-    sg_self_tcp_port_range: { port: [10, 100], protocol: 'tcp' },
-    sg_self_port:           { port: 10 },
-    sg_self_port_range:     { port: [10, 100] },
-    cidr:                   { cidr: '0.0.0.0/8' },
-    cidr_tcp:               { protocol: 'tcp', cidr: '0.0.0.0/8' },
-    cidr_tcp_port:          { port: 10, protocol: 'tcp', cidr: '0.0.0.0/8' },
-    cidr_tcp_port_range:    { port: [10, 100], protocol: 'tcp', cidr: '0.0.0.0/8' },
-    cidr_port:              { port: 10, cidr: '0.0.0.0/8' },
-    cidr_port_range:        { port: [10, 100], cidr: '0.0.0.0/8' } }
+    sg_self:                { 'security_group' => 'self' },
+    sg_test:                { 'security_group' => 'test' },
+    sg_self_tcp:            { 'protocol' => 'tcp' },
+    sg_self_tcp_port:       { 'port' => 10, 'protocol' => 'tcp' },
+    sg_self_tcp_port_range: { 'port' => [10, 100], 'protocol' => 'tcp' },
+    sg_self_port:           { 'port' => 10 },
+    sg_self_port_range:     { 'port' => [10, 100] },
+    cidr:                   { 'cidr' => '0.0.0.0/8' },
+    cidr_tcp:               { 'protocol' => 'tcp', 'cidr' => '0.0.0.0/8' },
+    cidr_tcp_port:          { 'port' => 10, 'protocol' => 'tcp', 'cidr' => '0.0.0.0/8' },
+    cidr_tcp_port_range:    { 'port' => [10, 100], 'protocol' => 'tcp', 'cidr' => '0.0.0.0/8' },
+    cidr_port:              { 'port' => 10, 'cidr' => '0.0.0.0/8' },
+    cidr_port_range:        { 'port' => [10, 100], 'cidr' => '0.0.0.0/8' } }
 
   VPC_IP_PERMISSION_LISTS = {
     empty:                  [ { ip_protocol: -1,
@@ -149,8 +149,8 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
     RULES.each do |key, rule|
       it key do
         ec2.stubs(:vpc_only_account? => true)
-        expect(subject.rule_to_ip_permission_list(ec2, rule, nil, nil)).to(
-          eq(VPC_IP_PERMISSION_LISTS[key]))
+        expect(subject.rule_to_ip_permission(ec2, rule, 'self_id', 'self')).to(
+          eq(VPC_IP_PERMISSION_LISTS[key].first))
       end
     end
   end
@@ -159,7 +159,8 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
     VPC_IP_PERMISSION_LISTS.each do |key, ipp|
       it key do
         ec2.stubs(:vpc_only_account? => true)
-        expect(subject.ip_permission_to_rule(ec2, ipp.first, nil)).to(
+        subject.stubs(id_to_name: 'self')
+        expect(subject.ip_permission_to_rule(ec2, ipp.first, 'self')).to(
           eq(RULES[key]))
       end
     end
