@@ -11,7 +11,11 @@ ec2_securitygroup { 'sample-sg':
   description => 'Security group for VPC',
   ingress     => [{
     security_group => 'sample-sg',
-  }],
+  },{
+    protocol => 'tcp',
+    port     => 22,
+    cidr     => '0.0.0.0/0'
+  }]
 }
 
 ec2_vpc_subnet { 'sample-subnet':

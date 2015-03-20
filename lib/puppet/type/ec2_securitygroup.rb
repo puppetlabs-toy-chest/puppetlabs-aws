@@ -1,4 +1,5 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require_relative '../../puppet_x/puppetlabs/aws_ingress_rules_parser'
 
 Puppet::Type.newtype(:ec2_securitygroup) do
   @doc = 'type representing an EC2 security group'
@@ -8,35 +9,25 @@ Puppet::Type.newtype(:ec2_securitygroup) do
   newparam(:name, namevar: true) do
     desc 'the name of the security group'
     validate do |value|
-      fail Puppet::Error, 'Security groups must have a name' if value == ''
+      fail 'Security groups must have a name' if value == ''
     end
   end
 
   newproperty(:region) do
     desc 'the region in which to launch the security group'
     validate do |value|
-      fail Puppet::Error, 'region should not contains spaces' if value =~ /\s/
+      fail 'region should not contains spaces' if value =~ /\s/
     end
   end
 
   newproperty(:ingress, :array_matching => :all) do
     desc 'rules for ingress traffic'
     def insync?(is)
-      order_ingress(should) == order_ingress(stringify_values(is))
-    end
-
-    def order_ingress(rules)
-      groups, ports = rules.partition { |rule| rule['security_group'] }
-      groups.sort_by! { |group| group['security_group'] }
-      ports.sort! { |a, b| [a['protocol'], a['port']] <=> [b['protocol'], b['port']] }
-
-      groups + ports
-    end
-
-    def stringify_values(rules)
-      rules.collect do |obj|
-        obj.each { |k,v| obj[k] = v.to_s }
-      end
+      for_comparison = Marshal.load(Marshal.dump(should))
+      parser = PuppetX::Puppetlabs::AwsIngressRulesParser.new(for_comparison)
+      to_create = parser.rules_to_create(is)
+      to_delete = parser.rules_to_delete(is)
+      to_create.empty? && to_delete.empty?
     end
   end
 
@@ -47,7 +38,7 @@ Puppet::Type.newtype(:ec2_securitygroup) do
   newproperty(:description) do
     desc 'a short description of the group'
     validate do |value|
-      fail Puppet::Error, 'description cannot be blank' if value == ''
+      fail  'description cannot be blank' if value == ''
     end
   end
 
