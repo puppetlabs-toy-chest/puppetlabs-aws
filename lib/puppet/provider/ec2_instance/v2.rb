@@ -1,6 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 require 'base64'
-require 'retries'
 
 Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws

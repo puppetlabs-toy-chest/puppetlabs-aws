@@ -1,5 +1,3 @@
-require 'aws-sdk-core'
-
 module PuppetX
   module Puppetlabs
     class Aws < Puppet::Provider
