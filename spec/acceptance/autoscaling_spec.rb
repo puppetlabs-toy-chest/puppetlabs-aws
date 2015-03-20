@@ -229,6 +229,11 @@ describe "ec2_autoscalinggroup" do
           expect(@result.stdout).to match(regex)
         end
 
+        it 'alarm_actions' do
+          regex = /alarm_actions\s*=>\s*\['#{@asg_config[:alarm_actions]}'\]/
+          expect(@result.stdout).to match(regex)
+        end
+
       end
 
       context 'autoscaling group' do
