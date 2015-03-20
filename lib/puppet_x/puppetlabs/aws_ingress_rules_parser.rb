@@ -77,8 +77,10 @@ module PuppetX
                           compact.map(&:to_s).uniq.map(&:to_i),
           'security_group' => (ipp[:user_id_group_pairs] || []).
             map {|ug| ug[:group_name] || id_to_name(ec2, ug[:group_id], self_ref) }.
-            compact.reject {|g| self_ref.last == g}
+            compact
         }.delete_if {|k,v| v.nil? || (v.is_a?(Array) && v.empty?)}
+
+        h.delete 'security_group' if h['security_group'] == [self_ref.last]
 
         %w{cidr port security_group}.each do |at|
           next unless h[at]

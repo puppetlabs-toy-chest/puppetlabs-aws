@@ -9,6 +9,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
   RULES = {
     sg_self:                { },
     sg_test:                { 'security_group' => 'test' },
+    sg_self_sg_test:        { 'security_group' => %w{test self} },
     sg_self_tcp:            { 'protocol' => 'tcp' },
     sg_self_tcp_port:       { 'port' => 10, 'protocol' => 'tcp' },
     sg_self_tcp_port_range: { 'port' => [10, 100], 'protocol' => 'tcp' },
@@ -27,6 +28,10 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
 
     sg_test:                [ { ip_protocol: -1,
                                 user_id_group_pairs: [ { group_id: 'test_id' } ] } ],
+
+    sg_self_sg_test:        [ { ip_protocol: -1,
+                                user_id_group_pairs: [ { group_id: 'test_id' },
+                                                       { group_id: 'self_id'} ] } ],
 
     sg_self_tcp:            [ { ip_protocol: 'tcp',
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
@@ -75,6 +80,16 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
                                 user_id_group_pairs: [ { group_id: 'test_id' } ] },
                               { ip_protocol: 'icmp',
                                 user_id_group_pairs: [ { group_id: 'test_id' } ] } ],
+
+    sg_self_sg_test:        [ { ip_protocol: 'tcp',
+                                user_id_group_pairs: [ { group_id: 'test_id' },
+                                                       { group_id: 'self_id' } ] },
+                              { ip_protocol: 'udp',
+                                user_id_group_pairs: [ { group_id: 'test_id' },
+                                                       { group_id: 'self_id' } ] },
+                              { ip_protocol: 'icmp',
+                                user_id_group_pairs: [ { group_id: 'test_id' },
+                                                       { group_id: 'self_id' } ] } ],
 
     sg_self_tcp:            [ { ip_protocol: 'tcp',
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
