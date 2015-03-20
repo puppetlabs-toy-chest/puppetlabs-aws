@@ -6,9 +6,9 @@ module PuppetX
         ip_permission = rule_to_ip_permission(ec2, rule, group_id, group_name)
 
         if ip_permission[:protocol] == '-1' && !ec2.vpc_only_account?
-          tcp  = ip_permission.dup.merge!(:protocol => 'tcp')
-          udp  = ip_permission.dup.merge!(:protocol => 'udp')
-          icmp = ip_permission.dup.merge!(
+          tcp  = Marshal.load(Marshal.dump(ip_permission)).merge!(:protocol => 'tcp')
+          udp  = Marshal.load(Marshal.dump(ip_permission)).merge!(:protocol => 'udp')
+          icmp = Marshal.load(Marshal.dump(ip_permission)).merge!(
             :protocol => 'icmp', :from_port => -1, :to_port => -1)
 
           [tcp, udp, icmp]
@@ -29,8 +29,9 @@ module PuppetX
         end
 
         categorized[:tcp].delete_if do |tcp_rule|
-          udp_rule  = tcp_rule.dup.merge! 'protocol' => 'udp'
-          icmp_rule = tcp_rule.dup.merge! 'protocol' => 'icmp', 'port' => nil
+          udp_rule  = Marshal.load(Marshal.dump(tcp_rule)).merge! 'protocol' => 'udp'
+          icmp_rule = Marshal.load(Marshal.dump(tcp_rule)).merge! 'protocol' => 'icmp'
+          icmp_rule.delete 'port'
 
           if categorized[:udp].include?(udp_rule) &&
              categorized[:icmp].include?(icmp_rule)
