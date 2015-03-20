@@ -1,11 +1,11 @@
 module PuppetX
   module Puppetlabs
     module AwsIngressRulesParser
-      # for vpc accounts expand protocol=-1 into protocol=tcp,udp,icmp
+      # for vpc accounts expand protocol='-1' into protocol=tcp,udp,icmp
       def self.rule_to_ip_permission_list(ec2, vpc_only, rule, self_ref)
         ip_permission = rule_to_ip_permission(ec2, rule, self_ref)
 
-        if ip_permission[:ip_protocol] == -1 && !vpc_only
+        if ip_permission[:ip_protocol] == '-1' && !vpc_only
           tcp  = Marshal.load(Marshal.dump(ip_permission)).merge!(ip_protocol: 'tcp')
           udp  = Marshal.load(Marshal.dump(ip_permission)).merge!(ip_protocol: 'udp')
           icmp = Marshal.load(Marshal.dump(ip_permission)).merge!(ip_protocol: 'icmp')
@@ -59,19 +59,19 @@ module PuppetX
         ports = Array(rule['port'])
 
         {
-          ip_protocol: rule['protocol'] || -1,
-          from_port: ports.first,
-          to_port: ports.last,
+          ip_protocol: rule['protocol'] || '-1',
+          from_port: ports.first.is_a?(String) ? ports.first.to_i : ports.first,
+          to_port: ports.last.is_a?(String) ? ports.last.to_i : ports.last,
           ip_ranges: Array(rule['cidr']).map {|c| {cidr_ip: c}},
           user_id_group_pairs: Array(security_group).map do |sg|
-            { group_id: name_to_id(ec2, sg, self_ref)}
+            { group_id: name_to_id(ec2, sg, self_ref) }
           end
         }.delete_if {|k,v| v.nil? || (v.is_a?(Array) && v.empty?)}
       end
 
       def self.ip_permission_to_rule(ec2, ipp, self_ref)
         h = {
-          'protocol' => ipp[:ip_protocol] == -1 ? nil : ipp[:ip_protocol],
+          'protocol' => ipp[:ip_protocol] == '-1' ? nil : ipp[:ip_protocol],
           'cidr'     => (ipp[:ip_ranges] || []).map{|ipr| ipr[:cidr_ip]},
           'port'     => [ipp[:from_port], ipp[:to_port]].
                           compact.map(&:to_s).uniq.map(&:to_i),

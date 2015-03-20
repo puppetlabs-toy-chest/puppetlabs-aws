@@ -4,7 +4,6 @@ require 'securerandom'
 require_relative '../../lib/puppet_x/puppetlabs/aws_ingress_rules_parser.rb'
 
 describe "ec2_securitygroup" do
-
   before(:all) do
     @default_region = ENV['AWS_REGION'] || 'sa-east-1'
     @aws = AwsHelper.new(@default_region)
@@ -18,16 +17,10 @@ describe "ec2_securitygroup" do
   end
 
   def check_ingress_rule(rule, ip_permissions)
-    require 'pry'
-    binding.pry
+    rules = PuppetX::Puppetlabs::AwsIngressRulesParser.ip_permissions_to_rules_list(
+      @aws.ec2_client, ip_permissions, [@group[:group_id], @group[:group_name]])
 
-    rules = ip_permissions.map do |ipp|
-      PuppetX::Puppetlabs::AwsIngressRulesParser.ip_permission_to_rule(
-        @aws.ec2_client, ipp, @group[:group_name])
-    end
-
-    [ rules.all? {|member| rule.include? member},
-      "#{rule.inspect} in #{ip_permissions.inspect}"]
+    [ rules.include?(rule), "#{rule.inspect} in #{ip_permissions.inspect}"]
   end
 
   def has_ingress_rule(rule, ip_permissions)
@@ -40,9 +33,7 @@ describe "ec2_securitygroup" do
     expect(match).to eq(false), msg
   end
 
-
   describe 'should create a new security group' do
-
     before(:all) do
       @name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
       @config = {
@@ -93,15 +84,14 @@ describe "ec2_securitygroup" do
 
     it 'should be able to modify the ingress rules and recreate the security group' do
       new_rules = [{
-        :protocol => 'tcp',
-        :port     => 80,
-        :cidr     => '0.0.0.0/0'
+        'protocol' => 'tcp',
+        'port'     => 80,
+        'cidr'     => '0.0.0.0/0'
       }]
       new_config = @config.dup.update({:ingress => new_rules})
       success = PuppetManifest.new(@template, new_config).apply[:exit_status].success?
       expect(success).to eq(false)
 
-      # should still have the original rules
       @group = get_group(@config[:name])
 
       new_rules.all? { |rule| has_ingress_rule(rule, @group.ip_permissions)}
@@ -115,11 +105,8 @@ describe "ec2_securitygroup" do
           :name => @name_2,
           # need both sgs by name to trigger a potential issue here
           :ingress => [
-            {
-              :security_group => @name
-            },{
-              :security_group => @name_2
-            }
+            { 'security_group' => @name },
+            { }
           ],
         }
         @config_2 = @config.dup.update(new_config)
@@ -143,7 +130,6 @@ describe "ec2_securitygroup" do
   end
 
   describe 'should create a new securitygroup' do
-
     before(:each) do
       @name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
       @config = {
@@ -153,18 +139,18 @@ describe "ec2_securitygroup" do
         :region => @default_region,
         :ingress => [
           {
-            :protocol => 'udp',
-            :port     => 22,
-            :cidr     => '0.0.0.0/0'
+            'protocol' => 'udp',
+            'port'     => 22,
+            'cidr'     => '0.0.0.0/0'
           },
           {
-            :protocol => 'tcp',
-            :port     => 443,
-            :cidr     => '0.0.0.0/0'
+            'protocol' => 'tcp',
+            'port'     => 443,
+            'cidr'     => '0.0.0.0/0'
           },{
-            :protocol => 'tcp',
-            :port     => 22,
-            :cidr     => '0.0.0.0/0'
+            'protocol' => 'tcp',
+            'port'     => 22,
+            'cidr'     => '0.0.0.0/0'
           },
         ],
         :tags => {
@@ -185,8 +171,8 @@ describe "ec2_securitygroup" do
     end
 
     def expect_rule_matches(ingress_rule, ip_permission)
-      expect(ingress_rule[:protocol]).to eq(ip_permission.ip_protocol)
-      expect(ingress_rule[:port]).to eq(ip_permission.to_port)
+      expect(ingress_rule['protocol']).to eq(ip_permission.ip_protocol)
+      expect(ingress_rule['port']).to eq(ip_permission.to_port)
     end
 
     it 'and does not emit change notifications on a second run when the manifest ingress rule ordering does not match the one returned by AWS' do
@@ -205,7 +191,6 @@ describe "ec2_securitygroup" do
   end
 
   describe 'should create a new securitygroup' do
-
     before(:each) do
       @name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
       @config = {
@@ -214,12 +199,11 @@ describe "ec2_securitygroup" do
         :description => 'aws acceptance sg',
         :region => @default_region,
         :ingress => [
+          { },
           {
-            :security_group => @name,
-          },{
-            :protocol => 'tcp',
-            :port     => 22,
-            :cidr     => '0.0.0.0/0'
+            'protocol' => 'tcp',
+            'port'     => 22,
+            'cidr'     => '0.0.0.0/0'
           }
         ],
         :tags => {
@@ -252,7 +236,6 @@ describe "ec2_securitygroup" do
   end
 
   describe 'create a security group' do
-
     before(:all) do
       @config = {
         :name         => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
@@ -274,7 +257,6 @@ describe "ec2_securitygroup" do
       TestExecutor.puppet_resource('ec2_securitygroup', @config, '--modulepath ../')
       expect { get_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
     end
-
   end
 
   describe 'create a new securitygroup with manifest' do
@@ -287,9 +269,9 @@ describe "ec2_securitygroup" do
         :region       => @default_region,
         :ingress => [
           {
-            :protocol => 'tcp',
-            :port     => 22,
-            :cidr     => '0.0.0.0/0'
+            'protocol' => 'tcp',
+            'port'     => 22,
+            'cidr'     => '0.0.0.0/0'
           },
           {
             :security_group => 'default',
@@ -336,7 +318,6 @@ describe "ec2_securitygroup" do
       it 'ingress rules are correct' do
         @config[:ingress].each do |i|
           i.each do |key, value|
-            keys = key == :port ? ['from_port', 'to_port'] : [key]
             keys.each do |new_key|
               regex = /('#{new_key}')(\s*)(=>)(\s*)('#{value}')/
               expect(@response.stdout).to match(regex)
@@ -352,11 +333,9 @@ describe "ec2_securitygroup" do
       PuppetManifest.new(@template, @config).apply
       expect { get_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
     end
-
   end
 
   describe 'should create a new security group' do
-
     before(:all) do
       @name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
       @config = {
@@ -366,10 +345,9 @@ describe "ec2_securitygroup" do
         :region => @default_region,
         :ingress => [
           {
-            :protocol  => 'tcp',
-            :from_port => 22,
-            :to_port => 1000,
-            :cidr      => '0.0.0.0/0'
+            'protocol'  => 'tcp',
+            'port' => [22, 1000],
+            'cidr'      => '0.0.0.0/0'
           }
         ],
       }
@@ -391,34 +369,29 @@ describe "ec2_securitygroup" do
 
     rules_to_test = [
       [{
-        :protocol  => 'udp',
-        :from_port => 80,
-        :to_port   => 100,
-        :cidr      => '0.0.0.0/0'
+        'protocol'  => 'udp',
+        'port'      => [80, 100],
+        'cidr'      => '0.0.0.0/0'
       }],
       [{
-        :port => 22,
-        :cidr => '0.0.0.0/0'
+        'port' => 22,
+        'cidr' => '0.0.0.0/0'
       }],
       [{
-        :protocol => 'tcp',
-        :port     => 22,
-        :cidr     => '0.0.0.0/0'
+        'protocol' => 'tcp',
+        'port'     => 22,
+        'cidr'     => '0.0.0.0/0'
       },{
-        :protocol  => 'udp',
-        :from_port => 80,
-        :to_port   => 100,
-        :cidr      => '0.0.0.0/0'
+        'protocol'  => 'udp',
+        'port'      => [80, 100],
+        'cidr'      => '0.0.0.0/0'
       }],
       [{
-        :protocol => 'tcp',
-        :security_group => '<<name>>',
+        'protocol' => 'tcp'
       }],
       [{
-        :protocol => 'udp',
-        :from_port => 100,
-        :to_port   => 120,
-        :security_group => '<<name>>',
+        'protocol' => 'udp',
+        'port'     => [100, 120]
       }]
     ]
 
@@ -439,6 +412,5 @@ describe "ec2_securitygroup" do
         @config[:ingress].all? { |rule| doesnt_have_ingress_rule(rule, @group.ip_permissions)}
       end
     end
-
   end
 end
