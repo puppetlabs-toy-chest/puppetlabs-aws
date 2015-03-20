@@ -2,7 +2,8 @@
 
 1. [Overview](#overview)
 2. [Description - What the module does and why it is useful](#module-description)
-3. [Setup - Getting started](#setup)
+3. [Setup - Requirements](#setup)
+4. [Getting Started](#getting-started)
 4. [Usage - Configuration options and additional functionality](#usage)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
@@ -25,6 +26,15 @@ importantly, it allows you to describe your entire AWS infrastructure and
 to model the relationships between different components.
 
 ##Setup
+
+###Requirements
+
+* Puppet 3.4 or greater
+* Ruby 1.9
+* Amazon AWS Ruby SDK (available as a gem)
+* Retries gem
+
+###Installing the aws module
 
 1. Install the retries gem and the Amazon AWS Ruby SDK gem. 
 
@@ -81,11 +91,30 @@ region using an environment variable.
 export AWS_REGION=eu-west-1
 ```
 
+## Getting Started with aws
+
+To stand up an instance with AWS, use the `ec2_instance` type:
+
+~~~
+ec2_instance { ['web-1', 'web-2']:
+  ensure          => present,
+  image_id        => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
+  security_groups => ['web-sg'],
+  instance_type   => 't1.micro',
+  tags            => {
+    department => 'engineering',
+    project    => 'cloud',
+    created_by => $::id,
+  }
+}
+~~~
+
+
 ##Usage
 
 ### Creating and Destroying Resources 
 
-#### Using the Puppet DSL
+#### Create and Destroy with the Puppet DSL
 
 The aws module allows you to manage AWS using the Puppet DSL. Let's create a simple stack, with a load balancer, instances, and security groups.
 
@@ -133,7 +162,7 @@ To destroy the resources created by the above, run the following:
 puppet apply tests/destroy.pp --test
 ```
 
-#### From the Command Line
+#### Create and Destroy on the Command Line
 
 The module also has basic `puppet resource` support, so you can manage AWS resources from the command line. 
 
@@ -155,39 +184,29 @@ and then destroy them, all from the command line:
 puppet resource ec2_securitygroup test-group ensure=absent region=sa-east-1
 ```
 
-###Other Uses [???this is a terrible section head and should be changed]
+### Managing AWS Infrastructure
 
+You can use the aws module to audit AWS resources, launch autoscaling groups in VPC, perform unit testing, and more. The [examples](examples/) directory contains a variety of usage examples that should give you an idea of what's possible:
 
-The [examples](examples/) directory contains other usage examples which should give an idea of what's possible.
-
-
-
+* [Puppet Enterprise](puppet-enterprise/): Start up a small Puppet Enterprise cluster using the AWS module.
+* [Managing DNS](manage-dns/): Manage DNS records in Amazon Route53 using Puppet.
+* [Data Driven Manifests](data-driven-manifests/): Automatically generate resources based on a data structure.
+* [Hiera Example](hiera-example/): Store common information like region or AMI id in Hiera.
+* [Infrastructure as YAML](yaml-infrastructure-definition/): Describe an entire infrastructure stack in YAML, and use `create_resources` and Hiera to build your infrastructure.
+* [Auditing Resources](audit-security-groups/): Audit AWS resource changes and work alongside other tools.
+* [Unit Testing](unit-testing): Test your AWS code with Puppet testing tools like rspec-puppet.
+* [Virtual Private Cloud](vpc-example): Use the Puppet DSL to manage a AWS VPC environment.
+* [Using IAM permissions](iam-profile): Control the API permissions required by the module with an IAM profile.
+* [Elastic IP Addresses](elastic-ip-addresses/): Attach existing elastic IP addresses to instances managed by Puppet
+  
 ##Reference
 
 ### Types
 
-
-#### ec2_instance
-
-```puppet
-ec2_instance { 'name-of-instance':
-  ensure            => present,
-  region            => 'us-east-1',
-  availability_zone => 'us-east-1a',
-  image_id          => 'ami-123456',
-  instance_type     => 't1.micro',
-  monitoring        => true,
-  key_name          => 'name-of-existing-key',
-  security_groups   => ['name-of-security-group'],
-  user_data         => template('module/file-path.sh.erb'),
-  tags              => {
-    tag_name => 'value',
-  },
-}
-```
+#### Type: ec2_instance
 
 #####`ensure`
-Specifies the basic state of the resource. Valid values are 'present,' 'absent' 'running', 'stopped'. IS THERE A DEFAULT VALUE FOR THIS???
+Specifies the basic state of the resource. Valid values are 'present,' 'absent' 'running', 'stopped'. 
 
 #####`name`
 *Required* The name of the instance. This is the value of the AWS Name tag.
@@ -201,7 +220,7 @@ Specifies the basic state of the resource. Valid values are 'present,' 'absent' 
 #####`user_data`
 *Optional* User data script to execute on new instance.
 
-#####`key_name
+#####`key_name`
 The name of the key pair associated with this instance. This must be an existing key pair already uploaded to the region in which you're launching the instance.
 
 #####`monitoring`
@@ -220,12 +239,15 @@ The name of the key pair associated with this instance. This must be an existing
 *Required* The type to use for the instance. See [Amazon EC2 Instances](http://aws.amazon.com/ec2/instance-types/) for available types.
 
 #####`private_ip_addresS`
-*Optional* The private IP address for the instance. Must be a valid IPv4 address. 
+*Optional* The private IP address for the instance. Must be a valid IPv4 address.
+
+#####`associate_public_ip_address`
+*Optional* Whether to assign a public interface in a VPC. Valid values are ‘true,’ ‘false’. Defaults to 'false'.
 
 #####`subnet`
 *Optional* The VPC subnet to attach the instance to. Accepts the name of the subnet; this is the value of the Name tag for the subnet. If you're describing the subnet in Puppet, then this value will be the name of the resource. 
 
-#####`ebs_optimized
+#####`ebs_optimized`
 *Optional* Whether or not to use optimized storage for the instance. Valid values are 'true', 'false'. Defaults to 'false'.
 
 #####`instance_initiated_shutdown_behavior`
@@ -243,28 +265,30 @@ block_devices => [
 ] 
 ~~~
 
-#### ec2_securitygroup
+#####`instance_id`
+The AWS generated id for the instance. Read-only.
+
+#####`hypervisor`
+The type of hypervisor running the instance. Read-only.
+
+#####`virtualization_type`
+The underlying virtualization of the instance. Read-only.
+
+#####`public_ip_address`
+The public IP address for the instance. Read-only.
+
+#####`private_dns_name`
+The internal DNS name for the instance. Read-only.
+
+#####`public_dns_name`
+The publicly available DNS name for the instance. Read-only.
+
+#####`kernel_id`
+The ID of the kernel in use by the instance. Read-only.
+
+#### Type: ec2_securitygroup
 
 Sets up an EC2 security group.
-
-
-```puppet
-ec2_securitygroup { 'name-of-group':
-  ensure      => present,
-  region      => 'us-east-1',
-  description => 'a description of the group',
-  ingress     => [{
-    protocol => 'tcp',
-    port     => 80,
-    cidr     => '0.0.0.0/0',
-  },{
-    security_group => 'other-security-group',
-  }],
-  tags        => {
-    tag_name => 'value',
-  },
-}
-```
 
 ##### `name
 *Required* The name of the security group.
@@ -285,27 +309,8 @@ ec2_securitygroup { 'name-of-group':
 *Optional* The VPC to which the group should be associated. Accepts the value of the Name tag for the VPC.
 
 
-#### elb_loadbalancer
+#### Type: elb_loadbalancer
 Sets up an ELB load balancer.
-
-```puppet
-elb_loadbalancer { 'name-of-load-balancer':
-  ensure             => present,
-  region             => 'us-east-1',
-  availability_zones => ['us-east-1a', 'us-east-1b'],
-  instances          => ['name-of-instance', 'another-instance'],
-  security_groups    => ['name-of-security-group'],
-  listeners          => [{
-    protocol           => 'tcp',
-    load_balancer_port => 80,
-    instance_protocol  => 'tcp',
-    instance_port      => 80,
-  }],
-  tags               => {
-    tag_name => 'value',
-  },
-}
-```
 
 #####`name`
 *Required* The name of the load balancer.
@@ -338,7 +343,7 @@ elb_loadbalancer { 'name-of-load-balancer':
 #####`scheme`
 *Optional* Whether the load balancer is internal or public facing. Valid values are 'internal', 'internet-facing'. Default value is 'internet-facing' and makes the load balancer publicly available.
 
-####cloudwatch_alarm
+#### Type: cloudwatch_alarm
 
 ##### `name`
 *Required* The name of the alarm.
@@ -368,12 +373,12 @@ elb_loadbalancer { 'name-of-load-balancer':
 *Required* The region in which to launch the instances. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 ##### `dimensions`
-*Optional* The dimensions by which to filter the alarm by. (I HAVE NO IDEA WHAT THIS MEANS.)
+*Optional* The dimensions by which to filter the alarm by. For more information about EC2 dimensions, see AWS [Dimensions and Metrics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ec2-metricscollected.html) documentation.
 
 ##### `alarm_actions`
 *Optional* The actions to trigger when the alarm triggers. This parameter currently supports only named scaling policies.
 
-####ec2_autoscalinggroup
+#### Type: ec2_autoscalinggroup
 
 Sets up an EC2 auto scaling group. For more information, see the aws module [autoscaling documentation and examples](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/auto-scaling-groups).  
 
@@ -398,11 +403,11 @@ Sets up an EC2 auto scaling group. For more information, see the aws module [aut
 ##### `subnets`
 *Optional* The subnets to associate with the autoscaling group.
 
-####ec2_elastic_ip
-Type representing an Elastic IP and its association. NOT SURE WHAT THIS MEANS
+#### Type: ec2_elastic_ip
+Type representing an Elastic IP and its association.
 
 #####`ensure`
-Specifies that basic state of the resource. Valid values are 'attached', 'detached'. NO IDEA WHETHER THIS IS RIGHT.
+Specifies that basic state of the resource. Valid values are 'attached', 'detached'.
 
 #####`name`
 *Required* The IP address of the Elastic IP. Accepts a valid IPv4 address of an already existing elastic IP.  
@@ -414,7 +419,7 @@ Specifies that basic state of the resource. Valid values are 'attached', 'detach
 *Required* The name of the instance associated with the Elastic IP.
 
 
-####ec2_launchconfiguration
+#### Type: ec2_launchconfiguration
 Sets up an EC2 launch configuration to provide autoscaling support.
 
 #####`name`
@@ -441,7 +446,7 @@ Sets up an EC2 launch configuration to provide autoscaling support.
 #####`vpc`
 *Optional* A hint to specify the VPC. This is useful when detecting ambiguously named security groups that might exist in different VPCs, such as 'default'.
 
-####ec2_scalingpolicy
+#### Type: ec2_scalingpolicy
 
 Sets up an EC2 scaling policy.
 
@@ -460,7 +465,7 @@ Sets up an EC2 scaling policy.
 #####`auto_scaling_group
 *Required* The name of the auto scaling group to attach the policy to.
 
-####ec2_vpc
+#### Type: ec2_vpc
 Sets up an AWS VPC.
 
 #####`name`
@@ -481,11 +486,11 @@ Sets up an AWS VPC.
 #####`tags`
 *Optional* The tags to assign to the VPC. Accepts a 'key => value' hash of tags.
 
-####ec2_vpc_customer_gateway
+#### Type: ec2_vpc_customer_gateway
 Type representing an AWS VPC customer gateways.
 
 #####`name`
-*Required* The name of the customer gateway.'
+*Required* The name of the customer gateway.
 
 #####`ip_address`
 *Required* The IPv4 address for the customer gateway. Accepts a valid IPv4 address.
@@ -502,7 +507,7 @@ Type representing an AWS VPC customer gateways.
 #####`type`
 The type of customer gateway. The only currently supported value --- and the default --- is 'ipsec.1'.
 
-####ec2_vpc_dhcp_options
+#### Type: ec2_vpc_dhcp_options
 
 Sets a DHCP option AWS VPC.
 
@@ -522,7 +527,7 @@ Sets a DHCP option AWS VPC.
 *Optional* A list of domain name servers to use for the DHCP options set. Accepts an array of domain server names. 
 
 #####`ntp_servers
-*Optional* A list of NTP servers to use for the DHCP options set. Accepts an array of ???
+*Optional* A list of NTP servers to use for the DHCP options set. Accepts an array of NTP server names.
 
 #####`netbios_name_servers`
 *Optional* A list of netbios name servers to use for the DHCP options set. Accepts an array.
@@ -531,7 +536,7 @@ Sets a DHCP option AWS VPC.
 *Optional* The netbios node type. Valid values are '1', '2', '4', '8'. Defaults to '2'.
 
 
-####ec2_vpc_internet_gateway
+#### Type: ec2_vpc_internet_gateway
 
 Sets up an EC2 VPC Internet Gateway.
 
@@ -548,7 +553,7 @@ Sets up an EC2 VPC Internet Gateway.
 *Optional* The vpc to assign this internet gateway to.
 
 
-####ec2_vpc_routetable
+#### Type: ec2_vpc_routetable
 
 Sets up a VPC route table.
 
@@ -562,7 +567,7 @@ Sets up a VPC route table.
 *Optional* The region in which to launch the route table. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 #####`routes`
-*Optional* Individual routes for the routing table. 
+*Optional* Individual routes for the routing table. Accepts an array of 'destination_cidr_block' and 'gateway' values:
  
 ~~~
 routes => [
@@ -580,7 +585,7 @@ routes => [
 *Optional* Tags to assign to the route table. Accepts a 'key => value' hash of tags.
 
 
-####ec2_vpc_subnet
+#### Type: ec2_vpc_subnet
 
 Sets up a VPC subnet.
 
@@ -588,7 +593,7 @@ Sets up a VPC subnet.
 *Required* The name of the subnet.
 
 #####`vpc`
-*Optional* VPC to assign the subnet  to.
+*Optional* VPC to assign the subnet to.
 
 #####`region`
 *Required* The region in which to launch the subnet. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
@@ -609,7 +614,8 @@ The route table to attach to the subnet.
 *Optional* Region in which to launch the route table. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 #####`routes`
-*Required* Individual routes for the routing table. Accepts an array like:
+*Optional* Individual routes for the routing table. Accepts an array of 'destination_cidr_block' and 'gateway' values:
+
 
 ~~~
 routes => [
@@ -627,7 +633,7 @@ routes => [
 *Optional* Tags to assign to the route table. Accepts a 'key => value' hash of tags.
 
 
-####ec2_vpc_vpn
+#### Type: ec2_vpc_vpn
 
 Sets up an AWS Virtual Private Network.
 
@@ -644,8 +650,7 @@ Sets up an AWS Virtual Private Network.
 *Optional* The type of VPN gateway. The only currently supported value --- and the default --- is 'ipsec.1'.
 
 #####`routes` 
-*Optional* The list of routes for the VPN. Valid values are IP ranges like:
-`routes           => ['0.0.0.0/0']`
+*Optional* The list of routes for the VPN. Valid values are IP ranges like: `routes           => ['0.0.0.0/0']`
 
 #####`static_routes`
 *Optional* Whether or not to use static routes. Valid values are 'true', 'false'. Defaults to 'true'.
@@ -656,7 +661,7 @@ Sets up an AWS Virtual Private Network.
 #####`tags`
 *Optional* The tags for the VPN. Accepts a 'key => value' hash of tags.
 
-####ec2_vpc_vpn_gateway
+#### Type: ec2_vpc_vpn_gateway
 Sets up a VPN gateway.
 
 #####`name`
@@ -677,7 +682,9 @@ Sets up a VPN gateway.
 #####`type`
 *Optional* The type of VPN gateway. The only currently supported value --- and the default --- is 'ipsec.1'.
 
-####`route53` Types
+#### Type: route53*
+
+These route53 types set up various types of Route53 records:
 
 * route53_a_record
 Sets up a Route53 DNS record. 
@@ -723,7 +730,7 @@ All Route53 record types use the same parameters:
 #####`name`
 *Required* The name of DNS zone group.
 
-#### route53_zone
+#### Type: route53_zone
 Sets up a Route53 DNS zone.
 
 #####`name`
@@ -732,11 +739,11 @@ Sets up a Route53 DNS zone.
 
 ##Limitations
 
-At the moment this module only supports a small number of the resources
-in the AWS API. These resources also exist a little bit outside the
+This module requires Ruby 1.9 or later and is only tested on Puppet
+versions 3.4 and later.
+
+At the moment this module only supports a few of the resources
+in the AWS API. These resources also exist a bit outside the
 normal host level resources like `package`, `file`, `user`, etc. We're
 really interested to see how people use these new resources, and what
 else you would like to be able to do with the module.
-
-Note that this module also requires at least Ruby 1.9 and is only tested on Puppet
-versions from 3.4. If this is too limiting please let us know.
