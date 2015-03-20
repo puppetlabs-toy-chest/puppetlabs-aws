@@ -5,11 +5,12 @@ module PuppetX
       def self.rule_to_ip_permission_list(ec2, rule, self_ref)
         ip_permission = rule_to_ip_permission(ec2, rule, self_ref)
 
-        if ip_permission[:protocol] == '-1' && !ec2.vpc_only_account?
-          tcp  = Marshal.load(Marshal.dump(ip_permission)).merge!(:protocol => 'tcp')
-          udp  = Marshal.load(Marshal.dump(ip_permission)).merge!(:protocol => 'udp')
-          icmp = Marshal.load(Marshal.dump(ip_permission)).merge!(
-            :protocol => 'icmp', :from_port => -1, :to_port => -1)
+        if ip_permission[:ip_protocol] == -1 && !ec2.vpc_only_account?
+          tcp  = Marshal.load(Marshal.dump(ip_permission)).merge!(ip_protocol: 'tcp')
+          udp  = Marshal.load(Marshal.dump(ip_permission)).merge!(ip_protocol: 'udp')
+          icmp = Marshal.load(Marshal.dump(ip_permission)).merge!(ip_protocol: 'icmp')
+          icmp.delete :from_port
+          icmp.delete :to_port
 
           [tcp, udp, icmp]
         else
@@ -24,10 +25,13 @@ module PuppetX
 
         categorized = {tcp: [], udp: [], icmp: [], none: []}
         rules.each do |rule|
-          key = %w{tcp udp icmp}.include?(rule['protocol']) ? 'none' : rule['protocol']
-          categorized[key.to_sym] = rule
+          key = %w{tcp udp icmp}.include?(rule['protocol']) ? rule['protocol'] : 'none'
+          categorized[key.to_sym] << rule
         end
 
+        # go through tcp rules and search for matching udp and icmp
+        # if found - drop them all from corresponding lists and attach
+        # a rule without protocol into :none category
         categorized[:tcp].delete_if do |tcp_rule|
           udp_rule  = Marshal.load(Marshal.dump(tcp_rule)).merge! 'protocol' => 'udp'
           icmp_rule = Marshal.load(Marshal.dump(tcp_rule)).merge! 'protocol' => 'icmp'
@@ -37,7 +41,9 @@ module PuppetX
              categorized[:icmp].include?(icmp_rule)
             categorized[:udp].delete udp_rule
             categorized[:icmp].delete icmp_rule
-            categorized[:none] << udp_rule.merge!('protocol' => '-1')
+
+            udp_rule.delete 'protocol'
+            categorized[:none] << udp_rule
             true
           end
         end

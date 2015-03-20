@@ -4,6 +4,7 @@ require_relative '../../lib/puppet_x/puppetlabs/aws_ingress_rules_parser.rb'
 describe PuppetX::Puppetlabs::AwsIngressRulesParser do
   let(:subject) { PuppetX::Puppetlabs::AwsIngressRulesParser }
   let(:ec2) { stub('ec2') }
+  let(:self_ref) { ['self_id', 'self'] }
 
   RULES = {
     sg_self:                { },
@@ -88,14 +89,14 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] },
                               { ip_protocol: 'udp', from_port: 10, to_port: 10,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] },
-                              { ip_protocol: 'icmp', from_port: 10, to_port: 10,
+                              { ip_protocol: 'icmp',
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
 
     sg_self_port_range:     [ { ip_protocol: 'tcp', from_port: 10, to_port: 100,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] },
                               { ip_protocol: 'udp', from_port: 10, to_port: 100,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] },
-                              { ip_protocol: 'icmp', from_port: 10, to_port: 100,
+                              { ip_protocol: 'icmp',
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
 
     cidr:                   [ { ip_protocol: 'tcp',
@@ -118,20 +119,70 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] },
                               { ip_protocol: 'udp', from_port: 10, to_port: 10,
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] },
-                              { ip_protocol: 'icmp', from_port: 10, to_port: 10,
+                              { ip_protocol: 'icmp',
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] } ],
 
     cidr_port_range:        [ { ip_protocol: 'tcp', from_port: 10, to_port: 100,
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] },
                               { ip_protocol: 'udp', from_port: 10, to_port: 100,
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] },
-                              { ip_protocol: 'icmp', from_port: 10, to_port: 100,
+                              { ip_protocol: 'icmp',
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] } ] }
 
   describe '#rule_to_ip_permission_list' do # (ec2, rule, group_id, group_name)
+    RULES.each do |key, rule|
+      it "#{key} in non-vpc should expand" do
+        ec2.stubs(:vpc_only_account? => false)
+
+        # this should only stub calls for test_id group
+        ec2.stubs(:describe_security_groups).returns(
+          stub(data: stub(security_groups: [stub(group_id: 'test_id')])))
+
+        expect(subject.rule_to_ip_permission_list(ec2, rule, self_ref)).to(
+          eq(NON_VPC_IP_PERMISSION_LISTS[key]))
+      end
+    end
+
+    RULES.each do |key, rule|
+      it "#{key} in vpc should not expand" do
+        ec2.stubs(:vpc_only_account? => true)
+
+        # this should only stub calls for test_id group
+        ec2.stubs(:describe_security_groups).returns(
+          stub(data: stub(security_groups: [stub(group_id: 'test_id')])))
+
+        expect(subject.rule_to_ip_permission_list(ec2, rule, self_ref)).to(
+          eq(VPC_IP_PERMISSION_LISTS[key]))
+      end
+    end
   end
 
   describe '#ip_permissions_to_rules_list' do # (ec2, ipps, group_name)
+    VPC_IP_PERMISSION_LISTS.each do |key, rule|
+      it "#{key} in vpc should collapse" do
+        ec2.stubs(:vpc_only_account? => true)
+
+        # this should only stub calls for test_id group
+        ec2.stubs(:describe_security_groups).returns(
+          stub(data: stub(security_groups: [stub(group_name: 'test')])))
+
+        expect(subject.ip_permissions_to_rules_list(ec2, rule, self_ref)).to(
+          eq([RULES[key]]))
+      end
+    end
+
+    NON_VPC_IP_PERMISSION_LISTS.each do |key, rule|
+      it "#{key} in non-vpc should not collapse" do
+        ec2.stubs(:vpc_only_account? => false)
+
+        # this should only stub calls for test_id group
+        ec2.stubs(:describe_security_groups).returns(
+          stub(data: stub(security_groups: [stub(group_name: 'test')])))
+
+        expect(subject.ip_permissions_to_rules_list(ec2, rule, self_ref)).to(
+          eq([RULES[key]]))
+      end
+    end
   end
 
   describe '#rule_to_ip_permission' do # (ec2, rule, group_id, group_name)
@@ -143,7 +194,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
         ec2.stubs(:describe_security_groups).returns(
           stub(data: stub(security_groups: [stub(group_id: 'test_id')])))
 
-        expect(subject.rule_to_ip_permission(ec2, rule, ['self_id', 'self'])).to(
+        expect(subject.rule_to_ip_permission(ec2, rule, self_ref)).to(
           eq(VPC_IP_PERMISSION_LISTS[key].first))
       end
     end
@@ -158,7 +209,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
         ec2.stubs(:describe_security_groups).returns(
           stub(data: stub(security_groups: [stub(group_name: 'test')])))
 
-        expect(subject.ip_permission_to_rule(ec2, ipp.first, ['self_id', 'self'])).to(
+        expect(subject.ip_permission_to_rule(ec2, ipp.first, self_ref)).to(
           eq(RULES[key]))
       end
     end
