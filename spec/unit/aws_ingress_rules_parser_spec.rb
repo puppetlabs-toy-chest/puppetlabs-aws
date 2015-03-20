@@ -6,8 +6,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
   let(:ec2) { stub('ec2') }
 
   RULES = {
-    empty:                  {},
-    sg_self:                { 'security_group' => 'self' },
+    sg_self:                { },
     sg_test:                { 'security_group' => 'test' },
     sg_self_tcp:            { 'protocol' => 'tcp' },
     sg_self_tcp_port:       { 'port' => 10, 'protocol' => 'tcp' },
@@ -22,9 +21,6 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
     cidr_port_range:        { 'port' => [10, 100], 'cidr' => '0.0.0.0/8' } }
 
   VPC_IP_PERMISSION_LISTS = {
-    empty:                  [ { ip_protocol: -1,
-                                user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
-
     sg_self:                [ { ip_protocol: -1,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
 
@@ -43,7 +39,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
     sg_self_port:           [ { ip_protocol: -1, from_port: 10, to_port: 10,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
 
-    sg_self_port_range:     [ { ip_protocol: -1, from_port: 10, to_port: 10,
+    sg_self_port_range:     [ { ip_protocol: -1, from_port: 10, to_port: 100,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
 
     cidr:                   [ { ip_protocol: -1,
@@ -65,13 +61,6 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] } ] }
 
   NON_VPC_IP_PERMISSION_LISTS = {
-    empty:                  [ { ip_protocol: 'tcp',
-                                user_id_group_pairs: [ { group_id: 'self_id' } ] },
-                              { ip_protocol: 'udp',
-                                user_id_group_pairs: [ { group_id: 'self_id' } ] },
-                              { ip_protocol: 'icmp',
-                                user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
-
     sg_self:                [ { ip_protocol: 'tcp',
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] },
                               { ip_protocol: 'udp',
@@ -102,11 +91,11 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
                               { ip_protocol: 'icmp', from_port: 10, to_port: 10,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
 
-    sg_self_port_range:     [ { ip_protocol: 'tcp', from_port: 10, to_port: 10,
+    sg_self_port_range:     [ { ip_protocol: 'tcp', from_port: 10, to_port: 100,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] },
-                              { ip_protocol: 'udp', from_port: 10, to_port: 10,
+                              { ip_protocol: 'udp', from_port: 10, to_port: 100,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] },
-                              { ip_protocol: 'icmp', from_port: 10, to_port: 10,
+                              { ip_protocol: 'icmp', from_port: 10, to_port: 100,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
 
     cidr:                   [ { ip_protocol: 'tcp',
@@ -149,7 +138,12 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
     RULES.each do |key, rule|
       it key do
         ec2.stubs(:vpc_only_account? => true)
-        expect(subject.rule_to_ip_permission(ec2, rule, 'self_id', 'self')).to(
+
+        # this should only stub calls for test_id group
+        ec2.stubs(:describe_security_groups).returns(
+          stub(data: stub(security_groups: [stub(group_id: 'test_id')])))
+
+        expect(subject.rule_to_ip_permission(ec2, rule, ['self_id', 'self'])).to(
           eq(VPC_IP_PERMISSION_LISTS[key].first))
       end
     end
@@ -159,8 +153,12 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
     VPC_IP_PERMISSION_LISTS.each do |key, ipp|
       it key do
         ec2.stubs(:vpc_only_account? => true)
-        subject.stubs(id_to_name: 'self')
-        expect(subject.ip_permission_to_rule(ec2, ipp.first, 'self')).to(
+
+        # this should only stub calls for test_id group
+        ec2.stubs(:describe_security_groups).returns(
+          stub(data: stub(security_groups: [stub(group_name: 'test')])))
+
+        expect(subject.ip_permission_to_rule(ec2, ipp.first, ['self_id', 'self'])).to(
           eq(RULES[key]))
       end
     end
@@ -168,11 +166,11 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
 
   describe '#name_to_id' do # (ec2, group_id_or_name, group_id, group_name)
     it 'returns group_id_or_name when it is in id form' do
-      expect(subject.name_to_id(nil, 'sg-123', nil, nil)).to eq('sg-123')
+      expect(subject.name_to_id(nil, 'sg-123')).to eq('sg-123')
     end
 
     it 'returns group_id when group_id_or_name = group_name' do
-      expect(subject.name_to_id(nil, 'foo', 'sg-123', 'foo')).to eq('sg-123')
+      expect(subject.name_to_id(nil, 'foo', ['sg-123', 'foo'])).to eq('sg-123')
     end
 
     it 'requests group data from ec2' do
@@ -180,7 +178,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
         with(filters: [{name: 'group-name', values: ['foo']}]).
         returns(stub(data: stub(security_groups: [stub(group_id: 'sg-456')])))
 
-      expect(subject.name_to_id(ec2, 'foo', 'sg-123', 'bar')).to eq('sg-456')
+      expect(subject.name_to_id(ec2, 'foo', ['sg-123', 'bar'])).to eq('sg-456')
     end
 
     it 'fails when no groups found' do
@@ -188,7 +186,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
         with(filters: [{name: 'group-name', values: ['foo']}]).
         returns(stub(data: stub(security_groups: [])))
 
-      expect { subject.name_to_id(ec2, 'foo', 'sg-123', 'bar') }.to raise_exception
+      expect { subject.name_to_id(ec2, 'foo') }.to raise_exception
     end
 
     it 'warns when more than 1 group found but returns first found' do
@@ -199,17 +197,21 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
           stub(group_id: 'sg-456')])))
 
       Puppet.expects(:warning)
-      expect(subject.name_to_id(ec2, 'foo', 'sg-123', 'bar')).to eq('sg-123')
+      expect(subject.name_to_id(ec2, 'foo')).to eq('sg-123')
     end
   end
 
   describe '#id_to_name' do # (ec2, group_id)
+    it 'returns data from cache' do
+      expect(subject.id_to_name(ec2, 'id', ['id', 'name'])).to eq('name')
+    end
+
     it 'passes filter for group-id and returns name from data' do
       ec2.expects(:describe_security_groups).
-        with(filters: [{name: 'group-id', values: ['123']}]).
-        returns(stub(data: stub(security_groups: [stub(group_name: '123')])))
+        with(filters: [{name: 'group-id', values: ['id']}]).
+        returns(stub(data: stub(security_groups: [stub(group_name: 'name')])))
 
-      expect(subject.id_to_name(ec2, '123')).to eq('123')
+      expect(subject.id_to_name(ec2, 'id')).to eq('name')
     end
   end
 end
