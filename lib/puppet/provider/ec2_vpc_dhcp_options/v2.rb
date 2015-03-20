@@ -13,7 +13,7 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
       ec2_client(region).describe_dhcp_options.collect do |response|
         response.data.dhcp_options.each do |item|
           hash = dhcp_option_to_hash(region, item)
-          options << new(hash) if hash[:name]
+          options << new(hash) if has_name?(hash)
         end
       end
       options

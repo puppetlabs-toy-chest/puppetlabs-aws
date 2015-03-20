@@ -13,7 +13,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
       gateways = []
       response.data.internet_gateways.each do |gateway|
         hash = gateway_to_hash(region, gateway)
-        gateways << new(hash) if hash[:name]
+        gateways << new(hash) if has_name?(hash)
       end
       gateways
     end.flatten

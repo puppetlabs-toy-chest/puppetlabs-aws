@@ -13,7 +13,7 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
       vpcs = []
       response.data.vpcs.each do |vpc|
         hash = vpc_to_hash(region, vpc)
-        vpcs << new(hash) if hash[:name]
+        vpcs << new(hash) if has_name?(hash)
       end
       vpcs
     end.flatten
