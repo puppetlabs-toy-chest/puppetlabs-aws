@@ -89,6 +89,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
       ensure: :present,
       ingress: format_ingress_rules(ec2, group),
       vpc: vpc_name,
+      vpc_id: group.vpc_id,
       region: region,
       tags: tags_for(group),
     }
@@ -117,6 +118,8 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
       vpc_id = vpc_response.data.vpcs.first.vpc_id
       Puppet.warning "Multiple VPCs found called #{vpc_name}, using #{vpc_id}" if vpc_response.data.vpcs.count > 1
       config[:vpc_id] = vpc_id
+      @property_hash[:vpc_id] = vpc_id
+      @property_hash[:vpc] = vpc_name
     end
 
     response = ec2.create_security_group(config)
@@ -153,14 +156,20 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
         source_group_name = rule['security_group']
 
         filters = [ {name: 'group-name', values: [source_group_name]} ]
-        if vpc_only_account?
+
+        if @property_hash[:vpc_id]
+          filters.push( {name: 'vpc-id', values: [@property_hash[:vpc_id]]} )
+        elsif vpc_only_account?
           response = ec2.describe_security_groups(group_ids: [@property_hash[:id]])
           vpc_id = response.data.security_groups.first.vpc_id
           filters.push( {name: 'vpc-id', values: [vpc_id]} )
         end
+
         group_response = ec2.describe_security_groups(filters: filters)
         match_count = group_response.data.security_groups.count
-        fail("No groups found called #{source_group_name}") if match_count == 0
+        msg = "No groups found called #{source_group_name}"
+        msg = msg + " in #{@property_hash[:vpc]}"
+        fail(msg) if match_count == 0
         source_group_id = group_response.data.security_groups.first.group_id
         Puppet.warning "#{match_count} groups found called #{source_group_name}, using #{source_group_id}" if match_count > 1
 
