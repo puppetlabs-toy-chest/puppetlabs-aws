@@ -162,26 +162,22 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
   describe '#rule_to_ip_permission_list' do # (ec2, rule, group_id, group_name)
     RULES.each do |key, rule|
       it "#{key} in non-vpc should expand" do
-        ec2.stubs(:vpc_only_account? => false)
-
         # this should only stub calls for test_id group
         ec2.stubs(:describe_security_groups).returns(
           stub(data: stub(security_groups: [stub(group_id: 'test_id')])))
 
-        expect(subject.rule_to_ip_permission_list(ec2, rule, self_ref)).to(
+        expect(subject.rule_to_ip_permission_list(ec2, false, rule, self_ref)).to(
           eq(NON_VPC_IP_PERMISSION_LISTS[key]))
       end
     end
 
     RULES.each do |key, rule|
       it "#{key} in vpc should not expand" do
-        ec2.stubs(:vpc_only_account? => true)
-
         # this should only stub calls for test_id group
         ec2.stubs(:describe_security_groups).returns(
           stub(data: stub(security_groups: [stub(group_id: 'test_id')])))
 
-        expect(subject.rule_to_ip_permission_list(ec2, rule, self_ref)).to(
+        expect(subject.rule_to_ip_permission_list(ec2, true, rule, self_ref)).to(
           eq(VPC_IP_PERMISSION_LISTS[key]))
       end
     end
@@ -189,9 +185,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
 
   describe '#ip_permissions_to_rules_list' do # (ec2, ipps, group_name)
     VPC_IP_PERMISSION_LISTS.each do |key, rule|
-      it "#{key} in vpc should collapse" do
-        ec2.stubs(:vpc_only_account? => true)
-
+      it "simple #{key} should match directly" do
         # this should only stub calls for test_id group
         ec2.stubs(:describe_security_groups).returns(
           stub(data: stub(security_groups: [stub(group_name: 'test')])))
@@ -202,9 +196,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
     end
 
     NON_VPC_IP_PERMISSION_LISTS.each do |key, rule|
-      it "#{key} in non-vpc should not collapse" do
-        ec2.stubs(:vpc_only_account? => false)
-
+      it "triplet #{key} should collapse into single rule" do
         # this should only stub calls for test_id group
         ec2.stubs(:describe_security_groups).returns(
           stub(data: stub(security_groups: [stub(group_name: 'test')])))
@@ -218,8 +210,6 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
   describe '#rule_to_ip_permission' do # (ec2, rule, group_id, group_name)
     RULES.each do |key, rule|
       it key do
-        ec2.stubs(:vpc_only_account? => true)
-
         # this should only stub calls for test_id group
         ec2.stubs(:describe_security_groups).returns(
           stub(data: stub(security_groups: [stub(group_id: 'test_id')])))
@@ -233,8 +223,6 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
   describe '#ip_permission_to_rule' do # (ec2, ipp, group_name)
     VPC_IP_PERMISSION_LISTS.each do |key, ipp|
       it key do
-        ec2.stubs(:vpc_only_account? => true)
-
         # this should only stub calls for test_id group
         ec2.stubs(:describe_security_groups).returns(
           stub(data: stub(security_groups: [stub(group_name: 'test')])))

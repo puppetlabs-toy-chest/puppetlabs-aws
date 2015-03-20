@@ -31,7 +31,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
   def self.format_ingress_rules(ec2, group)
     PuppetX::Puppetlabs::AwsIngressRulesParser.ip_permissions_to_rules_list(
-      ec2, group[:ip_permissions], [group.group_id, group.group_name])
+      ec2, vpc_only_account?, group[:ip_permissions], [group.group_id, group.group_name])
   end
 
   def self.security_group_to_hash(region, group)
@@ -113,14 +113,14 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
         group_id: @property_hash[:id],
         ip_permissions:
           PuppetX::Puppetlabs::AwsIngressRulesParser.rule_to_ip_permission_list(
-            ec2, rule, @property_hash.values_at(:id, :name)))
+            ec2, vpc_only_account?, rule, @property_hash.values_at(:id, :name)))
     end
 
     to_delete.compact.each do |rule|
       ec2.revoke_security_group_ingress(
         group_id: @property_hash[:id],
         ip_permissions: PuppetX::Puppetlabs::AwsIngressRulesParser.rule_to_ip_permission_list(
-          ec2, rule, @property_hash.values_at(:id, :name)))
+          ec2, vpc_only_account?, rule, @property_hash.values_at(:id, :name)))
     end
   end
 

@@ -2,10 +2,10 @@ module PuppetX
   module Puppetlabs
     module AwsIngressRulesParser
       # for vpc accounts expand protocol=-1 into protocol=tcp,udp,icmp
-      def self.rule_to_ip_permission_list(ec2, rule, self_ref)
+      def self.rule_to_ip_permission_list(ec2, vpc_only, rule, self_ref)
         ip_permission = rule_to_ip_permission(ec2, rule, self_ref)
 
-        if ip_permission[:ip_protocol] == -1 && !ec2.vpc_only_account?
+        if ip_permission[:ip_protocol] == -1 && !vpc_only
           tcp  = Marshal.load(Marshal.dump(ip_permission)).merge!(ip_protocol: 'tcp')
           udp  = Marshal.load(Marshal.dump(ip_permission)).merge!(ip_protocol: 'udp')
           icmp = Marshal.load(Marshal.dump(ip_permission)).merge!(ip_protocol: 'icmp')
@@ -18,8 +18,8 @@ module PuppetX
         end
       end
 
-      # for non-vpc accounts collapse "identical" rules with
-      # protocol=tcp,udp,icmp rule without protocol
+      # for all accounts collapse "identical" permissions with
+      # protocol=tcp,udp,icmp into rule without protocol
       def self.ip_permissions_to_rules_list(ec2, ipps, self_ref)
         rules = ipps.map{|ipp| ip_permission_to_rule(ec2, ipp, self_ref)}
 
