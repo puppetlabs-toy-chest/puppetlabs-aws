@@ -96,6 +96,12 @@ module PuppetX
         tags
       end
 
+      def target_region
+        target = resource ? resource[:region] || region : region
+        target = nil if target == :absent
+        target || ENV['AWS_REGION']
+      end
+
       def tags=(value)
         Puppet.info("Updating tags for #{name} in region #{region}")
         ec2 = ec2_client(resource[:region])

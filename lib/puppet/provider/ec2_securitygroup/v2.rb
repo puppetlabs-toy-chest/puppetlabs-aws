@@ -24,7 +24,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   def self.prefetch(resources)
     instances.each do |prov|
       if resource = resources[prov.name] # rubocop:disable Lint/AssignmentInCondition
-        resource.provider = prov if resource[:region] == prov.region
+        resource.provider = prov if (resource[:region] || ENV['AWS_REGION']) == prov.region
       end
     end
   end
@@ -96,14 +96,13 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if security group #{name} exists in region #{dest_region || region}")
+    Puppet.info("Checking if security group #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating security group #{name} in region #{resource[:region]}")
-    ec2 = ec2_client(resource[:region])
+    Puppet.info("Creating security group #{name} in region #{target_region}")
+    ec2 = ec2_client(target_region)
     config = {
       group_name: name,
       description: resource[:description]
@@ -207,8 +206,8 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def destroy
-    Puppet.info("Deleting security group #{name} in region #{resource[:region]}")
-    ec2_client(resource[:region]).delete_security_group(
+    Puppet.info("Deleting security group #{name} in region #{target_region}")
+    ec2_client(target_region).delete_security_group(
       group_id: @property_hash[:id]
     )
     @property_hash[:ensure] = :absent
