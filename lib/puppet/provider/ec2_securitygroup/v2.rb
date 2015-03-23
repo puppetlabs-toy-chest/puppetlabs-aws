@@ -1,5 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
-require_relative '../../../puppet_x/puppetlabs/aws_ingress_rules_parser.rb'
+require_relative '../../../puppet_x/puppetlabs/aws_ingress_rules_parser'
 
 Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
@@ -52,12 +52,12 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     end
     {
       id: group.group_id,
-      name: group[:group_name],
-      id: group[:group_id],
-      description: group[:description],
+      name: group.group_name,
+      description: group.description,
       ensure: :present,
       ingress: format_ingress_rules(ec2, group),
       vpc: vpc_name,
+      vpc_id: group.vpc_id,
       region: region,
       tags: tags_for(group),
     }
@@ -86,6 +86,8 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
       vpc_id = vpc_response.data.vpcs.first.vpc_id
       Puppet.warning "Multiple VPCs found called #{vpc_name}, using #{vpc_id}" if vpc_response.data.vpcs.count > 1
       config[:vpc_id] = vpc_id
+      @property_hash[:vpc_id] = vpc_id
+      @property_hash[:vpc] = vpc_name
     end
 
     response = ec2.create_security_group(config)
@@ -132,8 +134,8 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     authorize_ingress(value, @property_hash[:ingress])
   end
 
-  def normalize_ports(rules)
-    copy = Marshal.load(Marshal.dump(rules))
+  def normalize_ports(rule)
+    copy = Marshal.load(Marshal.dump(rule))
 
     port = copy['port']
     port = if port.is_a? String

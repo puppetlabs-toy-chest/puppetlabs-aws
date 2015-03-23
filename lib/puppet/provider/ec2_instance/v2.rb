@@ -1,6 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 require 'base64'
-require 'retries'
 
 Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
@@ -17,7 +16,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
         response.data.reservations.each do |reservation|
           reservation.instances.each do |instance|
             hash = instance_to_hash(region, instance)
-            instances << new(hash) if (hash[:name] and ! hash[:name].empty?)
+            instances << new(hash) if has_name?(hash)
           end
         end
       end

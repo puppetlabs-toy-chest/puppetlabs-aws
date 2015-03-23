@@ -1,8 +1,8 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
-require 'retries'
 
 Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
+  confine feature: :retries
 
   mk_resource_methods
   remove_method :tags=
@@ -13,7 +13,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
       subnets = []
       response.data.subnets.each do |subnet|
         hash = subnet_to_hash(region, subnet)
-        subnets << new(hash) if hash[:name]
+        subnets << new(hash) if has_name?(hash)
       end
       subnets
     end.flatten

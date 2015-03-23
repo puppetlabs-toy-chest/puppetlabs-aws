@@ -1,8 +1,8 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
-require 'retries'
 
 Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
+  confine feature: :retries
 
   mk_resource_methods
   remove_method :tags=
@@ -15,7 +15,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
       ]).each do |response|
         response.data.vpn_connections.each do |connection|
           hash = connection_to_hash(region, connection)
-          connections << new(hash) if hash[:name]
+          connections << new(hash) if has_name?(hash)
         end
       end
       connections

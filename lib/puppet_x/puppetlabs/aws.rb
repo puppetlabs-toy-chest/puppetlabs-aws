@@ -124,6 +124,10 @@ module PuppetX
         ) unless missing_tags.empty?
       end
 
+      def self.has_name?(hash)
+        !hash[:name].nil? && !hash[:name].empty?
+      end
+
     end
   end
 end

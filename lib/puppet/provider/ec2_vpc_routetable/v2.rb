@@ -1,8 +1,8 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
-require 'retries'
 
 Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
+  confine feature: :retries
 
   mk_resource_methods
   remove_method :tags=
@@ -13,7 +13,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
       tables = []
       response.data.route_tables.each do |table|
         hash = route_table_to_hash(region, table)
-        tables << new(hash) if hash[:name]
+        tables << new(hash) if has_name?(hash)
       end
       tables
     end.flatten
