@@ -9,16 +9,20 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
 
   def self.instances()
     regions.collect do |region|
-      connections = []
-      ec2_client(region).describe_vpn_connections(filters: [
-        {:name => 'state', :values => ['pending', 'available']}
-      ]).each do |response|
-        response.data.vpn_connections.each do |connection|
-          hash = connection_to_hash(region, connection)
-          connections << new(hash) if has_name?(hash)
+      begin
+        connections = []
+        ec2_client(region).describe_vpn_connections(filters: [
+          {:name => 'state', :values => ['pending', 'available']}
+        ]).each do |response|
+          response.data.vpn_connections.each do |connection|
+            hash = connection_to_hash(region, connection)
+            connections << new(hash) if has_name?(hash)
+          end
         end
+        connections
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      connections
     end.flatten
   end
 

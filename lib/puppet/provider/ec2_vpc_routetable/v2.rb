@@ -9,13 +9,17 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
 
   def self.instances
     regions.collect do |region|
-      response = ec2_client(region).describe_route_tables()
-      tables = []
-      response.data.route_tables.each do |table|
-        hash = route_table_to_hash(region, table)
-        tables << new(hash) if has_name?(hash)
+      begin
+        response = ec2_client(region).describe_route_tables()
+        tables = []
+        response.data.route_tables.each do |table|
+          hash = route_table_to_hash(region, table)
+          tables << new(hash) if has_name?(hash)
+        end
+        tables
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      tables
     end.flatten
   end
 

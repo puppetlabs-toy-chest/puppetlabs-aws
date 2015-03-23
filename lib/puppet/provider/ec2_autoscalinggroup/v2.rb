@@ -7,14 +7,18 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
 
   def self.instances
     regions.collect do |region|
-      groups = []
-      autoscaling_client(region).describe_auto_scaling_groups.each do |response|
-        response.data.auto_scaling_groups.each do |group|
-          hash = group_to_hash(region, group)
-          groups << new(hash)
+      begin
+        groups = []
+        autoscaling_client(region).describe_auto_scaling_groups.each do |response|
+          response.data.auto_scaling_groups.each do |group|
+            hash = group_to_hash(region, group)
+            groups << new(hash)
+          end
         end
+        groups
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      groups
     end.flatten
   end
 

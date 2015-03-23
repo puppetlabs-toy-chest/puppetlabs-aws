@@ -9,18 +9,22 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def self.instances
     regions.collect do |region|
-      instances = []
-      ec2_client(region).describe_instances(filters: [
-        {name: 'instance-state-name', values: ['pending', 'running', 'stopping', 'stopped']}
-      ]).each do |response|
-        response.data.reservations.each do |reservation|
-          reservation.instances.each do |instance|
-            hash = instance_to_hash(region, instance)
-            instances << new(hash) if has_name?(hash)
+      begin
+        instances = []
+        ec2_client(region).describe_instances(filters: [
+          {name: 'instance-state-name', values: ['pending', 'running', 'stopping', 'stopped']}
+        ]).each do |response|
+          response.data.reservations.each do |reservation|
+            reservation.instances.each do |instance|
+              hash = instance_to_hash(region, instance)
+              instances << new(hash) if has_name?(hash)
+            end
           end
         end
+        instances
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      instances
     end.flatten
   end
 

@@ -9,13 +9,17 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
 
   def self.instances
     regions.collect do |region|
-      response = ec2_client(region).describe_vpcs()
-      vpcs = []
-      response.data.vpcs.each do |vpc|
-        hash = vpc_to_hash(region, vpc)
-        vpcs << new(hash) if has_name?(hash)
+      begin
+        response = ec2_client(region).describe_vpcs()
+        vpcs = []
+        response.data.vpcs.each do |vpc|
+          hash = vpc_to_hash(region, vpc)
+          vpcs << new(hash) if has_name?(hash)
+        end
+        vpcs
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      vpcs
     end.flatten
   end
 

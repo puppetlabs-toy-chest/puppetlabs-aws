@@ -8,14 +8,18 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
 
   def self.instances
     regions.collect do |region|
-      launch_configs = []
-      autoscaling_client(region).describe_launch_configurations.each do |response|
-        response.data.launch_configurations.each do |config|
-          hash = config_to_hash(region, config)
-          launch_configs << new(hash)
+      begin
+        launch_configs = []
+        autoscaling_client(region).describe_launch_configurations.each do |response|
+          response.data.launch_configurations.each do |config|
+            hash = config_to_hash(region, config)
+            launch_configs << new(hash)
+          end
         end
+        launch_configs
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      launch_configs
     end.flatten
   end
 

@@ -7,14 +7,18 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
 
   def self.instances
     regions.collect do |region|
-      alarms = []
-      cloudwatch_client(region).describe_alarms.each do |response|
-        response.data.metric_alarms.each do |alarm|
-          hash = alarm_to_hash(region, alarm)
-          alarms << new(hash)
+      begin
+        alarms = []
+        cloudwatch_client(region).describe_alarms.each do |response|
+          response.data.metric_alarms.each do |alarm|
+            hash = alarm_to_hash(region, alarm)
+            alarms << new(hash)
+          end
         end
+        alarms
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      alarms
     end.flatten
   end
 
