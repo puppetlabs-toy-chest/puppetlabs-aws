@@ -316,12 +316,10 @@ describe "ec2_securitygroup" do
       end
 
       it 'ingress rules are correct' do
-        @config[:ingress].each do |i|
-          i.each do |key, value|
-            keys.each do |new_key|
-              regex = /('#{new_key}')(\s*)(=>)(\s*)('#{value}')/
-              expect(@response.stdout).to match(regex)
-            end
+        @config[:ingress].each do |rule|
+          rule.each do |key, value|
+            regex = /('#{new_key}')(\s*)(=>)(\s*)('#{value}')/
+            expect(@response.stdout).to match(regex)
           end
         end
       end
@@ -339,18 +337,14 @@ describe "ec2_securitygroup" do
     before(:all) do
       @name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
       @config = {
-        :name => @name,
-        :ensure => 'present',
+        :name        => @name,
+        :ensure      => 'present',
         :description => 'aws acceptance securitygroup',
-        :region => @default_region,
-        :ingress => [
-          {
-            'protocol'  => 'tcp',
-            'port' => [22, 1000],
-            'cidr'      => '0.0.0.0/0'
-          }
-        ],
-      }
+        :region      => @default_region,
+        :ingress     => [
+          { 'protocol'  => 'tcp',
+            'port'      => [22, 1000],
+            'cidr'      => '0.0.0.0/0' } ] }
 
       PuppetManifest.new(@template, @config).apply
       @group = get_group(@config[:name])

@@ -104,9 +104,10 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   def authorize_ingress(new_rules, existing_rules=[])
     ec2 = ec2_client(resource[:region])
     new_rules = [new_rules] unless new_rules.is_a?(Array)
+    normalized_rules = new_rules.compact.map{|r| normalize_rules r}
 
-    to_create = new_rules - existing_rules
-    to_delete = existing_rules - new_rules
+    to_create = normalized_rules - existing_rules
+    to_delete = existing_rules - normalized_rules
 
     self_ref  = [@property_hash[:id], name].compact
     fail "self ref #{self_ref.inspect} must contain id and name" unless self_ref.size == 2
@@ -129,6 +130,20 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
   def ingress=(value)
     authorize_ingress(value, @property_hash[:ingress])
+  end
+
+  def normalize_rules(rules)
+    copy = Marshal.load(Marshal.dump(rules))
+
+    port = copy['port']
+    port = if port.is_a? String
+      port.to_i
+    elsif port.is_a? Array
+      port.map {|p| p.is_a? String ? p.to_i : p}
+    end
+    copy['port'] = port
+
+    copy
   end
 
   def destroy

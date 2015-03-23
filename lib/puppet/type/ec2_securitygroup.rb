@@ -38,7 +38,7 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
 
     def stringify_values(rules)
-      rules.map {|rule| rule.inject({}) { |h,kv| h.merge!(Hash[*kv]) } }
+      rules.map {|rule| rule.inject({}) { |h,kv| h.merge!(Hash[*(kv.map(&:to_s))]) } }
     end
   end
 
