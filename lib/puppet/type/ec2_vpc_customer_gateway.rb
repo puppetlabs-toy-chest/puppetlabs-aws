@@ -9,6 +9,7 @@ Puppet::Type.newtype(:ec2_vpc_customer_gateway) do
     desc 'The name of the customer gateway.'
     validate do |value|
       fail 'customer gateways must have a name' if value == ''
+      fail 'name should be a String' unless value.is_a?(String)
     end
   end
 
@@ -34,6 +35,7 @@ Puppet::Type.newtype(:ec2_vpc_customer_gateway) do
     desc 'The region in which to launch the customer gateway.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 

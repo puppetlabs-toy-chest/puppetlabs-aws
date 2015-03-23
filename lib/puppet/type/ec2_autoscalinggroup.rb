@@ -7,6 +7,7 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     desc 'The name of the auto scaling group.'
     validate do |value|
       fail 'Auto scaling groups must have a name' if value == ''
+      fail 'name should be a String' unless value.is_a?(String)
     end
   end
 
@@ -35,13 +36,15 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
       fail 'region should not be blank' if value == ''
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 
   newproperty(:launch_configuration) do
     desc 'The launch configuration to use for the group.'
     validate do |value|
-      fail 'launch configuration cannot be blank' if value == ''
+      fail 'launch_configuration cannot be blank' if value == ''
+      fail 'launch_configuration should be a String' unless value.is_a?(String)
     end
   end
 
@@ -55,7 +58,7 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
   newproperty(:availability_zones, :array_matching => :all) do
     desc 'The availability zones in which to launch the instances.'
     validate do |value|
-      fail 'must provide a list of availability zones' if value.empty?
+      fail 'availability_zones should be a String' unless value.is_a?(String)
     end
     def insync?(is)
       is.to_set == should.to_set
@@ -64,6 +67,9 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
 
   newproperty(:subnets, :array_matching => :all) do
     desc 'The subnets to associate the autoscaling group.'
+    validate do |value|
+      fail 'subnets should be a String' unless value.is_a?(String)
+    end
     def insync?(is)
       is.to_set == should.to_set
     end

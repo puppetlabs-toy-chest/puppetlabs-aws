@@ -9,6 +9,7 @@ Puppet::Type.newtype(:ec2_vpc) do
     desc 'The name of the VPC.'
     validate do |value|
       fail 'a VPC must have a name' if value == ''
+      fail 'name should be a String' unless value.is_a?(String)
     end
   end
 
@@ -16,6 +17,7 @@ Puppet::Type.newtype(:ec2_vpc) do
     desc 'The region in which to launch the VPC.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 
@@ -25,6 +27,9 @@ Puppet::Type.newtype(:ec2_vpc) do
 
   newproperty(:dhcp_options) do
     desc 'The DHCP option set to use for this VPC.'
+    validate do |value|
+      fail 'dhcp_options should be a String' unless value.is_a?(String)
+    end
   end
 
   newproperty(:instance_tenancy) do

@@ -7,6 +7,7 @@ Puppet::Type.newtype(:ec2_scalingpolicy) do
     desc 'The name of the scaling policy.'
     validate do |value|
       fail 'Scaling policies must have a name' if value == ''
+      fail 'name should be a String' unless value.is_a?(String)
     end
   end
 
@@ -25,21 +26,24 @@ Puppet::Type.newtype(:ec2_scalingpolicy) do
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
       fail 'region should not be blank' if value == ''
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 
   newproperty(:adjustment_type) do
     desc 'The type of policy.'
     validate do |value|
-      fail 'adjustment type should not contain spaces' if value =~ /\s/
-      fail 'adjustment type should not be blank' if value == ''
+      fail 'adjustment_type should not contain spaces' if value =~ /\s/
+      fail 'adjustment_type should not be blank' if value == ''
+      fail 'adjustment_type should be a String' unless value.is_a?(String)
     end
   end
 
   newproperty(:auto_scaling_group) do
     desc 'The auto scaling group to attach the policy to.'
     validate do |value|
-      fail 'auto scaling group cannot be blank' if value == ''
+      fail 'auto_scaling_group cannot be blank' if value == ''
+      fail 'auto_scaling_group should be a String' unless value.is_a?(String)
     end
   end
 

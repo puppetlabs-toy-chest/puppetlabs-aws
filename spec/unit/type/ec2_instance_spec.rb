@@ -102,4 +102,21 @@ describe type_class do
   it 'should order tags on output' do
     expect(type_class).to order_tags_on_output
   end
+
+  [
+    'name',
+    'region',
+    'security_groups',
+    'key_name',
+    'region',
+    'image_id',
+    'availability_zone',
+    'instance_type',
+    'subnet',
+  ].each do |property|
+    it "should require #{property} to be a string" do
+      expect(type_class).to require_string_for(property)
+    end
+  end
+
 end

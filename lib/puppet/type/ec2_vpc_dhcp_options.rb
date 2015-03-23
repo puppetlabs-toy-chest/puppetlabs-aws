@@ -9,6 +9,7 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
     desc 'The name of the DHCP options set.'
     validate do |value|
       fail 'DHCP option sets must have a name' if value == ''
+      fail 'name should be a String' unless value.is_a?(String)
     end
   end
 
@@ -20,6 +21,7 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
     desc 'The region in which to assign the DHCP option set.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 
@@ -37,6 +39,9 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
 
   newproperty(:domain_name_servers, :array_matching => :all) do
     desc 'A list of domain name servers to use for the DHCP options set.'
+    validate do |value|
+      fail 'domain_name_servers should be a String' unless value.is_a?(String)
+    end
     def insync?(is)
       is.to_set == should.to_set
     end
@@ -44,6 +49,9 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
 
   newproperty(:ntp_servers, :array_matching => :all) do
     desc 'A list of NTP servers to use for the DHCP options set.'
+    validate do |value|
+      fail 'ntp_servers should be a String' unless value.is_a?(String)
+    end
     def insync?(is)
       is.to_set == should.to_set
     end
@@ -51,6 +59,9 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
 
   newproperty(:netbios_name_servers, :array_matching => :all) do
     desc 'A list of netbios name servers to use for the DHCP options set.'
+    validate do |value|
+      fail 'netbios_name_servers should be a String' unless value.is_a?(String)
+    end
     def insync?(is)
       is.to_set == should.to_set
     end

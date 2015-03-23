@@ -9,15 +9,22 @@ Puppet::Type.newtype(:ec2_vpc_vpn) do
     desc 'The name of the VPN.'
     validate do |value|
       fail 'VPNs must have a name' if value == ''
+      fail 'name should be a String' unless value.is_a?(String)
     end
   end
 
   newproperty(:vpn_gateway) do
     desc 'The VPN gateway to attach to the VPN.'
+    validate do |value|
+      fail 'vpn_gateway should be a String' unless value.is_a?(String)
+    end
   end
 
   newproperty(:customer_gateway) do
     desc 'The customer gateway to attach to the VPN.'
+    validate do |value|
+      fail 'customer_gateway should be a String' unless value.is_a?(String)
+    end
   end
 
   newproperty(:type) do
@@ -32,6 +39,9 @@ Puppet::Type.newtype(:ec2_vpc_vpn) do
 
   newproperty(:routes, :array_matching => :all) do
     desc 'The list of routes for the VPN.'
+    validate do |value|
+      fail 'routes should be a String' unless value.is_a?(String)
+    end
   end
 
   newproperty(:static_routes) do
@@ -47,6 +57,7 @@ Puppet::Type.newtype(:ec2_vpc_vpn) do
     desc 'The region in which to launch the VPN.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 

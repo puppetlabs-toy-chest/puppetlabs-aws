@@ -67,4 +67,18 @@ describe type_class do
     end
   end
 
+  [
+    'name',
+    'security_groups',
+    'key_name',
+    'region',
+    'instance_type',
+    'image_id',
+    'vpc',
+  ].each do |property|
+    it "should require #{property} to be a string" do
+      expect(type_class).to require_string_for(property)
+    end
+  end
+
 end

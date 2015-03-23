@@ -9,14 +9,16 @@ Puppet::Type.newtype(:ec2_securitygroup) do
   newparam(:name, namevar: true) do
     desc 'the name of the security group'
     validate do |value|
-      fail 'Security groups must have a name' if value == ''
+      fail 'security groups must have a name' if value == ''
+      fail 'name should be a String' unless value.is_a?(String)
     end
   end
 
   newproperty(:region) do
     desc 'the region in which to launch the security group'
     validate do |value|
-      fail 'region should not contains spaces' if value =~ /\s/
+      fail 'region should not contain spaces' if value =~ /\s/
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 
@@ -29,6 +31,10 @@ Puppet::Type.newtype(:ec2_securitygroup) do
       to_delete = parser.rules_to_delete(is)
       to_create.empty? && to_delete.empty?
     end
+
+    validate do |value|
+      fail 'ingress should be a Hash' unless value.is_a?(Hash)
+    end
   end
 
   newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
@@ -38,12 +44,16 @@ Puppet::Type.newtype(:ec2_securitygroup) do
   newproperty(:description) do
     desc 'a short description of the group'
     validate do |value|
-      fail  'description cannot be blank' if value == ''
+      fail 'description cannot be blank' if value == ''
+      fail 'description should be a String' unless value.is_a?(String)
     end
   end
 
   newproperty(:vpc) do
     desc 'A VPC to which the group should be associated'
+    validate do |value|
+      fail 'vpc should be a String' unless value.is_a?(String)
+    end
   end
 
   def should_autorequire?(rule)

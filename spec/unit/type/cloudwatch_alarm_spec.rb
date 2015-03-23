@@ -67,6 +67,23 @@ describe type_class do
     end
   end
 
+  [
+    'metric',
+    'namespace',
+    'statistic',
+    'comparison_operator',
+    'region',
+    'alarm_actions',
+  ].each do |property|
+    it "should require #{property} to be a string" do
+      expect(type_class).to require_string_for(property)
+    end
+  end
+
+  it "should require dimensions to be a hash" do
+    expect(type_class).to require_hash_for('dimensions')
+  end
+
   context 'with a full set of properties' do
     before :all do
       @instance = type_class.new(alarm_config)
