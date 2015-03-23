@@ -1,5 +1,25 @@
 module PuppetX
   module Puppetlabs
+    # We purposefully inherit from Exception here due to PUP-3656
+    # If we throw something based on StandardError prior to Puppet 4
+    # the exception will prevent the prefetch, but the provider will
+    # continue to run with incorrect data.
+    class FetchingAWSDataError < Exception
+      def initialize(region, type, message=nil)
+        @message = message
+        @region = region
+        @type = type
+      end
+
+      def to_s
+        """Puppet detected a problem with the information returned from AWS
+when looking up #{@type} in #{@region}. The specific error was:
+#{@message}
+Rather than report on #{@type} resources in an inconsistent state we have exited.
+This could be because some other process is modifying AWS at the same time."""
+      end
+    end
+
     class Aws < Puppet::Provider
       def self.regions
         if ENV['AWS_REGION'] and not ENV['AWS_REGION'].empty?
