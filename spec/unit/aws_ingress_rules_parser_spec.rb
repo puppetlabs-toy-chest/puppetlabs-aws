@@ -34,7 +34,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
                                 user_id_group_pairs: [ { group_id: 'test_id' },
                                                        { group_id: 'self_id'} ] } ],
 
-    sg_self_tcp:            [ { ip_protocol: 'tcp',
+    sg_self_tcp:            [ { ip_protocol: 'tcp', from_port: 0, to_port: 65535,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
 
     sg_self_tcp_port:       [ { ip_protocol: 'tcp', from_port: 10, to_port: 10,
@@ -56,7 +56,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' },
                                              { cidr_ip: '1.1.1.1/8' } ] } ],
 
-    cidr_tcp:               [ { ip_protocol: 'tcp',
+    cidr_tcp:               [ { ip_protocol: 'tcp', from_port: 0, to_port: 65535,
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] } ],
 
     cidr_tcp_port:          [ { ip_protocol: 'tcp', from_port: 10, to_port: 10,
@@ -96,7 +96,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
                                 user_id_group_pairs: [ { group_id: 'test_id' },
                                                        { group_id: 'self_id' } ] } ],
 
-    sg_self_tcp:            [ { ip_protocol: 'tcp',
+    sg_self_tcp:            [ { ip_protocol: 'tcp', from_port: 0, to_port: 65535,
                                 user_id_group_pairs: [ { group_id: 'self_id' } ] } ],
 
     sg_self_tcp_port:       [ { ip_protocol: 'tcp', from_port: 10, to_port: 10,
@@ -136,7 +136,7 @@ describe PuppetX::Puppetlabs::AwsIngressRulesParser do
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' },
                                              { cidr_ip: '1.1.1.1/8' } ] } ],
 
-    cidr_tcp:               [ { ip_protocol: 'tcp',
+    cidr_tcp:               [ { ip_protocol: 'tcp', from_port: 0, to_port: 65535,
                                 ip_ranges: [ { cidr_ip: '0.0.0.0/8' } ] } ],
 
     cidr_tcp_port:          [ { ip_protocol: 'tcp', from_port: 10, to_port: 10,
