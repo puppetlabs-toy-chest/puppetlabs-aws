@@ -104,7 +104,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   def authorize_ingress(new_rules, existing_rules=[])
     ec2 = ec2_client(resource[:region])
     new_rules = [new_rules] unless new_rules.is_a?(Array)
-    normalized_rules = new_rules.compact.map{|r| normalize_rules r}
+    normalized_rules = new_rules.compact.map{|r| normalize_ports r}
 
     to_create = normalized_rules - existing_rules
     to_delete = existing_rules - normalized_rules
@@ -132,17 +132,19 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     authorize_ingress(value, @property_hash[:ingress])
   end
 
-  def normalize_rules(rules)
+  def normalize_ports(rules)
     copy = Marshal.load(Marshal.dump(rules))
 
     port = copy['port']
     port = if port.is_a? String
       port.to_i
     elsif port.is_a? Array
-      port.map {|p| p.is_a? String ? p.to_i : p}
+      port.map {|p| p.is_a?(String) ? p.to_i : p}
+    else
+      port
     end
-    copy['port'] = port
 
+    copy['port'] = port if port
     copy
   end
 

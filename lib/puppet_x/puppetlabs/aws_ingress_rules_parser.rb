@@ -56,12 +56,13 @@ module PuppetX
         # fallback to current group id if cidr is also absent
         security_group = rule['security_group'] ||
           (rule['cidr'] ? nil : self_ref.last)
-        ports = Array(rule['port'])
+        ports = Array(rule['port']).map{|p| p.is_a?(String) ? p.to_i : p}
+        ports = [0, 65535] if ports.empty? && %w{udp tcp}.include?(rule['protocol'])
 
         {
           ip_protocol: rule['protocol'] || '-1',
-          from_port: ports.first.is_a?(String) ? ports.first.to_i : ports.first,
-          to_port: ports.last.is_a?(String) ? ports.last.to_i : ports.last,
+          from_port: ports.first,
+          to_port: ports.last,
           ip_ranges: Array(rule['cidr']).map {|c| {cidr_ip: c}},
           user_id_group_pairs: Array(security_group).map do |sg|
             { group_id: name_to_id(ec2, sg, self_ref) }
@@ -81,6 +82,7 @@ module PuppetX
         }.delete_if {|k,v| v.nil? || (v.is_a?(Array) && v.empty?)}
 
         h.delete 'security_group' if h['security_group'] == [self_ref.last]
+        h.delete 'port' if %w{udp tcp}.include?(h['protocol']) && h['port'] == [0, 65535]
 
         %w{cidr port security_group}.each do |at|
           next unless h[at]
