@@ -1,21 +1,27 @@
 require 'aws-sdk-core'
 require 'mustache'
+require 'erb'
 require 'open3'
 
 class PuppetManifest < Mustache
 
-  def initialize(file, config)
+  def initialize(file, config, erb=false)
     @template_file = File.join(Dir.getwd, 'spec', 'acceptance', 'fixtures', file)
+    @erb = erb
     config.each do |key, value|
       config_value = self.class.to_generalized_data(value)
-      instance_variable_set("@#{key}".to_sym, config_value)
-      self.class.send(:attr_accessor, key)
+      instance_variable_set(:"@#{key}", config_value)
+      instance_variable_set(:"@raw_#{key}", value)
+      self.class.send(:attr_accessor, key, "raw_#{key}")
     end
   end
 
   def apply
-    manifest = self.render.gsub("\n", '')
-    cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest}\" --modulepath ../"
+    manifest = (@erb ?
+      ERB.new(File.read(@template_file)).result(binding) :
+      self.render).gsub("\n", '').gsub("\"", '\'')
+
+    cmd = "bundle exec puppet apply --trace --detailed-exitcodes -e \"#{manifest}\" --modulepath ../"
     result = { output: [], exit_status: nil }
 
     Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|

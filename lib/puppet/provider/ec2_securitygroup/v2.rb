@@ -1,4 +1,4 @@
-require_relative '../../../puppet_x/puppetlabs/aws'
+require_relative '../../../puppet_x/puppetlabs/aws.rb'
 require_relative '../../../puppet_x/puppetlabs/aws_ingress_rules_parser'
 
 Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
@@ -29,41 +29,9 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     end
   end
 
-  def self.prepare_ingress_rule_for_puppet(client, rule, group = nil, cidr = nil)
-    config = {
-      'protocol' => rule.ip_protocol,
-      'from_port' => rule.from_port.to_i,
-      'to_port' => rule.to_port.to_i,
-    }
-    if group
-      name = group.group_name
-      if name.nil?
-        group_response = client.describe_security_groups(filters: [
-          {name: 'group-id', values: [group.group_id]}
-        ])
-        groups = group_response.data.security_groups
-        name = groups.empty? ? nil : groups.first.group_name
-      end
-      config['security_group'] = name
-    end
-    config['cidr'] = cidr.cidr_ip if cidr
-    config
-  end
-
-  def self.format_ingress_rules(client, group)
-    rules = []
-    group[:ip_permissions].each do |rule|
-      addition = []
-      rule.user_id_group_pairs.each do |security_group|
-        addition << prepare_ingress_rule_for_puppet(client, rule, security_group)
-      end
-      rule.ip_ranges.each do |cidr|
-        addition << prepare_ingress_rule_for_puppet(client, rule, nil, cidr)
-      end
-      addition << prepare_ingress_rule_for_puppet(client, rule) if addition.empty?
-      rules << addition
-    end
-    rules.flatten.uniq.compact
+  def self.format_ingress_rules(ec2, group)
+    PuppetX::Puppetlabs::AwsIngressRulesParser.ip_permissions_to_rules_list(
+      ec2, group[:ip_permissions], [group.group_id, group.group_name])
   end
 
   def self.security_group_to_hash(region, group)
@@ -135,75 +103,51 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     @property_hash[:ensure] = :present
   end
 
-  def prepare_ingress_for_api(rule)
-    ec2 = ec2_client(resource[:region])
-    from_port ||= rule['from_port'] || rule['port'] || 1
-    to_port ||= rule['to_port'] || rule['port'] || 65535
-    rule_hash = {
-      group_id: @property_hash[:id],
-      ip_permissions: []
-    }
-
-    protocols = rule.key?('protocol') ? Array(rule['protocol']) : ['tcp', 'udp', 'icmp']
-
-    protocols.each do |protocol|
-      permission = {
-        ip_protocol: protocol,
-      }
-      permission[:to_port] = protocol == 'icmp' ? -1 : to_port.to_i
-      permission[:from_port] = protocol == 'icmp' ? -1 : from_port.to_i
-      if rule.key? 'security_group'
-        source_group_name = rule['security_group']
-
-        filters = [ {name: 'group-name', values: [source_group_name]} ]
-
-        if @property_hash[:vpc_id]
-          filters.push( {name: 'vpc-id', values: [@property_hash[:vpc_id]]} )
-        elsif vpc_only_account?
-          response = ec2.describe_security_groups(group_ids: [@property_hash[:id]])
-          vpc_id = response.data.security_groups.first.vpc_id
-          filters.push( {name: 'vpc-id', values: [vpc_id]} )
-        end
-
-        group_response = ec2.describe_security_groups(filters: filters)
-        match_count = group_response.data.security_groups.count
-        msg = "No groups found called #{source_group_name}"
-        msg = msg + " in #{@property_hash[:vpc]}"
-        fail(msg) if match_count == 0
-        source_group_id = group_response.data.security_groups.first.group_id
-        Puppet.warning "#{match_count} groups found called #{source_group_name}, using #{source_group_id}" if match_count > 1
-
-        permission[:user_id_group_pairs] = [{
-          group_id: source_group_id
-        }]
-      elsif rule.key? 'cidr'
-        permission[:ip_ranges] = [{cidr_ip: rule['cidr']}]
-      end
-      rule_hash[:ip_permissions] << permission
-    end
-
-    rule_hash
-  end
-
   def authorize_ingress(new_rules, existing_rules=[])
     ec2 = ec2_client(resource[:region])
     new_rules = [new_rules] unless new_rules.is_a?(Array)
+    normalized_rules = new_rules.compact.map{|r| normalize_ports r}
 
-    parser = PuppetX::Puppetlabs::AwsIngressRulesParser.new(new_rules)
-    to_create = parser.rules_to_create(existing_rules)
-    to_delete = parser.rules_to_delete(existing_rules)
+    to_create = normalized_rules - existing_rules
+    to_delete = existing_rules - normalized_rules
 
-    to_delete.reject(&:nil?).each do |rule|
-      ec2.revoke_security_group_ingress(prepare_ingress_for_api(rule))
+    self_ref  = [@property_hash[:id], name].compact
+    fail "self ref #{self_ref.inspect} must contain id and name" unless self_ref.size == 2
+
+    to_create.compact.each do |rule|
+      ec2.authorize_security_group_ingress(
+        group_id: @property_hash[:id],
+        ip_permissions:
+          PuppetX::Puppetlabs::AwsIngressRulesParser.rule_to_ip_permission_list(
+            ec2, vpc_only_account?, rule, self_ref))
     end
 
-    to_create.each do |rule|
-      ec2.authorize_security_group_ingress(prepare_ingress_for_api(rule))
+    to_delete.compact.each do |rule|
+      ec2.revoke_security_group_ingress(
+        group_id: @property_hash[:id],
+        ip_permissions: PuppetX::Puppetlabs::AwsIngressRulesParser.rule_to_ip_permission_list(
+          ec2, vpc_only_account?, rule, self_ref))
     end
   end
 
   def ingress=(value)
     authorize_ingress(value, @property_hash[:ingress])
+  end
+
+  def normalize_ports(rule)
+    copy = Marshal.load(Marshal.dump(rule))
+
+    port = copy['port']
+    port = if port.is_a? String
+      port.to_i
+    elsif port.is_a? Array
+      port.map {|p| p.is_a?(String) ? p.to_i : p}
+    else
+      port
+    end
+
+    copy['port'] = port if port
+    copy
   end
 
   def destroy

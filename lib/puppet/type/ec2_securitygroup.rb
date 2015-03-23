@@ -22,12 +22,28 @@ Puppet::Type.newtype(:ec2_securitygroup) do
 
   newproperty(:ingress, :array_matching => :all) do
     desc 'rules for ingress traffic'
+
     def insync?(is)
-      for_comparison = Marshal.load(Marshal.dump(should))
-      parser = PuppetX::Puppetlabs::AwsIngressRulesParser.new(for_comparison)
-      to_create = parser.rules_to_create(is)
-      to_delete = parser.rules_to_delete(is)
-      to_create.empty? && to_delete.empty?
+      s = should.map{|rule| normalize_ports(rule)}
+      i = is.map{|rule| normalize_ports(rule)}
+
+      (s - i).empty? && (i - s).empty?
+    end
+
+    def normalize_ports(rule)
+      copy = Marshal.load(Marshal.dump(rule))
+
+      port = copy['port']
+      port = if port.is_a? String
+        port.to_i
+      elsif port.is_a? Array
+        port.map {|p| p.is_a?(String) ? p.to_i : p}
+      else
+        port
+      end
+
+      copy['port'] = port if port
+      copy
     end
   end
 
@@ -38,7 +54,7 @@ Puppet::Type.newtype(:ec2_securitygroup) do
   newproperty(:description) do
     desc 'a short description of the group'
     validate do |value|
-      fail  'description cannot be blank' if value == ''
+      fail 'description cannot be blank' if value == ''
     end
   end
 

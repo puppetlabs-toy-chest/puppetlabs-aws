@@ -1,3 +1,13 @@
+require 'aws-sdk-core'
+
+if ENV['AWS_DEBUG'] == '1'
+  require 'logger'
+  logger = Logger.new($stdout)
+  logger.formatter = proc {|severity, datetime, progname, msg| msg }
+  Aws.config[:logger] = logger
+  Aws.config[:log_formatter] = Seahorse::Client::Logging::Formatter.colored
+end
+
 module PuppetX
   module Puppetlabs
     class Aws < Puppet::Provider
@@ -37,13 +47,17 @@ module PuppetX
         self.class.ec2_client(region)
       end
 
-      def vpc_only_account?
+      def self.vpc_only_account?
         response = ec2_client.describe_account_attributes(
           attribute_names: ['supported-platforms']
         )
 
         account_types = response.account_attributes.map(&:attribute_values).flatten.map(&:attribute_value)
         account_types == ['VPC']
+      end
+
+      def vpc_only_account?
+        self.class.vpc_only_account?
       end
 
       def self.elb_client(region = default_region)

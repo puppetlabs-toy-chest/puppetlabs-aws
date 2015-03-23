@@ -1,0 +1,22 @@
+ec2_securitygroup { '<%= name %>':
+  ensure => <%= self.ensure %>,
+  description => '<%= description %>',
+  region => '<%= region %>',
+  <% if defined?(raw_ingress) && raw_ingress %>
+  ingress     => [
+    <% raw_ingress.each do |rule| %>
+      { <% rule.each do |key, value| %>
+          <%= key %> => <%= value.inspect %>,
+        <% end %>
+      },
+    <% end %>
+  ],
+  <% end %>
+  <% if defined?(raw_tags) && raw_tags %>
+  tags            => {
+  <% raw_tags.each do |key,value| %>
+    <%= key %> => <%= value.inspect %>,
+  <% end %>
+  }
+  <% end %>
+}
