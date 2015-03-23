@@ -236,26 +236,22 @@ describe "ec2_securitygroup" do
   end
 
   describe 'create a security group' do
-    before(:all) do
-      @config = {
-        :name         => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
-        :ensure       => 'present',
-        :description  => 'A_security_group_used_in_an_automated_acceptance_test',
-        :region       => @default_region,
-      }
-    end
+    let(:config) {{
+      :name         => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+      :ensure       => 'present',
+      :description  => 'A_security_group_used_in_an_automated_acceptance_test',
+      :region       => @default_region,
+    }}
 
-    it 'create with puppet resource' do
-      r = TestExecutor.puppet_resource('ec2_securitygroup', @config, '--modulepath ../')
+    it 'can create and remove puppet resource' do
+      r = TestExecutor.puppet_resource(
+        'ec2_securitygroup', config, '--modulepath ../')
       expect(r.stderr).not_to match(/Error:/)
-      # assert with AWS SKD
-      expect{get_group(@config[:name])}.not_to raise_error
-    end
+      expect { get_group(config[:name]) }.not_to raise_error
 
-    it 'destroy with puppet resource' do
-      @config[:ensure] = 'absent'
-      TestExecutor.puppet_resource('ec2_securitygroup', @config, '--modulepath ../')
-      expect { get_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
+      r = TestExecutor.puppet_resource(
+        'ec2_securitygroup', config.merge(:ensure => 'absent'), '--modulepath ../')
+      expect { get_group(config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
     end
   end
 
