@@ -9,13 +9,17 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
   def self.instances
     regions.collect do |region|
-      groups = []
-      ec2_client(region).describe_security_groups.each do |response|
-        response.data.security_groups.collect do |group|
-          groups << new(security_group_to_hash(region, group))
+      begin
+        groups = []
+        ec2_client(region).describe_security_groups.each do |response|
+          response.data.security_groups.collect do |group|
+            groups << new(security_group_to_hash(region, group))
+          end
         end
+        groups
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, 'ec2_securitygroup', e.message)
       end
-      groups
     end.flatten
   end
 
