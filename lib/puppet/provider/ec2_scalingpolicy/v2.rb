@@ -7,14 +7,18 @@ Puppet::Type.type(:ec2_scalingpolicy).provide(:v2, :parent => PuppetX::Puppetlab
 
   def self.instances
     regions.collect do |region|
-      policies = []
-      autoscaling_client(region).describe_policies.each do |response|
-        response.data.scaling_policies.each do |policy|
-          hash = policy_to_hash(region, policy)
-          policies << new(hash)
+      begin
+        policies = []
+        autoscaling_client(region).describe_policies.each do |response|
+          response.data.scaling_policies.each do |policy|
+            hash = policy_to_hash(region, policy)
+            policies << new(hash)
+          end
         end
+        policies
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      policies
     end.flatten
   end
 

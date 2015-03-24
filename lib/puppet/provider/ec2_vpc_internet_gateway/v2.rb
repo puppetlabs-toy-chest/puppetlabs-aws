@@ -9,13 +9,17 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
 
   def self.instances
     regions.collect do |region|
-      response = ec2_client(region).describe_internet_gateways()
-      gateways = []
-      response.data.internet_gateways.each do |gateway|
-        hash = gateway_to_hash(region, gateway)
-        gateways << new(hash) if has_name?(hash)
+      begin
+        response = ec2_client(region).describe_internet_gateways()
+        gateways = []
+        response.data.internet_gateways.each do |gateway|
+          hash = gateway_to_hash(region, gateway)
+          gateways << new(hash) if has_name?(hash)
+        end
+        gateways
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      gateways
     end.flatten
   end
 

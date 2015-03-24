@@ -9,14 +9,18 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
 
   def self.instances()
     regions.collect do |region|
-      gateways = []
-      ec2_client(region).describe_customer_gateways.each do |response|
-        response.data.customer_gateways.each do |gateway|
-          hash = gateway_to_hash(region, gateway)
-          gateways << new(hash) unless (gateway.state == "deleting" or gateway.state == "deleted")
+      begin
+        gateways = []
+        ec2_client(region).describe_customer_gateways.each do |response|
+          response.data.customer_gateways.each do |gateway|
+            hash = gateway_to_hash(region, gateway)
+            gateways << new(hash) unless (gateway.state == "deleting" or gateway.state == "deleted")
+          end
         end
+        gateways
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      gateways
     end.flatten
   end
 

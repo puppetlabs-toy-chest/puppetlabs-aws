@@ -7,14 +7,18 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
   def self.instances
     regions.collect do |region|
-      load_balancers = []
-      region_client = elb_client(region)
-      region_client.describe_load_balancers.each do |response|
-        response.data.load_balancer_descriptions.collect do |lb|
-          load_balancers << new(load_balancer_to_hash(region, lb))
+      begin
+        load_balancers = []
+        region_client = elb_client(region)
+        region_client.describe_load_balancers.each do |response|
+          response.data.load_balancer_descriptions.collect do |lb|
+            load_balancers << new(load_balancer_to_hash(region, lb))
+          end
         end
+        load_balancers
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      load_balancers
     end.flatten
   end
 

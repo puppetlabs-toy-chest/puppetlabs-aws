@@ -9,13 +9,17 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
 
   def self.instances
     regions.collect do |region|
-      response = ec2_client(region).describe_subnets()
-      subnets = []
-      response.data.subnets.each do |subnet|
-        hash = subnet_to_hash(region, subnet)
-        subnets << new(hash) if has_name?(hash)
+      begin
+        response = ec2_client(region).describe_subnets()
+        subnets = []
+        response.data.subnets.each do |subnet|
+          hash = subnet_to_hash(region, subnet)
+          subnets << new(hash) if has_name?(hash)
+        end
+        subnets
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-      subnets
     end.flatten
   end
 

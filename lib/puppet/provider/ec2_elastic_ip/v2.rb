@@ -7,30 +7,34 @@ Puppet::Type.type(:ec2_elastic_ip).provide(:v2, :parent => PuppetX::Puppetlabs::
 
   def self.instances
     regions.collect do |region|
-      ec2 = ec2_client(region)
-      ec2.describe_addresses.addresses.collect do |address|
-        instance_name = nil
-        unless address.instance_id.nil? || address.instance_id.empty?
-          instances = ec2.describe_instances(instance_ids: [address.instance_id]).collect do |response|
-            response.data.reservations.collect do |reservation|
-              reservation.instances.collect do |instance|
-                instance
-              end
+      begin
+        ec2 = ec2_client(region)
+        ec2.describe_addresses.addresses.collect do |address|
+          instance_name = nil
+          unless address.instance_id.nil? || address.instance_id.empty?
+            instances = ec2.describe_instances(instance_ids: [address.instance_id]).collect do |response|
+              response.data.reservations.collect do |reservation|
+                reservation.instances.collect do |instance|
+                  instance
+                end
+              end.flatten
             end.flatten
-          end.flatten
-          name_tag = instances.first.tags.detect { |tag| tag.key == 'Name' }
-          instance_name = name_tag ? name_tag.value : nil
+            name_tag = instances.first.tags.detect { |tag| tag.key == 'Name' }
+            instance_name = name_tag ? name_tag.value : nil
+          end
+          new({
+            name: address.public_ip,
+            instance_id: address.instance_id,
+            instance: instance_name,
+            allocation_id: address.allocation_id,
+            association_id: address.association_id,
+            domain: address.domain,
+            ensure: instance_name ? :attached : :detached,
+            region: region,
+          })
         end
-        new({
-          name: address.public_ip,
-          instance_id: address.instance_id,
-          instance: instance_name,
-          allocation_id: address.allocation_id,
-          association_id: address.association_id,
-          domain: address.domain,
-          ensure: instance_name ? :attached : :detached,
-          region: region,
-        })
+      rescue StandardError => e
+        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
     end.flatten
   end

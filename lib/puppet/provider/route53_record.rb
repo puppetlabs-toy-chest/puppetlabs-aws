@@ -3,21 +3,25 @@ require_relative '../../puppet_x/puppetlabs/aws'
 class Puppet::Provider::Route53Record < PuppetX::Puppetlabs::Aws
 
   def self.instances
-    zones_response = route53_client.list_hosted_zones()
-    records = []
-    zones_response.data.hosted_zones.each do |zone|
-      records_response = route53_client.list_resource_record_sets(hosted_zone_id: zone.id)
-      records_response.data.resource_record_sets.each do |record|
-        records << new({
-          name: record.name,
-          ensure: :present,
-          zone: zone.name,
-          ttl: record.ttl,
-          values: record.resource_records.map(&:value),
-        }) if record.type == record_type
+    begin
+      zones_response = route53_client.list_hosted_zones()
+      records = []
+      zones_response.data.hosted_zones.each do |zone|
+        records_response = route53_client.list_resource_record_sets(hosted_zone_id: zone.id)
+        records_response.data.resource_record_sets.each do |record|
+          records << new({
+            name: record.name,
+            ensure: :present,
+            zone: zone.name,
+            ttl: record.ttl,
+            values: record.resource_records.map(&:value),
+          }) if record.type == record_type
+        end
       end
+      records
+    rescue StandardError => e
+      raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
     end
-    records
   end
 
   def self.prefetch(resources)
