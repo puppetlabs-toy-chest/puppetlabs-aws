@@ -1,3 +1,8 @@
+ec2_securitygroup { 'sample-sg':
+  ensure   => absent,
+  region => 'sa-east-1',
+} ~>
+
 ec2_vpc_internet_gateway { 'sample-igw':
   ensure => absent,
   region => 'sa-east-1',

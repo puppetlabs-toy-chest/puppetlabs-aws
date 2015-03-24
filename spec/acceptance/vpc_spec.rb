@@ -90,6 +90,7 @@ describe "The AWS module" do
         :vpc_instance_tenancy => 'default',
         :subnet_cidr => '10.0.0.0/24',
         :subnet_availability_zone => "#{region}a",
+        :map_public_ip_on_launch => true,
         :vpn_type => 'ipsec.1',
         :customer_ip_address => generate_ip,
         :bgp_asn => '65000',
@@ -168,7 +169,7 @@ describe "The AWS module" do
       expect(@subnet.vpc_id).to eq(@vpc.vpc_id)
       expect(@subnet.cidr_block).to eq(@config[:subnet_cidr])
       expect(@subnet.availability_zone).to eq(@config[:subnet_availability_zone])
-      expect(@subnet.map_public_ip_on_launch).to be_falsy
+      expect(@subnet.map_public_ip_on_launch).to eq(@config[:map_public_ip_on_launch])
       expect(@subnet.default_for_az).to be_falsy
       expect(@aws.tag_difference(@subnet, @config[:tags])).to be_empty
     end
