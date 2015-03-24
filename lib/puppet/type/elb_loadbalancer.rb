@@ -1,4 +1,5 @@
-require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require_relative '../../puppet_x/puppetlabs/property/tag'
+require_relative '../../puppet_x/puppetlabs/property/region'
 
 Puppet::Type.newtype(:elb_loadbalancer) do
   @doc = 'Type representing an ELB load balancer.'
@@ -13,12 +14,8 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     end
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to launch the load balancer.'
-    validate do |value|
-      fail 'region must not contain spaces' if value =~ /\s/
-      fail 'region should be a String' unless value.is_a?(String)
-    end
   end
 
   newproperty(:listeners, :array_matching => :all) do
