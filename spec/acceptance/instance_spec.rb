@@ -1,6 +1,7 @@
 require 'spec_helper_acceptance'
 require 'securerandom'
 require 'ipaddr'
+require 'Base64'
 
 describe "ec2_instance" do
 
@@ -20,6 +21,7 @@ describe "ec2_instance" do
   describe 'should create a new instance' do
 
     before(:all) do
+      user_data = 'echo Hello World'
       @config = {
         :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
         :instance_type => 't1.micro',
@@ -33,6 +35,7 @@ describe "ec2_instance" do
         },
         :device_name => '/dev/sda1',
         :volume_size => 8,
+        :optional => {:user_data => user_data}
       }
 
       PuppetManifest.new(@template, @config).apply
@@ -95,6 +98,14 @@ describe "ec2_instance" do
       expect(instance.private_dns_name).to match(/\.compute\.internal/)
       expect{ IPAddr.new(instance.public_ip_address) }.not_to raise_error
       expect{ IPAddr.new(instance.private_ip_address) }.not_to raise_error
+    end
+
+    it 'user data is correct' do
+      ud = @aws.ec2_client.describe_instance_attribute({
+        :instance_id => @instance.instance_id,
+        :attribute => 'userData'
+        })
+      expect(Base64.decode64(ud.user_data.value)).to eq(@config[:optional][:user_data])
     end
 
   end
@@ -268,6 +279,7 @@ describe "ec2_instance" do
   describe 'should create a new instance with puppet resource' do
 
     before(:all) do
+      user_data = "'echo Hello World'"
       @config = {
         :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
         :instance_type => 't1.micro',
@@ -277,6 +289,7 @@ describe "ec2_instance" do
         :monitoring => false,
         :availability_zone => @default_availability_zone,
         :security_groups => 'default',
+        :user_data => user_data,
       }
 
       # The value for this ENV var must be an existing key in your Amazon account
@@ -396,6 +409,15 @@ describe "ec2_instance" do
     it 'public_ip_address is reported' do
       regex = /(public_ip_address)(\s*)(=>)(\s*)('#{@instance.public_ip_address}')/
       expect(@result.stdout).to match(regex)
+    end
+
+    it 'user data is correct' do
+      ud = @aws.ec2_client.describe_instance_attribute({
+        :instance_id => @instance.instance_id,
+        :attribute => 'userData'
+        })
+      data_no_quotes = @config[:user_data].gsub(/'/, '')
+      expect(Base64.decode64(ud.user_data.value)).to eq(data_no_quotes)
     end
 
     context 'stop the instance' do
