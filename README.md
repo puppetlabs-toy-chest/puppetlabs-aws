@@ -90,9 +90,9 @@ to model the relationships between different components.
 puppet module install puppetlabs-aws
 ~~~
 
-### A note on regions
+#### A note on regions
 
-By default the module will look through all regions in AWS when
+By default the module looks through all regions in AWS when
 determining if something is available. This can be a little slow. If you
 know what you're doing you can speed things up by targeting a single
 region using an environment variable.
@@ -101,16 +101,17 @@ region using an environment variable.
 export AWS_REGION=eu-west-1
 ~~~
 
+
 ##Getting Started with aws
 
 The aws module allows you to manage AWS using the Puppet DSL. To stand up an instance with AWS, use the `ec2_instance` type. The following code sets up a very basic instance: 
 
 ~~~
 ec2_instance { 'instance-name':
-  region          => 'us-west-1',
-  ensure          => present,
-  image_id        => 'ami-123456', # you need to select your own AMI
-  instance_type   => 't1.micro',
+  ensure        => present,
+  region        => 'us-west-1',
+  image_id      => 'ami-123456', # you need to select your own AMI
+  instance_type => 't1.micro',
 }
 ~~~
 
@@ -181,6 +182,7 @@ elb_loadbalancer { 'name-of-load-balancer':
 }
 ~~~
 
+To destroy any of these resources, set `ensure => absent`.
 
 ### Creating a stack
 
@@ -234,7 +236,7 @@ puppet apply tests/destroy.pp --test
 
 The module has basic `puppet resource` support, so you can manage AWS resources from the command line. 
 
-For example, the following command will list all the security groups:
+For example, the following command lists all the security groups:
 
 ~~~
 puppet resource ec2_securitygroup
@@ -251,6 +253,7 @@ and then destroy them, all from the command line:
 ~~~
 puppet resource ec2_securitygroup test-group ensure=absent region=sa-east-1
 ~~~
+
 
 ### Managing AWS infrastructure
 
@@ -341,7 +344,7 @@ The name of the key pair associated with this instance. This must be an existing
 *Optional* Whether to assign a public interface in a VPC. Valid values are 'true', 'false'. Defaults to 'false'.
 
 #####`subnet`
-*Optional* The VPC subnet to attach the instance to. Accepts the name of the subnet; this is the value of the Name tag for the subnet. If you're describing the subnet in Puppet, then this value will be the name of the resource. 
+*Optional* The VPC subnet to attach the instance to. Accepts the name of the subnet; this is the value of the Name tag for the subnet. If you're describing the subnet in Puppet, then this value is the name of the resource. 
 
 #####`ebs_optimized`
 *Optional* Whether or not to use optimized storage for the instance. Valid values are 'true', 'false'. Defaults to 'false'.
