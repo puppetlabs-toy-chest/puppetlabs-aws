@@ -1,7 +1,7 @@
 require 'spec_helper_acceptance'
 require 'securerandom'
 require 'ipaddr'
-require 'Base64'
+require 'base64'
 
 describe "ec2_instance" do
 
