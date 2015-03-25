@@ -54,6 +54,15 @@ Puppet::Type.newtype(:ec2_instance) do
     desc 'User data script to execute on new instance.'
   end
 
+  newparam(:associate_public_ip_address) do
+    desc 'Whether to assign a public interface in a VPC.'
+    defaultto :false
+    newvalues(:true, :'false')
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
   newproperty(:key_name) do
     desc 'The name of the key pair associated with this instance.'
     validate do |value|
