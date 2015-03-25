@@ -90,7 +90,7 @@ describe "The AWS module" do
         :vpc_instance_tenancy => 'default',
         :subnet_cidr => '10.0.0.0/24',
         :subnet_availability_zone => "#{region}a",
-        :map_public_ip_on_launch => true,
+        :map_public_ip_on_launch => false,
         :vpn_type => 'ipsec.1',
         :customer_ip_address => generate_ip,
         :bgp_asn => '65000',
@@ -737,23 +737,24 @@ describe "The AWS module" do
           },
         ],
         # ec2_vpc_subnet properties
-        :subnet_vpc_setting         => "#{name}-vpc",
-        :subnet_cidr                => '10.0.0.0/24',
-        :subnet_availability_zone   => "#{region}a",
-        :subnet_route_table_setting => "#{name}-routes",
+        :subnet_vpc_setting          => "#{name}-vpc",
+        :subnet_cidr                 => '10.0.0.0/24',
+        :subnet_availability_zone    => "#{region}a",
+        :subnet_route_table_setting  => "#{name}-routes",
         # ec2_vpc_internet_gateway properties
-        :igw_vpc_setting            => "#{name}-vpc",
+        :igw_vpc_setting             => "#{name}-vpc",
         # ec2_vpc_customer_gateway properties
-        :customer_ip_address        => ip_address,
-        :bgp_asn                    => '65000',
+        :customer_ip_address         => ip_address,
+        :bgp_asn                     => '65000',
         # ec2_vpc_vpn properties
-        :vpn_vgw_setting            => "#{name}-vgw",
-        :vpn_cgw_setting            => "#{name}-cgw",
-        :vpn_routes                 => ['0.0.0.0/0', '0.0.0.50/31'],
-        :static_routes              => true,
+        :vpn_vgw_setting             => "#{name}-vgw",
+        :vpn_cgw_setting             => "#{name}-cgw",
+        :vpn_routes                  => ['0.0.0.0/0', '0.0.0.50/31'],
+        :static_routes               => true,
         # ec2_vpc_vpn_gateway properites
-        :vgw_vpc_setting            => "#{name}-vpc",
-        :vgw_availability_zone      => "#{region}a",
+        :vgw_vpc_setting             => "#{name}-vpc",
+        :vgw_availability_zone       => "#{region}a",
+        :associate_public_ip_address => false,
       }
     end
 
