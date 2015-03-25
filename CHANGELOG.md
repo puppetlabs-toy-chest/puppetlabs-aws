@@ -4,7 +4,7 @@ This release includes:
 
 * Integration with VPC for Autoscaling groups, instances and security groups
 * Support for managing Elastic IP addresses
-* Additional DSN types for the Route53 support
+* Additional DNS types for the Route53 support
 * Detailed documentation on the properties of each type
 * Better error messaging in case of AWS failures
 * Extensive validation of types
@@ -19,7 +19,7 @@ This release includes support for:
 * Route53 DNS
 
 This also improves the other resources (instances, security groups and
-elastic load balancers), includes examples of the news resources and
+elastic load balancers), includes examples of the new resources and
 expands the acceptance testing suite.
 
 In total that's 19 types/providers, 16 of them new from the previous release.
