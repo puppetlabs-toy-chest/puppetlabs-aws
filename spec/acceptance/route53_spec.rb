@@ -376,7 +376,7 @@ describe "route53_zone" do
           r = PuppetManifest.new(@template, config).apply
           expect(r[:output].any?{|x| x.include? 'Error'}).to eq(false)
           record = find_record(config[:ns_record_name], @zone, 'NS')
-          expect(record.resource_records.map(&:values).flatten).to eq(config[:ns_values])
+          expect(record.resource_records.map(&:values).flatten.to_set).to eq(config[:ns_values].to_set)
         end
 
       end
