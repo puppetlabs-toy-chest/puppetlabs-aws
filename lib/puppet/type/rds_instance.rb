@@ -158,6 +158,10 @@ Not applicable. Must be null.'
     newvalues(:false, :'false',:'true')
   end
 
+  newproperty(:db_parameter_group_name) do
+    desc 'the DB parameter group for this RDS instance'
+  end
+
   newproperty(:final_db_snapshot_identifier) do
     desc 'Name given to the last snapshot on deletion.'
     validate do |value|
