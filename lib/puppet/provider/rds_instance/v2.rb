@@ -50,7 +50,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       backup_retention_period = 0
     end
     config = {
-    ensure: :present,
+      ensure: :present,
       name: instance.db_instance_identifier,
       region: region,
       engine: instance.engine,
@@ -65,6 +65,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       backup_retention_period: backup_retention_period,
       skip_final_snapshot: skip_final_snapshot,
       final_db_snapshot_identifier: final_db_snapshot_identifier,
+      db_parameter_group_name: instance.db_parameter_groups.collect(&:db_parameter_group_name).first,
       db_security_groups: instance.db_security_groups.collect(&:db_security_group_name),
     }
     if instance.respond_to?('endpoint')
@@ -97,6 +98,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       master_user_password: resource[:master_user_password],
       db_subnet_group_name: resource[:db_subnet_group_name],
       db_security_groups: resource[:db_security_groups],
+      db_parameter_group_name: resource[:db_parameter_group_name],
     }
 
     rds_client(resource[:region]).create_db_instance(config)
