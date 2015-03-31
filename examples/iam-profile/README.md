@@ -24,7 +24,7 @@ add to this profile.
 
 ```json
 {
-  "Version": "2015-02-13",
+  "Version": "2012-10-17",
   "Statement": [
     {
       "Action": [
