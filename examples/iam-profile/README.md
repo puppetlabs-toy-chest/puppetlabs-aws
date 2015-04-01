@@ -61,7 +61,7 @@ add to this profile.
         "ec2:CreateRouteTable",
         "ec2:DeleteRouteTable",
         "ec2:CreateRoute",
-        "ec2:DescribeSubnet",
+        "ec2:DescribeSubnets",
         "ec2:CreateSubnet",
         "ec2:DeleteSubnet",
         "ec2:AssociateRouteTable",
