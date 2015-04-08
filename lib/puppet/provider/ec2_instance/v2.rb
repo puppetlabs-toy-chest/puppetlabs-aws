@@ -258,6 +258,7 @@ Found #{matching_groups.length}:
         instance_initiated_shutdown_behavior: resource[:instance_initiated_shutdown_behavior].to_s,
         placement: {
           availability_zone: resource[:availability_zone]
+          tenancy: resource[:instance_tenancy]
         },
         monitoring: {
           enabled: resource[:monitoring].to_s,
