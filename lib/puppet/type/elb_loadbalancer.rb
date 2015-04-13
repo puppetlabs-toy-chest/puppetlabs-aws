@@ -42,6 +42,30 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     end
   end
 
+  newproperty(:health_check) do
+    desc 'Specifies the health check settings to use for evaluating the health state of your back-end instances.'
+    def normalise(health_checks)
+        |k,v| health_checks[k] = v.to_s.downcase
+    end
+    validate do |value|
+      ['target', 'interval', 'timeout', 'unhealthy_threshold', 'healthy_threshold'].each do |key|
+        fail "health_check must include #{key}" unless health_check.keys.include?(key)
+      end
+    end
+  end
+
+  newproperty(:ssl_certificate) do
+    desc 'Sets the certificate that terminates the specified listener's SSL connections'
+    def normalise(ssl_certificate)
+        |k,v| ssl_certificate[k] = v.to_s.downcase
+    end
+    validate do |value|
+      ['port', 'ssl_certificate_id'].each do |key|
+        fail "ssl_certificate must include #{key}" unless ssl_certificate.keys.include?(key)
+      end
+    end
+  end
+
   newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'The tags for the load balancer.'
   end
