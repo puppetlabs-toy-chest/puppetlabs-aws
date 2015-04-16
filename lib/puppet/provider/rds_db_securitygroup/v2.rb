@@ -49,7 +49,7 @@ Puppet::Type.type(:rds_db_securitygroup).provide(:v2, :parent => PuppetX::Puppet
   end
 
   def create
-    Puppet.info("Starting DB instance #{name}")
+    Puppet.info("Creating DB Security Group #{name}")
     config = {
       :db_security_group_name        => resource[:name],
       :db_security_group_description => resource[:db_security_group_description],

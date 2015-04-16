@@ -6,7 +6,7 @@
 
 This example creates a security group to allow Postgres RDS instance, then creates an RDS instance with that security group assigned.
 
-  puppet apply rds_security.pp
+    puppet apply rds_security.pp
 
 Unfortunatly, it's not possible to assign the EC2 group and the allowed IP's to the `db_securitygroup` through the API, so you have to do this manually though the console for now:
 

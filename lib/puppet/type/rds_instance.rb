@@ -133,10 +133,10 @@ Not applicable. Must be null.'
     end
   end
 
-  newproperty(:db_subnet_group_name) do
+  newproperty(:subnet_group_name) do
     desc 'The VPC subnet for this instance.'
     validate do |value|
-      fail 'db_subnet_group_name should not be blank' if value == ''
+      fail 'subnet_group_name should not be blank' if value == ''
     end
   end
 
