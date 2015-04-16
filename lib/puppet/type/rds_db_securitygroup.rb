@@ -7,10 +7,10 @@ Puppet::Type.newtype(:rds_db_securitygroup) do
     desc 'the name of the DB Security Group (also known as the db_security_group_name)'
   end
 
-  newparam(:db_security_group_description) do
+  newparam(:description) do
     desc 'the description of a DB Security group'
     validate do |value|
-      fail 'db_security_group_description should not be blank' if value == ''
+      fail 'description should not be blank' if value == ''
     end
   end
 
@@ -18,8 +18,9 @@ Puppet::Type.newtype(:rds_db_securitygroup) do
     desc 'the ID of the owner of this DB Security Group'
   end
 
-  newproperty(:ec2_security_groups, :array_matching => :all) do
-    desc 'the EC2 Security Groups assigned to this RDS DB security group'
+  autorequire(:ec2_securitygroup) do
+    groups = self[:security_groups]
+    groups.is_a?(Array) ? groups : [groups]
   end
 
   newproperty(:region) do

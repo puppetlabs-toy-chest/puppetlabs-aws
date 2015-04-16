@@ -68,7 +68,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       db_parameter_group_name: instance.db_parameter_groups.collect(&:db_parameter_group_name).first,
       db_security_groups: instance.db_security_groups.collect(&:db_security_group_name),
     }
-    if instance.respond_to?('endpoint')
+    if instance.respond_to?('endpoint') && !instance.endpoint.nil?
       config[:endpoint] = instance.endpoint.address
       config[:port]     = instance.endpoint.port
     end
@@ -96,7 +96,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       iops: resource[:iops],
       master_username: resource[:master_username],
       master_user_password: resource[:master_user_password],
-      db_subnet_group_name: resource[:db_subnet_group_name],
+      db_subnet_group_name: resource[:subnet_group_name],
       db_security_groups: resource[:db_security_groups],
       db_parameter_group_name: resource[:db_parameter_group_name],
     }

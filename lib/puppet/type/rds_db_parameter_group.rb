@@ -11,12 +11,12 @@ Puppet::Type.newtype(:rds_db_parameter_group) do
     desc 'the description of a DB parameter group'
   end
 
-  newproperty(:db_parameter_group_family) do
-    desc 'the name of the DB parameter group family that this DB parameter group is compatible with.'
+  newproperty(:family) do
+    desc 'the name of the DB family that this DB parameter group is compatible with (eg. mysql5.1)'
   end
 
   newproperty(:region) do
-    desc 'the region in which to create the db_parametergroup'
+    desc 'the region in which to create the db_parameter_group'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
     end

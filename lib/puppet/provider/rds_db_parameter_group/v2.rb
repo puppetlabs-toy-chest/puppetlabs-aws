@@ -1,4 +1,4 @@
-require_relative '../../../puppet_z/puppetlabs/aws.rb'
+require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
 Puppet::Type.type(:rds_db_parameter_group).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
@@ -24,7 +24,7 @@ Puppet::Type.type(:rds_db_parameter_group).provide(:v2, :parent => PuppetX::Pupp
       :ensure => :present,
       :name => db_parameter_group.db_parameter_group_name,
       :description => db_parameter_group.description,
-      :db_parameter_group_family => db_parameter_group.db_parameter_group_family,
+      :family => db_parameter_group.db_parameter_group_family,
       :region => region,
     }
   end

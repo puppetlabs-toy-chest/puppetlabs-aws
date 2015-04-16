@@ -47,9 +47,10 @@ Not applicable. Must be null.'
   end
 
   newproperty(:region) do
-    desc 'the region in which to launch the instance'
+    desc 'The region in which to launch the instance.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/
+      fail 'region should be a String' unless value.is_a?(String)
     end
   end
 
@@ -58,6 +59,7 @@ Not applicable. Must be null.'
     validate do |value|
       fail 'db_instance_class should not contain spaces' if value =~ /\s/
       fail 'db_instance_class should not be blank' if value == ''
+      fail 'db_instance_class should be a String' unless value.is_a?(String)
     end
   end
 
@@ -66,6 +68,7 @@ Not applicable. Must be null.'
     validate do |value|
       fail 'availability_zone should not contain spaces' if value =~ /\s/
       fail 'availability_zone should not be blank' if value == ''
+      fail 'availability_zone should be a String' unless value.is_a?(String)
     end
   end
 
@@ -109,7 +112,9 @@ Not applicable. Must be null.'
 
   newproperty(:iops) do
     desc 'The IOPS stype for the DB.'
-    newvalue(/\d+/)
+    validate do |value|
+      fail 'The value of the IOPS must be an integer' unless value =~ /^\d+$/
+    end
   end
 
   newproperty(:master_username) do
@@ -133,10 +138,10 @@ Not applicable. Must be null.'
     end
   end
 
-  newproperty(:db_subnet_group_name) do
+  newproperty(:subnet_group_name) do
     desc 'The VPC subnet for this instance.'
     validate do |value|
-      fail 'db_subnet_group_name should not be blank' if value == ''
+      fail 'subnet_group_name should not be blank' if value == ''
     end
   end
 
@@ -150,6 +155,9 @@ Not applicable. Must be null.'
 
   newproperty(:port) do
     desc 'the port the database is running on'
+    validate do |value|
+      fail 'The value of the port must be an integer' unless value =~ /^\d+$/
+    end
   end
 
   newproperty(:skip_final_snapshot) do
