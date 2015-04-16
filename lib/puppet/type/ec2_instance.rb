@@ -46,8 +46,21 @@ Puppet::Type.newtype(:ec2_instance) do
     end
   end
 
+  newparam(:iam_instance_profile_name) do
+    desc 'The name of the amazon IAM role you want the ec2 instance to operate under'
+  end
+
+  newproperty(:iam_instance_profile_arn) do
+    desc 'The arn of the amazon IAM role you want the ec2 instance to operate under'
+  end
+
+  validate do
+    fail "You can specify either an IAM name or an IAM arn but not both for the ec2 instance [#{self[:name]}]" if self[:iam_instance_profile_name] && self[:iam_instance_profile_arn]
+  end
+
   newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'The tags for the instance.'
+    desc 'the tags for the instance'
   end
 
   newparam(:user_data) do

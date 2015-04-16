@@ -9,6 +9,7 @@ describe type_class do
       :name,
       :instance_initiated_shutdown_behavior,
       :associate_public_ip_address,
+      :iam_instance_profile_name,
     ]
   end
 
@@ -24,6 +25,7 @@ describe type_class do
       :key_name,
       :subnet,
       :ebs_optimized,
+      :iam_instance_profile_arn,
     ]
   end
 
@@ -125,4 +127,9 @@ describe type_class do
     end
   end
 
+  it 'should disallow passing both an IAM role name and an IAM role ARN' do
+    expect {
+      type_class.new({:name => 'sample', :iam_instance_profile_arn => '1234::ARN', :iam_instance_profile_name => 'foobar'})
+    }.to raise_error(Puppet::Error)
+  end
 end

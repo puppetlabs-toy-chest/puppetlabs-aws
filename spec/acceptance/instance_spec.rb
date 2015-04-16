@@ -38,6 +38,13 @@ describe "ec2_instance" do
         :optional => {:user_data => user_data}
       }
 
+
+      # The value for this ENV var must be an existing IAM role in your Amazon account
+      # the IAM role must be available in the acceptance test region.
+      #
+      # When testing IAM roles you need to provide the IAM role name and the coresponding ARN.
+      @config[:optional]['iam_instance_profile_name'] = ENV['IAM_ROLE_NAME'] if ENV['IAM_ROLE_NAME'] && ENV['IAM_ROLE_ARN']
+
       PuppetManifest.new(@template, @config).apply
       @instance = get_instance(@config[:name])
     end
@@ -65,6 +72,14 @@ describe "ec2_instance" do
 
     it "with the specified AMI" do
       expect(@instance.image_id).to eq(@config[:image_id])
+    end
+
+    it "with the specified IAM ROLE" do
+      if ENV['IAM_ROLE_ARN']
+        expect(@instance.iam_instance_profile[:arn]).to eq(ENV['IAM_ROLE_ARN'])
+      else
+        expect(@instance.iam_instance_profile).to be_nil
+      end
     end
 
     it "not associated with a VPC (EC2-Classic accounts only)" do
@@ -485,4 +500,50 @@ describe "ec2_instance" do
     end
   end
 
+  describe 'should create a new instance with specified IAM role ARN' do
+
+    before(:all) do
+      @iam_arn_template = 'instance.pp.tmpl'
+      @config = {
+        :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+        :instance_type => 't1.micro',
+        :region => @default_region,
+        :image_id => 'ami-67a60d7a',
+        :ensure => 'present',
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        },
+        :device_name => '/dev/sda1',
+        :volume_size => 8,
+      }
+
+      # The value for this ENV var must be an existing IAM role in your Amazon account
+      # the IAM role must be available in the acceptance test region.
+      #
+      # When testing IAM roles you need to provide the IAM role name and the coresponding ARN.
+      @config[:optional] = {:iam_instance_profile_arn => ENV['IAM_ROLE_ARN']} if ENV['IAM_ROLE_ARN']
+
+      PuppetManifest.new(@iam_arn_template, @config).apply
+      @instance = get_instance(@config[:name])
+    end
+
+    after(:all) do
+      @aws.ec2_client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
+
+      new_config = @config.update({:ensure => 'absent'})
+      PuppetManifest.new(@iam_arn_template, new_config).apply
+
+      @aws.ec2_client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id])
+    end
+
+    it "with the specified IAM ROLE" do
+      if ENV['IAM_ROLE_ARN']
+        expect(@instance.iam_instance_profile[:arn]).to eq(ENV['IAM_ROLE_ARN'])
+      else
+        expect(@instance.iam_instance_profile).to be_nil
+      end
+    end
+  end
 end

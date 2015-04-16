@@ -30,7 +30,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   read_only(:instance_id, :instance_type, :region, :user_data, :key_name,
             :availability_zones, :security_groups, :monitoring, :subnet,
-            :ebs_optimized, :block_devices, :private_ip_address)
+            :ebs_optimized, :block_devices, :private_ip_address,
+            :iam_instance_profile_arn, :iam_instance_profile_name)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -73,6 +74,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       tags: tags,
       region: region,
       hypervisor: instance.hypervisor,
+      iam_instance_profile_arn: instance.iam_instance_profile ? instance.iam_instance_profile.arn : nil,
       virtualization_type: instance.virtualization_type,
       security_groups: instance.security_groups.collect(&:group_name),
       subnet: subnet_name,
@@ -256,6 +258,9 @@ Found #{matching_groups.length}:
         user_data: data,
         ebs_optimized: resource[:ebs_optimized].to_s,
         instance_initiated_shutdown_behavior: resource[:instance_initiated_shutdown_behavior].to_s,
+        iam_instance_profile: resource[:iam_instance_profile_arn] ?
+          Hash['arn' => resource[:iam_instance_profile_arn]] :
+          Hash['name' => resource[:iam_instance_profile_name]],
         placement: {
           availability_zone: resource[:availability_zone]
         },

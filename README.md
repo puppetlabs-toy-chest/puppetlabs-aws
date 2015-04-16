@@ -20,8 +20,6 @@ Status](https://travis-ci.org/puppetlabs/puppetlabs-aws.svg?branch=master)](http
   * [Parameters](#parameters)
 7. [Limitations - OS compatibility, etc.](#limitations)
 
-
-
 ##Overview
 
 The aws module manages Amazon Web Services (AWS) resources to build out cloud infrastructure.
@@ -384,6 +382,13 @@ The publicly available DNS name for the instance. Read-only.
 
 #####`kernel_id`
 The ID of the kernel in use by the instance. Read-only.
+
+#####`iam_instance_profile_name`
+The user provided name for the IAM profile to associate with the
+instance.
+
+#####`iam_instance_profile_arn`
+The Amazon Resource Name for the associated IAM profile.
 
 #### Type: ec2_securitygroup
 
@@ -824,3 +829,6 @@ in the AWS API. These resources also exist a bit outside the
 normal host level resources like `package`, `file`, `user`, etc. We're
 really interested to see how people use these new resources, and what
 else you would like to be able to do with the module.
+
+Note that this module also requires at least Ruby 1.9 and is only tested on Puppet
+versions from 3.4. If this is too limiting please let us know.
