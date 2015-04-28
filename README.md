@@ -80,7 +80,7 @@ to model the relationships between different components.
   aws_secret_access_key = your_secret_access_key
   ~~~
 
-  If you have Puppet running on AWS, and you're running the module examples, you can instead use [IAM](http://aws.amazon.com/iam/). To do this, assign the correct role to the instance from which you're running the examples. For a sample profile with all the required permissions, see the [IAM profile example](examples/iam-profile/).
+  If you have Puppet running on AWS, and you're running the module examples, you can instead use [IAM](http://aws.amazon.com/iam/). To do this, assign the correct role to the instance from which you're running the examples. For a sample profile with all the required permissions, see the [IAM profile example](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/iam-profile/).
 
 3. Finally, install the module with:
 
