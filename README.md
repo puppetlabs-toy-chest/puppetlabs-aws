@@ -255,18 +255,18 @@ puppet resource ec2_securitygroup test-group ensure=absent region=sa-east-1
 
 ### Managing AWS infrastructure
 
-You can use the aws module to audit AWS resources, launch autoscaling groups in VPC, perform unit testing, and more. The [examples](/examples) directory in the module contains a variety of usage examples that should give you an idea of what's possible:
+You can use the aws module to audit AWS resources, launch autoscaling groups in VPC, perform unit testing, and more. The [examples](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples) directory in the module contains a variety of usage examples that should give you an idea of what's possible:
 
-* [Puppet Enterprise](/examples/puppet-enterprise/): Start up a small Puppet Enterprise cluster using the AWS module.
-* [Managing DNS](/examples/manage-dns/): Manage DNS records in Amazon Route53 using Puppet.
-* [Data Driven Manifests](./examples/data-driven-manifests/): Automatically generate resources based on a data structure.
-* [Hiera Example](/examples/hiera-example/): Store common information like region or AMI id in Hiera.
-* [Infrastructure as YAML](/examples/yaml-infrastructure-definition/): Describe an entire infrastructure stack in YAML, and use `create_resources` and Hiera to build your infrastructure.
-* [Auditing Resources](/examples/audit-security-groups/): Audit AWS resource changes and work alongside other tools.
-* [Unit Testing](/examples/unit-testing): Test your AWS code with Puppet testing tools like rspec-puppet.
-* [Virtual Private Cloud](/examples/vpc-example): Use the Puppet DSL to manage a AWS VPC environment.
-* [Using IAM permissions](/examples/iam-profile): Control the API permissions required by the module with an IAM profile.
-* [Elastic IP Addresses](/examples/elastic-ip-addresses/): Attach existing elastic IP addresses to instances managed by Puppet.
+* [Puppet Enterprise](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/puppet-enterprise/): Start up a small Puppet Enterprise cluster using the AWS module.
+* [Managing DNS](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/manage-dns/): Manage DNS records in Amazon Route53 using Puppet.
+* [Data Driven Manifests](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/data-driven-manifests/): Automatically generate resources based on a data structure.
+* [Hiera Example](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/hiera-example/): Store common information like region or AMI id in Hiera.
+* [Infrastructure as YAML](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/yaml-infrastructure-definition/): Describe an entire infrastructure stack in YAML, and use `create_resources` and Hiera to build your infrastructure.
+* [Auditing Resources](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/audit-security-groups/): Audit AWS resource changes and work alongside other tools.
+* [Unit Testing](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/unit-testing): Test your AWS code with Puppet testing tools like rspec-puppet.
+* [Virtual Private Cloud](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/vpc-example): Use the Puppet DSL to manage a AWS VPC environment.
+* [Using IAM permissions](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/iam-profile): Control the API permissions required by the module with an IAM profile.
+* [Elastic IP Addresses](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/elastic-ip-addresses/): Attach existing elastic IP addresses to instances managed by Puppet.
   
 ##Reference
 
