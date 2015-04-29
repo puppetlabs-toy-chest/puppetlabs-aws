@@ -86,10 +86,13 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
         vpc_name_tag ? vpc_name_tag.value : nil
       end
     end
+    name = group[:group_name]
+    name = "#{vpc_name}::#{name}" if vpc_name && name == 'default'
     {
-      id: group.group_id,
-      name: group.group_name,
-      description: group.description,
+      name: name,
+      group_name: group[:group_name],
+      id: group[:group_id],
+      description: group[:description],
       ensure: :present,
       ingress: format_ingress_rules(ec2, group),
       vpc: vpc_name,

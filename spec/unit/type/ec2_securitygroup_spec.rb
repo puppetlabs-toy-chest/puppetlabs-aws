@@ -67,4 +67,10 @@ describe type_class do
     expect(type_class).to order_tags_on_output
   end
 
+  it 'should extract the vpc from a composite name' do
+    sg = type_class.new({name: 'sample::default'})
+    expect(sg[:vpc]).to eq('sample')
+    expect(sg[:group_name]).to eq('default')
+  end
+
 end
