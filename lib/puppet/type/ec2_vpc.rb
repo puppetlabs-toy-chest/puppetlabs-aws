@@ -42,6 +42,22 @@ Puppet::Type.newtype(:ec2_vpc) do
     desc 'The tags to assign to the VPC.'
   end
 
+  newproperty(:enable_dns_support) do
+    desc 'Whether to use the Amazon provided DNS service.'
+    newvalues(:true, :'false')
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
+  newproperty(:enable_dns_hostnames) do
+    desc 'Whether the instances launched in the VPC get DNS hostnames allocated.'
+    newvalues(:true, :'false')
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
   autorequire(:ec2_vpc_dhcp_options) do
     self[:dhcp_options]
   end
