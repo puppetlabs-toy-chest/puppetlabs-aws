@@ -2,7 +2,7 @@ require_relative '../../../puppet_x/puppetlabs/aws.rb'
 require 'aws-sdk-core'
 
 module Puppet::Parser::Functions
-  newfunction(:ec2_private_ip_address_from_filter_on_name, :type => :rvalue) do |args|
+  newfunction(:ec2_return_private_ip_addresses, :type => :rvalue) do |args|
     func_name = __method__.to_s.sub!('real_function_','')
     method = :private_ip_address
 
@@ -11,25 +11,25 @@ module Puppet::Parser::Functions
     end
 
     region    = args[0]
-    subnet_id = args[1]
-    instances  = args[2]
+    instances = args[1]
+    subnet_id = args[2]
 
-    subnet_id = [subnet_id] if subnet_id.instance_of?(String)
     instances = [instances] if instances.instance_of?(String)
+    subnet_id = [subnet_id] if subnet_id.instance_of?(String)
 
-    subnet_id.reject!(&:empty?)
     instances.reject!(&:empty?)
+    subnet_id.reject!(&:empty?)
 
     unless region.instance_of?(String) then
       raise Puppet::ParseError, ("#{func_name}(): Parameter [region] is not a string.  It looks to be a #{filter.class}")
     end
 
-    unless subnet_id.instance_of?(Array) and subnet_id.all? {|element| element.instance_of?(String)} then
-      raise Puppet::ParseError, ("#{func_name}(): Parameter [subnet_id] must be an array containing strings.")
+    unless instances.instance_of?(Array) and not instances.empty? and instances.all? {|element| element.instance_of?(String)} then
+      raise Puppet::ParseError, ("#{func_name}(): Parameter [filter] must be an array containing only strings, with at least one search filter.")
     end
 
-    unless instances.instance_of?(Array) and not instances.empty? and instances.all? {|element| element.instance_of?(String)} then
-      raise Puppet::ParseError, ("#{func_name}(): Parameter [filter] must be an array containing strings, with one search filter.")
+    unless subnet_id.instance_of?(Array) and subnet_id.all? {|element| element.instance_of?(String)} then
+      raise Puppet::ParseError, ("#{func_name}(): Parameter [subnet_id] must be an array containing strings.")
     end
 
     filter = [{
