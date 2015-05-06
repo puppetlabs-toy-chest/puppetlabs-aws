@@ -100,6 +100,14 @@ This could be because some other process is modifying AWS at the same time."""
         self.class.route53_client(region)
       end
 
+      def rds_client(region = default_region)
+        self.class.rds_client(region)
+      end
+
+      def self.rds_client(region = default_region)
+        ::Aws::RDS::Client.new({region: region})
+      end
+
       def tags_for_resource
         tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
         tags << {key: 'Name', value: name}
