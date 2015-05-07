@@ -11,12 +11,22 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     regions.collect do |region|
       begin
         instances = []
+        subnets = Hash.new()
+
+        subnets_response = ec2_client(region).describe_subnets()
+        subnets_response.data.subnets.each do |subnet|
+          name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
+          if name_tag then
+            subnets[subnet.subnet_id] = name_tag.value
+          end
+        end
+
         ec2_client(region).describe_instances(filters: [
           {name: 'instance-state-name', values: ['pending', 'running', 'stopping', 'stopped']}
         ]).each do |response|
           response.data.reservations.each do |reservation|
             reservation.instances.each do |instance|
-              hash = instance_to_hash(region, instance)
+              hash = instance_to_hash(region, instance, subnets)
               instances << new(hash) if has_name?(hash)
             end
           end
@@ -41,7 +51,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end
   end
 
-  def self.instance_to_hash(region, instance)
+  def self.instance_to_hash(region, instance, subnets)
     name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
     monitoring = instance.monitoring.state == "enabled" ? true : false
     tags = {}
@@ -50,10 +60,8 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end
     subnet_name = nil
     if instance.subnet_id
-      subnet_response = ec2_client(region).describe_subnets(subnet_ids: [instance.subnet_id])
-      subnet_name_tag = subnet_response.data.subnets.first.tags.detect { |tag| tag.key == 'Name' }
+      subnet_name = subnets[instance.subnet_id] ? subnets[instance.subnet_id] : nil
     end
-    subnet_name = subnet_name_tag ? subnet_name_tag.value : nil
 
     devices = instance.block_device_mappings.collect do |mapping|
       {
