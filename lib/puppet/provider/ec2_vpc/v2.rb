@@ -34,6 +34,18 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   end
 
   def self.vpc_to_hash(region, vpc)
+    response = ec2_client(region).describe_vpc_attribute(
+      vpc_id: vpc.vpc_id,
+      attribute: 'enableDnsHostnames'
+    )
+    dns_hostnames = response.enable_dns_hostnames.value
+
+    response = ec2_client(region).describe_vpc_attribute(
+      vpc_id: vpc.vpc_id,
+      attribute: 'enableDnsSupport'
+    )
+    dns_support = response.enable_dns_support.value
+
     options_name = unless vpc.dhcp_options_id.nil? || vpc.dhcp_options_id.empty?
       response = ec2_client(region).describe_dhcp_options(
         dhcp_options_ids: [vpc.dhcp_options_id]
@@ -51,6 +63,8 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
       region: region,
       tags: tags_for(vpc),
       dhcp_options: options_name,
+      enable_dns_support: dns_support,
+      enable_dns_hostnames: dns_hostnames,
     }
   end
 
@@ -81,6 +95,28 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
       ec2.associate_dhcp_options(
         dhcp_options_id: options_response.data.dhcp_options.first.dhcp_options_id,
         vpc_id: vpc_id,
+      )
+    end
+
+    vpc_attribute = resource[:enable_dns_hostnames]
+    if not vpc_attribute.nil?
+      value = vpc_attribute == :true ? true : false
+      ec2.modify_vpc_attribute(
+        vpc_id: vpc_id,
+        enable_dns_hostnames: {
+          value: value,
+        },
+    )
+    end
+
+    vpc_attribute = resource[:enable_dns_support]
+    if not vpc_attribute.nil?
+      value = vpc_attribute == :true ? true : false
+      ec2.modify_vpc_attribute(
+        vpc_id: vpc_id,
+        enable_dns_support: {
+          value: value,
+        },
       )
     end
 
