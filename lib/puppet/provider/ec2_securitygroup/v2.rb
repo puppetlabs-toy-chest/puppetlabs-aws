@@ -10,13 +10,23 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   def self.instances
     regions.collect do |region|
       begin
-        groups = []
-        ec2_client(region).describe_security_groups.each do |response|
-          response.data.security_groups.collect do |group|
-            groups << new(security_group_to_hash(region, group))
-          end
+        vpc_names = {}
+        vpc_response = ec2_client(region).describe_vpcs()
+        vpc_response.data.vpcs.each do |vpc|
+          vpc_name = name_from_tag(vpc)
+          vpc_names[vpc.vpc_id] = vpc_name if vpc_name
         end
-        groups
+
+        group_names = {}
+        groups = ec2_client(region).describe_security_groups.collect do |response|
+          response.data.security_groups.collect do |group|
+            group_names[group.group_id] = group.group_name || name_from_tag(group)
+            group
+          end
+        end.flatten
+        groups.collect do |group|
+          new(security_group_to_hash(region, group, group_names, vpc_names))
+        end.compact
       rescue StandardError => e
         raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
@@ -33,7 +43,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     end
   end
 
-  def self.prepare_ingress_rule_for_puppet(region, rule, group = nil, cidr = nil)
+  def self.prepare_ingress_rule_for_puppet(region, rule, groups, group = nil, cidr = nil)
     config = {
       'protocol' => rule.ip_protocol,
       'from_port' => rule.from_port.to_i,
@@ -42,7 +52,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     if group
       name = group.group_name
       if name.nil?
-        name = security_group_name_from_id(region, group.group_id)
+        name = groups[group.group_id]
       end
       config['security_group'] = name
     end
@@ -50,30 +60,30 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     config
   end
 
-  def self.format_ingress_rules(region, group)
+  def self.format_ingress_rules(region, group, groups)
     rules = []
     group[:ip_permissions].each do |rule|
       addition = []
       rule.user_id_group_pairs.each do |security_group|
-        addition << prepare_ingress_rule_for_puppet(region, rule, security_group)
+        addition << prepare_ingress_rule_for_puppet(region, rule, groups, security_group)
       end
       rule.ip_ranges.each do |cidr|
-        addition << prepare_ingress_rule_for_puppet(region, rule, nil, cidr)
+        addition << prepare_ingress_rule_for_puppet(region, rule, groups, nil, cidr)
       end
-      addition << prepare_ingress_rule_for_puppet(region, rule) if addition.empty?
+      addition << prepare_ingress_rule_for_puppet(region, rule, groups) if addition.empty?
       rules << addition
     end
     rules.flatten.uniq.compact
   end
 
-  def self.security_group_to_hash(region, group)
+  def self.security_group_to_hash(region, group, groups, vpcs)
     {
       id: group.group_id,
       name: group.group_name,
       description: group.description,
       ensure: :present,
-      ingress: format_ingress_rules(region, group),
-      vpc: vpc_name_from_id(region, group.vpc_id),
+      ingress: format_ingress_rules(region, group, groups),
+      vpc: vpcs[group.vpc_id],
       vpc_id: group.vpc_id,
       region: region,
       tags: tags_for(group),
