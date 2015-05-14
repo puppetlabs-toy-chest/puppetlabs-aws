@@ -392,7 +392,7 @@ The Amazon Resource Name for the associated IAM profile.
 
 #### Type: ec2_securitygroup
 
-##### `name
+##### `name`
 *Required* The name of the security group. This is the value of the AWS Name tag.
 
 ##### `region`
@@ -558,7 +558,7 @@ Specifies that basic state of the resource. Valid values are 'attached', 'detach
 #####`adjustment_type`
 *Required* The type of policy. Accepts a string specifying the policy adjustment type. For valid values, see AWS [Adjustment Type](http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_AdjustmentType.html) documentation. 
 
-#####`auto_scaling_group
+#####`auto_scaling_group`
 *Required* The name of the auto scaling group to attach the policy to. This is the value of the AWS Name tag.
 
 #### Type: ec2_vpc
@@ -618,7 +618,7 @@ The type of customer gateway. The only currently supported value --- and the def
 #####`domain_name_servers` 
 *Optional* A list of domain name servers to use for the DHCP options set. Accepts an array of domain server names. 
 
-#####`ntp_servers
+#####`ntp_servers`
 *Optional* A list of NTP servers to use for the DHCP options set. Accepts an array of NTP server names.
 
 #####`netbios_name_servers`
@@ -769,32 +769,23 @@ routes => [
 
 The route53 types set up various types of Route53 records:
 
-* route53_a_record
-Sets up a Route53 DNS record. 
+* `route53_a_record`: Sets up a Route53 DNS record. 
 
-* route53_aaaa_record
-Sets up a Route53 DNS AAAA record.
+* `route53_aaaa_record`: Sets up a Route53 DNS AAAA record.
 
-* route53_cname_record
-Sets up a Route53 CNAME record.
+* `route53_cname_record`: Sets up a Route53 CNAME record.
 
-* route53_mx_record
-Sets up a Route53 MX record.
+* `route53_mx_record`: Sets up a Route53 MX record.
 
-* route53_ns_record
-Sets up a Route53 DNS record.
+* `route53_ns_record`: Sets up a Route53 DNS record.
 
-* route53_spf_record
-Sets up a Route53 SPF record.
+* `route53_spf_record`: Sets up a Route53 SPF record.
 
-* route53_srv_record
-Sets up a Route53 SRV record.
+* `route53_srv_record`: Sets up a Route53 SRV record.
 
-* route53_txt_record
-Sets up a Route53 TXT record.
+* `route53_txt_record`: Sets up a Route53 TXT record.
 
-* route53_zone
-Sets up a Route53 DNS zone.
+* `route53_zone`: Sets up a Route53 DNS zone.
 
 All Route53 record types use the same parameters:
 
