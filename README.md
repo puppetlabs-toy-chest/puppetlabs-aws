@@ -52,10 +52,10 @@ to model the relationships between different components.
 
       `gem install retries`
 
-  * If you're running Puppet Enterprise, install both the gems with this command: 
+  * If you're running Puppet Enterprise, install both the gems with this command:
 
       `/opt/puppet/bin/gem install aws-sdk-core retries`
-    
+
   This allows the gems to be used by the Puppet Enterprise Ruby.
 
   * If you're running [Puppet Server](https://github.com/puppetlabs/puppet-server), you need to make both gems available to JRuby with:
@@ -99,10 +99,20 @@ region using an environment variable.
 export AWS_REGION=eu-west-1
 ~~~
 
+#### A note on proxies
+
+By default the module accesses the AWS API directly, but if you're in an
+environment which doesn't have direct access you can provide a proxy
+setting for all traffic like so:
+
+~~~
+export PUPPET_AWS_PROXY=http://localhost:8888
+~~~
+
 
 ##Getting Started with aws
 
-The aws module allows you to manage AWS using the Puppet DSL. To stand up an instance with AWS, use the `ec2_instance` type. The following code sets up a very basic instance: 
+The aws module allows you to manage AWS using the Puppet DSL. To stand up an instance with AWS, use the `ec2_instance` type. The following code sets up a very basic instance:
 
 ~~~
 ec2_instance { 'instance-name':
