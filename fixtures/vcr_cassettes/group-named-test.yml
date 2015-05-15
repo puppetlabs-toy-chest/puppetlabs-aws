@@ -5,6 +5,57 @@
         uri: "https://ec2.sa-east-1.amazonaws.com/"
         body: 
           encoding: UTF-8
+          string: "Action=DescribeVpcs&Version=2014-09-01"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
+          X-Amz-Date: 
+            - "20150511T081254Z"
+          Host: 
+            - ec2.sa-east-1.amazonaws.com
+          X-Amz-Content-Sha256: 
+            - a5f2916dc835304d35fa21090cbec3b88c7389b76b81e560905ce762a499b8c1
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150511/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=f368f89f9e6248ff6d50b018bb01e6ab48793aeff7a22649b0cdf520a5a4dc63"
+          Content-Length: 
+            - "38"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Content-Type: 
+            - "text/xml;charset=UTF-8"
+          Transfer-Encoding: 
+            - chunked
+          Vary: 
+            - Accept-Encoding
+          Date: 
+            - "Mon, 11 May 2015 08:12:53 GMT"
+          Server: 
+            - AmazonEC2
+        body: 
+          encoding: UTF-8
+          string: |-
+            <?xml version="1.0" encoding="UTF-8"?>
+            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
+                <requestId>f1c9fde4-0fdf-4f9a-8ca1-341d0cc733f9</requestId>
+                <vpcSet>
+                </vpcSet>
+            </DescribeVpcsResponse>
+        http_version: 
+      recorded_at: "Mon, 11 May 2015 08:12:55 GMT"
+    - request: 
+        method: post
+        uri: "https://ec2.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
           string: "Action=DescribeSecurityGroups&Version=2014-09-01"
         headers: 
           Content-Type: 
@@ -14,13 +65,13 @@
           User-Agent: 
             - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
           X-Amz-Date: 
-            - "20150224T181019Z"
+            - "20150511T081255Z"
           Host: 
             - ec2.sa-east-1.amazonaws.com
           X-Amz-Content-Sha256: 
             - "5d21a760e19d65e1362145b2d52df2569bac924f2eaee44aefe25f75ead4e7e2"
           Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=50a9cac09e0f99a59786eb7060cf5b60cd4d9e5d522d7ef36bfb81b5fbb88393"
+            - "AWS4-HMAC-SHA256 Credential=redacted/20150511/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=070674801bc51a13f598ff5f67b95a56bed15ae8799a3f2215d086cb95b9a5e9"
           Content-Length: 
             - "48"
           Accept: 
@@ -37,7 +88,7 @@
           Vary: 
             - Accept-Encoding
           Date: 
-            - "Tue, 24 Feb 2015 18:10:19 GMT"
+            - "Mon, 11 May 2015 08:12:55 GMT"
           Server: 
             - AmazonEC2
         body: 
@@ -45,428 +96,18 @@
           string: |-
             <?xml version="1.0" encoding="UTF-8"?>
             <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>35486255-fd7c-41ab-b5e1-375b26429c6b</requestId>
+                <requestId>a71b19a6-71b3-44a1-b0f2-40db5a9706f1</requestId>
                 <securityGroupInfo>
                     <item>
-                        <ownerId>482693910459</ownerId>
-                        <groupId>sg-9917aa86</groupId>
-                        <groupName>lb-sg</groupName>
-                        <groupDescription>Security group for load balancer</groupDescription>
-                        <ipPermissions>
-                            <item>
-                                <ipProtocol>tcp</ipProtocol>
-                                <fromPort>80</fromPort>
-                                <toPort>80</toPort>
-                                <groups/>
-                                <ipRanges>
-                                    <item>
-                                        <cidrIp>0.0.0.0/0</cidrIp>
-                                    </item>
-                                </ipRanges>
-                            </item>
-                        </ipPermissions>
+                        <ownerId>x</ownerId>
+                        <groupId>sg-x</groupId>
+                        <groupName></groupName>
+                        <groupDescription>group for testing autoscaling group</groupDescription>
+                        <ipPermissions/>
                         <ipPermissionsEgress/>
                     </item>
                 </securityGroupInfo>
             </DescribeSecurityGroupsResponse>
         http_version: 
-      recorded_at: "Tue, 24 Feb 2015 18:10:21 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeVpcs&Version=2014-09-01&VpcId.1=vpc-bd9a16d8"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150224T181021Z"
-          Host: 
-            - ec2.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "6be63b442b739fff8026512888983019d34f6a43b7daad573209dc8a5f3d018d"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=099c7975a1180bf653e6a72afdd0b011e46191e24a83bd53af1a0d3e2e06c97a"
-          Content-Length: 
-            - "59"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Tue, 24 Feb 2015 18:10:22 GMT"
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>1d291ab0-e063-44b8-8426-82ee0b414498</requestId>
-                <vpcSet>
-                </vpcSet>
-            </DescribeVpcsResponse>
-        http_version: 
-      recorded_at: "Tue, 24 Feb 2015 18:10:22 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeSecurityGroups&GroupId.1=sg-06a27263&Version=2014-09-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150224T181022Z"
-          Host: 
-            - ec2.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - c1c0f505cc429502bf01376e90d82644d96c7e615cceb3d57cd12b734f508855
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=b338c62bfd4aed6729351e3172d4b9eada8069c2f77b754234802111b8a0a661"
-          Content-Length: 
-            - "70"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Tue, 24 Feb 2015 18:10:23 GMT"
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>60b93653-fdcf-427e-9122-3f69105f7164</requestId>
-                <securityGroupInfo>
-                </securityGroupInfo>
-            </DescribeSecurityGroupsResponse>
-        http_version: 
-      recorded_at: "Tue, 24 Feb 2015 18:10:23 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeVpcs&Version=2014-09-01&VpcId.1=vpc-35c25750"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150224T181023Z"
-          Host: 
-            - ec2.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "728ca83d7c54feaeb7681e8b63230f80abe011185116c65d91ff763d8bec748e"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=319dc59185d47df3457a50d1dc59fe1b5634bece759e1bc5522a739ab302558d"
-          Content-Length: 
-            - "59"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Tue, 24 Feb 2015 18:10:24 GMT"
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>703368fc-10d3-4f61-8134-aeeb841960b6</requestId>
-            </DescribeVpcsResponse>
-        http_version: 
-      recorded_at: "Tue, 24 Feb 2015 18:10:24 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeSecurityGroups&GroupId.1=sg-03904a66&Version=2014-09-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150224T181024Z"
-          Host: 
-            - ec2.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "2b8897b8eb97470085add5732874ed823cd6d7e2613f638f0bafdc54c5f6ec49"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=71cfb1611346139c57add06afdaf384613410ccedd1341568d274391bfe99428"
-          Content-Length: 
-            - "70"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Tue, 24 Feb 2015 18:10:25 GMT"
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>6d78c5c7-575a-4aff-bb1c-18ab72ef88b1</requestId>
-            </DescribeSecurityGroupsResponse>
-        http_version: 
-      recorded_at: "Tue, 24 Feb 2015 18:10:26 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeVpcs&Version=2014-09-01&VpcId.1=vpc-35c25750"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150224T181026Z"
-          Host: 
-            - ec2.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "728ca83d7c54feaeb7681e8b63230f80abe011185116c65d91ff763d8bec748e"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=724b13ceb3d5730609e0e05a6fc9292c725ec1d5fed41e9164c8fca140a043d8"
-          Content-Length: 
-            - "59"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Tue, 24 Feb 2015 18:10:26 GMT"
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeVpcsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>e80b1f01-4f00-4ef4-b2d1-330a5e6ba6ae</requestId>
-            </DescribeVpcsResponse>
-        http_version: 
-      recorded_at: "Tue, 24 Feb 2015 18:10:27 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeSecurityGroups&GroupId.1=sg-3d954f58&Version=2014-09-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150224T181027Z"
-          Host: 
-            - ec2.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - b15501a6ac86d302df4485109afc2045837bed0813c75441d1605c7177d58cb5
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=d79cca88e73af8c7ac6a5839e42d2e26c4628e05052c6dfbd4d08c53f5bd47cc"
-          Content-Length: 
-            - "70"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Tue, 24 Feb 2015 18:10:28 GMT"
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>44218c83-d8f0-4edc-9d13-2e013dcf27ea</requestId>
-            </DescribeSecurityGroupsResponse>
-        http_version: 
-      recorded_at: "Tue, 24 Feb 2015 18:10:28 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeSecurityGroups&GroupId.1=sg-3d954f58&Version=2014-09-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150224T181028Z"
-          Host: 
-            - ec2.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - b15501a6ac86d302df4485109afc2045837bed0813c75441d1605c7177d58cb5
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=074c953f9373d5291cab799a5b06830633e8ce8fda953d93acc5e8265c14dac6"
-          Content-Length: 
-            - "70"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Tue, 24 Feb 2015 18:10:29 GMT"
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>3dc105b0-37f3-4fb8-8fcc-e39a9d5a147d</requestId>
-                <securityGroupInfo>
-                </securityGroupInfo>
-            </DescribeSecurityGroupsResponse>
-        http_version: 
-      recorded_at: "Tue, 24 Feb 2015 18:10:29 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeSecurityGroups&GroupId.1=sg-3d954f58&Version=2014-09-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150224T181029Z"
-          Host: 
-            - ec2.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - b15501a6ac86d302df4485109afc2045837bed0813c75441d1605c7177d58cb5
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150224/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=74967d1d2577db868742c155cfc171f933f2d71cadb61062fb0532c7e2169c05"
-          Content-Length: 
-            - "70"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Tue, 24 Feb 2015 18:10:30 GMT"
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>8b3d1e87-112f-4d79-9241-3c8b548e1f08</requestId>
-            </DescribeSecurityGroupsResponse>
-        http_version: 
-      recorded_at: "Tue, 24 Feb 2015 18:10:30 GMT"
+      recorded_at: "Mon, 11 May 2015 08:12:57 GMT"
   recorded_with: "VCR 2.9.3"

@@ -55,16 +55,14 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if auto scaling group #{name} exists in region #{dest_region || region}")
+    Puppet.info("Checking if auto scaling group #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Starting auto scaling group #{name} in region #{resource[:region]}")
+    Puppet.info("Starting auto scaling group #{name} in region #{target_region}")
     zones = resource[:availability_zones]
     zones = [zones] unless zones.is_a?(Array)
-
 
     config = {
       auto_scaling_group_name: name,
@@ -77,26 +75,26 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     if resource[:subnets]
       subnets = resource[:subnets]
       subnets = [subnets] unless subnets.is_a?(Array)
-      response = ec2_client(resource[:region]).describe_subnets(filters: [
+      response = ec2_client(target_region).describe_subnets(filters: [
         {name: 'tag:Name', values: subnets},
       ])
       subnet_ids = response.data.subnets.collect(&:subnet_id)
       config['vpc_zone_identifier'] = subnet_ids.join(',')
     end
 
-    autoscaling_client(resource[:region]).create_auto_scaling_group(config)
+    autoscaling_client(target_region).create_auto_scaling_group(config)
     @property_hash[:ensure] = :present
   end
 
   def min_size=(value)
-    autoscaling_client(resource[:region]).update_auto_scaling_group(
+    autoscaling_client(target_region).update_auto_scaling_group(
       auto_scaling_group_name: name,
       min_size: value,
     )
   end
 
   def max_size=(value)
-    autoscaling_client(resource[:region]).update_auto_scaling_group(
+    autoscaling_client(target_region).update_auto_scaling_group(
       auto_scaling_group_name: name,
       max_size: value,
     )
@@ -104,11 +102,11 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
 
   def subnets=(value)
     subnets = value.is_a?(Array) ? value : [value]
-    response = ec2_client(resource[:region]).describe_subnets(filters: [
+    response = ec2_client(target_region).describe_subnets(filters: [
       {name: 'tag:Name', values: subnets},
     ])
     subnet_ids = response.data.subnets.collect(&:subnet_id)
-    autoscaling_client(resource[:region]).update_auto_scaling_group(
+    autoscaling_client(target_region).update_auto_scaling_group(
       auto_scaling_group_name: name,
       vpc_zone_identifier: subnet_ids.join(','),
     )
@@ -116,22 +114,22 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
 
   def availability_zones=(value)
     zones = value.is_a?(Array) ? value : [value]
-    autoscaling_client(resource[:region]).update_auto_scaling_group(
+    autoscaling_client(target_region).update_auto_scaling_group(
       auto_scaling_group_name: name,
       availability_zones: zones,
     )
   end
 
   def launch_configuration=(value)
-    autoscaling_client(resource[:region]).update_auto_scaling_group(
+    autoscaling_client(target_region).update_auto_scaling_group(
       auto_scaling_group_name: name,
       launch_configuration_name: value,
     )
   end
 
   def destroy
-    Puppet.info("Deleting auto scaling group #{name} in region #{resource[:region]}")
-    autoscaling_client(resource[:region]).delete_auto_scaling_group(
+    Puppet.info("Deleting auto scaling group #{name} in region #{target_region}")
+    autoscaling_client(target_region).delete_auto_scaling_group(
       auto_scaling_group_name: name,
       force_delete: true,
     )

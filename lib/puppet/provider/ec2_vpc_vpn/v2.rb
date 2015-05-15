@@ -37,37 +37,17 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   end
 
   def self.connection_to_hash(region, connection)
-    ec2 = ec2_client(region)
+    name = name_from_tag(connection)
+    return {} unless name
 
-    customer_response = ec2.describe_customer_gateways(
-      customer_gateway_ids: [connection.customer_gateway_id]
-    )
-
-    customer_gateways = customer_response.data.customer_gateways
-    customer_gateway_name = unless customer_gateways.empty?
-      customer_name_tag = customer_gateways.first.tags.detect { |tag| tag.key == 'Name' }
-      customer_name_tag ? customer_name_tag.value : nil
-    else
-      nil
-    end
-
-    vpn_response = ec2.describe_vpn_gateways(
-      vpn_gateway_ids: [connection.vpn_gateway_id]
-    )
-
-    vpn_gateways = vpn_response.data.vpn_gateways
-    vpn_gateway_name = unless vpn_gateways.empty?
-      vpn_name_tag = vpn_gateways.first.tags.detect { |tag| tag.key == 'Name' }
-      vpn_name_tag ? vpn_name_tag.value : nil
-    else
-      nil
-    end
+    customer_gateway_name = customer_gateway_name_from_id(region, connection.customer_gateway_id)
+    vpn_gateway_name = vpn_gateway_name_from_id(region, connection.vpn_gateway_id)
 
     routes = connection.routes.collect { |route| route.destination_cidr_block }
     static_routes = connection.options.nil? ? nil : connection.options.static_routes_only
 
     {
-      :name             => name_from_tag(connection),
+      :name             => name,
       :id               => connection.vpn_connection_id,
       :customer_gateway => customer_gateway_name,
       :ensure           => :present,
@@ -81,14 +61,13 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if VPN #{name} exists in region #{dest_region || region}")
+    Puppet.info("Checking if VPN #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating VPN gateway #{name} in region #{resource[:region]}")
-    ec2 = ec2_client(resource[:region])
+    Puppet.info("Creating VPN gateway #{name} in region #{target_region}")
+    ec2 = ec2_client(target_region)
 
     vpn_response = ec2.describe_vpn_gateways(filters: [
       {name: "tag:Name", values: [resource[:vpn_gateway]]},
@@ -133,9 +112,8 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   end
 
   def destroy
-    region = @property_hash[:region]
-    Puppet.info("Destroying VPN #{name} in region #{region}")
-    ec2 = ec2_client(region)
+    Puppet.info("Destroying VPN #{name} in region #{target_region}")
+    ec2 = ec2_client(target_region)
     ec2.delete_vpn_connection(
       vpn_connection_id: @property_hash[:id]
     )
@@ -146,4 +124,3 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
     @property_hash[:ensure] = :absent
   end
 end
-

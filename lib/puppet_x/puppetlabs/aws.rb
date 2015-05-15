@@ -43,6 +43,10 @@ This could be because some other process is modifying AWS at the same time."""
         self.class.default_region
       end
 
+      def target_region
+        resource ? resource[:region] || region : region
+      end
+
       def self.read_only(*methods)
         methods.each do |method|
           define_method("#{method}=") do |v|
@@ -51,8 +55,16 @@ This could be because some other process is modifying AWS at the same time."""
         end
       end
 
+      def self.logger
+        if ENV['PUPPET_AWS_DEBUG_LOG'] and not ENV['PUPPET_AWS_DEBUG_LOG'].empty?
+          Logger.new('puppet-aws-debug.log')
+        else
+          nil
+        end
+      end
+
       def self.client_config(region)
-        config = {region: region}
+        config = {region: region, logger: logger}
         if ENV['PUPPET_AWS_PROXY'] and not ENV['PUPPET_AWS_PROXY'].empty?
           config[:http_proxy] = ENV['PUPPET_AWS_PROXY']
         end
@@ -127,8 +139,8 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def tags=(value)
-        Puppet.info("Updating tags for #{name} in region #{region}")
-        ec2 = ec2_client(resource[:region])
+        Puppet.info("Updating tags for #{name} in region #{target_region}")
+        ec2 = ec2_client(target_region)
         ec2.create_tags(
           resources: [@property_hash[:id]],
           tags: value.collect { |k,v| { :key => k, :value => v } }
@@ -142,6 +154,97 @@ This could be because some other process is modifying AWS at the same time."""
 
       def self.has_name?(hash)
         !hash[:name].nil? && !hash[:name].empty?
+      end
+
+      def self.vpc_name_from_id(region, vpc_id)
+        ec2 = ec2_client(region)
+        @vpcs ||= Hash.new do |h, key|
+          h[key] = if key
+            response = ec2.describe_vpcs(vpc_ids: [key])
+            if response.data.vpcs.first.to_hash.keys.include?(:group_name)
+              response.data.vpcs.first.group_name
+            elsif response.data.vpcs.first.to_hash.keys.include?(:tags)
+              name_from_tag(response.data.vpcs.first)
+            end
+          else
+            nil
+          end
+        end
+        @vpcs[vpc_id]
+      end
+
+      def self.security_group_name_from_id(region, group_id)
+        ec2 = ec2_client(region)
+        @groups ||= Hash.new do |h, key|
+          h[key] = if key
+            response = ec2.describe_security_groups(group_ids: [key])
+            response.data.security_groups.first.group_name
+          else
+            nil
+          end
+        end
+        @groups[group_id]
+      end
+
+      def self.customer_gateway_name_from_id(region, gateway_id)
+        ec2 = ec2_client(region)
+        @customer_gateways ||= Hash.new do |h, key|
+          h[key] = if key
+            response = ec2.describe_customer_gateways(customer_gateway_ids: [key])
+            name_from_tag(response.data.customer_gateways.first)
+          else
+            nil
+          end
+        end
+        @customer_gateways[gateway_id]
+      end
+
+      def self.vpn_gateway_name_from_id(region, gateway_id)
+        ec2 = ec2_client(region)
+        @vpn_gateways ||= Hash.new do |h, key|
+          h[key] = if key
+            response = ec2.describe_vpn_gateways(vpn_gateway_ids: [key])
+            name_from_tag(response.data.vpn_gateways.first)
+          else
+            nil
+          end
+        end
+        @vpn_gateways[gateway_id]
+      end
+
+      def self.options_name_from_id(region, options_id)
+        ec2 = ec2_client(region)
+        @dhcp_options ||= Hash.new do |h, key|
+          h[key] = unless key.nil? || key.empty?
+            response = ec2.describe_dhcp_options(dhcp_options_ids: [key])
+            name_from_tag(response.dhcp_options.first)
+          else
+            nil
+          end
+        end
+        @dhcp_options[options_id]
+      end
+
+      def self.gateway_name_from_id(region, gateway_id)
+        ec2 = ec2_client(region)
+        @gateways ||= Hash.new do |h, key|
+          h[key] = if key == 'local'
+            'local'
+          else
+            begin
+              igw_response = ec2.describe_internet_gateways(internet_gateway_ids: [key])
+              name_from_tag(igw_response.data.internet_gateways.first)
+            rescue ::Aws::EC2::Errors::InvalidInternetGatewayIDNotFound
+              begin
+                vgw_response = ec2.describe_vpn_gateways(vpn_gateway_ids: [key])
+                name_from_tag(vgw_response.data.vpn_gateways.first)
+              rescue ::Aws::EC2::Errors::InvalidVpnGatewayIDNotFound
+                nil
+              end
+            end
+          end
+        end
+        @gateways[gateway_id]
       end
 
     end
