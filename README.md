@@ -278,7 +278,8 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * [Virtual Private Cloud](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/vpc-example): Use the Puppet DSL to manage a AWS VPC environment.
 * [Using IAM permissions](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/iam-profile): Control the API permissions required by the module with an IAM profile.
 * [Elastic IP Addresses](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/elastic-ip-addresses/): Attach existing elastic IP addresses to instances managed by Puppet.
-  
+* [Create your own abstractions](https://github.com/puppetlabs/puppetlabs--aws/tree/master/examples/create-your-own-abstractions/): Use Puppet's defined types to better model your own infrastructure.
+
 ##Reference
 
 ### Types
