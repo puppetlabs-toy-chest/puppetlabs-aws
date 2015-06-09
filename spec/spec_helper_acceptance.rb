@@ -15,7 +15,7 @@ class PuppetManifest < Mustache
 
   def apply
     manifest = self.render.gsub("\n", '')
-    cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest}\" --modulepath ../"
+    cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest}\" --modulepath ../ --trace"
     result = { output: [], exit_status: nil }
 
     Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
@@ -69,6 +69,13 @@ class PuppetManifest < Mustache
     ).gsub(/'/, '')
   end
 
+  def self.rds_id
+    @rds_id ||= (
+      ENV['BUILD_DISPLAY_NAME'] ||
+      (ENV['USER'])
+    ).gsub(/'/, '')
+  end
+
   def self.env_dns_id
     @env_dns_id ||= @env_id.gsub(/[^\\dA-Za-z-]/, '')
   end
@@ -83,6 +90,21 @@ class AwsHelper
     @autoscaling_client = ::Aws::AutoScaling::Client.new({region: region})
     @cloudwatch_client = ::Aws::CloudWatch::Client.new({region: region})
     @route53_client = ::Aws::Route53::Client.new({region: region})
+    @rds_client = ::Aws::RDS::Client.new({region: region})
+  end
+
+  def get_rds_instance(name)
+    response = @rds_client.describe_db_instances(
+      db_instance_identifier: name
+    )
+    response.data.db_instances
+  end
+
+  def get_db_security_groups(name)
+    response = @rds_client.describe_db_security_groups(
+      db_security_group_name: name
+    )
+    response.data.db_security_groups
   end
 
   def get_instances(name)
