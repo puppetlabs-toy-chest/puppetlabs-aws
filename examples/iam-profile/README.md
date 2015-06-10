@@ -93,7 +93,16 @@ add to this profile.
         "route53:ListHostedZones",
         "route53:ChangeResourceRecordSets",
         "route53:CreateHostedZone",
-        "route53:DeleteHostedZone"
+        "route53:DeleteHostedZone",
+        "rds:CreateDBInstance",
+        "rds:ModifyDBInstance",
+        "rds:DeleteDBInstance",
+        "rds:DescribeDBInstances",
+        "rds:AuthorizeDBSecurityGroupIngress",
+        "rds:DescribeDBSecurityGroups",
+        "rds:CreateDBSecurityGroup",
+        "rds:DeleteDBSecurityGroup",
+        "rds:DescribeDBParameterGroups"
       ],
       "Effect": "Allow",
       "Resource": "*",
