@@ -20,7 +20,7 @@ Unfortunately, it's not possible to assign the EC2 group and the allowed IPs to 
 ## It should look something like this
 ![Final Look](./images/final-screen.png?raw=true)
 
-You can now check your security group is correct by using Puppet resource commands:
+You can now check to see if your security group is correct by using `puppet resource` commands:
 
     puppet resource rds_db_securitygroup rds-postgres-db_securitygroup
 
@@ -40,7 +40,7 @@ When this is complete, create the RDS Postgres instance:
 
     puppet apply rds_postgres.pp
 
-This can take a while to setup, but when it's complete, you should be able to access it:
+This can take a while to set up, but when it's complete, you should be able to access it:
 
 ~~~
 psql -d postgresql -h puppetlabs-aws-postgres.cwgutxb9fmx.us-west-2.rds.amazonaws.com -U root

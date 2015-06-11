@@ -1,7 +1,7 @@
 # Unit Testing AWS Infrastucture
 
 This example demonstrates using the standard Puppet testing tools to
-test code using the AWS module.
+test code in the AWS module.
 
 ## What
 
@@ -15,9 +15,9 @@ against the puppet style guide using
 
 ## How
 
-First you'll need to install the testing dependencies using
+First, you'll need to install the testing dependencies using
 [bundler](http://bundler.io/). We'll then use
-[R10k](https://github.com/adrienthebo/r10k) to make the AWS module
+[r10k](https://github.com/adrienthebo/r10k) to make the AWS module
 available to the manifests under test.
 
     bundle install
@@ -29,7 +29,7 @@ With that all set up you should be able to run all of the tests:
 
 This should output something like the following:
 
-```
+~~~
 ---> syntax:manifests
 ---> syntax:templates
 ---> syntax:hiera:yaml
@@ -46,9 +46,9 @@ instance_type => "t1.micro"
 
 Finished in 0.23166 seconds
 4 examples, 0 failures
-```
+~~~
 
-Note that if you prefer you can run the lint, syntax and spec tests
+Note that if you prefer, you can run the lint, syntax, and spec tests
 separately with individual commands:
 
     bundle exec rake lint
