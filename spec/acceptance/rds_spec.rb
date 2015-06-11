@@ -19,7 +19,7 @@ describe "rds_instance" do
 
     before(:all) do
       @config = {
-        :name => "#{PuppetManifest.rds_id}-#{SecureRandom.hex}",
+        :name => "v#{PuppetManifest.rds_id}-#{SecureRandom.hex}",
         :ensure => 'present',
         :region => @default_region,
         :db_name =>  'puppet',

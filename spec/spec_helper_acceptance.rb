@@ -73,7 +73,7 @@ class PuppetManifest < Mustache
     @rds_id ||= (
       ENV['BUILD_DISPLAY_NAME'] ||
       (ENV['USER'])
-    ).gsub(/'/, '')
+    ).gsub(/\W+/, '')
   end
 
   def self.env_dns_id
