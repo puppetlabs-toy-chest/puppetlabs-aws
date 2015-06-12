@@ -67,6 +67,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       {
         device_name: mapping.device_name,
         delete_on_termination: mapping.ebs.delete_on_termination,
+        volume_id: mapping.ebs.volume_id,
       }
     end
 
@@ -207,16 +208,23 @@ Found #{matching_groups.length}:
     devices = [devices] unless devices.is_a?(Array)
     devices = devices.reject(&:nil?)
     mappings = devices.collect do |device|
-      {
-        device_name: device['device_name'],
-        ebs: {
-          volume_size: device['volume_size'],
-          delete_on_termination: device['delete_on_termination'] || true,
-          volume_type: device['volume_type'] || 'standard',
-          iops: device['iops'],
-          encrypted: device['encrypted'] ? true : nil
-        },
-      }
+      if device['virtual_name'] =~ /ephemeral\d+/
+        {
+          virtual_name: device['virtual_name'],
+          device_name: device['device_name'],
+        }
+      else
+        {
+          device_name: device['device_name'],
+          ebs: {
+            volume_size: device['volume_size'],
+            delete_on_termination: device['delete_on_termination'] || true,
+            volume_type: device['volume_type'] || 'standard',
+            iops: device['iops'],
+            encrypted: device['encrypted'] ? true : nil
+          },
+        }
+      end
     end
     config['block_device_mappings'] = mappings unless mappings.empty?
     config

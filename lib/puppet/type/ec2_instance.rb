@@ -212,11 +212,12 @@ Puppet::Type.newtype(:ec2_instance) do
     validate do |value|
       devices = value.is_a?(Array) ? value : [value]
       devices.each do |device|
-        ['device_name', 'volume_size'].each do |key|
-          fail "block device must include #{key}" unless value.keys.include?(key)
-        end
-        if value['volume_type'] == 'io1'
-          fail 'must specify iops if using provisioned iops volumes' unless value.keys.include?('iops')
+        fail "block device must include 'device_name'" unless value.keys.include?('device_name')
+        if value['virtual_name'] !~ /ephemeral\d+/
+          fail "block device must include 'volume_size' for ebs volumes" unless value.keys.include?('volume_size')
+          if value['volume_type'] == 'io1'
+            fail 'must specify iops if using provisioned iops volumes' unless value.keys.include?('iops')
+          end
         end
       end
     end
