@@ -786,13 +786,13 @@ Note that currently, this type can only be listed via puppet resource,
 but cannot be created by Puppet.
 
 #####`name`
-*Required* The name of the parameter group.
+The name of the parameter group.
 
 #####`region`
-*Required* The region in which to launch the parameter group. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
+The region in the parameter group is present. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 #####`description`
-A description of the parameter group. Should be a string.
+The description of the parameter group. Should be a string.
 
 #####`family`
 The name of the database family with which the parameter group is
