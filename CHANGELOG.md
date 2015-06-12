@@ -1,3 +1,17 @@
+## 2015-06-16 - Supported Version 1.1.0
+
+This release includes:
+
+* Support for managing RDS databases
+* Instances now support assigning an IAM instance profile when created
+* Large performance improvements for many resources, which should also
+  allow for the management of larger AWS environments
+* More examples and lots of small improvement to the documentation
+* Updated IAM profile
+
+Thanks to @jhoblitt, @daveseff and @pjfoley for contributing to this release.
+
+
 ## 2015-03-25 - Supported Version 1.0.0
 
 This release includes:
