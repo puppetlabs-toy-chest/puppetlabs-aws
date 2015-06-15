@@ -39,7 +39,7 @@ to model the relationships between different components.
 ###Requirements
 
 * Puppet 3.4 or greater
-* Ruby 1.9
+* Ruby 1.9 or greater
 * Amazon AWS Ruby SDK (available as a gem)
 * Retries gem
 
