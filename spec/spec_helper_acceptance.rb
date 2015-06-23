@@ -2,6 +2,28 @@ require 'aws-sdk-core'
 require 'mustache'
 require 'open3'
 
+if ENV['PUPPET_AWS_USE_BEAKER'] and ENV['PUPPET_AWS_USE_BEAKER'] == 'yes'
+  require 'beaker-rspec'
+  require 'beaker/puppet_install_helper'
+  unless ENV['BEAKER_provision'] == 'no'
+    install_pe
+
+    proj_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+    puppet_module_install(:source => proj_root, :module_name => 'aws')
+
+    on(default, puppet('resource package aws-sdk-core ensure=installed provider=puppet_gem'))
+    on(default, puppet('resource package retries ensure=installed provider=puppet_gem'))
+
+    # install aws creds on SUT
+    home = ENV['HOME']
+    file = File.open("#{home}/.aws/credentials")
+    agent_home = on(default, 'printenv HOME').stdout.chomp
+    on(default, "mkdir #{agent_home}/.aws")
+    create_remote_file(default, "#{agent_home}/.aws/credentials", file.read)
+    # TODO enable promotion of artifact to modules forge
+  end
+end
+
 class PuppetManifest < Mustache
 
   def initialize(file, config)
@@ -14,20 +36,7 @@ class PuppetManifest < Mustache
   end
 
   def apply
-    manifest = self.render.gsub("\n", '')
-    cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest}\" --modulepath ../ --trace"
-    result = { output: [], exit_status: nil }
-
-    Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
-      while line = stdout_err.gets
-        result[:output].push(line)
-        puts line
-      end
-
-      result[:exit_status] = wait_thr.value
-    end
-
-    result
+    PuppetRunProxy.new.apply(self.render)
   end
 
   def self.to_generalized_data(val)
@@ -243,27 +252,7 @@ class AwsHelper
 
 end
 
-# a tool for applying commands on the system that is running a test
 class TestExecutor
-
-  def self.shell(cmd)
-    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
-      @out = read_stream(stdout)
-      @error = read_stream(stderr)
-      @code = /(exit)(\s)(\d+)/.match(wait_thr.value.to_s)[3]
-    end
-    TestExecutor::Response.new(@out, @error, @code, cmd)
-  end
-
-  def self.read_stream(stream)
-    result = String.new
-    while line = stream.gets
-      result << line if line.class == String
-      puts line
-    end
-    result
-  end
-
   # build and apply complex puppet resource commands
   # the arguement resource is the type of the resource
   # the opts hash must include a key 'name'
@@ -282,20 +271,81 @@ class TestExecutor
     cmd << options
     cmd << " #{command_flags}"
     # apply the command
-    response = shell(cmd)
+    response = PuppetRunProxy.new.resource(cmd)
     response
   end
 
 end
 
-class TestExecutor::Response
+class PuppetRunProxy
+  attr_accessor :mode
+
+  def initialize
+    @mode = if ENV['PUPPET_AWS_USE_BEAKER'] and ENV['PUPPET_AWS_USE_BEAKER'] == 'yes'
+      :beaker
+    else
+      :local
+    end
+  end
+
+  def apply(manifest)
+    case @mode
+    when :local
+      cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest.gsub("\n", '')}\" --modulepath ../ --debug"
+      use_local_shell(cmd)
+    else
+      # acceptable_exit_codes and expect_changes are passed because we want detailed-exit-codes but want to
+      # make our own assertions about the responses
+      apply_manifest(manifest, {:acceptable_exit_codes => (0...256), :expect_changes => true, :debug => true,})
+    end
+  end
+
+  def resource(cmd)
+    case @mode
+    when :local
+      # local commands use bundler to isolate the  puppet environment
+      cmd.prepend('bundle exec ')
+      use_local_shell(cmd)
+    else
+      # beaker has a puppet helper to run puppet on the remote system so we remove the explicit puppet part of the command
+      cmd = "#{cmd.split('puppet ').join}"
+      # when running under beaker we install the module via the package, so need to use the default module path
+      cmd ="#{cmd.split(/--modulepath \S*/).join}"
+      on(default, puppet(cmd))
+    end
+  end
+
+  private
+  def use_local_shell(cmd)
+    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+      @out = read_stream(stdout)
+      @error = read_stream(stderr)
+      @code = /(exit)(\s)(\d+)/.match(wait_thr.value.to_s)[3]
+    end
+    BeakerLikeResponse.new(@out, @error, @code, cmd)
+  end
+
+  def read_stream(stream)
+    result = String.new
+    while line = stream.gets
+      result << line if line.class == String
+      puts line
+    end
+    result
+  end
+
+end
+
+class BeakerLikeResponse
   attr_reader :stdout , :stderr, :exit_code, :command
 
   def initialize(standard_out, standard_error, exit, cmd)
     @stdout = standard_out
     @stderr = standard_error
-    @exit_code = exit
+    @exit_code = exit.to_i
     @command = cmd
   end
 
 end
+
+
