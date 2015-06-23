@@ -70,8 +70,8 @@ describe "route53_zone" do
     end
 
     it 'should run idempotently' do
-      success = PuppetManifest.new(@template, @config).apply[:exit_status].success?
-      expect(success).to eq(true)
+      result = PuppetManifest.new(@template, @config).apply
+      expect(result.exit_code).to eq('0')
     end
 
     it 'should create a DNS zone with the correct name' do
@@ -365,7 +365,7 @@ describe "route53_zone" do
           config = @config.clone
           config[:ns_ttl] = 4000
           r = PuppetManifest.new(@template, config).apply
-          expect(r[:output].any?{|x| x.include? 'Error'}).to eq(false)
+          expect(r.stderr).not_to match(/error/i)
           record = find_record(config[:ns_record_name], @zone, 'NS')
           expect(record.ttl).to eq(config[:ns_ttl])
         end
@@ -374,7 +374,7 @@ describe "route53_zone" do
           config = @config.clone
           config[:ns_values] = ['ns1.example.com', 'ns5.example.com', 'ns3.example.com']
           r = PuppetManifest.new(@template, config).apply
-          expect(r[:output].any?{|x| x.include? 'Error'}).to eq(false)
+          expect(r.stderr).not_to match(/error/i)
           record = find_record(config[:ns_record_name], @zone, 'NS')
           expect(record.resource_records.map(&:values).flatten.to_set).to eq(config[:ns_values].to_set)
         end
@@ -387,7 +387,7 @@ describe "route53_zone" do
           config = @config.clone
           config[:txt_ttl] = 7000
           r = PuppetManifest.new(@template, config).apply
-          expect(r[:output].any?{|x| x.include? 'Error'}).to eq(false)
+          expect(r.stderr).not_to match(/error/i)
           record = find_record(config[:txt_record_name], @zone, 'TXT')
           expect(record.ttl).to eq(config[:txt_ttl])
         end
@@ -396,7 +396,7 @@ describe "route53_zone" do
           config = @config.clone
           config[:txt_values] = ['This is a test', 'Test all the other things!', 'Very wow much test']
           r = PuppetManifest.new(@template, config).apply
-          expect(r[:output].any?{|x| x.include? 'Error'}).to eq(false)
+          expect(r.stderr).not_to match(/error/i)
           record = find_record(config[:txt_record_name], @zone, 'TXT')
           expect(record.resource_records.map{|x| x.value.delete('/"')}.to_set).to eq(config[:txt_values].to_set)
         end
@@ -429,7 +429,7 @@ describe "route53_zone" do
 
     it 'add records to the zone with a manifest' do
       result = PuppetManifest.new(@template, @config).apply
-      expect(result[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      expect(result.stderr).not_to match(/error/i)
       zone = find_zone(@config[:name])
       expect{find_record(@config[:txt_record_name], zone, 'TXT')}.not_to raise_error
       expect{find_record(@config[:a_record_name], zone, 'A')}.not_to raise_error

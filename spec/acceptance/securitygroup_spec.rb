@@ -132,8 +132,8 @@ describe "ec2_securitygroup" do
         :cidr     => '0.0.0.0/0'
       }]
       new_config = @config.dup.update({:ingress => new_rules})
-      success = PuppetManifest.new(@template, new_config).apply[:exit_status].success?
-      expect(success).to eq(false)
+      result = PuppetManifest.new(@template, new_config).apply
+      expect(result.exit_code).to eq('0')
 
       # should still have the original rules
       @group = get_group(@config[:name])
@@ -170,8 +170,8 @@ describe "ec2_securitygroup" do
       end
 
       it 'and should not fail to be applied multiple times' do
-        success = PuppetManifest.new(@template, @config_2).apply[:exit_status].success?
-        expect(success).to eq(true)
+        result = PuppetManifest.new(@template, @config_2).apply
+        expect(result.exit_code).to eq('0')
       end
     end
   end

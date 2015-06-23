@@ -1,6 +1,24 @@
 require 'aws-sdk-core'
 require 'mustache'
 require 'open3'
+unless ENV['DEVELOPMENT']
+  require 'beaker-rspec'
+  require 'beaker/puppet_install_helper'
+  install_pe
+  on(default, puppet('module install puppetlabs-aws'))
+
+  # install the AWS SKD & retries gems on the agent
+  on(default, puppet('resource package aws-sdk-core ensure=installed provider=puppet_gem'))
+  on(default, puppet('resource package retries ensure=installed provider=puppet_gem'))
+
+  # install aws creds on SUT
+  home = ENV['HOME']
+  file = File.open("#{home}/.aws/credentials")
+  agent_home = on(default, 'printenv HOME').stdout.chomp
+  on(default, "mkdir #{agent_home}/.aws")
+  create_remote_file(default, "#{agent_home}/.aws/credentials", file.read)
+  # TODO enable promotion of artifact to modules forge
+end
 
 class PuppetManifest < Mustache
 
@@ -14,20 +32,7 @@ class PuppetManifest < Mustache
   end
 
   def apply
-    manifest = self.render.gsub("\n", '')
-    cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest}\" --modulepath ../ --trace"
-    result = { output: [], exit_status: nil }
-
-    Open3.popen2e(cmd) do |stdin, stdout_err, wait_thr|
-      while line = stdout_err.gets
-        result[:output].push(line)
-        puts line
-      end
-
-      result[:exit_status] = wait_thr.value
-    end
-
-    result
+    Toggle_switch.shell(self.render)
   end
 
   def self.to_generalized_data(val)
@@ -246,24 +251,6 @@ end
 # a tool for applying commands on the system that is running a test
 class TestExecutor
 
-  def self.shell(cmd)
-    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
-      @out = read_stream(stdout)
-      @error = read_stream(stderr)
-      @code = /(exit)(\s)(\d+)/.match(wait_thr.value.to_s)[3]
-    end
-    TestExecutor::Response.new(@out, @error, @code, cmd)
-  end
-
-  def self.read_stream(stream)
-    result = String.new
-    while line = stream.gets
-      result << line if line.class == String
-      puts line
-    end
-    result
-  end
-
   # build and apply complex puppet resource commands
   # the arguement resource is the type of the resource
   # the opts hash must include a key 'name'
@@ -282,13 +269,59 @@ class TestExecutor
     cmd << options
     cmd << " #{command_flags}"
     # apply the command
-    response = shell(cmd)
+    response = Toggle_switch.shell(cmd)
     response
   end
 
 end
 
-class TestExecutor::Response
+# a common class to use to switch between local shell access and an Agent as SUT
+class Toggle_switch
+
+  def self.shell(cmd)
+    if ENV['DEVELOPMENT']
+      if cmd.start_with?('puppet resource')
+        cmd.prepend('bundle exec ')
+      else
+        cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{cmd.gsub("\n", '')}\" --modulepath ../ --trace"
+      end
+      use_local_shell(cmd)
+    else
+      if cmd.start_with?('puppet resource')
+        # remove puppet
+        cmd = "#{cmd.split('puppet ').join}"
+        # remove --modulepath
+        cmd ="#{cmd.split(/--modulepath \S*/).join}"
+        on(default, puppet(cmd))
+      else
+        # apply a manifest
+        apply_manifest(cmd, {:acceptable_exit_codes => (0...256)})
+      end
+    end
+  end
+
+  private
+  def self.use_local_shell(cmd)
+    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+      @out = read_stream(stdout)
+      @error = read_stream(stderr)
+      @code = /(exit)(\s)(\d+)/.match(wait_thr.value.to_s)[3]
+    end
+    Toggle_switch::Beaker_like_response.new(@out, @error, @code, cmd)
+  end
+
+  def self.read_stream(stream)
+    result = String.new
+    while line = stream.gets
+      result << line if line.class == String
+      puts line
+    end
+    result
+  end
+
+end
+
+class Toggle_switch::Beaker_like_response
   attr_reader :stdout , :stderr, :exit_code, :command
 
   def initialize(standard_out, standard_error, exit, cmd)
@@ -299,3 +332,5 @@ class TestExecutor::Response
   end
 
 end
+
+
