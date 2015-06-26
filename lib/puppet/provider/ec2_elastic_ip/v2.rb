@@ -56,11 +56,12 @@ Puppet::Type.type(:ec2_elastic_ip).provide(:v2, :parent => PuppetX::Puppetlabs::
     Puppet.info("Creating association for #{name}")
     ec2 = ec2_client(resource[:region])
     response = ec2.describe_instances(filters: [
-      {name: 'tag:Name', values: [resource[:instance]]}
+      {name: 'tag:Name', values: [resource[:instance]]},
+      {name: 'instance-state-name', values: ['pending','running']}
     ])
     instance_ids = response.reservations.map(&:instances).flatten.map(&:instance_id)
 
-    fail "No instance found named #{resource[:instance]}" if instance_ids.empty?
+    fail "No pending or running instance found named #{resource[:instance]}" if instance_ids.empty?
     if instance_ids.count > 1
       Puppet.warning "Multiple instances found named #{resource[:instance]}, using #{instance_ids.first}"
     end
