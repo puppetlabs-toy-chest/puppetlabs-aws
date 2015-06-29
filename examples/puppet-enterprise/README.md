@@ -6,7 +6,7 @@ agents, one Windows and one Linux based.
 
 ## What
 
-```
+~~~
                                       443
                                        +
                                        |
@@ -24,13 +24,13 @@ agents, one Windows and one Linux based.
                    | +----------------+ +----------------+ |
                    +---------------------------------------+
 
-```
+~~~
 
 
 ## How
 
-This example is in two parts, first we'll bring up the Puppet Master. And after
-making a quick configuration change we'll bring up two Puppet agents.
+This example is in two parts, first we'll bring up the Puppet Master. After
+making a quick configuration change, we'll bring up two Puppet agents.
 
 With the module installed as described in the README, from this
 directory run:
@@ -46,18 +46,18 @@ master. Open up `pe_agent.pp` and change the line:
     $pe_master_hostname = 'ip-your-ip-here.us-west-2.compute.internal'
 
 You can find the IP address under _Private DNS_ in the AWS web console.
-Alternatively you can use the Puppet resource commands:
+Alternatively, you can use the `puppet resource` commands:
 
     puppet resource ec2_instance puppet-master
 
 This should return a Puppet resource, including the public and private
 IP and DNS details.
 
-Finally you can run:
+Finally, run the following:
 
     puppet apply pe_agent.pp --test --templatedir templates
 
-Now lets login to your new Puppet Enterprise console. Retrieve the _Public IP_ address
+Now let's login to your new Puppet Enterprise console. Retrieve the _Public IP_ address
 of the `puppet-master` instance from the AWS console or using `puppet resource`, then visit:
 
     https://your-public-ip-address
@@ -65,7 +65,7 @@ of the `puppet-master` instance from the AWS console or using `puppet resource`,
 You can login with the username `admin` and the password `puppetlabs`,
 or you can change these in the `pe_agent.pp` file mentioned above.
 
-Note the https part. Because we're just using a temporary IP address here you'll likely
+Note the https part. Because we're using a temporary IP address here you'll likely
 get a certificate error from your browser, ignore this for now.
 
 You can learn more about using Puppet Enterprise from the comprehensive
@@ -78,9 +78,9 @@ This example demonstrates the power of using the AWS module but still has a few 
 edges, specifically:
 
 * You need to run the manifests twice, first to create the master and then to
-  create the agents
-* All certificates from agents are automatically signed by the master
+  create the agents.
+* All certificates from agents are automatically signed by the master.
 
-All of these are solvable, one approach being to utilise Amazon's VPC service
+All of these are solvable, one approach being to utilize Amazon's VPC service
 and to use the policy based autosigning API in Puppet. We'll likely build on
 this example as we develop the module.
