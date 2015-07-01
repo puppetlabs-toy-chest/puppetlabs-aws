@@ -238,7 +238,7 @@ This could be because some other process is modifying AWS at the same time."""
         @gateways ||= Hash.new do |h, key|
           h[key] = if key == 'local'
             'local'
-          else
+          elsif key
             begin
               igw_response = ec2.describe_internet_gateways(internet_gateway_ids: [key])
               name_from_tag(igw_response.data.internet_gateways.first)
@@ -250,6 +250,8 @@ This could be because some other process is modifying AWS at the same time."""
                 nil
               end
             end
+          else
+            nil
           end
         end
         @gateways[gateway_id]
