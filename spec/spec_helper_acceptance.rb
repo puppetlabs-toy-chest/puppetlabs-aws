@@ -32,7 +32,7 @@ class PuppetManifest < Mustache
   end
 
   def apply
-    Toggle_switch.shell(self.render)
+    ToggleSwitch.shell(self.render)
   end
 
   def self.to_generalized_data(val)
@@ -269,14 +269,14 @@ class TestExecutor
     cmd << options
     cmd << " #{command_flags}"
     # apply the command
-    response = Toggle_switch.shell(cmd)
+    response = ToggleSwitch.shell(cmd)
     response
   end
 
 end
 
 # a common class to use to switch between local shell access and an Agent as SUT
-class Toggle_switch
+class ToggleSwitch
 
   def self.shell(cmd)
     if ENV['DEVELOPMENT']
@@ -307,7 +307,7 @@ class Toggle_switch
       @error = read_stream(stderr)
       @code = /(exit)(\s)(\d+)/.match(wait_thr.value.to_s)[3]
     end
-    Toggle_switch::Beaker_like_response.new(@out, @error, @code, cmd)
+    ToggleSwitch::Beaker_like_response.new(@out, @error, @code, cmd)
   end
 
   def self.read_stream(stream)
@@ -321,7 +321,7 @@ class Toggle_switch
 
 end
 
-class Toggle_switch::Beaker_like_response
+class ToggleSwitch::Beaker_like_response
   attr_reader :stdout , :stderr, :exit_code, :command
 
   def initialize(standard_out, standard_error, exit, cmd)
