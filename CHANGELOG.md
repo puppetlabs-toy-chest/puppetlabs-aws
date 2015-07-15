@@ -1,3 +1,9 @@
+## 2015-07-16 - Supported Version 1.1.1
+
+This release includes:
+
+* update to the metadata for the upcoming release of PE
+
 ## 2015-06-16 - Supported Version 1.1.0
 
 This release includes:
