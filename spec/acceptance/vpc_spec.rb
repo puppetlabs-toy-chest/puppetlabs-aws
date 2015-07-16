@@ -110,7 +110,7 @@ describe "The AWS module" do
       }
 
       @template = 'vpc.pp.tmpl'
-      @exit = PuppetManifest.new(@template, @config).apply[:exit_status]
+      @result = PuppetManifest.new(@template, @config).apply
 
       @vpc = find_vpc("#{@name}-vpc")
       @option = find_dhcp_option("#{@name}-options")
@@ -126,13 +126,14 @@ describe "The AWS module" do
       PuppetManifest.new(template, new_config).apply
     end
 
+
     it 'should run successfully first time with changes' do
-      expect(@exit.exitstatus).to eq(2)
+      expect(@result.exit_code.to_s).to eq('2')
     end
 
     it 'should run idempotently' do
-      success = PuppetManifest.new(@template, @config).apply[:exit_status].success?
-      expect(success).to eq(true)
+      result = PuppetManifest.new(@template, @config).apply
+      expect(result.exit_code).to eq('0')
     end
 
     it 'should create a VPC' do
@@ -349,7 +350,7 @@ describe "The AWS module" do
       }
       @template = 'vpc_complete.pp.tmpl'
       result = PuppetManifest.new(@template, @config).apply
-      expect(result[:output].any?{ |x| x.include? 'Error:'}).to eq(false)
+      expect(result.stderr).not_to match(/error/i)
     end
 
     after(:all) do
@@ -357,7 +358,7 @@ describe "The AWS module" do
       template = 'vpc_complete_delete.pp.tmpl'
       config = {:name => @config[:name], :region => @config[:region], :ensure => 'absent'}
       result = PuppetManifest.new(template, config).apply
-      expect(result[:output].any?{ |x| x.include? 'Error:'}).to eq(false)
+      expect(result.stderr).not_to match(/error/i)
     end
 
     it 'should create a public instance in the VPC' do
@@ -371,7 +372,7 @@ describe "The AWS module" do
 
       before(:all) do
         result = PuppetManifest.new(@template, @config).apply
-        expect(result[:output].any?{ |x| x.include? 'Error:'}).to eq(false)
+        expect(result.stderr).not_to match(/error/i)
       end
 
       context 'to describe an ec2_vpc' do
@@ -762,7 +763,7 @@ describe "The AWS module" do
       template = 'vpc_complete_delete.pp.tmpl'
       config = {:name => @negative_config[:name], :region => @negative_config[:region], :ensure => 'absent'}
       result = PuppetManifest.new(template, config).apply
-      expect(result[:output].any?{ |x| x.include? 'Error:'}).to eq(false)
+      expect(r.stderr).not_to match(/error/i)
     end
 
     it 'attempt to add two routes that point to the same gateway' do
@@ -781,7 +782,7 @@ describe "The AWS module" do
         },
       ]
       result = PuppetManifest.new(@template, @negative_config).apply
-      expect(result[:output].any? { |x| x.include? 'Only one route per gateway allowed'}).to eq(true)
+      expect(result.stderr).not_to match(/only one route per gateway allower/i)
     end
 
     it 'attempt to add a route that has an invalid CIDR block, AWS will coerce to a valid CIDR' do
@@ -802,7 +803,7 @@ describe "The AWS module" do
       ]
       # apply once expect no error
       result = PuppetManifest.new(@template, @negative_config).apply
-      expect(result[:output].any?{ |x| x.include? 'Error:'}).to eq(false)
+      expect(result.stderr).not_to match(/error/i)
       # apply again looking for puppet error on attempted change
       result2 = PuppetManifest.new(@template, @negative_config).apply
       regex = /Error: routes property is read-only once ec2_vpc_routetable created/
