@@ -47,19 +47,19 @@ to model the relationships between different components.
 
 1. Install the retries gem and the Amazon AWS Ruby SDK gem.
 
-    * If you're using open source Puppet, the SDK gem should be installed into the same Ruby used by Puppet. Install the gems with these commands:
+  * If you're running Puppet from the `puppet-agent` package or running Puppet Enterprise 2015.2.0 you can install the gems using:
 
-      `gem install aws-sdk-core`
+      `/opt/puppetlabs/puppet/bin/gem install aws-sdk-core retries`
 
-      `gem install retries`
+  * If you're using an older version of open source Puppet, install the gems into the same Ruby used by Puppet with these commands:
 
-  * If you're running Puppet Enterprise, install both the gems with this command:
+      `gem install aws-sdk-core retries`
+
+  * If you're running Puppet Enterprise 3.x, install both the gems with this command:
 
       `/opt/puppet/bin/gem install aws-sdk-core retries`
 
-  This allows the gems to be used by the Puppet Enterprise Ruby.
-
-  * If you're running [Puppet Server](https://github.com/puppetlabs/puppet-server), you need to make both gems available to JRuby with:
+  * If you're running [Puppet Server](https://github.com/puppetlabs/puppet-server), you also need to make both gems available to JRuby with:
 
       `/opt/puppet/bin/puppetserver gem install aws-sdk-core retries`
 
