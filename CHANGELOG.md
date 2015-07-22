@@ -1,3 +1,10 @@
+## 2015-07-22 - Supported Version 1.1.1
+
+This release includes:
+
+* Update to the metadata for the upcoming release of PE
+* Update to the gem installation instructions in the README
+
 ## 2015-06-16 - Supported Version 1.1.0
 
 This release includes:
