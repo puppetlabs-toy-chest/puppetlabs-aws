@@ -132,8 +132,8 @@ describe "ec2_securitygroup" do
         :cidr     => '0.0.0.0/0'
       }]
       new_config = @config.dup.update({:ingress => new_rules})
-      success = PuppetManifest.new(@template, new_config).apply[:exit_status].success?
-      expect(success).to eq(false)
+      result = PuppetManifest.new(@template, new_config).apply
+      expect(result.exit_code).to eq(2)
 
       # should still have the original rules
       @group = get_group(@config[:name])
@@ -170,8 +170,8 @@ describe "ec2_securitygroup" do
       end
 
       it 'and should not fail to be applied multiple times' do
-        success = PuppetManifest.new(@template, @config_2).apply[:exit_status].success?
-        expect(success).to eq(true)
+        result = PuppetManifest.new(@template, @config_2).apply
+        expect(result.exit_code).to eq(0)
       end
     end
   end
@@ -224,7 +224,7 @@ describe "ec2_securitygroup" do
     end
 
     it 'and does not emit change notifications on a second run when the manifest ingress rule ordering does not match the one returned by AWS' do
-      output = PuppetManifest.new(@template, @config).apply[:output]
+      result = PuppetManifest.new(@template, @config).apply
       @group = get_group(@config[:name])
 
       # Puppet code not loaded, so can't call format_ingress_rules on ec2_securitygroup type
@@ -233,8 +233,7 @@ describe "ec2_securitygroup" do
       expect_rule_matches(@config[:ingress][0], @group[:ip_permissions][2])
 
       # should still be considered insync despite ordering differences
-      changed = output.any? { |l| l.match('ingress changed') }
-      expect(changed).to eq(false)
+      expect(result.stdout).not_to match(/ingress changed/)
     end
   end
 
@@ -464,8 +463,8 @@ describe "ec2_securitygroup" do
           new_rules << rule
         end
         new_config = @config.dup.update({:ingress => new_rules})
-        exit_status = PuppetManifest.new(@template, new_config).apply[:exit_status]
-        expect(exit_status.exitstatus).to eq(2)
+        result = PuppetManifest.new(@template, new_config).apply
+        expect(result.exit_code).to eq(2)
 
         @group = get_group(@config[:name])
 
