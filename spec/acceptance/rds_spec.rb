@@ -98,8 +98,10 @@ describe "rds_instance" do
       expect(@rds_instance.storage_type).to eq(@config[:storage_type])
     end
 
-    it 'not associated with a VPC (EC2-Classic accounts only)' do
-      unless @aws.vpc_only?
+    it 'with the correct VPC association' do
+      if @aws.vpc_only?
+        expect(@rds_instance.db_subnet_group.db_subnet_group_name).to eq('default')
+      else
         expect(@rds_instance.vpc_security_groups).to be_empty
         expect(@rds_instance.db_subnet_group).to be_nil
       end
@@ -154,6 +156,13 @@ describe "rds_instance" do
       it 'backup retention is correct' do
         regex = /(backup_retention_period)(\s*)(=>)(\s*)('#{@config[:backup_retention_period]}')/
         expect(@result.stdout).to match(regex)
+      end
+
+      it 'with the default subnet association (VPC-only accounts)' do
+        unless @aws.vpc_only?
+          regex = /(db_subnet)(\s*)(=>)(\s*)('default')/
+          expect(@result.stdout).to match(regex)
+        end
       end
     end
 
