@@ -38,6 +38,7 @@ add to this profile.
         "ec2:TerminateInstances",
         "elasticloadbalancing:DescribeLoadBalancers",
         "elasticloadbalancing:CreateLoadBalancer",
+        "elasticloadbalancing:DescribeTags",
         "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
         "elasticloadbalancing:DeleteLoadBalancer",
         "ec2:DescribeSecurityGroups",
@@ -56,6 +57,7 @@ add to this profile.
         "ec2:DeleteCustomerGateway",
         "ec2:DescribeInternetGateways",
         "ec2:CreateInternetGateway",
+        "ec2:AttachInternetGateway",
         "ec2:DeleteInternetGateway",
         "ec2:DetachInternetGateway",
         "ec2:DescribeRouteTables",
@@ -105,7 +107,7 @@ add to this profile.
         "rds:DescribeDBParameterGroups"
       ],
       "Effect": "Allow",
-      "Resource": "*",
+      "Resource": "*"
     }
   ]
 }

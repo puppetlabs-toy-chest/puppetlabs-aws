@@ -13,7 +13,7 @@
         "ec2:TerminateInstances",
         "elasticloadbalancing:DescribeLoadBalancers",
         "elasticloadbalancing:CreateLoadBalancer",
-        "elasticloadbalancing:DescribeTags"
+        "elasticloadbalancing:DescribeTags",
         "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
         "elasticloadbalancing:DeleteLoadBalancer",
         "ec2:DescribeSecurityGroups",
