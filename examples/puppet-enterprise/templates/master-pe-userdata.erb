@@ -81,9 +81,9 @@ function install_puppetmaster() {
     case ${breed} in
       "redhat")
         ntpdate -u 0.north-america.pool.ntp.org
-        curl -s -o /opt/pe-installer.tar.gz "https://s3.amazonaws.com/pe-builds/released/$PUPPET_PE_VERSION/puppet-enterprise-$PUPPET_PE_VERSION-el-6-x86_64.tar.gz" ;;
+        curl -L -s -o /opt/pe-installer.tar.gz "https://pm.puppetlabs.com/puppet-enterprise/$PUPPET_PE_VERSION/puppet-enterprise-$PUPPET_PE_VERSION-el-6-x86_64.tar.gz" ;;
       "debian")
-        curl -s -o /opt/pe-installer.tar.gz "https://s3.amazonaws.com/pe-builds/released/$PUPPET_PE_VERSION/puppet-enterprise-$PUPPET_PE_VERSION-debian-7-amd64.tar.gz" ;;
+        curl -L -s -o /opt/pe-installer.tar.gz "https://pm.puppetlabs.com/puppet-enterprise/$PUPPET_PE_VERSION/puppet-enterprise-$PUPPET_PE_VERSION-debian-7-amd64.tar.gz" ;;
     esac
     #Drop installer in predictable location
     tar --extract --file=/opt/pe-installer.tar.gz --strip-components=1 --directory=/opt/puppet-enterprise
