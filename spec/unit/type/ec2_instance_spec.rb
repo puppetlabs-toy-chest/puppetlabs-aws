@@ -80,15 +80,15 @@ describe type_class do
       type_class.new({:name => 'sample', :block_devices => [
         {'volume_size' => 8}
       ]})
-    }.to raise_error(Puppet::Error, /block device must include device_name/)
+    }.to raise_error(Puppet::Error, /block device must be named/)
   end
 
-  it 'if block device included must include a volume size' do
+  it 'if block device included must include a volume size or snapshot' do
     expect {
       type_class.new({:name => 'sample', :block_devices => [
         {'device_name' => '/dev/sda1'}
       ]})
-    }.to raise_error(Puppet::Error, /block device must include volume_size/)
+    }.to raise_error(Puppet::Error, /block device must include at least one of: volume_size snapshot_id/)
   end
 
   it 'if private IP included must be a valid IP' do

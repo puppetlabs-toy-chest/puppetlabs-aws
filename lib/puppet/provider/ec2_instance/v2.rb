@@ -211,6 +211,7 @@ Found #{matching_groups.length}:
         device_name: device['device_name'],
         ebs: {
           volume_size: device['volume_size'],
+          snapshot_id: device['snapshot_id'],
           delete_on_termination: device['delete_on_termination'] || true,
           volume_type: device['volume_type'] || 'standard',
           iops: device['iops'],
