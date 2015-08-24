@@ -227,10 +227,13 @@ describe "ec2_securitygroup" do
       result = PuppetManifest.new(@template, @config).apply
       @group = get_group(@config[:name])
 
+      original_rules = @config[:ingress].sort { |a, b| [a[:port], a[:protocol]] <=> [b[:port], b[:protocol]] }
+      new_rules = @group[:ip_permissions].sort { |a, b| [a.to_port, a.ip_protocol] <=> [b.to_port, b.ip_protocol] }
+
       # Puppet code not loaded, so can't call format_ingress_rules on ec2_securitygroup type
-      expect_rule_matches(@config[:ingress][2], @group[:ip_permissions][0])
-      expect_rule_matches(@config[:ingress][1], @group[:ip_permissions][1])
-      expect_rule_matches(@config[:ingress][0], @group[:ip_permissions][2])
+      original_rules.each_with_index do |rule,i|
+        expect_rule_matches(rule, new_rules[i])
+      end
 
       # should still be considered insync despite ordering differences
       expect(result.stdout).not_to match(/ingress changed/)
