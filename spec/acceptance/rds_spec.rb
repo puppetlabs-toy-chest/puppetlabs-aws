@@ -33,10 +33,10 @@ describe "rds_instance" do
         :master_user_password => 'pullth3stringz',
         :multi_az => false,
         :skip_final_snapshot => true,
+        :backup_retention_period => 5,
       }
 
-      manifest = PuppetManifest.new(@template, @config)
-      manifest.apply
+      @result = PuppetManifest.new(@template, @config).apply
       @rds_instance = get_rds_instance(@config[:name])
     end
 
@@ -45,12 +45,25 @@ describe "rds_instance" do
       PuppetManifest.new(@template, new_config).apply
     end
 
+    it 'should run with changes' do
+      expect(@result.exit_code).to eq(2)
+    end
+
+    it 'should run idempotently' do
+      result = PuppetManifest.new(@template, @config).apply
+      expect(result.exit_code).to eq(0)
+    end
+
     it 'with the specified name' do
       expect(@rds_instance.db_instance_identifier).to eq(@config[:name])
     end
 
     it 'with the specified db_name' do
       expect(@rds_instance.db_name).to eq(@config[:db_name])
+    end
+
+    it 'with the specified backup_retention_period' do
+      expect(@rds_instance.backup_retention_period).to eq(@config[:backup_retention_period])
     end
 
     it 'with the specified engine' do
@@ -135,6 +148,11 @@ describe "rds_instance" do
 
       it 'storage type is correct' do
         regex = /(storage_type)(\s*)(=>)(\s*)('#{@config[:storage_type]}')/
+        expect(@result.stdout).to match(regex)
+      end
+
+      it 'backup retention is correct' do
+        regex = /(backup_retention_period)(\s*)(=>)(\s*)('#{@config[:backup_retention_period]}')/
         expect(@result.stdout).to match(regex)
       end
     end
