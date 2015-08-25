@@ -7,7 +7,6 @@ describe type_class do
   let :params do
     [
       :name,
-      :db_subnet,
       :master_user_password,
       :skip_final_snapshot,
       :final_db_snapshot_identifier,
@@ -34,6 +33,7 @@ describe type_class do
       :port,
       :db_parameter_group,
       :backup_retention_period,
+      :db_subnet,
     ]
   end
 
