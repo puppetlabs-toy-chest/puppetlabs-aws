@@ -159,7 +159,7 @@ describe "rds_instance" do
       end
 
       it 'with the default subnet association (VPC-only accounts)' do
-        unless @aws.vpc_only?
+        if @aws.vpc_only?
           regex = /(db_subnet)(\s*)(=>)(\s*)('default')/
           expect(@result.stdout).to match(regex)
         end
