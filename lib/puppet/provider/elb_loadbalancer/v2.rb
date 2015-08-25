@@ -22,7 +22,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     end.flatten
   end
 
-  read_only(:region, :scheme, :availability_zones, :listeners, :tags)
+  read_only(:region, :scheme, :availability_zones, :listeners, :tags, :ssl_certificate, :health_check)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -209,6 +209,14 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         security_groups: ids,
       ) unless ids.empty?
     end
+  end
+
+  def ssl_certificate=(value)
+      elb_client(resource[:region]).set_load_balancer_listener_ssl_certificate(
+        load_balancer_name: name,
+        load_balancer_port: value['port'],
+        ssl_certificate_id: value['ssl_certificate_id'],
+      )
   end
 
   def subnets=(value)
