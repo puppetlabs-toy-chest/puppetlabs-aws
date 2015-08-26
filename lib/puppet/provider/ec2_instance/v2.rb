@@ -123,7 +123,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     ec2 = ec2_client(resource[:region])
     # filter by VPC, since describe_subnets doesn't work on empty tag:Name
     subnet_response = ec2.describe_subnets(filters: [
-      {name: "vpc-id", values: vpc_ids}])
+      {name: "vpc-id", values: vpc_ids}, { name: "availability-zone:", values: resource[:availability_zone] ])
 
     # then find the name in the VPC subnets that we have
     subnets = subnet_response.data.subnets.select do |s|
