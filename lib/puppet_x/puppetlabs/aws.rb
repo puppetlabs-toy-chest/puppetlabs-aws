@@ -26,6 +26,8 @@ This could be because some other process is modifying AWS at the same time."""
       def self.regions
         if ENV['AWS_REGION'] and not ENV['AWS_REGION'].empty?
           [ENV['AWS_REGION']]
+        elsif Facter.value(:aws_region)
+          Facter.value(:aws_region)
         else
           ec2_client(default_region).describe_regions.data.regions.map(&:region_name)
         end
@@ -67,6 +69,8 @@ This could be because some other process is modifying AWS at the same time."""
         config = {region: region, logger: logger}
         if ENV['PUPPET_AWS_PROXY'] and not ENV['PUPPET_AWS_PROXY'].empty?
           config[:http_proxy] = ENV['PUPPET_AWS_PROXY']
+        elsif Facter.value(:puppet_aws_proxy)
+          config[:http_proxy] = Facter.value(:puppet_aws_proxy)
         end
         config
       end
