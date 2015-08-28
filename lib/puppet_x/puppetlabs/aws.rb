@@ -27,7 +27,7 @@ This could be because some other process is modifying AWS at the same time."""
         if ENV['AWS_REGION'] and not ENV['AWS_REGION'].empty?
           [ENV['AWS_REGION']]
         elsif Facter.value(:aws_region)
-          Facter.value(:aws_region)
+          [Facter.value(:aws_region)]
         else
           ec2_client(default_region).describe_regions.data.regions.map(&:region_name)
         end
