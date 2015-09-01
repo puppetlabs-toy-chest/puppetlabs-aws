@@ -100,6 +100,9 @@ region using an environment variable.
 export AWS_REGION=eu-west-1
 ~~~
 
+Alternatively, an `aws_region` fact can be used when environment variables 
+aren't accessible (such as during Puppet agent runs).
+
 #### A note on proxies
 
 By default the module accesses the AWS API directly, but if you're in an
@@ -110,6 +113,8 @@ setting for all traffic like so:
 export PUPPET_AWS_PROXY=http://localhost:8888
 ~~~
 
+Alternatively, a `puppet_aws_proxy` fact can be used when environment 
+variables aren't accessible (such as during Puppet agent runs).
 
 ##Getting Started with aws
 
