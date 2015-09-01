@@ -130,7 +130,7 @@ describe type_class do
     expect(elb[:scheme]).to eq(:internal)
   end
 
-  ['subnets', 'security_groups'].each do |property|
+  ['instances', 'subnets', 'security_groups'].each do |property|
     it "should ignore the order of #{property} for matching" do
       values = ['a', 'b']
       config = {:name => 'sample'}

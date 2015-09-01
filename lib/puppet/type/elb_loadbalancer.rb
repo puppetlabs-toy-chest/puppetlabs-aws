@@ -77,6 +77,9 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     validate do |value|
       fail 'instances should be a String' unless value.is_a?(String)
     end
+    def insync?(is)
+      is.to_set == should.to_set
+    end
   end
 
   newproperty(:scheme) do
