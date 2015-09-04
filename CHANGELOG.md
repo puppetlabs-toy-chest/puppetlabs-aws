@@ -1,3 +1,20 @@
+## 2015-09-04 - Supported Version 1.2.0
+
+This release includes:
+
+* The ability to manage a backup retention policy for RDS instances
+* Improvements to the Route53 and ELB types to make them more robust
+
+As well as following fixes:
+
+* Support managing RDS instances in VPC subnets
+* Updates to the IAM profile
+* The Puppet Enterprise example now uses the correct download URL
+
+Thanks to @aharden, @vazhnov, @rfletcher, @bashtoni, @claflico for
+contributing to this release.
+
+
 ## 2015-07-22 - Supported Version 1.1.1
 
 This release includes:
