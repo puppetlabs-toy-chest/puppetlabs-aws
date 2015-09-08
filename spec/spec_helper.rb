@@ -25,7 +25,7 @@ RSpec::Matchers.define :order_tags_on_output do |expected|
     expect(srv.property(:tags).insync?(reverse)).to be true
     expect(srv.property(:tags).should_to_s(tags).to_s).to eq(reverse.to_s)
   end
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     "expected that #{actual} would order tags"
   end
 end
@@ -38,7 +38,7 @@ RSpec::Matchers.define :require_string_for do |property|
       type_class.new(config)
     }.to raise_error(Puppet::Error, /#{property} should be a String/)
   end
-  failure_message_for_should do |type_class|
+  failure_message do |type_class|
     "#{type_class} should require #{property} to be a String"
   end
 end
@@ -51,7 +51,7 @@ RSpec::Matchers.define :require_hash_for do |property|
       type_class.new(config)
     }.to raise_error(Puppet::Error, /#{property} should be a Hash/)
   end
-  failure_message_for_should do |type_class|
+  failure_message do |type_class|
     "#{type_class} should require #{property} to be a Hash"
   end
 end

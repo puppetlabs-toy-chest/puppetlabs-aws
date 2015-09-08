@@ -160,7 +160,7 @@ describe "ec2_loadbalancer" do
         end
 
         it 'availablity_zones' do
-          regex = /(availability_zones)(\s*)(=>)(\s*)(\[\'sa\-east\-1a\', \'sa\-east\-1b\'\])/
+          regex = /availability_zones\s*=>\s*\[(\'sa\-east\-1a\', \'sa\-east\-1b\'|\'sa\-east\-1b\', \'sa\-east\-1a\')\]/
           expect(@result.stdout).to match(regex)
         end
 

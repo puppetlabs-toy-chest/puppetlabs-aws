@@ -77,7 +77,7 @@ class Puppet::Provider::Route53Record < PuppetX::Puppetlabs::Aws
   def create
     Puppet.info("Creating #{self.class.record_type} record #{name}")
     route53_client.change_resource_record_sets(
-      record_hash('CREATE')
+      record_hash('UPSERT')
     )
     @property_hash[:ensure] = :present
   end

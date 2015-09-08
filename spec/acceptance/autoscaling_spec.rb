@@ -54,7 +54,6 @@ describe "ec2_autoscalinggroup" do
         :availability_zones   => ["#{@default_region}a", "#{@default_region}b"],
         :policy_name          => "#{name}-policy",
         :second_policy_name   => "#{name}-second_policy",
-        :asg_setting          => "#{name}-asg",
         :scaling_adjustment   => 30,
         :adjustment_type      => 'PercentChangeInCapacity',
         :alarm_name           => "#{name}-cw_alarm",
@@ -69,7 +68,7 @@ describe "ec2_autoscalinggroup" do
         :alarm_actions        => "#{name}-policy",
       }
       r = PuppetManifest.new(@asg_template, @asg_config).apply
-      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      expect(r.stderr).not_to match(/error/i)
       # launch duplicate resources
       @duplicate_asg_config = {
         :region       => @default_region,
@@ -77,7 +76,7 @@ describe "ec2_autoscalinggroup" do
         :lc_name      => "#{name}-lc2",
       }
       r2 = PuppetManifest.new(@duplicate_asg_template, @duplicate_asg_config).apply
-      expect(r2[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      expect(r2.stderr).not_to match(/error/i)
     end
 
     after(:all) do
@@ -87,7 +86,7 @@ describe "ec2_autoscalinggroup" do
       duplicate_delete = 'duplicate_asg_delete.pp.tmpl'
       r = PuppetManifest.new(@asg_template_delete, @asg_config).apply
       # assert that none of the results contain 'Error:'
-      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      expect(r.stderr).not_to match(/error/i)
       response = @aws.autoscaling_client.describe_auto_scaling_groups(
         auto_scaling_group_names: [@asg_config[:asg_name]],
       )
@@ -104,15 +103,15 @@ describe "ec2_autoscalinggroup" do
       }
       ENV['AWS_REGION'] = @default_region
       r2 = TestExecutor.puppet_resource('ec2_securitygroup', options, '--modulepath ../')
-      expect(r2.stdout).not_to match(/Error:/)
+      expect(r2.stderr).not_to match(/error/i)
       # terminate duplicate resources
       r3 = PuppetManifest.new(duplicate_delete, @duplicate_asg_config).apply
-      expect(r3[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      expect(r3.stderr).not_to match(/error/i)
     end
 
     it 'should run idempotently' do
-      success = PuppetManifest.new(@asg_template, @asg_config).apply[:exit_status].success?
-      expect(success).to eq(true)
+      result = PuppetManifest.new(@asg_template, @asg_config).apply
+      expect(result.exit_code).to eq(0)
     end
 
     context 'should create' do
@@ -356,7 +355,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:metric] = 'NetworkIn'
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         cloudwatch = find_alarm(@asg_config[:alarm_name])
         expect(cloudwatch.metric_name).to eq('NetworkIn')
       end
@@ -367,7 +366,7 @@ describe "ec2_autoscalinggroup" do
         config[:metric] = 'AWS/ELB'
         config[:namespace] = 'HealthyHostCount'
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         cloudwatch = find_alarm(@asg_config[:alarm_name])
         expect(cloudwatch.metric_name).to eq('AWS/ELB')
         expect(cloudwatch.namespace).to eq('HealthyHostCount')
@@ -377,7 +376,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:statistic] = 'Sum'
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         cloudwatch = find_alarm(@asg_config[:alarm_name])
         expect(cloudwatch.statistic).to eq('Sum')
       end
@@ -386,7 +385,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:period] = 180
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         cloudwatch = find_alarm(@asg_config[:alarm_name])
         expect(cloudwatch.period).to eq(180)
       end
@@ -395,7 +394,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:evaluation_periods] = 4
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         cloudwatch = find_alarm(@asg_config[:alarm_name])
         expect(cloudwatch.evaluation_periods).to eq(4)
       end
@@ -404,7 +403,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:threshold] = 50
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         cloudwatch = find_alarm(@asg_config[:alarm_name])
         expect(cloudwatch.threshold).to eq(50.0)
       end
@@ -413,7 +412,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:comparison_operator] = 'GreaterThanThreshold'
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         cloudwatch = find_alarm(@asg_config[:alarm_name])
         expect(cloudwatch.comparison_operator).to eq('GreaterThanThreshold')
       end
@@ -426,7 +425,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:scaling_adjustment] = 40
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         policy = find_scaling_policy(@asg_config[:policy_name], @asg_config[:asg_name])
         expect(policy.scaling_adjustment).to eq(40)
       end
@@ -435,7 +434,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:adjustment_type] = 'ExactCapacity'
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         policy = find_scaling_policy(@asg_config[:policy_name], @asg_config[:asg_name])
         expect(policy.adjustment_type).to eq('ExactCapacity')
       end
@@ -448,7 +447,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:min_size] = 3
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         group = find_autoscaling_group(@asg_config[:asg_name])
         expect(group.min_size).to eq(3)
       end
@@ -457,7 +456,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:max_size] = 5
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         group = find_autoscaling_group(@asg_config[:asg_name])
         expect(group.max_size).to eq(5)
       end
@@ -466,7 +465,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:lc_setting] = @duplicate_asg_config[:lc_name]
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         group = find_autoscaling_group(@asg_config[:asg_name])
         expect(group.launch_configuration_name).to eq(@duplicate_asg_config[:lc_name])
       end
@@ -475,7 +474,7 @@ describe "ec2_autoscalinggroup" do
         config = @asg_config.clone
         config[:availability_zones] = ["#{@default_region}b"]
         r = PuppetManifest.new(@asg_template, config).apply
-        expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+        expect(r.stderr).not_to match(/error/i)
         group = find_autoscaling_group(@asg_config[:asg_name])
         expect(group.availability_zones.sort).to eq(config[:availability_zones].sort)
       end
@@ -499,18 +498,18 @@ describe "ec2_autoscalinggroup" do
         :subnet_cidr => '10.0.0.0/24',
       }
       r = PuppetManifest.new(@template, @config).apply
-      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      expect(r.stderr).not_to match(/error/i)
     end
 
     after(:all) do
       @config[:ensure] = 'absent'
       r = PuppetManifest.new(@template_delete, @config).apply
-      expect(r[:output].any?{ |o| o.include?('Error:')}).to eq(false)
+      expect(r.stderr).not_to match(/error/i)
     end
 
     it 'should run idempotently' do
-      success = PuppetManifest.new(@template, @config).apply[:exit_status].success?
-      expect(success).to eq(true)
+      result = PuppetManifest.new(@template, @config).apply
+      expect(result.exit_code).to eq(0)
     end
 
     context 'should create' do

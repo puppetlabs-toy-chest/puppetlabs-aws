@@ -14,3 +14,4 @@ env:
   - PUPPET_LOCATION="~> 3.7.0" PARSER="future"
   - PUPPET_LOCATION="~> 3.6.0"
   - PUPPET_LOCATION="~> 3.7.0"
+  - PUPPET_LOCATION="~> 4.0.0"

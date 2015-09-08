@@ -94,13 +94,12 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if load balancer #{name} exists in region #{dest_region || region}")
+    Puppet.info("Checking if load balancer #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating load balancer #{name} in region #{resource[:region]}")
+    Puppet.info("Creating load balancer #{name} in region #{target_region}")
     subnets = subnet_ids_from_names(resource[:subnets])
     security_groups = security_group_ids_from_names(resource[:security_groups])
     zones = resource[:availability_zones]
@@ -121,7 +120,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       }
     end
 
-    elb_client(resource[:region]).create_load_balancer(
+    elb_client(target_region).create_load_balancer(
       load_balancer_name: name,
       listeners: listeners_for_api,
       availability_zones: zones,
@@ -233,8 +232,8 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def destroy
-    Puppet.info("Destroying load balancer #{name} in region #{resource[:region]}")
-    elb_client(resource[:region]).delete_load_balancer(
+    Puppet.info("Destroying load balancer #{name} in region #{target_region}")
+    elb_client(target_region).delete_load_balancer(
       load_balancer_name: name,
     )
     @property_hash[:ensure] = :absent

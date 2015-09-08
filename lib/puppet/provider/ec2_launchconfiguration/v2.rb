@@ -54,20 +54,19 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if launch configuration #{name} exists in region #{dest_region || region}")
+    Puppet.info("Checking if launch configuration #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Starting launch configuration #{name} in region #{resource[:region]}")
+    Puppet.info("Starting launch configuration #{name} in region #{target_region}")
     groups = resource[:security_groups]
     groups = [groups] unless groups.is_a?(Array)
     groups = groups.reject(&:nil?)
 
     group_ids = []
     unless groups.empty?
-      ec2 = ec2_client(resource[:region])
+      ec2 = ec2_client(target_region)
       filters = [{name: 'group-name', values: groups}]
       vpc_name = resource[:vpc]
       if vpc_name
@@ -95,14 +94,14 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
     key = resource[:key_name] ? resource[:key_name] : false
     config['key_name'] = key if key
 
-    autoscaling_client(resource[:region]).create_launch_configuration(config)
+    autoscaling_client(target_region).create_launch_configuration(config)
 
     @property_hash[:ensure] = :present
   end
 
   def destroy
-    Puppet.info("Deleting instance #{name} in region #{resource[:region]}")
-    autoscaling_client(resource[:region]).delete_launch_configuration(
+    Puppet.info("Deleting instance #{name} in region #{target_region}")
+    autoscaling_client(target_region).delete_launch_configuration(
       launch_configuration_name: name
     )
     @property_hash[:ensure] = :absent

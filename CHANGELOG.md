@@ -1,3 +1,41 @@
+## 2015-09-04 - Supported Version 1.2.0
+
+This release includes:
+
+* The ability to manage a backup retention policy for RDS instances
+* Improvements to the Route53 and ELB types to make them more robust
+
+As well as following fixes:
+
+* Support managing RDS instances in VPC subnets
+* Updates to the IAM profile
+* The Puppet Enterprise example now uses the correct download URL
+
+Thanks to @aharden, @vazhnov, @rfletcher, @bashtoni, @claflico for
+contributing to this release.
+
+
+## 2015-07-22 - Supported Version 1.1.1
+
+This release includes:
+
+* Update to the metadata for the upcoming release of PE
+* Update to the gem installation instructions in the README
+
+## 2015-06-16 - Supported Version 1.1.0
+
+This release includes:
+
+* Support for managing RDS databases
+* Instances now support assigning an IAM instance profile when created
+* Large performance improvements for many resources, which should also
+  allow for the management of larger AWS environments
+* More examples and lots of small improvement to the documentation
+* Updated IAM profile
+
+Thanks to @jhoblitt, @daveseff and @pjfoley for contributing to this release.
+
+
 ## 2015-03-25 - Supported Version 1.0.0
 
 This release includes:

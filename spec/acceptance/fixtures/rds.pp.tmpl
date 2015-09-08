@@ -1,0 +1,16 @@
+rds_instance { '{{name}}':
+  ensure => '{{ensure}}',
+  region => '{{region}}',
+  db_name =>  '{{db_name}}',
+  engine => '{{engine}}',
+  allocated_storage => '{{allocated_storage}}',
+  engine_version => '{{engine_version}}',
+  license_model => '{{license_model}}',
+  storage_type => '{{storage_type}}',
+  db_instance_class => '{{db_instance_class}}',
+  master_username => '{{master_username}}',
+  master_user_password => '{{master_user_password}}',
+  multi_az => '{{multi_az}}',
+  skip_final_snapshot => '{{skip_final_snapshot}}',
+  backup_retention_period => '{{backup_retention_period}}',
+}

@@ -1,6 +1,6 @@
 # Setting IAM Permissions for the Module
 
-[IAM](http://aws.amazon.com/iam/) is the Identify and Access management
+[IAM](http://aws.amazon.com/iam/) is the Identify and Access Management
 component for AWS. It provides one way of restricting access to certain
 API calls for a given user. The following shows the permissions
 required for the currently supported resources in the AWS Puppet module.
@@ -10,19 +10,19 @@ required for the currently supported resources in the AWS Puppet module.
 It is advisable to have a good understanding of IAM before commencing. A
 good starting point is the [IAM user guide](http://docs.aws.amazon.com/IAM/latest/UserGuide/IAM_Introduction.html).
 
-The following JSON profile grants all the permissions required to use
+The following JSON profile grants the permissions required to use
 all of the resources currently supported.
 
 ## How
 
-Simple upload the following profile to your IAM account. It is included
+Upload the following profile to your IAM account. It is included
 for clarity below, but you can download the [raw JSON
 file](profile.json) too.
 
 Note that as the number of resources the module supports grows we will
 add to this profile.
 
-```json
+~~~json
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -38,6 +38,7 @@ add to this profile.
         "ec2:TerminateInstances",
         "elasticloadbalancing:DescribeLoadBalancers",
         "elasticloadbalancing:CreateLoadBalancer",
+        "elasticloadbalancing:DescribeTags",
         "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
         "elasticloadbalancing:DeleteLoadBalancer",
         "ec2:DescribeSecurityGroups",
@@ -56,6 +57,7 @@ add to this profile.
         "ec2:DeleteCustomerGateway",
         "ec2:DescribeInternetGateways",
         "ec2:CreateInternetGateway",
+        "ec2:AttachInternetGateway",
         "ec2:DeleteInternetGateway",
         "ec2:DetachInternetGateway",
         "ec2:DescribeRouteTables",
@@ -93,23 +95,32 @@ add to this profile.
         "route53:ListHostedZones",
         "route53:ChangeResourceRecordSets",
         "route53:CreateHostedZone",
-        "route53:DeleteHostedZone"
+        "route53:DeleteHostedZone",
+        "rds:CreateDBInstance",
+        "rds:ModifyDBInstance",
+        "rds:DeleteDBInstance",
+        "rds:DescribeDBInstances",
+        "rds:AuthorizeDBSecurityGroupIngress",
+        "rds:DescribeDBSecurityGroups",
+        "rds:CreateDBSecurityGroup",
+        "rds:DeleteDBSecurityGroup",
+        "rds:DescribeDBParameterGroups"
       ],
       "Effect": "Allow",
-      "Resource": "*",
+      "Resource": "*"
     }
   ]
 }
-```
+~~~
 
 ## Discussion
 
-Given the large number of permissions required by all the different
+Given the large number of permissions required by all of the different
 resources in the module it might be wise to provide some further
-restrictions in conditions. A good exmaple of this might be locking
+restrictions in conditions. A good exmaple of this id locking
 requests down to a specific IP range like so:
 
-```json
+~~~json
 {
   "Version": "2015-02-13",
   "Statement": [
@@ -131,4 +142,4 @@ requests down to a specific IP range like so:
     }
   ]
 }
-```
+~~~

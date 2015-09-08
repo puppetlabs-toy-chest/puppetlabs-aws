@@ -2,14 +2,14 @@
 
 A virtual private cloud (VPC) is a virtual network that closely
 resembles a traditional network that you'd operate in your own data
-centre. The AWS Puppet module allows for describing the various moving
+center. The AWS Puppet module allows for describing the various moving
 parts of VPC in the Puppet DSL. This can be useful for creating and
 sharing duplicate environments or alternatively as part of an audit
 mechanism to ensure your VPC configuration is as intended.
 
 ## What
 
-For this example we're going to create a VPC, a subnet, a route table
+For this example we're going to create a VPC, a subnet, a route table,
 and an internet gateway. This broadly follows the [getting started
 example](http://docs.aws.amazon.com/AmazonVPC/latest/GettingStartedGuide/Wizard.html)
 from the official Amazon documentation.
@@ -26,7 +26,7 @@ directory run:
 
 This should create the resources discussed above in the AWS example.
 Once complete you should be able to observe the VPC and associated
-resources via the AWS console as shown in the example. Alternatively you
+resources via the AWS console as shown in the example. Alternatively, you
 can use the puppet resource CLI to show resources.
 
     > puppet resource ec2_vpc sample-vpc
@@ -46,8 +46,8 @@ manifest like so:
 The module also supports resources for the AWS VPN, including for VPN
 gateways and customer gateways. The following example will create the
 relevant resources, but for a working VPN connection you would need to
-provide the BGP ASN and IP Address of your VPN gateway. To demonstate
-the manifests run:
+provide the BGP ASN and IP address of your VPN gateway. To demonstate
+the manifests, run:
 
     puppet apply vpn.pp --test
 

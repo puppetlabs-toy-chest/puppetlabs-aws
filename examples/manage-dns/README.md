@@ -28,26 +28,26 @@ You should be see the zone when you run:
 This should output the following, maybe along with other domains you're
 already managing.
 
-```puppet
+~~~puppet
 route53_zone { 'puppetlabs.com.':
   ensure => 'present',
 }
-```
+~~~
 
-And to list the A records:
+To list the A records:
 
     puppet resource route53_a_record
 
 Which should return:
 
-```puppet
+~~~puppet
 route53_a_record { 'local.puppetlabs.com.':
   ensure => 'present',
   ttl    => '3000',
   values => ['127.0.0.1'],
   zone   => 'puppetlabs.com.',
 }
-```
+~~~
 
 We can also list the automatically created NS record and a TXT record with:
 
@@ -56,26 +56,26 @@ We can also list the automatically created NS record and a TXT record with:
 
 Which should output something like:
 
-```puppet
+~~~puppet
 route53_ns_record { 'puppetlabs.com.':
   ensure => 'present',
   ttl    => '172800',
   values => ['ns-1254.awsdns-28.org.', 'ns-1922.awsdns-48.co.uk.', 'ns-806.awsdns-36.net.', 'ns-103.awsdns-12.com.'],
   zone   => 'puppetlabs.com.',
 }
-```
+~~~
 
-and:
+And:
 
-```puppet
+~~~puppet
 route53_txt_record { 'local.puppetlabs.com.':
   ensure => 'present',
   ttl    => '17200',
   values => ['"message"'],
   zone   => 'puppetlabs.com.',
 }
-```
+~~~
 
-Finally we can delete all the records followed by the zone:
+Finally, we can delete all the records followed by the zone:
 
     puppet apply delete.pp --test

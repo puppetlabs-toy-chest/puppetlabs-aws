@@ -54,8 +54,7 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if alarm #{name} exists in region #{dest_region || region}")
+    Puppet.info("Checking if alarm #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 
@@ -103,8 +102,8 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def destroy
-    Puppet.info("Deleting alarm #{name} in region #{resource[:region]}")
-    cloudwatch_client(resource[:region]).delete_alarms(
+    Puppet.info("Deleting alarm #{name} in region #{target_region}")
+    cloudwatch_client(target_region).delete_alarms(
       alarm_names: [name],
     )
     @property_hash[:ensure] = :absent

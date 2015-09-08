@@ -55,14 +55,13 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if DHCP options #{name} exists in region #{dest_region || region}")
+    Puppet.info("Checking if DHCP options #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating DHCP options #{name} in region #{resource[:region]}")
-    ec2 = ec2_client(resource[:region])
+    Puppet.info("Creating DHCP options #{name} in region #{target_region}")
+    ec2 = ec2_client(target_region)
 
     options = []
     ['domain_name', 'ntp_servers', 'domain_name_servers', 'netbios_name_servers', 'netbios_node_type'].each do |key|
@@ -85,12 +84,10 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
   end
 
   def destroy
-    region = @property_hash[:region]
-    Puppet.info("Destroying DHCP options #{name} in #{region}")
-    ec2_client(region).delete_dhcp_options(
+    Puppet.info("Destroying DHCP options #{name} in #{target_region}")
+    ec2_client(target_region).delete_dhcp_options(
       dhcp_options_id: @property_hash[:id]
     )
     @property_hash[:ensure] = :absent
   end
 end
-

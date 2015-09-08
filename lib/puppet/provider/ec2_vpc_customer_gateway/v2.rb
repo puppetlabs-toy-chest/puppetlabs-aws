@@ -49,14 +49,13 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def exists?
-    dest_region = resource[:region] if resource
-    Puppet.info("Checking if Customer gateway #{name} exists in #{dest_region || region}")
+    Puppet.info("Checking if Customer gateway #{name} exists in #{target_region}")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating Customer gateway #{name} in #{resource[:region]}")
-    ec2 = ec2_client(resource[:region])
+    Puppet.info("Creating Customer gateway #{name} in #{target_region}")
+    ec2 = ec2_client(target_region)
 
     response = ec2.create_customer_gateway(
       type: resource[:type],
@@ -75,12 +74,10 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def destroy
-    region = @property_hash[:region]
-    Puppet.info("Destroying Customer gateway #{name} in #{region}")
-    ec2_client(region).delete_customer_gateway(
+    Puppet.info("Destroying Customer gateway #{name} in #{target_region}")
+    ec2_client(target_region).delete_customer_gateway(
       customer_gateway_id: @property_hash[:id]
     )
     @property_hash[:ensure] = :absent
   end
 end
-
