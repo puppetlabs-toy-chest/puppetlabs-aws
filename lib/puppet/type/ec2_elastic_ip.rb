@@ -35,6 +35,14 @@ Puppet::Type.newtype(:ec2_elastic_ip) do
     end
   end
 
+  newproperty(:instance_id) do
+    desc 'The id of the instance associated with the Elastic IP'
+    validate do |value|
+      fail 'instance_id should be a String' unless value.is_a?(String)
+      fail 'You must provide an instance_id for the Elastic IP association' if value.nil? || value.empty?
+    end
+  end
+
   autorequire(:ec2_instance) do
     self[:instance]
   end

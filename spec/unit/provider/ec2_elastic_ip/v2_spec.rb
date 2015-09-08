@@ -13,6 +13,7 @@ describe provider_class do
       name: '177.71.189.57',
       region: 'sa-east-1',
       instance: 'web-1',
+      instance_id: 'i-c07c4f3',
     )}
 
     let(:provider) { resource.provider }

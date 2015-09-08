@@ -61,9 +61,17 @@ Puppet::Type.type(:ec2_elastic_ip).provide(:v2, :parent => PuppetX::Puppetlabs::
     instance_ids = response.reservations.map(&:instances).flatten.map(&:instance_id)
 
     fail "No instance found named #{resource[:instance]}" if instance_ids.empty?
-    if instance_ids.count > 1
-      Puppet.warning "Multiple instances found named #{resource[:instance]}, using #{instance_ids.first}"
+
+    if instance_ids.include?(resource[:instance_id])
+      Puppet.info("Found an instance with a name of #{resource[:instance]} and matches the id of #{resource[:instance_id]}")
+      instance_ids.delete_if {|x| x != resource[:instance_id]}
+    else
+      if instance_ids.count > 1
+        Puppet.warning "Multiple instances found named #{resource[:instance]}, using #{instance_ids.first}"
+      end
+      fail "No instance found named #{resource[:instance]} with an id of #{resource[:instance_id]}" if instance_ids.empty?
     end
+
 
     config = if @property_hash[:domain] == 'vpc'
       {
