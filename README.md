@@ -6,7 +6,7 @@ Status](https://travis-ci.org/puppetlabs/puppetlabs-aws.svg?branch=master)](http
 ####Table of Contents
 
 1. [Overview](#overview)
-2. [Description - What the module does and why it is useful](#module-description)
+2. [Description - What the module does and why it is useful](#description)
 3. [Setup](#setup)
   * [Requirements](#requirements)
   * [Installing the aws module](#installing-the-aws-module)
