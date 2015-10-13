@@ -130,7 +130,7 @@ ec2_instance { 'instance-name':
 
 You can also set up more complex EC2 instances with a variety of AWS features, as well as
 load balancers and security groups.
- 
+
 **Set up an instance:**
 
 ~~~
@@ -308,6 +308,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `route53_cname_record`: Sets up a Route53 CNAME record.
 * `route53_mx_record`: Sets up a Route53 MX record.
 * `route53_ns_record`: Sets up a Route53 DNS record.
+* `route53_ptr_record`: Sets up a Route53 PTR record.
 * `route53_spf_record`: Sets up a Route53 SPF record.
 * `route53_srv_record`: Sets up a Route53 SRV record.
 * `route53_txt_record`: Sets up a Route53 TXT record.
@@ -925,6 +926,8 @@ The route53 types set up various types of Route53 records:
 * `route53_mx_record`: Sets up a Route53 MX record.
 
 * `route53_ns_record`: Sets up a Route53 DNS record.
+
+* `route53_ptr_record`: Sets up a Route53 PTR record.
 
 * `route53_spf_record`: Sets up a Route53 SPF record.
 
