@@ -1,6 +1,6 @@
 require_relative '../route53_record'
 
-Puppet::Type.type(:route53_a_record).provide(:v2, :parent => Puppet::Provider::Route53Record) do
+Puppet::Type.type(:route53_ptr_record).provide(:v2, :parent => Puppet::Provider::Route53Record) do
   confine feature: :aws
 
   mk_resource_methods
