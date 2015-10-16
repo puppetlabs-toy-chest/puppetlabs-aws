@@ -1,5 +1,6 @@
-$pe_master_hostname = 'ip-your-ip-here.us-west-2.compute.internal'
-$pe_version_string = '3.7.0'
+$pe_master_hostname   = 'ip-your-ip-here.us-west-2.compute.internal'
+$pe_version_string    = '2015.2.2'
+$agent_version_string = '1.2.6'
 
 ec2_instance { 'puppet-agent':
   ensure          => present,
