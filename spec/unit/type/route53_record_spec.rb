@@ -7,6 +7,7 @@ require 'spec_helper'
   :route53_aaaa_record,
   :route53_cname_record,
   :route53_mx_record,
+  :route53_ptr_record,
   :route53_spf_record,
   :route53_srv_record,
 ].each do |type|
