@@ -8,7 +8,6 @@ PUPPET_PE_CONSOLEPWD='<%= @pe_password %>'
 PUPPET_PE_VERSION='<%= @pe_version_string %>'
 
 RESULTS_FILE='/tmp/puppet_bootstrap_output'
-S3_BASE='https://s3.amazonaws.com/pe-builds/released/'
 
 function check_exit_status() {
   if [ ! -f $RESULTS_FILE ]; then
@@ -23,7 +22,7 @@ function write_masteranswers() {
 q_all_in_one_install=y
 q_backup_and_purge_old_configuration=n
 q_backup_and_purge_old_database_directory=n
-q_database_host=localhost
+q_database_host=$PUBLIC_HOSTNAME
 q_database_install=y
 q_install=y
 q_pe_database=y
@@ -32,23 +31,23 @@ q_puppet_enterpriseconsole_auth_password=$PUPPET_PE_CONSOLEPWD
 q_puppet_enterpriseconsole_auth_user_email=$PUPPET_PE_CONSOLEADMIN
 q_puppet_enterpriseconsole_httpd_port=443
 q_puppet_enterpriseconsole_install=y
-q_puppet_enterpriseconsole_master_hostname=$INTERNAL_HOSTNAME
-q_puppet_enterpriseconsole_smtp_host=localhost
+q_puppet_enterpriseconsole_master_hostname=$PUBLIC_HOSTNAME
+q_puppet_enterpriseconsole_smtp_host=$PUBLIC_HOSTNAME
 q_puppet_enterpriseconsole_smtp_password=
 q_puppet_enterpriseconsole_smtp_port=25
 q_puppet_enterpriseconsole_smtp_use_tls=n
 q_puppet_enterpriseconsole_smtp_user_auth=n
 q_puppet_enterpriseconsole_smtp_username=
 q_puppet_symlinks_install=y
-q_puppetagent_certname=$INTERNAL_HOSTNAME
+q_puppetagent_certname=$PUBLIC_HOSTNAME
 q_puppetagent_install=y
-q_puppetagent_server=$INTERNAL_HOSTNAME
-q_puppetdb_hostname=$INTERNAL_HOSTNAME
+q_puppetagent_server=$PUBLIC_HOSTNAME
+q_puppetdb_hostname=$PUBLIC_HOSTNAME
 q_puppetdb_install=y
 q_puppetdb_port=8081
-q_puppetmaster_certname=$INTERNAL_HOSTNAME
-q_puppetmaster_dnsaltnames=$INTERNAL_HOSTNAME,puppet,$PUBLIC_HOSTNAME
-q_puppetmaster_enterpriseconsole_hostname=localhost
+q_puppetmaster_certname=$PUBLIC_HOSTNAME
+q_puppetmaster_dnsaltnames=$PUBLIC_HOSTNAME,puppet,$INTERNAL_HOSTNAME
+q_puppetmaster_enterpriseconsole_hostname=$PUBLIC_HOSTNAME
 q_puppetmaster_enterpriseconsole_port=443
 q_puppetmaster_install=y
 q_run_updtvpkg=n
@@ -57,7 +56,7 @@ ANSWERS
 }
 
 function write_sitepp() {
-  cat > /etc/puppetlabs/puppet/manifests/site.pp << SITEPP
+  cat > /etc/puppetlabs/code/environments/production/manifests/site.pp << SITEPP
 filebucket { 'main':
   server => \$servername,
   path   => false,
@@ -68,7 +67,7 @@ File { backup => 'main' }
 Package { allow_virtual => false }
 
 node default {
-  include pe_mcollective
+  # Default setup here
 }
 SITEPP
 }
@@ -93,10 +92,10 @@ function install_puppetmaster() {
 }
 
 function download_modules() {
-  /opt/puppet/bin/puppet module upgrade puppetlabs-stdlib
+  /opt/puppetlabs/bin/puppet module install puppetlabs-stdlib
   if [ -n $1 ]; then
     MODULE_LIST=`echo "$1" | sed 's/,/ /g'`
-    for i in $MODULE_LIST; do /opt/puppet/bin/puppet module install --force $i ; done;
+    for i in $MODULE_LIST; do /opt/puppetlabs/bin/puppet module install --force $i ; done;
   fi
 }
 
@@ -114,14 +113,6 @@ function clone_modules() {
     done;
     popd
   fi
-}
-
-function classify_master () {
-  declare -a class_array=($PUPPET_PE_CLASSES)
-  for class in ${class_array[@]}; do
-    /opt/puppet/bin/rake -f /opt/puppet/share/puppet-dashboard/Rakefile RAILS_ENV=production nodeclass:add["${class}",'skip']
-    /opt/puppet/bin/rake -f /opt/puppet/share/puppet-dashboard/Rakefile RAILS_ENV=production node:addclass[`hostname -f`,"${class}"]
-  done
 }
 
 function make_partition {
@@ -161,12 +152,11 @@ function provision_puppet() {
   install_puppetmaster
   download_modules "puppetlabs-ntp,puppetlabs-apache"
   clone_modules    "$PUPPET_REPOS"
-  classify_master
   write_sitepp
 
   echo "*" > /etc/puppetlabs/puppet/autosign.conf
 
-  /opt/puppet/bin/puppet agent --onetime --no-daemonize --color=false --verbose
+  /opt/puppetlabs/bin/puppet agent --onetime --no-daemonize --color=false --verbose
 
   echo $? > $RESULTS_FILE
   echo "Puppet installation finished!"
