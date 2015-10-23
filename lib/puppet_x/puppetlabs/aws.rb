@@ -36,7 +36,7 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def self.default_region
-        ENV['AWS_REGION'] || 'eu-west-1'
+        ENV['AWS_REGION'] || region_from_global_configuration || 'eu-west-1'
       end
 
       def default_region
@@ -56,19 +56,83 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def self.logger
-        if ENV['PUPPET_AWS_DEBUG_LOG'] and not ENV['PUPPET_AWS_DEBUG_LOG'].empty?
-          Logger.new('puppet-aws-debug.log')
+        log_name = 'puppet-aws-debug.log'
+        if global_configuration and global_configuration['default'] and global_configuration['default']['logger']
+          Logger.new(log_name) if global_configuration['default']['logger'] == 'true'
+        elsif ENV['PUPPET_AWS_DEBUG_LOG'] and not ENV['PUPPET_AWS_DEBUG_LOG'].empty?
+          Logger.new(log_name)
+        else
+          nil
+        end
+      end
+
+      def self.global_credentials
+        # Under a Puppet agent we don't have the HOME environment variable available
+        # so the standard way of detecting the location for the config file doesn't
+        # work. The following provides a fall back method to a confdir config file.
+        # The preference is still to use IAM instance roles if possible.
+        begin
+          Puppet.initialize_settings unless Puppet[:confdir]
+          path = File.join(Puppet[:confdir], 'puppetlabs_aws_credentials.ini')
+          credentials = ::Aws::SharedCredentials.new(path: path)
+          credentials.loadable? ? credentials : nil
+        rescue ::Aws::Errors::NoSuchProfileError
+          nil
+        end
+      end
+
+      def self.global_configuration
+        Puppet.initialize_settings unless Puppet[:confdir]
+        path = File.join(Puppet[:confdir], 'puppetlabs_aws_configuration.ini')
+        File.exists?(path) ? parse_ini(File.new(path)) : nil
+      end
+
+      def self.region_from_global_configuration
+        global_configuration['default']['region']
+      end
+
+      def self.proxy_configuration
+        if global_configuration and global_configuration['default'] and global_configuration['default']['http_proxy']
+          global_configuration['default']['http_proxy']
+        elsif ENV['PUPPET_AWS_PROXY'] and not ENV['PUPPET_AWS_PROXY'].empty?
+          ENV['PUPPET_AWS_PROXY']
         else
           nil
         end
       end
 
       def self.client_config(region)
-        config = {region: region, logger: logger}
-        if ENV['PUPPET_AWS_PROXY'] and not ENV['PUPPET_AWS_PROXY'].empty?
-          config[:http_proxy] = ENV['PUPPET_AWS_PROXY']
+        config = {logger: logger}
+        config[:http_proxy] = proxy_configuration if proxy_configuration
+        config[:credentials] = global_credentials if global_credentials
+        config[:region] = if global_configuration
+          config[:region] = region_from_global_configuration || region
+        else
+          region
         end
         config
+      end
+
+      # This method is vendored from the AWS SDK, rather than including an
+      # extra library just to parse an ini file
+      def self.ini_parse(file)
+        current_section = {}
+        map = {}
+        file.rewind
+        file.each_line do |line|
+          line = line.split(/^|\s;/).first # remove comments
+          section = line.match(/^\s*\[([^\[\]]+)\]\s*$/) unless line.nil?
+          if section
+            current_section = section[1]
+          elsif current_section
+            item = line.match(/^\s*(.+?)\s*=\s*(.+?)\s*$/) unless line.nil?
+            if item
+              map[current_section] = map[current_section] || {}
+              map[current_section][item[1]] = item[2]
+            end
+          end
+        end
+        map
       end
 
       def self.ec2_client(region = default_region)
