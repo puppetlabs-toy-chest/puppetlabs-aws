@@ -6,14 +6,14 @@ provider_class = Puppet::Type.type(:sqs_queue).provider(:v2)
 
 ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
 ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-ENV['AWS_REGION'] = 'us-west-1'
+ENV['AWS_REGION'] = 'sa-east-1'
 
 describe provider_class do
   context 'with params' do
     let(:resource) do 
       Puppet::Type.type(:sqs_queue).new(
         name: 'queue',
-        region: 'us-east-1',
+        region: 'sa-east-1',
         delay_seconds: 10,
         message_retention_period: 699
       ) 
@@ -57,7 +57,7 @@ describe provider_class do
     let(:resource) do 
       Puppet::Type.type(:sqs_queue).new(
         name: 'queue2',
-        region: 'us-east-1',
+        region: 'sa-east-1',
         delay_seconds: 10,
       ) 
     end
@@ -82,7 +82,7 @@ describe provider_class do
      let(:resource) do 
        Puppet::Type.type(:sqs_queue).new(
          name: 'queue',
-         region: 'us-east-1',
+         region: 'sa-east-1',
          url:  queue_url
        ) 
      end
