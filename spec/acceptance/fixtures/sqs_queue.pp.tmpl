@@ -1,0 +1,7 @@
+sqs_queue { '{{name}}':
+  ensure      => '{{ensure}}' ,
+  region      => '{{region}}',
+  delay_seconds => {{delay_seconds}},
+  message_retention_period => {{message_retention_period}},
+  maximum_message_size => {{maximum_message_size}},
+}

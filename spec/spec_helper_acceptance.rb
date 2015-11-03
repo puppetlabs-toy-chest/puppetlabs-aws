@@ -100,7 +100,25 @@ class AwsHelper
     @cloudwatch_client = ::Aws::CloudWatch::Client.new({region: region})
     @route53_client = ::Aws::Route53::Client.new({region: region})
     @rds_client = ::Aws::RDS::Client.new({region: region})
+    @sqs_client = ::Aws::SQS::Client.new({region: region})
   end
+
+
+  def get_sqs_queue_url(name)
+    response = @sqs_client.get_queue_url(
+      queue_name: name
+    )
+    response.data.queue_url
+  end
+
+  def get_sqs_queue_attributes(url)
+    response = @sqs_client.get_queue_attributes(
+      queue_url: url,
+      attribute_names: ['All']
+    )
+    response.data.attributes
+  end
+
 
   def get_rds_instance(name)
     response = @rds_client.describe_db_instances(

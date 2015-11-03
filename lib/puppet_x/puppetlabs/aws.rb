@@ -192,6 +192,15 @@ This could be because some other process is modifying AWS at the same time."""
         ::Aws::RDS::Client.new({region: region})
       end
 
+      def sqs_client(region = default_region)
+        self.class.sqs_client(region)
+      end
+
+      def self.sqs_client(region = default_region)
+        ::Aws::SQS::Client.new({region: region})
+      end
+
+
       def tags_for_resource
         tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
         tags << {key: 'Name', value: name}
@@ -295,6 +304,13 @@ This could be because some other process is modifying AWS at the same time."""
           end
         end
         @dhcp_options[options_id]
+      end
+
+
+      def queue_url_from_name (queue_name )
+        sqs = sqs_client(target_region)
+        response = sqs.get_queue_url ({queue_name: name})
+        response.data.queue_url
       end
 
       def self.gateway_name_from_id(region, gateway_id)

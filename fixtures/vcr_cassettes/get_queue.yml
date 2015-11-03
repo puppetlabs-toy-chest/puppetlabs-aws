@@ -1,0 +1,228 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://sqs.us-west-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=ListQueues&Version=2012-11-05"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/1.9.3 x86_64-darwin13.4.0"
+          X-Amz-Date: 
+            - "20151102T185457Z"
+          X-Amz-Content-Sha256: 
+            - "48a38266faf90970d6c7fea9b15e6ba366e5f6397c2970fc893f8a7b5e207bd0"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20151102/us-west-1/sqs/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=ec4b7dc7da7661a385f0f56d2486bcac81083e653480027b37d9e875c67492bf"
+          Content-Length: 
+            - "36"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Server: 
+            - Server
+          Date: 
+            - "Mon, 02 Nov 2015 18:52:59 GMT"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "501"
+          Connection: 
+            - keep-alive
+          X-Amzn-Requestid: 
+            - f659f9de-a5e6-57b2-a0fb-b76f16adac07
+        body: 
+          encoding: US-ASCII
+          string: "<?xml version=\x221.0\x22?><ListQueuesResponse xmlns=\x22http://queue.amazonaws.com/doc/2012-11-05/\x22><ListQueuesResult><QueueUrl>https://sqs.us-west-1.amazonaws.com/854330369555/71b3ac187342696888a9</QueueUrl><QueueUrl>https://sqs.us-west-1.amazonaws.com/854330369555/fc9501e5636022c597f7</QueueUrl><QueueUrl>https://sqs.us-west-1.amazonaws.com/854330369555/queue</QueueUrl></ListQueuesResult><ResponseMetadata><RequestId>f659f9de-a5e6-57b2-a0fb-b76f16adac07</RequestId></ResponseMetadata></ListQueuesResponse>"
+        http_version: 
+      recorded_at: "Mon, 02 Nov 2015 18:54:58 GMT"
+    - request: 
+        method: post
+        uri: "https://sqs.us-west-1.amazonaws.com/854330369555/71b3ac187342696888a9"
+        body: 
+          encoding: UTF-8
+          string: "Action=GetQueueAttributes&AttributeName.1=All&QueueUrl=https%3A%2F%2Fsqs.us-west-1.amazonaws.com%2F854330369555%2F71b3ac187342696888a9&Version=2012-11-05"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/1.9.3 x86_64-darwin13.4.0"
+          X-Amz-Date: 
+            - "20151102T185458Z"
+          X-Amz-Content-Sha256: 
+            - "104390c3abbbec8f25f0bf9598054cf0d088acf7162166f36d13650b4e03927c"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20151102/us-west-1/sqs/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=c896eb3ea26ba18559d9dd2d6c8958f307c93266dd82128a259668d6be37f287"
+          Content-Length: 
+            - "153"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Server: 
+            - Server
+          Date: 
+            - "Mon, 02 Nov 2015 18:53:00 GMT"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "1173"
+          Connection: 
+            - keep-alive
+          X-Amzn-Requestid: 
+            - ebfd4c23-b231-5317-8191-0292017d64b8
+        body: 
+          encoding: US-ASCII
+          string: "<?xml version=\x221.0\x22?><GetQueueAttributesResponse xmlns=\x22http://queue.amazonaws.com/doc/2012-11-05/\x22><GetQueueAttributesResult><Attribute><Name>QueueArn</Name><Value>arn:aws:sqs:us-west-1:854330369555:71b3ac187342696888a9</Value></Attribute><Attribute><Name>ApproximateNumberOfMessages</Name><Value>0</Value></Attribute><Attribute><Name>ApproximateNumberOfMessagesNotVisible</Name><Value>0</Value></Attribute><Attribute><Name>ApproximateNumberOfMessagesDelayed</Name><Value>0</Value></Attribute><Attribute><Name>CreatedTimestamp</Name><Value>1446489955</Value></Attribute><Attribute><Name>LastModifiedTimestamp</Name><Value>1446489955</Value></Attribute><Attribute><Name>VisibilityTimeout</Name><Value>30</Value></Attribute><Attribute><Name>MaximumMessageSize</Name><Value>262144</Value></Attribute><Attribute><Name>MessageRetentionPeriod</Name><Value>120</Value></Attribute><Attribute><Name>DelaySeconds</Name><Value>100</Value></Attribute><Attribute><Name>ReceiveMessageWaitTimeSeconds</Name><Value>0</Value></Attribute></GetQueueAttributesResult><ResponseMetadata><RequestId>ebfd4c23-b231-5317-8191-0292017d64b8</RequestId></ResponseMetadata></GetQueueAttributesResponse>"
+        http_version: 
+      recorded_at: "Mon, 02 Nov 2015 18:54:59 GMT"
+    - request: 
+        method: post
+        uri: "https://sqs.us-west-1.amazonaws.com/854330369555/fc9501e5636022c597f7"
+        body: 
+          encoding: UTF-8
+          string: "Action=GetQueueAttributes&AttributeName.1=All&QueueUrl=https%3A%2F%2Fsqs.us-west-1.amazonaws.com%2F854330369555%2Ffc9501e5636022c597f7&Version=2012-11-05"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/1.9.3 x86_64-darwin13.4.0"
+          X-Amz-Date: 
+            - "20151102T185459Z"
+          X-Amz-Content-Sha256: 
+            - "82a518cbdd75de72e95f29ef74f466b308bf2247813520945154370f98904086"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20151102/us-west-1/sqs/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=e3b44d8c8b569a018841a8834485aa78cc9e7728a6cdc46ce615f6876c39e1cf"
+          Content-Length: 
+            - "153"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Server: 
+            - Server
+          Date: 
+            - "Mon, 02 Nov 2015 18:53:02 GMT"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "1173"
+          Connection: 
+            - keep-alive
+          X-Amzn-Requestid: 
+            - "5af2a60f-9513-526d-bbb2-e8be265d3da6"
+        body: 
+          encoding: US-ASCII
+          string: "<?xml version=\x221.0\x22?><GetQueueAttributesResponse xmlns=\x22http://queue.amazonaws.com/doc/2012-11-05/\x22><GetQueueAttributesResult><Attribute><Name>QueueArn</Name><Value>arn:aws:sqs:us-west-1:854330369555:fc9501e5636022c597f7</Value></Attribute><Attribute><Name>ApproximateNumberOfMessages</Name><Value>0</Value></Attribute><Attribute><Name>ApproximateNumberOfMessagesNotVisible</Name><Value>0</Value></Attribute><Attribute><Name>ApproximateNumberOfMessagesDelayed</Name><Value>0</Value></Attribute><Attribute><Name>CreatedTimestamp</Name><Value>1446490059</Value></Attribute><Attribute><Name>LastModifiedTimestamp</Name><Value>1446490059</Value></Attribute><Attribute><Name>VisibilityTimeout</Name><Value>30</Value></Attribute><Attribute><Name>MaximumMessageSize</Name><Value>262144</Value></Attribute><Attribute><Name>MessageRetentionPeriod</Name><Value>120</Value></Attribute><Attribute><Name>DelaySeconds</Name><Value>100</Value></Attribute><Attribute><Name>ReceiveMessageWaitTimeSeconds</Name><Value>0</Value></Attribute></GetQueueAttributesResult><ResponseMetadata><RequestId>5af2a60f-9513-526d-bbb2-e8be265d3da6</RequestId></ResponseMetadata></GetQueueAttributesResponse>"
+        http_version: 
+      recorded_at: "Mon, 02 Nov 2015 18:55:00 GMT"
+    - request: 
+        method: post
+        uri: "https://sqs.us-west-1.amazonaws.com/854330369555/queue"
+        body: 
+          encoding: UTF-8
+          string: "Action=GetQueueAttributes&AttributeName.1=All&QueueUrl=https%3A%2F%2Fsqs.us-west-1.amazonaws.com%2F854330369555%2Fqueue&Version=2012-11-05"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/1.9.3 x86_64-darwin13.4.0"
+          X-Amz-Date: 
+            - "20151102T185500Z"
+          X-Amz-Content-Sha256: 
+            - db1e111d346eeac4860326380f0d4b58130b9fb08f40f0769b2e305704acc49f
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20151102/us-west-1/sqs/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=16b6b0cca5a209aa62290ad08cf180b51837178c349dbe2dc0a2278d1915b951"
+          Content-Length: 
+            - "138"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Server: 
+            - Server
+          Date: 
+            - "Mon, 02 Nov 2015 18:53:03 GMT"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "1159"
+          Connection: 
+            - keep-alive
+          X-Amzn-Requestid: 
+            - "9bf9d5ae-a2ca-5862-88a3-9b1f118529d0"
+        body: 
+          encoding: US-ASCII
+          string: "<?xml version=\x221.0\x22?><GetQueueAttributesResponse xmlns=\x22http://queue.amazonaws.com/doc/2012-11-05/\x22><GetQueueAttributesResult><Attribute><Name>QueueArn</Name><Value>arn:aws:sqs:us-west-1:854330369555:queue</Value></Attribute><Attribute><Name>ApproximateNumberOfMessages</Name><Value>0</Value></Attribute><Attribute><Name>ApproximateNumberOfMessagesNotVisible</Name><Value>0</Value></Attribute><Attribute><Name>ApproximateNumberOfMessagesDelayed</Name><Value>0</Value></Attribute><Attribute><Name>CreatedTimestamp</Name><Value>1446473434</Value></Attribute><Attribute><Name>LastModifiedTimestamp</Name><Value>1446473434</Value></Attribute><Attribute><Name>VisibilityTimeout</Name><Value>30</Value></Attribute><Attribute><Name>MaximumMessageSize</Name><Value>262144</Value></Attribute><Attribute><Name>MessageRetentionPeriod</Name><Value>345600</Value></Attribute><Attribute><Name>DelaySeconds</Name><Value>0</Value></Attribute><Attribute><Name>ReceiveMessageWaitTimeSeconds</Name><Value>0</Value></Attribute></GetQueueAttributesResult><ResponseMetadata><RequestId>9bf9d5ae-a2ca-5862-88a3-9b1f118529d0</RequestId></ResponseMetadata></GetQueueAttributesResponse>"
+        http_version: 
+      recorded_at: "Mon, 02 Nov 2015 18:55:01 GMT"
+    - request: 
+        method: post
+        uri: "https://sqs.us-west-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=GetQueueUrl&QueueName=71b3ac187342696888a9&Version=2012-11-05"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/1.9.3 x86_64-darwin13.4.0"
+          X-Amz-Date: 
+            - "20151102T185501Z"
+          X-Amz-Content-Sha256: 
+            - "05b46e23bfea3f99af037c5b2f2a872030b0038205d41ecf3a369e9f8be60d44"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20151102/us-west-1/sqs/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=48f67eefeec2ad4219219e9edd6a121fd3b494b99c15ecc34c8dbc42653d6e64"
+          Content-Length: 
+            - "68"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Server: 
+            - Server
+          Date: 
+            - "Mon, 02 Nov 2015 18:53:04 GMT"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "340"
+          Connection: 
+            - keep-alive
+          X-Amzn-Requestid: 
+            - "743fc4bc-bf0c-5ddd-ae73-8a0d0c5c5e0c"
+        body: 
+          encoding: US-ASCII
+          string: "<?xml version=\x221.0\x22?><GetQueueUrlResponse xmlns=\x22http://queue.amazonaws.com/doc/2012-11-05/\x22><GetQueueUrlResult><QueueUrl>https://sqs.us-west-1.amazonaws.com/854330369555/71b3ac187342696888a9</QueueUrl></GetQueueUrlResult><ResponseMetadata><RequestId>743fc4bc-bf0c-5ddd-ae73-8a0d0c5c5e0c</RequestId></ResponseMetadata></GetQueueUrlResponse>"
+        http_version: 
+      recorded_at: "Mon, 02 Nov 2015 18:55:02 GMT"
+  recorded_with: "VCR 2.9.3"
