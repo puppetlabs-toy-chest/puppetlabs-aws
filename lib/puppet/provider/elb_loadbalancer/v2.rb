@@ -16,7 +16,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
           end
         end
         load_balancers
-      rescue StandardError => e
+      rescue Timeout::Error, StandardError => e
         raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
     end.flatten

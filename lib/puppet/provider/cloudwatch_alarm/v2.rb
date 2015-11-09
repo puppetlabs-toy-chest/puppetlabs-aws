@@ -16,7 +16,7 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
           end
         end
         alarms
-      rescue StandardError => e
+      rescue Timeout::Error, StandardError => e
         raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
     end.flatten
