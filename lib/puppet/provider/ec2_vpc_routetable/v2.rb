@@ -17,7 +17,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
           tables << new(hash) if has_name?(hash)
         end
         tables
-      rescue StandardError => e
+      rescue Timeout::Error, StandardError => e
         raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
     end.flatten

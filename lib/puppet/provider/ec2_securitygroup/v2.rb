@@ -27,7 +27,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
         groups.collect do |group|
           new(security_group_to_hash(region, group, group_names, vpc_names))
         end.compact
-      rescue StandardError => e
+      rescue Timeout::Error, StandardError => e
         raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
     end.flatten
