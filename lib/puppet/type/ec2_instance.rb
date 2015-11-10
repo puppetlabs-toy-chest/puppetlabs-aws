@@ -22,9 +22,11 @@ Puppet::Type.newtype(:ec2_instance) do
       current == desired ? current : "changed #{current} to #{desired}"
     end
     def insync?(is)
-      is = :present if is == :running
-      is = :stopped if is == :stopping
-      is.to_s == should.to_s
+      is.to_s == should.to_s or
+        (is.to_s == 'running' and should.to_s == 'present') or
+        (is.to_s == 'stopped' and should.to_s == 'present') or
+        (is.to_s == 'stopping' and should.to_s == 'stopped') or
+        (is.to_s == 'stopping' and should.to_s == 'present')
     end
   end
 

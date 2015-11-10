@@ -55,6 +55,31 @@ describe type_class do
     type_class.new(:name => 'sample', :ensure => :running)
   end
 
+  it 'should acknowledge stopped instance to be present' do
+    machine = type_class.new(:name => 'sample', :ensure => :present)
+    expect(machine.property(:ensure).insync?(:stopped)).to be true
+  end
+
+  it 'should acknowledge stopping instance to be present' do
+    machine = type_class.new(:name => 'sample', :ensure => :present)
+    expect(machine.property(:ensure).insync?(:stopping)).to be true
+  end
+
+  it 'should acknowledge running instance to be present' do
+    machine = type_class.new(:name => 'sample', :ensure => :present)
+    expect(machine.property(:ensure).insync?(:running)).to be true
+  end
+
+  it 'should acknowledge stopping instance to be stopped' do
+    machine = type_class.new(:name => 'sample', :ensure => :stopped)
+    expect(machine.property(:ensure).insync?(:stopping)).to be true
+  end
+
+  it 'should acknowledge running instance to be running' do
+    machine = type_class.new(:name => 'sample', :ensure => :running)
+    expect(machine.property(:ensure).insync?(:running)).to be true
+  end
+
   it 'should default monitoring to false' do
     srv = type_class.new(:name => 'sample')
     expect(srv[:monitoring]).to eq(:false)
