@@ -239,7 +239,7 @@ describe "ec2_instance" do
 
       @aws.ec2_client.wait_until(:instance_stopped, instance_ids:[@instance.instance_id])
 
-      @config[:ensure] = 'present'
+      @config[:ensure] = 'running'
       PuppetManifest.new(@template, @config).apply
       @aws.ec2_client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
     end
