@@ -1,0 +1,48 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://sqs.sa-east-1.amazonaws.com/"
+        body: 
+          encoding: UTF-8
+          string: "Action=CreateQueue&Attribute.1.Name=DelaySeconds&Attribute.1.Value=0&Attribute.2.Name=MessageRetentionPeriod&Attribute.2.Value=345600&Attribute.3.Name=MaximumMessageSize&Attribute.3.Value=262144&QueueName=queue&Version=2012-11-05"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/1.9.3 x86_64-darwin13.4.0"
+          X-Amz-Date: 
+            - "20151103T154201Z"
+          X-Amz-Content-Sha256: 
+            - ed9f0ba97216a562b1c1c31775652b4e1b127edcbebd5c9a7713f0ff3dca707d
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20151103/sa-east-1/sqs/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=a88abd2eb6fc357ea2d7769762819bd9891bdcc12fbce199fe63a6e9dcde25f1"
+          Content-Length: 
+            - "229"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Server: 
+            - Server
+          Date: 
+            - "Tue, 03 Nov 2015 15:40:03 GMT"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "325"
+          Connection: 
+            - keep-alive
+          X-Amzn-Requestid: 
+            - fca7d6db-f58b-53a2-8e03-98692218fc01
+        body: 
+          encoding: US-ASCII
+          string: "<?xml version=\x221.0\x22?><CreateQueueResponse xmlns=\x22http://queue.amazonaws.com/doc/2012-11-05/\x22><CreateQueueResult><QueueUrl>https://sqs.sa-east-1.amazonaws.com/854330369555/queue</QueueUrl></CreateQueueResult><ResponseMetadata><RequestId>fca7d6db-f58b-53a2-8e03-98692218fc01</RequestId></ResponseMetadata></CreateQueueResponse>"
+        http_version: 
+      recorded_at: "Tue, 03 Nov 2015 15:42:03 GMT"
+  recorded_with: "VCR 2.9.3"

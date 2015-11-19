@@ -1,0 +1,48 @@
+--- 
+  http_interactions: 
+    - request: 
+        method: post
+        uri: "https://sqs.sa-east-1.amazonaws.com/854330369555/queue"
+        body: 
+          encoding: UTF-8
+          string: "Action=DeleteQueue&QueueUrl=https%3A%2F%2Fsqs.sa-east-1.amazonaws.com%2F854330369555%2Fqueue&Version=2012-11-05"
+        headers: 
+          Content-Type: 
+            - "application/x-www-form-urlencoded; charset=utf-8"
+          Accept-Encoding: 
+            - ""
+          User-Agent: 
+            - "aws-sdk-ruby2/2.0.5 ruby/1.9.3 x86_64-darwin13.4.0"
+          X-Amz-Date: 
+            - "20151103T154207Z"
+          X-Amz-Content-Sha256: 
+            - "98de8e2f5d31c76eb11dbf00e1e8fabe120b2b7e84f632bd24a968bf9eab45fb"
+          Authorization: 
+            - "AWS4-HMAC-SHA256 Credential=redacted/20151103/sa-east-1/sqs/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=2d3dba0eceb5d2f37a1471396d49380bfeb7792b776f827ce7fafce0730b1966"
+          Content-Length: 
+            - "111"
+          Accept: 
+            - "*/*"
+      response: 
+        status: 
+          code: 200
+          message: OK
+        headers: 
+          Server: 
+            - Server
+          Date: 
+            - "Tue, 03 Nov 2015 15:40:08 GMT"
+          Content-Type: 
+            - text/xml
+          Content-Length: 
+            - "211"
+          Connection: 
+            - keep-alive
+          X-Amzn-Requestid: 
+            - b1e0732b-261d-5498-9df2-3d99f18587d9
+        body: 
+          encoding: US-ASCII
+          string: "<?xml version=\x221.0\x22?><DeleteQueueResponse xmlns=\x22http://queue.amazonaws.com/doc/2012-11-05/\x22><ResponseMetadata><RequestId>b1e0732b-261d-5498-9df2-3d99f18587d9</RequestId></ResponseMetadata></DeleteQueueResponse>"
+        http_version: 
+      recorded_at: "Tue, 03 Nov 2015 15:42:08 GMT"
+  recorded_with: "VCR 2.9.3"
