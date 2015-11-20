@@ -104,7 +104,8 @@ add to this profile.
         "rds:DescribeDBSecurityGroups",
         "rds:CreateDBSecurityGroup",
         "rds:DeleteDBSecurityGroup",
-        "rds:DescribeDBParameterGroups"
+        "rds:DescribeDBParameterGroups",
+        "sqs:*"
       ],
       "Effect": "Allow",
       "Resource": "*"
