@@ -94,6 +94,7 @@ class AwsHelper
   attr_reader :ec2_client, :elb_client, :autoscaling_client
 
   def initialize(region)
+    ENV['AWS_REGION'] = region
     @ec2_client = ::Aws::EC2::Client.new({region: region})
     @elb_client = ::Aws::ElasticLoadBalancing::Client.new({region: region})
     @autoscaling_client = ::Aws::AutoScaling::Client.new({region: region})
