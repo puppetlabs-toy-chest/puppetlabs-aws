@@ -21,8 +21,6 @@ group :test do
   gem 'vcr'
   gem 'rspec-puppet', :git => 'https://github.com/rodjek/rspec-puppet.git'
   gem 'metadata-json-lint'
-  gem 'beaker-rspec'
-  gem 'beaker-puppet_install_helper'
 end
 
 group :development do
@@ -37,6 +35,8 @@ end
 
 group :acceptance do
   gem 'mustache', '0.99.8'
+  gem 'beaker-rspec'
+  gem 'beaker-puppet_install_helper'
 end
 
 if File.exists? "#{__FILE__}.local"
