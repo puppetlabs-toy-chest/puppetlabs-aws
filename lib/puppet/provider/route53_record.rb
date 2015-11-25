@@ -19,10 +19,9 @@ class Puppet::Provider::Route53Record < PuppetX::Puppetlabs::Aws
         end
       end
     end
-      
       records
     rescue Timeout::Error, StandardError => e
-      raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
+      raise PuppetX::Puppetlabs::FetchingAWSDataError.new("Route 53", self.resource_type.name.to_s, e.message)
     end
   end
 
