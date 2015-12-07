@@ -1,3 +1,23 @@
+## 2015-12-08 - Supported Version 1.3.0
+
+This release includes:
+
+* A new type and provider for managing SQS resources in AWS
+* Support for using a credentials file for agents
+* Support for PTR resources in Route53
+* Allow snapshots to be used when mounting block devices for instances
+
+As well as following fixes:
+
+* Correctly handle timeouts when prefetching resources
+* Fix error reporting for Route53 resources
+* Correctly handle large sets of Route53 resource by paging through
+  larger results sets
+
+Thanks to @jae2 @lattwood, @tamsky, Chris Pick, @cwood and the folks at
+ServiceChannel for contributing to this release.
+
+
 ## 2015-09-04 - Supported Version 1.2.0
 
 This release includes:
