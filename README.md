@@ -543,6 +543,9 @@ Specifies that basic state of the resource. Valid values are 'attached', 'detach
 #####`instance`
 *Required* The name of the instance associated with the Elastic IP. This is the value of the AWS Name tag.
 
+#####`instance_id`
+*Optional* The id of the instance_id associated with the Elastic IP. This is the value of the AWS EC2 Instance ID.
+
 
 #### Type: ec2_launchconfiguration
 
