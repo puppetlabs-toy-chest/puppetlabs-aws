@@ -1,4 +1,4 @@
-## 2015-12-08 - Supported Version 1.3.0
+## 2015-12-09 - Supported Version 1.3.0
 
 This release includes:
 
@@ -13,9 +13,12 @@ As well as following fixes:
 * Fix error reporting for Route53 resources
 * Correctly handle large sets of Route53 resource by paging through
   larger results sets
+* Fixed an issue where routes that have don't have a gateway cause
+  failures when loading routetables
+* Correctly limit the association of EIPs to pending or running instances
 
-Thanks to @jae2 @lattwood, @tamsky, Chris Pick, @cwood and the folks at
-ServiceChannel for contributing to this release.
+Thanks to @jae2 @lattwood, @tamsky, Chris Pick, @cwood, @mikeslattery
+@rfletcher and the folks at ServiceChannel for contributing to this release.
 
 
 ## 2015-09-04 - Supported Version 1.2.0
