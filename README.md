@@ -279,6 +279,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * [Using IAM permissions](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/iam-profile): Control the API permissions required by the module with an IAM profile.
 * [Elastic IP Addresses](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/elastic-ip-addresses/): Attach existing elastic IP addresses to instances managed by Puppet.
 * [Create your own abstractions](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/create-your-own-abstractions/): Use Puppet's defined types to better model your own infrastructure.
+* [Distribute instances across availability zones](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/distribute-across-az/): Use the future parser and stdlib functions to launch instances balanced across different availability zones.
 
 ##Reference
 

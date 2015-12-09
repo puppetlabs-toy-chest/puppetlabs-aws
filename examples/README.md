@@ -24,3 +24,8 @@ infrastructure.
 * [Elastic IP Addresses](elastic-ip-addresses/) - attach existing elastic
 * [Create your own abstractions](create-your-own-abstractions/) - use
   Puppet's defined types to better model your own infrastructure
+  IP addresses to instances managed by Puppet
+* [Distribute instances across availability
+  zones](distribute-across-az/) - use the future parser and stdlib
+  functions to launch instances balanced across different availability
+  zones
