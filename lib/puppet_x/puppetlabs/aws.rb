@@ -84,7 +84,7 @@ This could be because some other process is modifying AWS at the same time."""
       def self.global_configuration
         Puppet.initialize_settings unless Puppet[:confdir]
         path = File.join(Puppet[:confdir], 'puppetlabs_aws_configuration.ini')
-        File.exists?(path) ? parse_ini(File.new(path)) : nil
+        File.exists?(path) ? ini_parse(File.new(path)) : nil
       end
 
       def self.region_from_global_configuration
