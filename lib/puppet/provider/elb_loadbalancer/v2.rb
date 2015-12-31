@@ -97,6 +97,15 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     Puppet.info("Checking if load balancer #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
+  
+  def update
+    Puppet.info("Updating load balancer #{name} in region #{target_region}")
+    instances = resource[:instances]
+    if ! instances.nil?
+      instances = [instances] unless instances.is_a?(Array)
+      self.class.add_instances_to_load_balancer(resource[:region], name, instances)
+    end
+  end
 
   def create
     Puppet.info("Creating load balancer #{name} in region #{target_region}")
@@ -230,7 +239,11 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       )
     end
   end
-
+  
+  def flush
+    update unless @property_hash[:ensure] == :absent
+  end
+  
   def destroy
     Puppet.info("Destroying load balancer #{name} in region #{target_region}")
     elb_client(target_region).delete_load_balancer(
