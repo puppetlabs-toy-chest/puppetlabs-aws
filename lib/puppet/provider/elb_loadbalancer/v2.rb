@@ -57,6 +57,16 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         'instance_port' => listener.listener.instance_port,
       }
     end
+    health_check = {}
+    unless load_balancer.health_check.nil?
+        health_check = {
+          'healthy_threshold' => load_balancer.health_check.healthy_threshold,
+          'interval' => load_balancer.health_check.interval,
+          'target' => load_balancer.health_check.target,
+          'timeout' => load_balancer.health_check.timeout,
+          'unhealthy_threshold' => load_balancer.health_check.unhealthy_threshold,
+        }
+    end
     tag_response = elb_client(region).describe_tags(
       load_balancer_names: [load_balancer.load_balancer_name]
     )
@@ -90,6 +100,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       subnets: subnet_names,
       security_groups: security_group_names,
       scheme: load_balancer.scheme,
+      health_check: health_check,
     }
   end
 
@@ -140,6 +151,10 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     )
 
     @property_hash[:ensure] = :present
+
+    if ! resource[:health_check].nil?
+        self.health_check = resource[:health_check]
+    end
 
     instances = resource[:instances]
     if ! instances.nil?
@@ -244,6 +259,34 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     update unless @property_hash[:ensure] == :absent
   end
   
+  def health_check=(value)
+    elb = elb_client(resource[:region])
+    elb.configure_health_check({
+      load_balancer_name: name,
+      health_check: {
+        target: value['target'],
+        interval: value['interval'],
+        timeout: value['timeout'],
+        unhealthy_threshold: value['unhealthy_threshold'],
+        healthy_threshold: value['healthy_threshold'],
+      },
+    })
+  end
+
+  def health_check=(value)
+    elb = elb_client(resource[:region])
+    elb.configure_health_check({
+      load_balancer_name: name,
+      health_check: {
+        target: value['target'],
+        interval: value['interval'],
+        timeout: value['timeout'],
+        unhealthy_threshold: value['unhealthy_threshold'],
+        healthy_threshold: value['healthy_threshold'],
+      },
+    })
+  end
+
   def destroy
     Puppet.info("Destroying load balancer #{name} in region #{target_region}")
     elb_client(target_region).delete_load_balancer(

@@ -481,6 +481,15 @@ The Amazon Resource Name for the associated IAM profile.
 #####`scheme`
 *Optional* Whether the load balancer is internal or public facing. This parameter is set at creation only; it is not affected by updates. Valid values are 'internal', 'internet-facing'. Default value is 'internet-facing' and makes the load balancer publicly available.
 
+#####`health_check`
+*Optional* The health check which the load balancer should perform. For more description, see [AWS Elastic Load Balancing HealthCheck](http://docs.aws.amazon.com/sdkforruby/api/Aws/ElasticLoadBalancing/Types/HealthCheck.html). Accepts a Hash of the following values(all are required):
+  * target
+  * interval
+  * timeout
+  * healthy_threshold
+  * unhealthy_threshold
+
+
 #### Type: cloudwatch_alarm
 
 ##### `name`
