@@ -26,6 +26,8 @@ This could be because some other process is modifying AWS at the same time."""
       def self.regions
         if ENV['AWS_REGION'] and not ENV['AWS_REGION'].empty?
           [ENV['AWS_REGION']]
+        elsif global_configuration and global_configuration['default'] and global_configuration['default']['region']
+          [global_configuration['default']['region']]
         else
           ec2_client(default_region).describe_regions.data.regions.map(&:region_name)
         end
