@@ -189,10 +189,16 @@ elb_loadbalancer { 'name-of-load-balancer':
   instances            => ['name-of-instance', 'another-instance'],
   security_groups      => ['name-of-security-group'],
   listeners            => [{
-    protocol           => 'tcp',
+    protocol           => 'HTTP',
     load_balancer_port => 80,
-    instance_protocol  => 'tcp',
+    instance_protocol  => 'HTTP',
     instance_port      => 80,
+  },{
+    protocol           => 'HTTPS',
+    load_balancer_port => 443,
+    instance_protocol  => 'HTTPS',
+    instance_port      => 8080,
+    ssl_certificate_id => 'arn:aws:iam::123456789000:server-certificate/yourcert.com',
   }],
   tags                 => {
     tag_name => 'value',
@@ -461,6 +467,7 @@ The Amazon Resource Name for the associated IAM profile.
   * load_balancer_port
   * instance_protocol
   * instance_port
+  * ssl_certificate_id (optional if protocol is HTTPS )
 
 #####`tags`
 *Optional* The tags for the load balancer. This parameter is set at creation only; it is not affected by updates. Accepts a 'key => value' hash of tags.

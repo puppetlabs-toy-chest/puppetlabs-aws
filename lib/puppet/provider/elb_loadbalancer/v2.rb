@@ -55,6 +55,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         'load_balancer_port' => listener.listener.load_balancer_port,
         'instance_protocol' => listener.listener.instance_protocol,
         'instance_port' => listener.listener.instance_port,
+        'ssl_certificate_id' => listener.listener.ssl_certificate_id,
       }
     end
     tag_response = elb_client(region).describe_tags(
@@ -126,6 +127,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         load_balancer_port: listener['load_balancer_port'],
         instance_protocol: listener['instanceprotocol'],
         instance_port: listener['instance_port'],
+        ssl_certificate_id: listener['ssl_certificate_id'],
       }
     end
 
