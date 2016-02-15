@@ -50,13 +50,15 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       end
     end
     listeners = load_balancer.listener_descriptions.collect do |listener|
-      {
+      l = {
         'protocol' => listener.listener.protocol,
         'load_balancer_port' => listener.listener.load_balancer_port,
         'instance_protocol' => listener.listener.instance_protocol,
         'instance_port' => listener.listener.instance_port,
         'ssl_certificate_id' => listener.listener.ssl_certificate_id,
       }
+      l['ssl_certificate_id'] = listener.listener.ssl_certificate_id unless listener.listener.ssl_certificate_id.nil?
+      l
     end
     tag_response = elb_client(region).describe_tags(
       load_balancer_names: [load_balancer.load_balancer_name]
@@ -122,13 +124,15 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     listeners = [listeners] unless listeners.is_a?(Array)
 
     listeners_for_api = listeners.collect do |listener|
-      {
+      l = {
         protocol: listener['protocol'],
         load_balancer_port: listener['load_balancer_port'],
         instance_protocol: listener['instanceprotocol'],
         instance_port: listener['instance_port'],
         ssl_certificate_id: listener['ssl_certificate_id'],
       }
+      l[:ssl_certificate_id] = listener['ssl_certificate_id'] if listener.has_key?('ssl_certificate_id')
+      l
     end
 
     elb_client(target_region).create_load_balancer(
