@@ -313,6 +313,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 
 * `ec2_instance`: Sets up an EC2 instance.
 * `ec2_securitygroup`: Sets up an EC2 security group.
+* `ec2_volume`: Sets up an EC2 EBS volume.
 * `elb_loadbalancer`: Sets up an ELB load balancer.
 * `cloudwatch_alarm`: Sets up a Cloudwatch Alarm.
 * `ec2_autoscalinggroup`: Sets up an EC2 auto scaling group.
@@ -527,6 +528,35 @@ back- end instances.  Accepts a hash with the following keys:
 
 #####`scheme`
 *Optional* Whether the load balancer is internal or public facing. This parameter is set at creation only; it is not affected by updates. Valid values are 'internal', 'internet-facing'. Default value is 'internet-facing' and makes the load balancer publicly available.
+
+#### Type: ec2_volume
+
+##### `name`
+*Required* The name of the volume
+
+##### `region`
+*Required* The region in which to create the volume. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
+
+##### `size`
+*Conditional* The size of the EBS volume in GB. if restoring from snapshot this parameter is not required.
+
+##### `iops`
+*Optional* Only valid for Provisioned IOPS SSD volumes. The number of I/O operations per second (IOPS) to provision for the volume, with a maximum ratio of 50 IOPS/GiB.
+
+##### `availability_zone`
+*Required* The availability zones in which to create the volume. Accepts an array of availability zone codes. For valid availability zone codes, see [AWS Regions and Availability Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html).
+
+##### `volume_type`
+*Required* The volume type. This can be gp2 for General Purpose SSD, io1 for Provisioned IOPS SSD, st1 for Throughput Optimized HDD, sc1 for Cold HDD, or standard for Magnetic volumes.
+
+##### `encrypted`
+*Optional* Specifies whether the volume should be encrypted. Encrypted Amazon EBS volumes may only be attached to instances that support Amazon EBS encryption. Volumes that are created from encrypted snapshots are automatically encrypted. There is no way to create an encrypted volume from an unencrypted snapshot or vice versa.
+
+##### `kms_key_id`
+*Optional* The full ARN of the AWS Key Management Service (AWS KMS) customer master key (CMK) to use when creating the encrypted volume. This parameter is only required if you want to use a non-default CMK; if this parameter is not specified, the default CMK for EBS is used.
+
+##### `snapshot_id`
+*Optional* The snapshot from which to create the volume.
 
 #### Type: cloudwatch_alarm
 
