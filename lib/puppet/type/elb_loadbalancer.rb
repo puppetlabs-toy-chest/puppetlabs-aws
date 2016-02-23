@@ -70,6 +70,9 @@ Puppet::Type.newtype(:elb_loadbalancer) do
   newproperty(:availability_zones, :array_matching => :all) do
     desc 'The availability zones in which to launch the load balancer.'
     defaultto []
+    def insync?(is)
+      is.to_set == should.to_set
+    end
   end
 
   newproperty(:instances, :array_matching => :all) do
