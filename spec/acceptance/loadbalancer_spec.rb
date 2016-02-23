@@ -1,7 +1,7 @@
 require 'spec_helper_acceptance'
 require 'securerandom'
 
-describe "ec2_loadbalancer" do
+describe "elb_loadbalancer" do
 
   before(:all) do
     @default_region = 'sa-east-1'
@@ -145,7 +145,16 @@ describe "ec2_loadbalancer" do
           }
         }
         @lb_template = 'loadbalancer.pp.tmpl'
-        PuppetManifest.new(@lb_template, @lb_config).apply
+        @result = PuppetManifest.new(@lb_template, @lb_config).apply
+      end
+
+      it 'should run successfully first time with changes' do
+        expect(@result.exit_code).to eq(2)
+      end
+
+      it 'should run idempotently' do
+        result = PuppetManifest.new(@lb_template, @lb_config).apply
+        expect(result.exit_code).to eq(0)
       end
 
       context 'using puppet resource to describe' do
