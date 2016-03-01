@@ -310,7 +310,7 @@ class PuppetRunProxy
   def apply(manifest)
     case @mode
     when :local
-      cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest.gsub("\n", '')}\" --modulepath ../ --debug"
+      cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest.gsub("\n", '')}\" --modulepath ../ --debug --trace"
       use_local_shell(cmd)
     else
       # acceptable_exit_codes and expect_changes are passed because we want detailed-exit-codes but want to
