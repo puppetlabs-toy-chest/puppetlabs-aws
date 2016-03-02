@@ -94,6 +94,20 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     end
   end
 
+  newproperty(:health_check) do
+    desc 'Health check.'
+    def insync?(is)
+      normalise(is).to_set == normalise(should).to_set
+    end
+    def normalise(value)
+      value.each { |k,v| value[k] = v.to_s }
+      Hash[value.sort]
+    end
+    validate do |value|
+      fail 'health check should be a Hash' unless value.is_a?(Hash)
+    end
+  end
+
   validate do
     subnets = self[:subnets]
     zones = self[:availability_zones]
