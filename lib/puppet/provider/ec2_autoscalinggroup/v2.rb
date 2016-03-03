@@ -83,6 +83,18 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     end
 
     autoscaling_client(target_region).create_auto_scaling_group(config)
+
+    with_retries(:max_tries => 5) do
+      autoscaling_client(target_region).create_or_update_tags(
+        tags: resource[:tags] ? resource[:tags].map { |k,v| {
+          resource_id: name,
+          resource_type:"auto-scaling-group",
+          key: k,
+          value: v,
+          propagate_at_launch: true } } : []
+        )
+    end
+
     @property_hash[:ensure] = :present
   end
 
@@ -136,4 +148,3 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     @property_hash[:ensure] = :absent
   end
 end
-

@@ -75,6 +75,10 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     end
   end
 
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
+    desc 'The tags for the instance.'
+  end
+
   autorequire(:ec2_launchconfiguration) do
     self[:launch_configuration]
   end
