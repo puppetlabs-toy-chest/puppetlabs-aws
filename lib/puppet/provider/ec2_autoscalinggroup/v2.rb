@@ -5,6 +5,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
   confine feature: :retries
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances
     regions.collect do |region|
