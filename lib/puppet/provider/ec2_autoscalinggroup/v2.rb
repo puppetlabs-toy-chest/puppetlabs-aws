@@ -92,7 +92,6 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     end
 
     autoscaling_client(target_region).create_auto_scaling_group(config)
-
     @property_hash[:ensure] = :present
   end
 
