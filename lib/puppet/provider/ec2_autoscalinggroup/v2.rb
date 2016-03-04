@@ -2,7 +2,6 @@ require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
 Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
-  confine feature: :retries
 
   mk_resource_methods
   remove_method :tags=
