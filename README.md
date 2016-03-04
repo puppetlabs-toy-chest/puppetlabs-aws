@@ -112,8 +112,8 @@ export PUPPET_AWS_PROXY=http://localhost:8888
 
 #### Using a configuration file
 
-The AWS region and HTTP proxy can be provided in a file called 
-`puppetlabs_aws_configuration.ini` in the Puppet confdir 
+The AWS region and HTTP proxy can be provided in a file called
+`puppetlabs_aws_configuration.ini` in the Puppet confdir
 (`$settings::confdir`) using this format:
 
     [default]
@@ -545,6 +545,9 @@ The Amazon Resource Name for the associated IAM profile.
 
 ##### `subnets`
 *Optional* The subnets to associate with the autoscaling group.
+
+##### `tags`
+*Optional* The tags to associate with the autoscaling group.
 
 #### Type: ec2_elastic_ip
 

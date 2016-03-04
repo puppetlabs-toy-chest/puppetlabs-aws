@@ -4,6 +4,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
   confine feature: :aws
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances
     regions.collect do |region|
@@ -64,12 +65,20 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     zones = resource[:availability_zones]
     zones = [zones] unless zones.is_a?(Array)
 
+    tags = resource[:tags] ? resource[:tags].map { |k,v| {
+        resource_id: name,
+        resource_type:"auto-scaling-group",
+        key: k,
+        value: v,
+        propagate_at_launch: true } } : nil
+
     config = {
       auto_scaling_group_name: name,
       min_size: resource[:min_size],
       max_size: resource[:max_size],
       availability_zones: zones,
       launch_configuration_name: resource[:launch_configuration],
+      tags: tags
     }
 
     if resource[:subnets]
@@ -83,6 +92,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     end
 
     autoscaling_client(target_region).create_auto_scaling_group(config)
+
     @property_hash[:ensure] = :present
   end
 
@@ -136,4 +146,3 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     @property_hash[:ensure] = :absent
   end
 end
-
