@@ -173,22 +173,22 @@ describe "ec2_instance" do
       expect_failed_apply(@config)
     end
 
-    context 'do' do
-    read_only = [
-      {:instance_id => 'foo'}, {:hypervisor => 'foo'},
-      {:virtualization_type => 'foo'}, {:private_ip_address => 'foo'},
-      {:public_ip_address => 'foo'}, {:private_dns_name => 'foo'},
-      {:public_dns_name => 'foo'}, {:kernel_id => 'foo'}
-    ]
+    context 'when trying to set read-only property' do
+      read_only = [
+        {:instance_id => 'foo'}, {:hypervisor => 'foo'},
+        {:virtualization_type => 'foo'}, {:private_ip_address => 'foo'},
+        {:public_ip_address => 'foo'}, {:private_dns_name => 'foo'},
+        {:public_dns_name => 'foo'}, {:kernel_id => 'foo'}
+      ]
 
-    read_only.each do |new_config_value|
-      it "when trying to set read-only property #{new_config_value.first[0]}" do
-        # :optional is special and allows injecting optional config into template
-        new_config = @config.update({:optional => new_config_value})
+      read_only.each do |new_config_value|
+        it "should reject #{new_config_value.first[0]}" do
+          # :optional is special and allows injecting optional config into template
+          new_config = @config.update({:optional => new_config_value})
 
-        expect_failed_apply(new_config)
+          expect_failed_apply(new_config)
+        end
       end
-    end
     end
   end
 
