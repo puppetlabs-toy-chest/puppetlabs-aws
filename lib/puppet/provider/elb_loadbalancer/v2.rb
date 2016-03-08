@@ -228,18 +228,18 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     to_create = value - @property_hash[:subnets]
     to_delete = @property_hash[:subnets] - value
     elb = elb_client(resource[:region])
-    unless to_delete.empty?
-      delete_ids = subnet_ids_from_names(to_delete)
-      elb.detach_load_balancer_from_subnets(
-        load_balancer_name: name,
-        subnets: delete_ids,
-      )
-    end
     unless to_create.empty?
       create_ids = subnet_ids_from_names(to_create)
       elb.attach_load_balancer_to_subnets(
         load_balancer_name: name,
         subnets: create_ids,
+      )
+    end
+    unless to_delete.empty?
+      delete_ids = subnet_ids_from_names(to_delete)
+      elb.detach_load_balancer_from_subnets(
+        load_balancer_name: name,
+        subnets: delete_ids,
       )
     end
   end
