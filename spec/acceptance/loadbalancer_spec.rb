@@ -2,13 +2,37 @@ require 'spec_helper_acceptance'
 require 'securerandom'
 
 describe "elb_loadbalancer" do
-
   before(:all) do
     @default_region = 'sa-east-1'
     @default_availability_zone = "#{@default_region}a"
     @aws = AwsHelper.new(@default_region)
     @instance_template = 'instance.pp.tmpl'
     @lb_template = 'loadbalancer.pp.tmpl'
+
+    @instance_config = {
+      :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
+      :instance_type => 't1.micro',
+      :region => @default_region,
+      :image_id => 'ami-67a60d7a',
+      :ensure => 'present',
+      :tags => {
+        :department => 'engineering',
+        :project    => 'cloud',
+        :created_by => 'aws-acceptance'
+      },
+      :device_name => '/dev/sda1',
+      :volume_size => 8,
+    }
+
+    PuppetManifest.new(@instance_template, @instance_config).apply
+    instances = @aws.get_instances(@instance_config[:name])
+    expect(instances.count).to eq(1)
+    @instance = instances[0]
+  end
+
+  after(:all) do
+    new_instance_config = @instance_config.update({:ensure => 'absent'})
+    PuppetManifest.new(@instance_template, new_instance_config).apply
   end
 
   def get_loadbalancer(name)
@@ -17,29 +41,8 @@ describe "elb_loadbalancer" do
     loadbalancers.first
   end
 
-  describe 'should create a new load balancer' do
-
+  describe 'creating a load balancer - single AZ' do
     before(:all) do
-      @instance_config = {
-        :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
-        :instance_type => 't1.micro',
-        :region => @default_region,
-        :image_id => 'ami-67a60d7a',
-        :ensure => 'present',
-        :tags => {
-          :department => 'engineering',
-          :project    => 'cloud',
-          :created_by => 'aws-acceptance'
-        },
-        :device_name => '/dev/sda1',
-        :volume_size => 8,
-      }
-
-      PuppetManifest.new(@instance_template, @instance_config).apply
-      instances = @aws.get_instances(@instance_config[:name])
-      expect(instances.count).to eq(1)
-      @instance = instances.first
-
       @lb_config = {
           :name => "#{PuppetManifest.env_dns_id}#{SecureRandom.uuid}".gsub('-', '')[0...31], # loadbalancer has name length limit
           :region => @default_region,
@@ -60,16 +63,22 @@ describe "elb_loadbalancer" do
               :created_by => 'aws-acceptance'
           }
       }
-      PuppetManifest.new(@lb_template, @lb_config).apply
+      @result = PuppetManifest.new(@lb_template, @lb_config).apply
       @loadbalancer = get_loadbalancer(@lb_config[:name])
     end
 
     after(:all) do
-      new_instance_config = @instance_config.update({:ensure => 'absent'})
-      PuppetManifest.new(@instance_template, new_instance_config).apply
-
       new_lb_config = @lb_config.update({:ensure => 'absent'})
       PuppetManifest.new(@lb_template, new_lb_config).apply
+    end
+
+    it 'should run successfully first time with changes' do
+      expect(@result.exit_code).to eq(2)
+    end
+
+    it 'should run idempotently' do
+      result = PuppetManifest.new(@lb_template, @lb_config).apply
+      expect(result.exit_code).to eq(0)
     end
 
     it "with the specified name" do
@@ -80,13 +89,6 @@ describe "elb_loadbalancer" do
       expect(@loadbalancer.availability_zones).to eq(@lb_config[:availability_zones])
     end
 
-    it "not part of a VPC (EC2-Classic accounts only)" do
-      unless @aws.vpc_only?
-        expect(@loadbalancer.vpc_id).to be_nil
-        expect(@loadbalancer.subnets).to be_empty
-      end
-    end
-
     it "with the default scheme" do
       expect(@loadbalancer.scheme).to eq('internet-facing')
     end
@@ -95,33 +97,23 @@ describe "elb_loadbalancer" do
       expect(@loadbalancer.instances.count).to eq(1)
     end
 
-    it "with no associated security groups (EC2-Classic accounts only)" do
-      expect(@loadbalancer.security_groups).to be_empty unless @aws.vpc_only?
-    end
+    context "on EC2-Classic accounts" do
+      it "not part of a VPC" do
+        skip "not running on EC2-Classic" if @aws.vpc_only?
+        expect(@loadbalancer.vpc_id).to be_nil
+        expect(@loadbalancer.subnets).to be_empty
+      end
 
+      it "with no associated security groups" do
+        skip "not running on EC2-Classic" if @aws.vpc_only?
+        expect(@loadbalancer.security_groups).to be_empty
+      end
+    end
   end
 
-  describe 'create a load balancer' do
-
+  describe 'creating a load balancer - multiple AZ' do
     context 'with a manifest' do
       before(:all) do
-        @instance_config = {
-          :name => "#{PuppetManifest.env_id}-#{SecureRandom.uuid}",
-          :instance_type => 't1.micro',
-          :region => @default_region,
-          :image_id => 'ami-67a60d7a',
-          :ensure => 'present',
-          :tags => {
-            :department => 'engineering',
-            :project    => 'cloud',
-            :created_by => 'aws-acceptance'
-          },
-          :device_name => '/dev/sda1',
-          :volume_size => 8,
-        }
-
-        PuppetManifest.new(@instance_template, @instance_config).apply
-
         @lb_config = {
           :name                 => "#{PuppetManifest.env_dns_id}#{SecureRandom.uuid}".gsub('-', '')[0...31],
           :ensure               => 'present',
@@ -148,6 +140,11 @@ describe "elb_loadbalancer" do
         @result = PuppetManifest.new(@lb_template, @lb_config).apply
       end
 
+      after(:all) do
+        new_lb_config = @lb_config.update({:ensure => 'absent'})
+        PuppetManifest.new(@lb_template, new_lb_config).apply
+      end
+
       it 'should run successfully first time with changes' do
         expect(@result.exit_code).to eq(2)
       end
@@ -158,7 +155,6 @@ describe "elb_loadbalancer" do
       end
 
       context 'using puppet resource to describe' do
-
         before(:all) do
           @result = TestExecutor.puppet_resource('elb_loadbalancer', {:name => @lb_config[:name]}, '--modulepath ../')
         end
@@ -195,28 +191,7 @@ describe "elb_loadbalancer" do
             expect(@result.stdout).to match(regex)
           end
         end
-
-      end
-
-      context 'destroy the load balancer' do
-        before(:all) do
-          ENV['AWS_REGION'] = @default_region
-        end
-
-        after(:all) do
-          # destroy the EC2 instance
-          @instance_config[:ensure] = 'absent'
-          PuppetManifest.new(@instance_template, @instance_config).apply
-        end
-
-        it 'with puppet resource' do
-          ENV['AWS_REGION'] = @default_region
-          TestExecutor.puppet_resource('elb_loadbalancer', {:name => @lb_config[:name], :ensure => 'absent', :region => @default_region}, '--modulepath ../')
-          expect{ get_loadbalancer(@lb_config[:name]) }.to raise_error Aws::ElasticLoadBalancing::Errors::LoadBalancerNotFound
-        end
-
       end
     end
-
   end
 end

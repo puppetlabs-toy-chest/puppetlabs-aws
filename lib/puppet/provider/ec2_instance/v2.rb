@@ -140,8 +140,11 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       end
     end
 
-    # handle ambiguous name collisions by selecting first matching subnet / vpc
-    subnet = subnets.first
+    # Handle ambiguous name collisions by selecting first matching subnet / vpc.
+    # This needs to be a stable sort to be idempotent and it needs to prefer the "a"
+    # availability_zone as others might be less feature complete. Users always
+    # have the option of overriding the subnet if that choice is not proper.
+    subnet = subnets.sort { |a,b| [ a.availability_zone, a.subnet_id ] <=> [ b.availability_zone, b.subnet_id ] }.first
     if subnets.length > 1
       subnet_map = subnets.map { |s| "#{s.subnet_id} (vpc: #{s.vpc_id})" }.join(', ')
       Puppet.warning "Ambiguous subnet name '#{subnet_name}' resolves to subnets #{subnet_map} - using #{subnet.subnet_id}"
@@ -331,4 +334,3 @@ Found #{matching_groups.length}:
     @property_hash[:ensure] = :absent
   end
 end
-

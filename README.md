@@ -473,14 +473,13 @@ The Amazon Resource Name for the associated IAM profile.
 *Optional* The tags for the load balancer. This parameter is set at creation only; it is not affected by updates. Accepts a 'key => value' hash of tags.
 
 #####`subnets`
-*Optional* The subnet in which the load balancer should be launched. This parameter is set at creation only; it is not affected by updates. Accepts an array of subnet names, i.e., the Name tags on the subnets.
-
+*Optional* The subnet in which the load balancer should be launched. Accepts an array of subnet names, i.e., the Name tags on the subnets. You can only set one of `availability_zones` or `subnets`.
 
 #####`security_groups`
 *Optional* The security groups to associate with the load balancer (VPC only). Accepts an array of security group names, i.e., the Name tag on the security groups.
 
 #####`availability_zones`
-*Optional* The availability zones in which to launch the load balancer. This parameter is set at creation only; it is not affected by updates. Accepts an array on availability zone codes. For valid availability zone codes, see [AWS Regions and Availability Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html).
+*Optional* The availability zones in which to launch the load balancer. This parameter is set at creation only; it is not affected by updates. Accepts an array on availability zone codes. For valid availability zone codes, see [AWS Regions and Availability Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html). You can only set one of `availability_zones` or `subnets`.
 
 #####`instances`
 *Optional* The instances to associate with the load balancer. Accepts an array of names, i.e., the Name tag on the instances.

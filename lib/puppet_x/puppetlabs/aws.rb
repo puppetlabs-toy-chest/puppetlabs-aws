@@ -240,74 +240,61 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def self.vpc_name_from_id(region, vpc_id)
-        ec2 = ec2_client(region)
-        @vpcs ||= Hash.new do |h, key|
-          h[key] = if key
-            response = ec2.describe_vpcs(vpc_ids: [key])
-            if response.data.vpcs.first.to_hash.keys.include?(:group_name)
-              response.data.vpcs.first.group_name
-            elsif response.data.vpcs.first.to_hash.keys.include?(:tags)
-              name_from_tag(response.data.vpcs.first)
-            end
-          else
-            nil
+        @vpcs ||= name_cache_hash do |ec2, key|
+          response = ec2.describe_vpcs(vpc_ids: [key])
+          if response.data.vpcs.first.to_hash.keys.include?(:group_name)
+            response.data.vpcs.first.group_name
+          elsif response.data.vpcs.first.to_hash.keys.include?(:tags)
+            name_from_tag(response.data.vpcs.first)
           end
         end
-        @vpcs[vpc_id]
+        @vpcs[[region, vpc_id]]
       end
 
       def self.security_group_name_from_id(region, group_id)
-        ec2 = ec2_client(region)
-        @groups ||= Hash.new do |h, key|
-          h[key] = if key
-            response = ec2.describe_security_groups(group_ids: [key])
-            response.data.security_groups.first.group_name
-          else
-            nil
-          end
+        @groups ||= name_cache_hash do |ec2, key|
+          response = ec2.describe_security_groups(group_ids: [key])
+          response.data.security_groups.first.group_name
         end
-        @groups[group_id]
+        @groups[[region, group_id]]
       end
 
       def self.customer_gateway_name_from_id(region, gateway_id)
-        ec2 = ec2_client(region)
-        @customer_gateways ||= Hash.new do |h, key|
-          h[key] = if key
-            response = ec2.describe_customer_gateways(customer_gateway_ids: [key])
-            name_from_tag(response.data.customer_gateways.first)
-          else
-            nil
-          end
+        @customer_gateways ||= name_cache_hash do |ec2, key|
+          response = ec2.describe_customer_gateways(customer_gateway_ids: [key])
+          name_from_tag(response.data.customer_gateways.first)
         end
-        @customer_gateways[gateway_id]
+
+        @customer_gateways[[region, gateway_id]]
       end
 
       def self.vpn_gateway_name_from_id(region, gateway_id)
-        ec2 = ec2_client(region)
-        @vpn_gateways ||= Hash.new do |h, key|
-          h[key] = if key
-            response = ec2.describe_vpn_gateways(vpn_gateway_ids: [key])
-            name_from_tag(response.data.vpn_gateways.first)
-          else
-            nil
-          end
+        @vpn_gateways ||= name_cache_hash do |ec2, key|
+          response = ec2.describe_vpn_gateways(vpn_gateway_ids: [key])
+          name_from_tag(response.data.vpn_gateways.first)
         end
-        @vpn_gateways[gateway_id]
+        @vpn_gateways[[region, gateway_id]]
       end
 
       def self.options_name_from_id(region, options_id)
-        ec2 = ec2_client(region)
-        @dhcp_options ||= Hash.new do |h, key|
+        @dhcp_options ||= name_cache_hash do |ec2, key|
+          response = ec2.describe_dhcp_options(dhcp_options_ids: [key])
+          name_from_tag(response.dhcp_options.first)
+        end
+
+        @dhcp_options[[region, options_id]]
+      end
+
+      def self.name_cache_hash(&block)
+        Hash.new do |h, rk|
+          region, key = rk
           h[key] = unless key.nil? || key.empty?
-            response = ec2.describe_dhcp_options(dhcp_options_ids: [key])
-            name_from_tag(response.dhcp_options.first)
+            block.call(ec2_client(region), key)
           else
             nil
           end
         end
-        @dhcp_options[options_id]
       end
-
 
       def queue_url_from_name (queue_name )
         sqs = sqs_client(target_region)

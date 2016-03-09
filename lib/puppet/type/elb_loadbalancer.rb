@@ -33,7 +33,7 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     end
     validate do |value|
       value = [value] unless value.is_a?(Array)
-      fail "you must provide a set if listeners for the load balancer" if value.empty?
+      fail "you must provide a set of listeners for the load balancer" if value.empty?
       value.each do |listener|
         ['protocol', 'load_balancer_port', 'instance_protocol', 'instance_port'].each do |key|
           fail "listeners must include #{key}" unless listener.keys.include?(key)
@@ -47,7 +47,6 @@ Puppet::Type.newtype(:elb_loadbalancer) do
   end
 
   newproperty(:subnets, :array_matching => :all) do
-    defaultto []
     desc 'The region in which to launch the load balancer.'
     validate do |value|
       fail 'subnets should be a String' unless value.is_a?(String)
@@ -69,7 +68,6 @@ Puppet::Type.newtype(:elb_loadbalancer) do
 
   newproperty(:availability_zones, :array_matching => :all) do
     desc 'The availability zones in which to launch the load balancer.'
-    defaultto []
     def insync?(is)
       is.to_set == should.to_set
     end
@@ -95,8 +93,8 @@ Puppet::Type.newtype(:elb_loadbalancer) do
   end
 
   validate do
-    subnets = self[:subnets]
-    zones = self[:availability_zones]
+    subnets = self[:subnets] || []
+    zones = self[:availability_zones] || []
     fail "You can specify either subnets or availability_zones for the ELB #{self[:name]}" if !zones.empty? && !subnets.empty?
   end
 

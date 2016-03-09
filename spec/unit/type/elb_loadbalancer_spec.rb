@@ -104,14 +104,14 @@ describe type_class do
     }])).to be true
   end
 
-  it 'should default subnets to a blank array' do
+  it 'should not have a default for subnets' do
     elb = type_class.new({:name => 'sample'})
-    expect(elb[:subnets]).to eq([])
+    expect(elb[:subnets]).to eq(nil)
   end
 
-  it 'should default availability zones to a blank array' do
+  it 'should not have a default for availability zones' do
     elb = type_class.new({:name => 'sample'})
-    expect(elb[:availability_zones]).to eq([])
+    expect(elb[:availability_zones]).to eq(nil)
   end
 
   it 'should default scheme to public' do
