@@ -1,3 +1,23 @@
+## Supported Version 1.4.0
+
+This release includes:
+- The set of instances that are associated with an ELB can now be modified.
+- Added 'ssl_certificate_id' property to elb_loadbalancer.
+- Added support for Debian 8.
+
+As well as following fixes and improvements:
+- Fixed issues related to the region property being displayed/returned incorrectly.
+- Fixed parsing of puppetlabs_aws_configuration.ini
+- Documentation improvements.
+- Multiple test improvements.
+- Rubocop updates.
+- Fixed issue with elb_loadbalancer availability_zones synchronisation detection.
+- Use the VPC's default subnet when none is specified on the ec2_instance.
+- Enable puppet resource command usage across regions for ec2_vpc (and maybe others).
+- Allow replacing the subnets of a elb_loadbalancer completely.
+- Allow the use of elb_loadbalancer without availability zones, or using the default subnets (for each availability zone).
+- Make default subnet choice idempotent for the ec2_instance resource.
+
 ## 2015-12-09 - Supported Version 1.3.0
 
 This release includes:
