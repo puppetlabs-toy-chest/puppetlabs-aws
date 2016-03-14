@@ -114,7 +114,7 @@ setting for all traffic like so:
 export PUPPET_AWS_PROXY=http://localhost:8888
 ~~~
 
-#### Using a configuration file
+#### Configuring the aws module using an ini file
 
 The AWS region and HTTP proxy can be provided in a file called 
 `puppetlabs_aws_configuration.ini` in the Puppet confdir 
