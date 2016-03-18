@@ -15,7 +15,7 @@ gem 'retries'
 
 group :test do
   gem 'rake'
-  gem 'puppet', *location_for(ENV['PUPPET_LOCATION'] || '~> 3.7.0')
+  gem 'puppet', *location_for(ENV['PUPPET_LOCATION'] || ENV['PUPPET_GEM_VERSION'])
   gem 'puppetlabs_spec_helper'
   gem 'webmock'
   gem 'vcr'
