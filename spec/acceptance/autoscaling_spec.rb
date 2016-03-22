@@ -66,6 +66,11 @@ describe "ec2_autoscalinggroup" do
         :asg_setting          => "#{name}-asg",
         :evaluation_periods   => 2,
         :alarm_actions        => "#{name}-policy",
+        :tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        },
       }
       r = PuppetManifest.new(@asg_template, @asg_config).apply
       expect(r.stderr).not_to match(/error/i)
@@ -127,6 +132,7 @@ describe "ec2_autoscalinggroup" do
           expect(@group.max_size).to eq(@asg_config[:max_size])
           expect(@group.launch_configuration_name).to eq(@asg_config[:lc_setting])
           expect(@group.availability_zones).to eq(['sa-east-1a', 'sa-east-1b'])
+          expect(@group.tags).to eq(@asg_config[:tags])
         end
 
       end

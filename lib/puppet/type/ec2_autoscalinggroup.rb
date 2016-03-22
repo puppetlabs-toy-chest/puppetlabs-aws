@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:ec2_autoscalinggroup) do
   @doc = 'Type representing an EC2 auto scaling group.'
 
@@ -73,6 +75,10 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     def insync?(is)
       is.to_set == should.to_set
     end
+  end
+
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
+    desc 'The tags for the instance.'
   end
 
   autorequire(:ec2_launchconfiguration) do
