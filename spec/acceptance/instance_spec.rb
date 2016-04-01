@@ -33,6 +33,7 @@ describe "ec2_instance" do
           :project    => 'cloud',
           :created_by => 'aws-acceptance'
         },
+        :tenancy => 'dedicated',
         :device_name => '/dev/sda1',
         :volume_size => 8,
         :optional => {:user_data => user_data}
@@ -137,6 +138,7 @@ describe "ec2_instance" do
           :project    => 'cloud',
           :created_by => 'aws-acceptance'
         },
+        :tenancy => 'dedicated',
         :device_name => '/dev/sda1',
         :volume_size => 8,
       }

@@ -13,6 +13,7 @@ describe provider_class do
       name: 'web-15',
       image_id: 'ami-67a60d7a',
       instance_type: 't1.micro',
+      tenancy: 'dedicated',
       availability_zone: 'sa-east-1a',
       region: 'sa-east-1',
       security_groups: ['web-sg'],
