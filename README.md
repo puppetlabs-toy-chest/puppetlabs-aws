@@ -472,8 +472,8 @@ The AWS generated interfaces hash for the instance.  Read-only.
 ##### `ingress`
 *Optional* Rules for ingress traffic. Accepts an array.
 
-##### `id`
-*Read-only* Unique string enumerated from existing resources uniquely identifying the security group.
+##### `egress`
+*Optional* Rules for egress traffic. Accepts an array. If no egress rules are specified, the security group will default to ALL outbound traffic allowed.
 
 ##### `tags`
 *Optional* The tags for the security group. Accepts a 'key => value' hash of tags.

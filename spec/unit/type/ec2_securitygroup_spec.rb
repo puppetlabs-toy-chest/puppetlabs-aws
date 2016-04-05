@@ -16,6 +16,7 @@ describe type_class do
       :description,
       :region,
       :ingress,
+      :egress,
       :tags,
       :id,
     ]
@@ -58,6 +59,10 @@ describe type_class do
 
   it "should require ingress to be a hash" do
     expect(type_class).to require_hash_for('ingress')
+  end
+
+  it "should require egress to be a hash" do
+    expect(type_class).to require_hash_for('egress')
   end
 
    it "should require tags to be a hash" do
