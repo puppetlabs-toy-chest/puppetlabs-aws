@@ -43,7 +43,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     end
   end
 
-  def self.prepare_ingress_rule_for_puppet(region, rule, groups, group = nil, cidr = nil)
+  def self.prepare_rule_for_puppet(region, rule, groups, group = nil, cidr = nil)
     config = {
       'protocol' => rule.ip_protocol,
       'from_port' => rule.from_port.to_i,
@@ -60,17 +60,22 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     config
   end
 
-  def self.format_ingress_rules(region, group, groups)
+  def self.format_rules(region, direction, group, groups)
     rules = []
-    group[:ip_permissions].each do |rule|
+    if direction == :ingress
+      group_rules = group[:ip_permissions]
+    elsif direction == :egress
+      group_rules = group[:ip_permissions_egress]
+    end
+    group_rules.each do |rule|
       addition = []
       rule.user_id_group_pairs.each do |security_group|
-        addition << prepare_ingress_rule_for_puppet(region, rule, groups, security_group)
+        addition << prepare_rule_for_puppet(region, rule, groups, security_group)
       end
       rule.ip_ranges.each do |cidr|
-        addition << prepare_ingress_rule_for_puppet(region, rule, groups, nil, cidr)
+        addition << prepare_rule_for_puppet(region, rule, groups, nil, cidr)
       end
-      addition << prepare_ingress_rule_for_puppet(region, rule, groups) if addition.empty?
+      addition << prepare_rule_for_puppet(region, rule, groups) if addition.empty?
       rules << addition
     end
     rules.flatten.uniq.compact
@@ -82,7 +87,8 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
       name: group.group_name,
       description: group.description,
       ensure: :present,
-      ingress: format_ingress_rules(region, group, groups),
+      ingress: format_rules(region, :ingress, group, groups),
+      egress: format_rules(region, :egress, group, groups),
       vpc: vpcs[group.vpc_id],
       vpc_id: group.vpc_id,
       region: region,
@@ -127,12 +133,14 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     ) if resource[:tags]
 
     @property_hash[:id] = response.group_id
-    rules = resource[:ingress]
-    authorize_ingress(rules)
+    ingress_rules = resource[:ingress]
+    egress_rules = resource[:egress]
+    authorize_rules(ingress_rules, :ingress)
+    authorize_rules(egress_rules, :egress)
     @property_hash[:ensure] = :present
   end
 
-  def prepare_ingress_for_api(rule)
+  def prepare_rule_for_api(rule)
     ec2 = ec2_client(resource[:region])
     from_port ||= rule['from_port'] || rule['port'] || 1
     to_port ||= rule['to_port'] || rule['port'] || 65535
@@ -185,7 +193,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     rule_hash[:ip_permissions].any? ? rule_hash : nil
   end
 
-  def authorize_ingress(new_rules, existing_rules=[])
+  def authorize_rules(new_rules, direction, existing_rules=[])
     ec2 = ec2_client(resource[:region])
     new_rules = [new_rules] unless new_rules.is_a?(Array)
 
@@ -193,19 +201,29 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     to_create = parser.rules_to_create(existing_rules)
     to_delete = parser.rules_to_delete(existing_rules)
 
-    to_delete.compact.each do |rule|
-      prepared_rule = prepare_ingress_for_api(rule) and
-        ec2.revoke_security_group_ingress(prepared_rule)
+    to_delete.reject(&:nil?).each do |rule|
+      if direction == :ingress
+        ec2.revoke_security_group_ingress(prepare_rule_for_api(rule))
+      elsif direction == :egress
+        ec2.revoke_security_group_egress(prepare_rule_for_api(rule))
+      end
     end
 
-    to_create.compact.each do |rule|
-      prepared_rule = prepare_ingress_for_api(rule) and
-        ec2.authorize_security_group_ingress(prepared_rule)
+    to_create.each do |rule|
+      if direction == :ingress
+        ec2.authorize_security_group_ingress(prepare_rule_for_api(rule))
+      elsif direction == :egress
+        ec2.authorize_security_group_egress(prepare_rule_for_api(rule))
+      end
     end
   end
 
   def ingress=(value)
-    authorize_ingress(value, @property_hash[:ingress])
+    authorize_rules(value, :ingress, @property_hash[:ingress])
+  end
+
+  def egress=(value)
+    authorize_rules(value, :egress, @property_hash[:egress])
   end
 
   def destroy
