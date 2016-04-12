@@ -66,6 +66,9 @@ describe "ec2_autoscalinggroup" do
         :asg_setting          => "#{name}-asg",
         :evaluation_periods   => 2,
         :alarm_actions        => "#{name}-policy",
+        :tags                 => {
+          custom_name: "#{name}-asg",
+        },
       }
       r = PuppetManifest.new(@asg_template, @asg_config).apply
       expect(r.stderr).not_to match(/error/i)
@@ -127,6 +130,10 @@ describe "ec2_autoscalinggroup" do
           expect(@group.max_size).to eq(@asg_config[:max_size])
           expect(@group.launch_configuration_name).to eq(@asg_config[:lc_setting])
           expect(@group.availability_zones).to eq(['sa-east-1a', 'sa-east-1b'])
+          expect(@group.tags).to have_attributes(size: 1)
+          expect(@group.tags.first).to have_attributes(
+            key: 'custom_name',
+            value: @asg_config[:asg_setting],)
         end
 
       end
@@ -450,6 +457,17 @@ describe "ec2_autoscalinggroup" do
         expect(r.stderr).not_to match(/error/i)
         group = find_autoscaling_group(@asg_config[:asg_name])
         expect(group.min_size).to eq(3)
+      end
+
+      it 'tags' do
+        config = @asg_config.clone
+        config[:tags][:other_tag] = 'tagvalue'
+        r = PuppetManifest.new(@asg_template, config).apply
+        expect(r.stderr).not_to match(/error/i)
+        group = find_autoscaling_group(@asg_config[:asg_name])
+        expect(group.tags).to have_attributes(size: 2)
+        expect(group.tags.map(&:key)).to contain_exactly('custom_name', 'other_tag')
+        expect(group.tags.map(&:value)).to contain_exactly(@asg_config[:asg_setting], 'tagvalue')
       end
 
       it 'max_size' do
