@@ -2,8 +2,10 @@ require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
 Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
+  confine feature: :retries
 
   mk_resource_methods
+  remove_method :tags=
 
   def self.instances
     regions.collect do |region|
@@ -41,6 +43,10 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
         subnet_name_tag ? subnet_name_tag.value : nil
       end.reject(&:nil?)
     end
+    tags = {}
+    group.tags.each do |tag|
+      tags[tag.key] = tag.value
+    end
     {
       name: group.auto_scaling_group_name,
       launch_configuration: group.launch_configuration_name,
@@ -50,7 +56,8 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       instance_count: group.instances.count,
       ensure: :present,
       subnets: subnet_names,
-      region: region
+      region: region,
+      tags: tags,
     }
   end
 
@@ -82,7 +89,12 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       config['vpc_zone_identifier'] = subnet_ids.join(',')
     end
 
-    autoscaling_client(target_region).create_auto_scaling_group(config)
+    client = autoscaling_client(target_region)
+
+    client.create_auto_scaling_group(config)
+
+    set_tags(client, resource[:tags])
+
     @property_hash[:ensure] = :present
   end
 
@@ -127,6 +139,24 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     )
   end
 
+  def tags=(value)
+    set_tags(autoscaling_client(target_region), value)
+  end
+
+  def set_tags(client, tags)
+    with_retries(:max_tries => 5) do
+      client.create_or_update_tags(
+        tags: tags ? tags.map { |k,v| {
+          key: k,
+          value: v,
+          resource_id: name,
+          resource_type: 'auto-scaling-group',
+          propagate_at_launch: false,
+        } } : []
+      )
+    end
+  end
+
   def destroy
     Puppet.info("Deleting auto scaling group #{name} in region #{target_region}")
     autoscaling_client(target_region).delete_auto_scaling_group(
@@ -136,4 +166,3 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     @property_hash[:ensure] = :absent
   end
 end
-

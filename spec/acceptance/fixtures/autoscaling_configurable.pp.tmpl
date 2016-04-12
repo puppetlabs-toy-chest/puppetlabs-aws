@@ -18,7 +18,14 @@ ec2_autoscalinggroup { '{{asg_name}}':
   max_size             => {{max_size}},
   region               => '{{region}}',
   launch_configuration => '{{lc_setting}}',
-  availability_zones => [{{#availability_zones}}'{{.}}',{{/availability_zones}}],
+  availability_zones   => [{{#availability_zones}}'{{.}}',{{/availability_zones}}],
+  {{#optional_tags}}
+  tags                 => {
+  {{#tags}}
+    {{k}} => '{{v}}',
+  {{/tags}}
+  },
+  {{/optional_tags}}
 }
 
 ec2_scalingpolicy { '{{policy_name}}':

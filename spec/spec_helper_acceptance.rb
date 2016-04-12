@@ -26,8 +26,11 @@ end
 
 class PuppetManifest < Mustache
 
+  attr_accessor :optional_tags
+
   def initialize(file, config)
     @template_file = File.join(Dir.getwd, 'spec', 'acceptance', 'fixtures', file)
+    @optional_tags = config[:tags].is_a?(Hash) and !config[:tags].empty?
     config.each do |key, value|
       config_value = self.class.to_generalized_data(value)
       instance_variable_set("@#{key}".to_sym, config_value)
