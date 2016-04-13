@@ -97,6 +97,10 @@ describe "ec2_instance" do
       expect(@instance.ebs_optimized).to eq(false)
     end
 
+    it "and return whether we have source dest checking enabled" do
+      expect(@instance.source_dest_check).to eq(true)
+    end
+
     it "with the specified block device mapping" do
       @aws.ec2_client.wait_until(:instance_running, instance_ids: [@instance.instance_id])
       instance = get_instance(@config[:name])
@@ -357,6 +361,11 @@ describe "ec2_instance" do
 
     it 'ebs_obtimized is correct' do
       regex = /(ebs_optimized)(\s*)(=>)(\s*)('false')/
+      expect(@result.stdout).to match(regex)
+    end
+
+    it 'source_dest_check is correct' do
+      regex = /(source_dest_check)(\s*)(=>)(\s*)('true')/
       expect(@result.stdout).to match(regex)
     end
 

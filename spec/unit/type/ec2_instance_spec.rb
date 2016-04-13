@@ -25,6 +25,7 @@ describe type_class do
       :key_name,
       :subnet,
       :ebs_optimized,
+      :source_dest_check,
       :iam_instance_profile_arn,
     ]
   end
@@ -93,6 +94,11 @@ describe type_class do
   it 'should default ebs obtimized to false' do
     srv = type_class.new(:name => 'sample')
     expect(srv[:monitoring]).to eq(:false)
+  end
+
+  it 'should default source dest check to true' do
+    srv = type_class.new(:name => 'sample')
+    expect(srv[:source_dest_check]).to eq(:true)
   end
 
   it 'should default instance_initiated_shutdown_behavior to stop' do

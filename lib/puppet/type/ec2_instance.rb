@@ -193,6 +193,15 @@ Puppet::Type.newtype(:ec2_instance) do
     end
   end
 
+  newproperty(:source_dest_check) do
+    desc 'Enable or Disable source_dest checking for this instance.'
+    defaultto :true
+    newvalues(:true, :'false')
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
   newparam(:instance_initiated_shutdown_behavior) do
     desc 'Whether the instance stops or terminates when you initiate shutdown from the instance.'
     defaultto :stop

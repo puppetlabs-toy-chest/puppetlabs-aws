@@ -88,6 +88,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       security_groups: instance.security_groups.collect(&:group_name),
       subnet: subnet_name,
       ebs_optimized: instance.ebs_optimized,
+      source_dest_check: instance.source_dest_check,
       kernel_id: instance.kernel_id,
     }
     if instance.state.name == 'running'
@@ -302,9 +303,26 @@ Found #{matching_groups.length}:
         )
       end
 
+      ec2.wait_until(:instance_running, instance_ids: instance_ids)
+
+      ec2.modify_instance_attribute(
+        instance_id: instance_ids[0], 
+        attribute: "sourceDestCheck",
+        value: resource[:source_dest_check] 
+      )
+
       @property_hash[:instance_id] = instance_ids.first
       @property_hash[:ensure] = :present
+
     end
+  end
+
+  def source_dest_check=(value)
+    ec2_client(region).modify_instance_attribute(
+      instance_id: instance_id,
+      attribute: "sourceDestCheck",
+      value: value
+    )
   end
 
   def restart

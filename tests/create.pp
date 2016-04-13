@@ -61,11 +61,12 @@ ec2_instance { ['web-1', 'web-2']:
 }
 
 ec2_instance { 'db-1':
-  ensure          => present,
-  image_id        => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
-  security_groups => ['db-sg'],
-  instance_type   => 't1.micro',
-  monitoring      => true,
+  ensure            => present,
+  image_id          => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
+  security_groups   => ['db-sg'],
+  instance_type     => 't1.micro',
+  monitoring        => true,
+  source_dest_check => false,
   tags            => {
     department => 'engineering',
     project    => 'cloud',

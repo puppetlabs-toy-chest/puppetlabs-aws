@@ -209,6 +209,7 @@
                         <hypervisor>xen</hypervisor>
                         <networkInterfaceSet/>
                         <ebsOptimized>false</ebsOptimized>
+                        <sourceDestCheck>true</sourceDestCheck>
                     </item>
                 </instancesSet>
             </RunInstancesResponse>
