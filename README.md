@@ -447,6 +447,9 @@ The Amazon Resource Name for the associated IAM profile.
 ##### `ingress`
 *Optional* Rules for ingress traffic. Accepts an array.
 
+##### `egress`
+*Optional* Rules for egress traffic. Accepts an array. If no egress rules are specified, the security group will default to ALL outbound traffic allowed.
+
 ##### `tags`
 *Optional* The tags for the security group. Accepts a 'key => value' hash of tags.
 
