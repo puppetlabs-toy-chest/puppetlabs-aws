@@ -320,6 +320,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `ec2_vpc_subnet`: Sets up a VPC subnet.
 * `ec2_vpc_vpn`: Sets up an AWS Virtual Private Network.
 * `ec2_vpc_vpn_gateway`: Sets up a VPN gateway.
+* `ec2_volume`: Sets up an EC2 Block Device.
 * `rds_db_parameter_group`: Allows read access to DB Parameter Groups.
 * `rds_db_securitygroup`: Sets up an RDS DB Security Group.
 * `rds_instance`: Sets up an RDS Database instance.
@@ -816,6 +817,42 @@ routes => [
 
 #####`type`
 *Optional* The type of VPN gateway. This parameter is set at creation only; it is not affected by updates. The only currently supported value --- and the default --- is 'ipsec.1'.
+
+#### Type: ec2_volume
+
+#####`name`
+The name of the volume.
+
+#####`region`
+The region in the parameter group is present. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
+
+#####`tags`
+*Optional* The tags to assign to the volume. Accepts a 'key => value' hash of tags.
+
+#####`snapshot_id`
+Create the volume from a snapshot.
+
+#####`size`
+The size of the volume in gigabytes. Only required if not creating from snapshot.
+
+#####`availability_zone`
+*Required* The availability zone in which to create the volume. This parameter is set at creation only; it is not affected by updates.
+
+#####`volume_type`
+The underlying storage type. Valid values are 'gp2' for general purpose SSD, 'io1' for provisioned iops. and 'standard' for legacy magnetic storage.
+
+#####`iops`
+The amount of provisioned iops for the storage. *Note* that the iops parameter is only valid for use with the 'io1' volume type.
+
+#####`attach`
+Which EC2 instance should this volume be attached to. 
+
+~~~
+attach => {
+    instance_id  => 'i-abcd1234',
+    device  => 'xvdg',
+  }
+~~~
 
 #### Type: rds_db_parameter_group
 
