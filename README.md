@@ -537,6 +537,9 @@ The Amazon Resource Name for the associated IAM profile.
 ##### `max_size`
 *Required* The maximum number of instances in the group.
 
+##### `desired_capacity`
+*Optional* The number of EC2 instances that should be running in the group. This number must be greater than or equal to the minimum size of the group and less than or equal to the maximum size of the group. Defaults to `min_size`.
+
 ##### `region`
 *Required* The region in which to launch the instances. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 

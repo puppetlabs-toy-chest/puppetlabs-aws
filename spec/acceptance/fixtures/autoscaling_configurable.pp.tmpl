@@ -16,6 +16,7 @@ ec2_autoscalinggroup { '{{asg_name}}':
   ensure               => {{ensure}},
   min_size             => {{min_size}},
   max_size             => {{max_size}},
+  desired_capacity     => {{desired_capacity}},
   region               => '{{region}}',
   launch_configuration => '{{lc_setting}}',
   availability_zones   => [{{#availability_zones}}'{{.}}',{{/availability_zones}}],

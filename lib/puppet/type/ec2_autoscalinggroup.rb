@@ -5,6 +5,10 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
 
   ensurable
 
+  validate do
+    fail "desired_capacity must be greater than or equal to min_size and less than or equal to max_size" unless self[:desired_capacity].nil? || self[:min_size] <= self[:desired_capacity] || self[:desired_capacity] <= self[:max_size]
+  end
+
   newparam(:name, namevar: true) do
     desc 'The name of the auto scaling group.'
     validate do |value|
@@ -27,6 +31,16 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     desc 'The maximum number of instances in the group.'
     validate do |value|
       fail 'min_size cannot be blank' if value == ''
+    end
+    munge do |value|
+      value.to_i
+    end
+  end
+
+  newproperty(:desired_capacity) do
+    desc 'The number of EC2 instances that should be running in the group. This number must be greater than or equal to the minimum size of the group (min_size) and less than or equal to the maximum size of the group (max_size).'
+    validate do |value|
+      fail 'desired_capacity cannot be blank' if value == ''
     end
     munge do |value|
       value.to_i

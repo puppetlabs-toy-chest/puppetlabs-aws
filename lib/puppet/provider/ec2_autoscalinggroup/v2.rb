@@ -53,6 +53,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       availability_zones: group.availability_zones,
       min_size: group.min_size,
       max_size: group.max_size,
+      desired_capacity: group.desired_capacity,
       instance_count: group.instances.count,
       ensure: :present,
       subnets: subnet_names,
@@ -75,6 +76,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       auto_scaling_group_name: name,
       min_size: resource[:min_size],
       max_size: resource[:max_size],
+      desired_capacity: resource[:desired_capacity] || resource[:min_size],
       availability_zones: zones,
       launch_configuration_name: resource[:launch_configuration],
     }
@@ -109,6 +111,13 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     autoscaling_client(target_region).update_auto_scaling_group(
       auto_scaling_group_name: name,
       max_size: value,
+    )
+  end
+
+  def desired_capacity=(value)
+    autoscaling_client(target_region).update_auto_scaling_group(
+      auto_scaling_group_name: name,
+      desired_capacity: value,
     )
   end
 

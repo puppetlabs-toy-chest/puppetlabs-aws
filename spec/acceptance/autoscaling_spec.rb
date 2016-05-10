@@ -50,6 +50,7 @@ describe "ec2_autoscalinggroup" do
         :asg_name             => "#{name}-asg",
         :min_size             => 2,
         :max_size             => 6,
+        :desired_capacity     => 3,
         :lc_setting           => "#{name}-lc",
         :availability_zones   => ["#{@default_region}a", "#{@default_region}b"],
         :policy_name          => "#{name}-policy",
@@ -259,6 +260,11 @@ describe "ec2_autoscalinggroup" do
 
         it 'max_size' do
           regex = /max_size\s*=>\s*'#{@asg.max_size}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'desired_capacity' do
+          regex = /desired_capacity\s*=>\s*'#{@asg.desired_capacity}'/
           expect(@result.stdout).to match(regex)
         end
 
@@ -477,6 +483,15 @@ describe "ec2_autoscalinggroup" do
         expect(r.stderr).not_to match(/error/i)
         group = find_autoscaling_group(@asg_config[:asg_name])
         expect(group.max_size).to eq(5)
+      end
+
+      it 'desired_capacity' do
+        config = @asg_config.clone
+        config[:desired_capacity] = 4
+        r = PuppetManifest.new(@asg_template, config).apply
+        expect(r.stderr).not_to match(/error/i)
+        group = find_autoscaling_group(@asg_config[:asg_name])
+        expect(group.desired_capacity).to eq(4)
       end
 
       it 'launch_configuration' do
