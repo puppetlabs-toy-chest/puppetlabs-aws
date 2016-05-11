@@ -925,6 +925,10 @@ This parameter is set at creation only; it is not affected by updates.
 Names of the database security groups to associate with the instance.
 This parameter is set at creation only; it is not affected by updates.
 
+#####`vpc_security_groups`
+IDs of the database security groups within a VPC to associate the instance
+with.  This parameter is set at creation only; it is not affected by updates.
+
 #####`endpoint`
 The DNS address of the database. Read-only.
 

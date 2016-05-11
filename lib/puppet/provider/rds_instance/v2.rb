@@ -20,10 +20,11 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end.flatten
   end
 
-  read_only(:iops, :master_username, :multi_az, :license_model,
-            :db_name, :region, :db_instance_class, :availability_zone,
-            :engine, :engine_version, :allocated_storage, :storage_type,
-            :db_security_groups, :db_parameter_group, :backup_retention_period, :db_subnet)
+  read_only(:iops, :master_username, :multi_az, :license_model, :db_name,
+            :region, :db_instance_class, :availability_zone, :engine,
+            :engine_version, :allocated_storage, :storage_type,
+            :db_security_groups, :db_parameter_group, :backup_retention_period,
+            :db_subnet, :vpc_security_groups)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -52,6 +53,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       db_subnet: db_subnet,
       db_parameter_group: instance.db_parameter_groups.collect(&:db_parameter_group_name).first,
       db_security_groups: instance.db_security_groups.collect(&:db_security_group_name),
+      vpc_security_groups: instance.vpc_security_groups.collect(&:vpc_security_group_id),
       backup_retention_period: instance.backup_retention_period
     }
     if instance.respond_to?('endpoint') && !instance.endpoint.nil?
@@ -85,6 +87,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       db_subnet_group_name: resource[:db_subnet],
       db_security_groups: resource[:db_security_groups],
       db_parameter_group_name: resource[:db_parameter_group],
+      vpc_security_group_ids: resource[:vpc_security_groups],
       backup_retention_period: resource[:backup_retention_period],
     }
 

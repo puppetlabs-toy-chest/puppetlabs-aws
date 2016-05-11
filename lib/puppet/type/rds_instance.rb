@@ -163,6 +163,10 @@ Not applicable. Must be null.'
     desc 'The DB security groups to assign to this RDS instance.'
   end
 
+  newproperty(:vpc_security_groups, :array_matching => :all) do
+    desc 'An array of security group IDs within the VPC to assign to the instance.'
+  end
+
   newproperty(:endpoint) do
     desc 'The connection endpoint for the database.'
     validate do |value|
