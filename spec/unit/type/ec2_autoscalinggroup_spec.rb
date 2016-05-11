@@ -6,6 +6,7 @@ def asg_config
     max_size: '3',
     desired_capacity: '2',
     min_size: '1',
+    default_cooldown: '200',
     launch_configuration: 'test-lc',
     region: 'sa-east-1',
   }
@@ -27,6 +28,7 @@ describe type_class do
       :min_size,
       :max_size,
       :desired_capacity,
+      :default_cooldown,
       :region,
       :launch_configuration,
       :instance_count,
@@ -90,6 +92,10 @@ describe type_class do
 
     it 'should convert desired_capacity values to an integer' do
       expect(@instance[:desired_capacity].kind_of?(Integer)).to be true
+    end
+
+    it 'should convert default_cooldown values to an integer' do
+      expect(@instance[:default_cooldown].kind_of?(Integer)).to be true
     end
 
   end

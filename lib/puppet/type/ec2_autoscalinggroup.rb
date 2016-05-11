@@ -47,6 +47,19 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     end
   end
 
+  newproperty(:default_cooldown) do
+    desc 'The amount of time, in seconds, after a scaling activity completes before another scaling activity can start.'
+
+    defaultto '300'
+
+    validate do |value|
+      fail 'default_cooldown cannot be blank' if value == ''
+    end
+    munge do |value|
+      value.to_i
+    end
+  end
+
   newproperty(:region) do
     desc 'The region in which to launch the instances.'
     validate do |value|

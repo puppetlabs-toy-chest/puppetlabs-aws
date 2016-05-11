@@ -51,6 +51,7 @@ describe "ec2_autoscalinggroup" do
         :min_size             => 2,
         :max_size             => 6,
         :desired_capacity     => 3,
+        :default_cooldown     => 400,
         :lc_setting           => "#{name}-lc",
         :availability_zones   => ["#{@default_region}a", "#{@default_region}b"],
         :policy_name          => "#{name}-policy",
@@ -265,6 +266,11 @@ describe "ec2_autoscalinggroup" do
 
         it 'desired_capacity' do
           regex = /desired_capacity\s*=>\s*'#{@asg.desired_capacity}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'default_cooldown' do
+          regex = /default_cooldown\s*=>\s*'#{@asg.default_cooldown}'/
           expect(@result.stdout).to match(regex)
         end
 
@@ -492,6 +498,15 @@ describe "ec2_autoscalinggroup" do
         expect(r.stderr).not_to match(/error/i)
         group = find_autoscaling_group(@asg_config[:asg_name])
         expect(group.desired_capacity).to eq(4)
+      end
+
+      it 'default_cooldown' do
+        config = @asg_config.clone
+        config[:default_cooldown] = 350
+        r = PuppetManifest.new(@asg_template, config).apply
+        expect(r.stderr).not_to match(/error/i)
+        group = find_autoscaling_group(@asg_config[:asg_name])
+        expect(group.default_cooldown).to eq(350)
       end
 
       it 'launch_configuration' do
