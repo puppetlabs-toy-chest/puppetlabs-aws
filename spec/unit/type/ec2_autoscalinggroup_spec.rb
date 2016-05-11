@@ -29,6 +29,8 @@ describe type_class do
       :max_size,
       :desired_capacity,
       :default_cooldown,
+      :health_check_type,
+      :health_check_grace_period,
       :region,
       :launch_configuration,
       :instance_count,
@@ -96,6 +98,10 @@ describe type_class do
 
     it 'should convert default_cooldown values to an integer' do
       expect(@instance[:default_cooldown].kind_of?(Integer)).to be true
+    end
+
+    it 'should convert health_check_grace_period values to an integer' do
+      expect(@instance[:health_check_grace_period].kind_of?(Integer)).to be true
     end
 
   end

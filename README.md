@@ -543,6 +543,12 @@ The Amazon Resource Name for the associated IAM profile.
 ##### `default_cooldown`
 *Optional* The amount of time, in seconds, after a scaling activity completes before another scaling activity can start.
 
+##### `health_check_type`
+*Optional* The service to use for the health checks. The valid values are `'EC2'` and `'ELB'`.
+
+##### `health_check_grace_period`
+*Optional* The amount of time, in seconds, that Auto Scaling waits before checking the health status of an EC2 instance that has come into service. During this time, any health check failures for the instance are ignored. The default is 300. This parameter is required if you are adding an ELB health check.
+
 ##### `region`
 *Required* The region in which to launch the instances. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 

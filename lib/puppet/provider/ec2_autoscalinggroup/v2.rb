@@ -55,6 +55,8 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       max_size: group.max_size,
       desired_capacity: group.desired_capacity,
       default_cooldown: group.default_cooldown,
+      health_check_type: group.health_check_type,
+      health_check_grace_period: group.health_check_grace_period,
       instance_count: group.instances.count,
       ensure: :present,
       subnets: subnet_names,
@@ -79,6 +81,8 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       max_size: resource[:max_size],
       desired_capacity: resource[:desired_capacity] || resource[:min_size],
       default_cooldown: resource[:default_cooldown],
+      health_check_type: resource[:health_check_type],
+      health_check_grace_period: resource[:health_check_grace_period],
       availability_zones: zones,
       launch_configuration_name: resource[:launch_configuration],
     }
@@ -127,6 +131,20 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     autoscaling_client(target_region).update_auto_scaling_group(
       auto_scaling_group_name: name,
       default_cooldown: value,
+    )
+  end
+
+  def health_check_type=(value)
+    autoscaling_client(target_region).update_auto_scaling_group(
+      auto_scaling_group_name: name,
+      health_check_type: value,
+    )
+  end
+
+  def health_check_grace_period=(value)
+    autoscaling_client(target_region).update_auto_scaling_group(
+      auto_scaling_group_name: name,
+      health_check_grace_period: value,
     )
   end
 

@@ -60,6 +60,28 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     end
   end
 
+  newproperty(:health_check_type) do
+    desc 'The service to use for the health checks.'
+
+    newvalue 'EC2'
+    newvalue 'ELB'
+
+    defaultto 'EC2'
+  end
+
+  newproperty(:health_check_grace_period) do
+    desc 'The amount of time, in seconds, that Auto Scaling waits before checking the health status of an EC2 instance that has come into service. During this time, any health check failures for the instance are ignored. This parameter is required if you are adding an ELB health check.'
+
+    defaultto '300'
+
+    validate do |value|
+      fail 'health_check_grace_period cannot be blank' if value == ''
+    end
+    munge do |value|
+      value.to_i
+    end
+  end
+
   newproperty(:region) do
     desc 'The region in which to launch the instances.'
     validate do |value|

@@ -18,6 +18,8 @@ ec2_autoscalinggroup { '{{asg_name}}':
   max_size             => {{max_size}},
   desired_capacity     => {{desired_capacity}},
   default_cooldown     => {{default_cooldown}},
+  health_check_type    => '{{health_check_type}}',
+  health_check_grace_period => {{health_check_grace_period}},
   region               => '{{region}}',
   launch_configuration => '{{lc_setting}}',
   availability_zones   => [{{#availability_zones}}'{{.}}',{{/availability_zones}}],
