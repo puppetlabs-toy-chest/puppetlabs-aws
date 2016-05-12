@@ -54,6 +54,7 @@ describe "ec2_autoscalinggroup" do
         :default_cooldown     => 400,
         :health_check_type    => 'EC2',
         :health_check_grace_period => 100,
+        :new_instances_protected_from_scale_in => false,
         :lc_setting           => "#{name}-lc",
         :availability_zones   => ["#{@default_region}a", "#{@default_region}b"],
         :policy_name          => "#{name}-policy",
@@ -282,6 +283,11 @@ describe "ec2_autoscalinggroup" do
         end
 
         it 'health_check_grace_period' do
+          regex = /health_check_grace_period\s*=>\s*'#{@asg.health_check_grace_period}'/
+          expect(@result.stdout).to match(regex)
+        end
+
+        it 'new_instances_protected_from_scale_in' do
           regex = /health_check_grace_period\s*=>\s*'#{@asg.health_check_grace_period}'/
           expect(@result.stdout).to match(regex)
         end
@@ -528,6 +534,15 @@ describe "ec2_autoscalinggroup" do
         expect(r.stderr).not_to match(/error/i)
         group = find_autoscaling_group(@asg_config[:asg_name])
         expect(group.health_check_grace_period).to eq(400)
+      end
+
+      it 'new_instances_protected_from_scale_in' do
+        config = @asg_config.clone
+        config[:new_instances_protected_from_scale_in] = true
+        r = PuppetManifest.new(@asg_template, config).apply
+        expect(r.stderr).not_to match(/error/i)
+        group = find_autoscaling_group(@asg_config[:asg_name])
+        expect(group.new_instances_protected_from_scale_in).to be true
       end
 
       it 'launch_configuration' do

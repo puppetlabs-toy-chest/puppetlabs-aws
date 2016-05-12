@@ -7,6 +7,7 @@ def asg_config
     desired_capacity: '2',
     min_size: '1',
     default_cooldown: '200',
+    new_instances_protected_from_scale_in: :true,
     launch_configuration: 'test-lc',
     region: 'sa-east-1',
   }
@@ -31,6 +32,7 @@ describe type_class do
       :default_cooldown,
       :health_check_type,
       :health_check_grace_period,
+      :new_instances_protected_from_scale_in,
       :region,
       :launch_configuration,
       :instance_count,
@@ -102,6 +104,10 @@ describe type_class do
 
     it 'should convert health_check_grace_period values to an integer' do
       expect(@instance[:health_check_grace_period].kind_of?(Integer)).to be true
+    end
+
+    it 'should convert new_instances_protected_from_scale_in values to a boolean' do
+      expect(@instance[:new_instances_protected_from_scale_in].kind_of?(TrueClass) || @instance[:new_instances_protected_from_scale_in].kind_of?(FalseClass)).to be true
     end
 
   end

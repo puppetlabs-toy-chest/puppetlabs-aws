@@ -20,6 +20,7 @@ ec2_autoscalinggroup { '{{asg_name}}':
   default_cooldown     => {{default_cooldown}},
   health_check_type    => '{{health_check_type}}',
   health_check_grace_period => {{health_check_grace_period}},
+  new_instances_protected_from_scale_in => {{new_instances_protected_from_scale_in}},
   region               => '{{region}}',
   launch_configuration => '{{lc_setting}}',
   availability_zones   => [{{#availability_zones}}'{{.}}',{{/availability_zones}}],

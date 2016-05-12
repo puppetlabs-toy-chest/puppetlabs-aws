@@ -57,6 +57,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       default_cooldown: group.default_cooldown,
       health_check_type: group.health_check_type,
       health_check_grace_period: group.health_check_grace_period,
+      new_instances_protected_from_scale_in: group.new_instances_protected_from_scale_in,
       instance_count: group.instances.count,
       ensure: :present,
       subnets: subnet_names,
@@ -83,6 +84,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       default_cooldown: resource[:default_cooldown],
       health_check_type: resource[:health_check_type],
       health_check_grace_period: resource[:health_check_grace_period],
+      new_instances_protected_from_scale_in: resource[:new_instances_protected_from_scale_in],
       availability_zones: zones,
       launch_configuration_name: resource[:launch_configuration],
     }
@@ -145,6 +147,13 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     autoscaling_client(target_region).update_auto_scaling_group(
       auto_scaling_group_name: name,
       health_check_grace_period: value,
+    )
+  end
+
+  def new_instances_protected_from_scale_in=(value)
+    autoscaling_client(target_region).update_auto_scaling_group(
+      auto_scaling_group_name: name,
+      new_instances_protected_from_scale_in: value,
     )
   end
 

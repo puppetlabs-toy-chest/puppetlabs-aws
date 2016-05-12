@@ -549,6 +549,9 @@ The Amazon Resource Name for the associated IAM profile.
 ##### `health_check_grace_period`
 *Optional* The amount of time, in seconds, that Auto Scaling waits before checking the health status of an EC2 instance that has come into service. During this time, any health check failures for the instance are ignored. The default is 300. This parameter is required if you are adding an ELB health check.
 
+##### `new_instances_protected_from_scale_in`
+*Optional* Indicates whether newly launched instances are protected from termination by Auto Scaling when scaling in. Defaults to true.
+
 ##### `region`
 *Required* The region in which to launch the instances. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 

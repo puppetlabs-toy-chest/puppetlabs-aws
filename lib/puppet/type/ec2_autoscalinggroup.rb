@@ -1,4 +1,5 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require 'puppet/property/boolean'
 
 Puppet::Type.newtype(:ec2_autoscalinggroup) do
   @doc = 'Type representing an EC2 auto scaling group.'
@@ -80,6 +81,10 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     munge do |value|
       value.to_i
     end
+  end
+
+  newproperty(:new_instances_protected_from_scale_in, parent: Puppet::Property::Boolean) do
+    desc 'Indicates whether newly launched instances are protected from termination by Auto Scaling when scaling in.'
   end
 
   newproperty(:region) do
