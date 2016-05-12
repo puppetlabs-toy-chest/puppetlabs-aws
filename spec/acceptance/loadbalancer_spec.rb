@@ -156,7 +156,7 @@ describe "elb_loadbalancer" do
 
       context 'using puppet resource to describe' do
         before(:all) do
-          @result = TestExecutor.puppet_resource('elb_loadbalancer', {:name => @lb_config[:name]}, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('elb_loadbalancer', {:name => @lb_config[:name]}, '--modulepath spec/fixtures/modules/')
         end
 
         it 'region' do

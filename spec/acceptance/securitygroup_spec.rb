@@ -299,7 +299,7 @@ describe "ec2_securitygroup" do
     end
 
     it 'create with puppet resource' do
-      r = TestExecutor.puppet_resource('ec2_securitygroup', @config, '--modulepath ../')
+      r = TestExecutor.puppet_resource('ec2_securitygroup', @config, '--modulepath spec/fixtures/modules/')
       expect(r.stderr).not_to match(/Error:/)
       # assert with AWS SKD
       expect{get_group(@config[:name])}.not_to raise_error
@@ -307,7 +307,7 @@ describe "ec2_securitygroup" do
 
     it 'destroy with puppet resource' do
       @config[:ensure] = 'absent'
-      TestExecutor.puppet_resource('ec2_securitygroup', @config, '--modulepath ../')
+      TestExecutor.puppet_resource('ec2_securitygroup', @config, '--modulepath spec/fixtures/modules/')
       expect { get_group(@config[:name]) }.to raise_error(Aws::EC2::Errors::InvalidGroupNotFound)
     end
 
@@ -341,7 +341,7 @@ describe "ec2_securitygroup" do
       }
       PuppetManifest.new(@template, @config).apply
       expect{get_group(@config[:name])}.not_to raise_error
-      @response = TestExecutor.puppet_resource('ec2_securitygroup', {:name => @config[:name]}, '--modulepath ../')
+      @response = TestExecutor.puppet_resource('ec2_securitygroup', {:name => @config[:name]}, '--modulepath spec/fixtures/modules/')
       @group = get_group(@config[:name])
     end
 

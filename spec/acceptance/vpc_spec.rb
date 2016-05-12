@@ -417,7 +417,7 @@ describe "The AWS module" do
         before(:all) do
           ENV['AWS_REGION'] = @default_region
           options = {:name => "#{@name}-vpc"}
-          @result = TestExecutor.puppet_resource('ec2_vpc', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('ec2_vpc', options, '--modulepath spec/fixtures/modules/')
         end
 
         it 'should show the correct tenancy' do
@@ -452,7 +452,7 @@ describe "The AWS module" do
         before(:all) do
           ENV['AWS_REGION'] = @default_region
           options = {:name => "#{@name}-options"}
-          @result = TestExecutor.puppet_resource('ec2_vpc_dhcp_options', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('ec2_vpc_dhcp_options', options, '--modulepath spec/fixtures/modules/')
         end
 
         it 'should show the correct tags' do
@@ -505,7 +505,7 @@ describe "The AWS module" do
         before(:all) do
           ENV['AWS_REGION'] = @default_region
           options = {:name => "#{@name}-routes"}
-          @result = TestExecutor.puppet_resource('ec2_vpc_routetable', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('ec2_vpc_routetable', options, '--modulepath spec/fixtures/modules/')
         end
 
         it 'should show the correct vpc' do
@@ -537,7 +537,7 @@ describe "The AWS module" do
         before(:all) do
           ENV['AWS_REGION'] = @default_region
           options = {:name => "#{@name}-subnet"}
-          @result = TestExecutor.puppet_resource('ec2_vpc_subnet', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('ec2_vpc_subnet', options, '--modulepath spec/fixtures/modules/')
         end
 
         it 'should show the correct vpc' do
@@ -577,7 +577,7 @@ describe "The AWS module" do
         before(:all) do
           ENV['AWS_REGION'] = @default_region
           options = {:name => "#{@name}-igw"}
-          @result = TestExecutor.puppet_resource('ec2_vpc_internet_gateway', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('ec2_vpc_internet_gateway', options, '--modulepath spec/fixtures/modules/')
         end
 
         it 'should show the correct region' do
@@ -602,7 +602,7 @@ describe "The AWS module" do
         before(:all) do
           ENV['AWS_REGION'] = @default_region
           options = {:name => "#{@name}-cgw"}
-          @result = TestExecutor.puppet_resource('ec2_vpc_customer_gateway', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('ec2_vpc_customer_gateway', options, '--modulepath spec/fixtures/modules/')
         end
 
         it 'should show the correct ip_address' do
@@ -637,7 +637,7 @@ describe "The AWS module" do
         before(:all) do
           ENV['AWS_REGION'] = @default_region
           options = {:name => "#{@name}-vpn"}
-          @result = TestExecutor.puppet_resource('ec2_vpc_vpn', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('ec2_vpc_vpn', options, '--modulepath spec/fixtures/modules/')
         end
 
         it 'should show the correct vpn_gateway' do
@@ -684,7 +684,7 @@ describe "The AWS module" do
         before(:all) do
           ENV['AWS_REGION'] = @default_region
           options = {:name => "#{@name}-vgw"}
-          @result = TestExecutor.puppet_resource('ec2_vpc_vpn_gateway', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('ec2_vpc_vpn_gateway', options, '--modulepath spec/fixtures/modules/')
         end
 
         it 'should show the correct tags' do
@@ -907,55 +907,55 @@ describe "The AWS module" do
       # instance
       instance_name = "#{@delete_me[:name]}-instance"
       options = {:name => instance_name, :region => @default_region, :ensure => 'absent'}
-      result = TestExecutor.puppet_resource('ec2_instance', options, '--modulepath ../')
+      result = TestExecutor.puppet_resource('ec2_instance', options, '--modulepath spec/fixtures/modules/')
       expect(result.stderr).not_to match(/Error/), error_message
       expect(@aws.send('get_instances', instance_name).first.state.name).to eq('terminated')
       # igw
       igw_name = "#{@delete_me[:name]}-igw"
       options = {:name => igw_name, :region => @default_region, :ensure => 'absent'}
-      result = TestExecutor.puppet_resource('ec2_vpc_internet_gateway', options, '--modulepath ../')
+      result = TestExecutor.puppet_resource('ec2_vpc_internet_gateway', options, '--modulepath spec/fixtures/modules/')
       expect(result.stderr).not_to match(/Error/), error_message
       expect(@aws.send('get_vpn_gateways', igw_name)).to be_empty
       # vpn
       vpn_name = "#{@delete_me[:name]}-vpn"
       options = {:name => vpn_name, :region => @default_region, :ensure => 'absent'}
-      result = TestExecutor.puppet_resource('ec2_vpc_vpn', options, '--modulepath ../')
+      result = TestExecutor.puppet_resource('ec2_vpc_vpn', options, '--modulepath spec/fixtures/modules/')
       expect(result.stderr).not_to match(/Error/), error_message
       expect(@aws.send('get_vpn', vpn_name)).to be_empty
       # cgw
       cgw_name = "#{@delete_me[:name]}-cgw"
       options = {:name => cgw_name, :region => @default_region, :ensure => 'absent'}
-      result = TestExecutor.puppet_resource('ec2_vpc_customer_gateway', options, '--modulepath ../')
+      result = TestExecutor.puppet_resource('ec2_vpc_customer_gateway', options, '--modulepath spec/fixtures/modules/')
       expect(result.stderr).not_to match(/Error/), error_message
       expect(@aws.send('get_customer_gateways', cgw_name)).to be_empty
       # vpn gateway
       vgw_name = "#{@delete_me[:name]}-vgw"
       options = {:name => vgw_name, :region => @default_region, :ensure => 'absent'}
-      result = TestExecutor.puppet_resource('ec2_vpc_vpn_gateway', options, '--modulepath ../')
+      result = TestExecutor.puppet_resource('ec2_vpc_vpn_gateway', options, '--modulepath spec/fixtures/modules/')
       expect(result.stderr).not_to match(/Error/), error_message
       expect(@aws.send('get_vpn_gateways', vgw_name)).to be_empty
       # subnet
       subnet_name = "#{@delete_me[:name]}-subnet"
       options = {:name => subnet_name, :region => @default_region, :ensure => 'absent'}
-      result = TestExecutor.puppet_resource('ec2_vpc_subnet', options, '--modulepath ../')
+      result = TestExecutor.puppet_resource('ec2_vpc_subnet', options, '--modulepath spec/fixtures/modules/')
       expect(result.stderr).not_to match(/Error/), error_message
       expect(@aws.send('get_subnets', subnet_name)).to be_empty
       # routes
       routes_name = "#{@delete_me[:name]}-routes"
       options = {:name => routes_name, :region => @default_region, :ensure => 'absent'}
-      result = TestExecutor.puppet_resource('ec2_vpc_routetable', options, '--modulepath ../')
+      result = TestExecutor.puppet_resource('ec2_vpc_routetable', options, '--modulepath spec/fixtures/modules/')
       expect(result.stderr).not_to match(/Error/), error_message
       expect(@aws.send('get_route_tables', routes_name)).to be_empty
       # vpc
       vpc_name = "#{@delete_me[:name]}-vpc"
       options = {:name => vpc_name, :region => @default_region, :ensure => 'absent'}
-      result = TestExecutor.puppet_resource('ec2_vpc', options, '--modulepath ../')
+      result = TestExecutor.puppet_resource('ec2_vpc', options, '--modulepath spec/fixtures/modules/')
       expect(result.stderr).not_to match(/Error/), error_message
       expect(@aws.send('get_vpcs', vpc_name)).to be_empty
       # dhcp options
       options_name = "#{@delete_me[:name]}-options"
       options = {:name => options_name, :region => @default_region, :ensure => 'absent'}
-      result = TestExecutor.puppet_resource('ec2_vpc_dhcp_options', options, '--modulepath ../')
+      result = TestExecutor.puppet_resource('ec2_vpc_dhcp_options', options, '--modulepath spec/fixtures/modules/')
       expect(result.stderr).not_to match(/Error/), error_message
       expect(@aws.send('get_dhcp_options', options_name)).to be_empty
     end

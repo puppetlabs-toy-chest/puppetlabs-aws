@@ -110,7 +110,7 @@ describe "ec2_autoscalinggroup" do
         :region   => @default_region
       }
       ENV['AWS_REGION'] = @default_region
-      r2 = TestExecutor.puppet_resource('ec2_securitygroup', options, '--modulepath ../')
+      r2 = TestExecutor.puppet_resource('ec2_securitygroup', options, '--modulepath spec/fixtures/modules/')
       expect(r2.stderr).not_to match(/error/i)
       # terminate duplicate resources
       r3 = PuppetManifest.new(duplicate_delete, @duplicate_asg_config).apply
@@ -197,7 +197,7 @@ describe "ec2_autoscalinggroup" do
           ENV['AWS_REGION'] = @default_region
           name = @asg_config[:alarm_name]
           options = {:name => name}
-          @result = TestExecutor.puppet_resource('cloudwatch_alarm', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('cloudwatch_alarm', options, '--modulepath spec/fixtures/modules/')
           @cw = find_alarm(name)
         end
 
@@ -253,7 +253,7 @@ describe "ec2_autoscalinggroup" do
           ENV['AWS_REGION'] = @default_region
           name = @asg_config[:asg_name]
           options = {:name => name}
-          @result = TestExecutor.puppet_resource('ec2_autoscalinggroup', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('ec2_autoscalinggroup', options, '--modulepath spec/fixtures/modules/')
           @asg = find_autoscaling_group(name)
         end
 
@@ -317,7 +317,7 @@ describe "ec2_autoscalinggroup" do
           ENV['AWS_REGION'] = @default_region
           name = @asg_config[:lc_name]
           options = {:name => name}
-          @result = TestExecutor.puppet_resource('ec2_launchconfiguration', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('ec2_launchconfiguration', options, '--modulepath spec/fixtures/modules/')
           @lc = find_launch_config(name)
         end
 
@@ -363,7 +363,7 @@ describe "ec2_autoscalinggroup" do
           name = @asg_config[:policy_name]
           asg_name = @asg_config[:asg_name]
           options = {:name => name}
-          @result = TestExecutor.puppet_resource('ec2_scalingpolicy', options, '--modulepath ../')
+          @result = TestExecutor.puppet_resource('ec2_scalingpolicy', options, '--modulepath spec/fixtures/modules/')
           @sp = find_scaling_policy(name, asg_name)
         end
 

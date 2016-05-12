@@ -59,7 +59,7 @@ describe "sqs_queue" do
       before(:all) do
         ENV['AWS_REGION'] = @default_region
         options = {:name => @config[:name]}
-        @result = TestExecutor.puppet_resource('sqs_queue', options, '--modulepath ../')
+        @result = TestExecutor.puppet_resource('sqs_queue', options, '--modulepath spec/fixtures/modules/')
       end
 
       it 'should show the queue as present' do

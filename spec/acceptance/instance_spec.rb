@@ -310,13 +310,13 @@ describe "ec2_instance" do
       # the key must be available in the sa-east-1 region
       @config[:key_name] = ENV['AWS_KEY_PAIR'] if ENV['AWS_KEY_PAIR']
       # create new instance with puppet resource
-      TestExecutor.puppet_resource('ec2_instance', @config, '--modulepath ../')
+      TestExecutor.puppet_resource('ec2_instance', @config, '--modulepath spec/fixtures/modules/')
       #wait for instance to report as running
       @instance = get_instance(@config[:name])
       @aws.ec2_client.wait_until(:instance_running, instance_ids:[@instance.instance_id])
       # set env variable and use puppet resource to inspect state of ec2 instance
       ENV['AWS_REGION'] = @config[:region]
-      @result = TestExecutor.puppet_resource('ec2_instance', {:name => @config[:name]}, '--modulepath ../')
+      @result = TestExecutor.puppet_resource('ec2_instance', {:name => @config[:name]}, '--modulepath spec/fixtures/modules/')
       expect(@result.stderr).not_to match(/error/i)
       # re-assign @instance for more up to date info
       @instance = get_instance(@config[:name])
@@ -324,7 +324,7 @@ describe "ec2_instance" do
 
     after(:all) do
       @config[:ensure] = 'absent'
-      TestExecutor.puppet_resource('ec2_instance', @config, '--modulepath ../')
+      TestExecutor.puppet_resource('ec2_instance', @config, '--modulepath spec/fixtures/modules/')
       @aws.ec2_client.wait_until(:instance_terminated, instance_ids:[@instance.instance_id]) do |w|
         w.max_attempts = 5
       end
@@ -440,9 +440,9 @@ describe "ec2_instance" do
         #stop the instance
         @config[:ensure] = 'stopped'
         ENV['AWS_REGION'] = @config[:region]
-        TestExecutor.puppet_resource('ec2_instance', @config, '--modulepath ../')
+        TestExecutor.puppet_resource('ec2_instance', @config, '--modulepath spec/fixtures/modules/')
         @aws.ec2_client.wait_until(:instance_stopped, instance_ids:[@instance.instance_id])
-        @stop_result = TestExecutor.puppet_resource('ec2_instance', {:name => @config[:name]}, '--modulepath ../')
+        @stop_result = TestExecutor.puppet_resource('ec2_instance', {:name => @config[:name]}, '--modulepath spec/fixtures/modules/')
       end
 
       it 'reports the instance as stopped' do
