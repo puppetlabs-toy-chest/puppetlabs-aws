@@ -227,10 +227,12 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       { instance_id: id }
     end
 
-    elb_client(region).register_instances_with_load_balancer(
-      load_balancer_name: load_balancer_name,
-      instances: instance_input
-    )
+    unless instance_input.empty?
+      elb_client(region).register_instances_with_load_balancer(
+        load_balancer_name: load_balancer_name,
+        instances: instance_input
+      )
+    end
   end
 
   def security_group_ids_from_names(names)

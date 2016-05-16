@@ -44,7 +44,7 @@ describe "elb_loadbalancer" do
   describe 'creating a load balancer - single AZ' do
     before(:all) do
       @lb_config = {
-          :name => "#{PuppetManifest.env_dns_id}#{SecureRandom.uuid}".gsub('-', '')[0...31], # loadbalancer has name length limit
+          :name => "#{PuppetManifest.env_dns_id}#{SecureRandom.uuid}".gsub(/[^a-zA-Z0-9]/, '')[0...31], # adhere to the LB's naming restrictions
           :region => @default_region,
           :availability_zones => [@default_availability_zone],
           :instances => [@instance_config[:name]],
