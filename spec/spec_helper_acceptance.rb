@@ -26,11 +26,12 @@ end
 
 class PuppetManifest < Mustache
 
-  attr_accessor :optional_tags
+  attr_accessor :optional_tags, :optional_load_balancers
 
   def initialize(file, config)
     @template_file = File.join(Dir.getwd, 'spec', 'acceptance', 'fixtures', file)
     @optional_tags = config[:tags].is_a?(Hash) and !config[:tags].empty?
+    @optional_load_balancers = config[:load_balancers].is_a?(Array) and !config[:load_balancers].empty?
     config.each do |key, value|
       config_value = self.class.to_generalized_data(value)
       instance_variable_set("@#{key}".to_sym, config_value)

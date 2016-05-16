@@ -24,6 +24,9 @@ ec2_autoscalinggroup { '{{asg_name}}':
   region               => '{{region}}',
   launch_configuration => '{{lc_setting}}',
   availability_zones   => [{{#availability_zones}}'{{.}}',{{/availability_zones}}],
+  {{#optional_load_balancers}}
+  load_balancers       => [{{#load_balancers}}'{{.}}',{{/load_balancers}}],
+  {{/optional_load_balancers}}
   {{#optional_tags}}
   tags                 => {
   {{#tags}}

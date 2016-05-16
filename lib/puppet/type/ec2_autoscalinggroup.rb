@@ -121,6 +121,20 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     end
   end
 
+  newproperty(:load_balancers, :array_matching => :all) do
+    desc 'The load balancers attached to this group.'
+
+    defaultto []
+
+    validate do |value|
+      fail 'load_balancers cannot be blank' if value == ''
+      fail 'load_balancers should be a String' unless value.is_a?(String)
+    end
+    def insync?(is)
+      is.to_set == should.to_set
+    end
+  end
+
   newproperty(:subnets, :array_matching => :all) do
     desc 'The subnets to associate the autoscaling group.'
     validate do |value|
@@ -137,6 +151,11 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
 
   autorequire(:ec2_launchconfiguration) do
     self[:launch_configuration]
+  end
+
+  autorequire(:elb_loadbalancer) do
+    lbs = self[:load_balancers]
+    lbs.is_a?(Array) ? lbs : [lbs]
   end
 
   autorequire(:ec2_vpc_subnet) do

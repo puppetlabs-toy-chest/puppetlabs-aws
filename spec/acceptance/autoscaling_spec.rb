@@ -5,6 +5,7 @@ describe "ec2_autoscalinggroup" do
 
   before(:all) do
     @default_region = 'sa-east-1'
+    @default_availability_zone = "#{@default_region}a"
     @aws = AwsHelper.new(@default_region)
   end
 
@@ -38,8 +39,13 @@ describe "ec2_autoscalinggroup" do
       name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
       @asg_template = 'autoscaling_configurable.pp.tmpl'
       @asg_template_delete = 'autoscaling_configurable_delete.pp.tmpl'
+      @lb_template = 'autoscaling_configurable_lbs.pp.tmpl'
+      @lb_template_delete = 'autoscaling_configurable_lbs_delete.pp.tmpl'
       @duplicate_asg_template = 'autoscaling_duplicate.pp.tmpl'
       @sg_delete = 'sg_delete.pp.tmpl'
+
+      @lb_name = "#{name}-lb".gsub(/[^a-zA-Z0-9]/, '')[0...31] # adhere to the LB's naming restrictions
+
       # launch asg and related resources
       @asg_config = {
         :ensure               => 'present',
@@ -72,10 +78,39 @@ describe "ec2_autoscalinggroup" do
         :evaluation_periods   => 2,
         :alarm_actions        => "#{name}-policy",
         :tags                 => {
-          custom_name: "#{name}-asg",
+          :custom_name => "#{name}-asg",
+          :department  => 'engineering',
+          :project     => 'cloud',
+          :created_by  => 'aws-acceptance'
         },
+        :load_balancers       => [ @lb_name ],
       }
-      r = PuppetManifest.new(@asg_template, @asg_config).apply
+      @lb_config = {
+        :name               => @lb_name,
+        :ensure             => 'present',
+        :region             => @default_region,
+        :availability_zones => [@default_availability_zone],
+        :listeners          => [
+          {
+            :protocol           => 'TCP',
+            :load_balancer_port => 80,
+            :instance_protocol  => 'TCP',
+            :instance_port      => 80,
+          }
+        ],
+        :tags => {
+            :department => 'engineering',
+            :project    => 'cloud',
+            :created_by => 'aws-acceptance'
+        }
+      }
+      # Mustache doesn't do nested data very well, so this creates a separate template renders for the main config and load balancers.
+      # This is primarily to keep the templates and config similar to hte elb_loadbalancer tests, and not have to rename everything from there.
+      asg_render = PuppetManifest.new(@asg_template, @asg_config).render
+      lb_render = PuppetManifest.new(@lb_template, @lb_config).render
+
+      r = PuppetRunProxy.new.apply(asg_render + lb_render)
+
       expect(r.stderr).not_to match(/error/i)
       # launch duplicate resources
       @duplicate_asg_config = {
@@ -92,9 +127,14 @@ describe "ec2_autoscalinggroup" do
       @asg_config[:ensure] = 'absent'
       @duplicate_asg_config[:ensure] = 'absent'
       duplicate_delete = 'duplicate_asg_delete.pp.tmpl'
-      r = PuppetManifest.new(@asg_template_delete, @asg_config).apply
+
+      asg_render = PuppetManifest.new(@asg_template_delete, @asg_config).render
+      lb_render = PuppetManifest.new(@lb_template_delete, @lb_config).render
+
+      r = PuppetRunProxy.new.apply(asg_render + lb_render)
       # assert that none of the results contain 'Error:'
       expect(r.stderr).not_to match(/error/i)
+
       response = @aws.autoscaling_client.describe_auto_scaling_groups(
         auto_scaling_group_names: [@asg_config[:asg_name]],
       )
@@ -135,8 +175,11 @@ describe "ec2_autoscalinggroup" do
           expect(@group.max_size).to eq(@asg_config[:max_size])
           expect(@group.launch_configuration_name).to eq(@asg_config[:lc_setting])
           expect(@group.availability_zones).to eq(['sa-east-1a', 'sa-east-1b'])
-          expect(@group.tags).to have_attributes(size: 1)
-          expect(@group.tags.first).to have_attributes(
+          expect(@group.tags).to have_attributes(size: 4)
+
+          custom_name_tag = @group.tags.select { |t| t.key == 'custom_name' }
+          expect(custom_name_tag).to have_attributes(size: 1)
+          expect(custom_name_tag.first).to have_attributes(
             key: 'custom_name',
             value: @asg_config[:asg_setting],)
         end
@@ -495,9 +538,9 @@ describe "ec2_autoscalinggroup" do
         r = PuppetManifest.new(@asg_template, config).apply
         expect(r.stderr).not_to match(/error/i)
         group = find_autoscaling_group(@asg_config[:asg_name])
-        expect(group.tags).to have_attributes(size: 2)
-        expect(group.tags.map(&:key)).to contain_exactly('custom_name', 'other_tag')
-        expect(group.tags.map(&:value)).to contain_exactly(@asg_config[:asg_setting], 'tagvalue')
+        expect(group.tags).to have_attributes(size: 5)
+        expect(group.tags.map(&:key)).to contain_exactly('custom_name', 'other_tag', 'department', 'project', 'created_by')
+        expect(group.tags.map(&:value)).to contain_exactly(@asg_config[:asg_setting], 'tagvalue', 'engineering', 'cloud', 'aws-acceptance')
       end
 
       it 'max_size' do

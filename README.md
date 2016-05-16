@@ -561,6 +561,9 @@ The Amazon Resource Name for the associated IAM profile.
 ##### `availability_zones`
 *Required* The availability zones in which to launch the instances. Accepts an array of availability zone codes. For valid availability zone codes, see [AWS Regions and Availability Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html).
 
+##### `load_balancers`
+*Optional* A list of load balancer names that should be attached to this autoscaling group.
+
 ##### `subnets`
 *Optional* The subnets to associate with the autoscaling group.
 

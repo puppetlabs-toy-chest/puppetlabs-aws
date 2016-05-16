@@ -10,6 +10,7 @@ def asg_config
     new_instances_protected_from_scale_in: :true,
     launch_configuration: 'test-lc',
     region: 'sa-east-1',
+    load_balancers: [ 'lb1' ],
   }
 end
 
@@ -37,6 +38,7 @@ describe type_class do
       :launch_configuration,
       :instance_count,
       :availability_zones,
+      :load_balancers,
       :subnets,
     ]
   end

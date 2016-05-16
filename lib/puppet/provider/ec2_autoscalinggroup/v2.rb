@@ -58,12 +58,18 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       health_check_type: group.health_check_type,
       health_check_grace_period: group.health_check_grace_period,
       new_instances_protected_from_scale_in: group.new_instances_protected_from_scale_in,
+      load_balancers: fetch_load_balancers(autoscaling_client(region), group.auto_scaling_group_name),
       instance_count: group.instances.count,
       ensure: :present,
       subnets: subnet_names,
       region: region,
       tags: tags,
     }
+  end
+
+  def self.fetch_load_balancers(client, name)
+    response = client.describe_load_balancers(auto_scaling_group_name: name)
+    response.load_balancers.collect { |lb| lb.load_balancer_name }
   end
 
   def exists?
@@ -104,6 +110,8 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     client.create_auto_scaling_group(config)
 
     set_tags(client, resource[:tags])
+
+    attach_load_balancers(client, resource[:load_balancers])
 
     @property_hash[:ensure] = :present
   end
@@ -177,6 +185,23 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     )
   end
 
+  def load_balancers=(value)
+    should = (value.is_a?(Array) ? value : [value]).to_set
+    is = fetch_load_balancers(autoscaling_client(target_region), name).to_set
+
+    to_delete = is - should
+    to_add = should - is
+
+    autoscaling_client(target_region).attach_load_balancers(
+      auto_scaling_group_name: name,
+      load_balancer_names: to_add,
+    )
+    autoscaling_client(target_region).detach_load_balancers(
+      auto_scaling_group_name: name,
+      load_balancer_names: to_delete,
+    )
+  end
+
   def launch_configuration=(value)
     autoscaling_client(target_region).update_auto_scaling_group(
       auto_scaling_group_name: name,
@@ -198,6 +223,15 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
           resource_type: 'auto-scaling-group',
           propagate_at_launch: false,
         } } : []
+      )
+    end
+  end
+
+  def attach_load_balancers(client, load_balancers)
+    with_retries(:max_tries => 5) do
+      client.attach_load_balancers(
+        auto_scaling_group_name: name,
+        load_balancer_names: load_balancers,
       )
     end
   end
