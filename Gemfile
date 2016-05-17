@@ -28,6 +28,7 @@ group :development do
   gem 'travis-lint'
   gem 'puppet-blacksmith'
   gem 'guard-rake'
+  gem 'listen', '= 3.0.7' # last version to support ruby 1.9; the proper fix would be to not install the development group in our internal CI
   gem 'rubocop', require: false
   gem 'pry'
   gem 'librarian-puppet'
