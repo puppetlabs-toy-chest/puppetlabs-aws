@@ -98,7 +98,7 @@ describe "route53_zone" do
       before(:all) do
         ENV['AWS_REGION'] = @default_region
         options = {:name => @config[:a_record_name]}
-        @result = TestExecutor.puppet_resource('route53_a_record', options, '--modulepath ../')
+        @result = TestExecutor.puppet_resource('route53_a_record', options, '--modulepath spec/fixtures/modules/')
       end
 
       it 'should show the correct TTL' do
@@ -129,7 +129,7 @@ describe "route53_zone" do
       before(:all) do
         ENV['AWS_REGION'] = @default_region
         options = {:name => @config[:mx_record_name]}
-        @result = TestExecutor.puppet_resource('route53_mx_record', options, '--modulepath ../')
+        @result = TestExecutor.puppet_resource('route53_mx_record', options, '--modulepath spec/fixtures/modules/')
       end
 
       it 'should show the correct TTL' do
@@ -160,7 +160,7 @@ describe "route53_zone" do
       before(:all) do
         ENV['AWS_REGION'] = @default_region
         options = {:name => @config[:cname_record_name]}
-        @result = TestExecutor.puppet_resource('route53_cname_record', options, '--modulepath ../')
+        @result = TestExecutor.puppet_resource('route53_cname_record', options, '--modulepath spec/fixtures/modules/')
       end
 
       it 'should show the correct TTL' do
@@ -191,7 +191,7 @@ describe "route53_zone" do
       before(:all) do
         ENV['AWS_REGION'] = @default_region
         options = {:name => @config[:srv_record_name]}
-        @result = TestExecutor.puppet_resource('route53_srv_record', options, '--modulepath ../')
+        @result = TestExecutor.puppet_resource('route53_srv_record', options, '--modulepath spec/fixtures/modules/')
       end
 
       it 'should show the correct TTL' do
@@ -218,7 +218,7 @@ describe "route53_zone" do
       before(:all) do
         ENV['AWS_REGION'] = @default_region
         options = {:name => @config[:aaaa_record_name]}
-        @result = TestExecutor.puppet_resource('route53_aaaa_record', options, '--modulepath ../')
+        @result = TestExecutor.puppet_resource('route53_aaaa_record', options, '--modulepath spec/fixtures/modules/')
       end
 
       it 'should show the correct TTL' do
@@ -241,7 +241,7 @@ describe "route53_zone" do
       before(:all) do
         ENV['AWS_REGION'] = @default_region
         options = {:name => @config[:txt_record_name]}
-        @result = TestExecutor.puppet_resource('route53_txt_record', options, '--modulepath ../')
+        @result = TestExecutor.puppet_resource('route53_txt_record', options, '--modulepath spec/fixtures/modules/')
       end
 
       it 'should show the correct TTL' do
@@ -267,7 +267,7 @@ describe "route53_zone" do
       before(:all) do
         ENV['AWS_REGION'] = @default_region
         options = {:name => @config[:spf_record_name]}
-        @result = TestExecutor.puppet_resource('route53_spf_record', options, '--modulepath ../')
+        @result = TestExecutor.puppet_resource('route53_spf_record', options, '--modulepath spec/fixtures/modules/')
       end
 
       it 'should show the correct TTL' do
@@ -285,7 +285,7 @@ describe "route53_zone" do
       before(:all) do
         ENV['AWS_REGION'] = @default_region
         options = {:name => @config[:name]}
-        @result = TestExecutor.puppet_resource('route53_ns_record', options, '--modulepath ../')
+        @result = TestExecutor.puppet_resource('route53_ns_record', options, '--modulepath spec/fixtures/modules/')
       end
 
       it 'should show the correct zone' do
@@ -298,7 +298,7 @@ describe "route53_zone" do
       before(:all) do
         ENV['AWS_REGION'] = @default_region
         options = {:name => @config[:name]}
-        @result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath ../')
+        @result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath spec/fixtures/modules/')
       end
 
       it 'should show the zone as present' do
@@ -422,7 +422,7 @@ describe "route53_zone" do
 
     it 'with puppet resource' do
       options = {:name => @config[:name], :ensure => 'present'}
-      result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath ../')
+      result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath spec/fixtures/modules/')
       expect(result.stderr).not_to match(/Error:/)
       expect{ find_zone(@config[:name]) }.not_to raise_error
     end
@@ -439,14 +439,14 @@ describe "route53_zone" do
 
       it 'attempt to delete the zone first' do
         options = {:name => @config[:name], :ensure => 'absent'}
-        result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath ../')
+        result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath spec/fixtures/modules/')
         regex = /Could not set 'absent' on ensure/
         expect(result.stderr).to match(regex)
       end
 
       it 'a_record' do
         options = {:name => @config[:a_record_name], :ensure => 'absent'}
-        result = TestExecutor.puppet_resource('route53_a_record', options, '--modulepath ../')
+        result = TestExecutor.puppet_resource('route53_a_record', options, '--modulepath spec/fixtures/modules/')
         expect(result.stderr).not_to match(/Error:/)
         zone = find_zone(@config[:name])
         expect{ find_record(@config[:a_record_name], zone, 'A')}.to raise_error
@@ -454,7 +454,7 @@ describe "route53_zone" do
 
       it 'txt_record' do
         options = {:name => @config[:txt_record_name], :ensure => 'absent'}
-        result = TestExecutor.puppet_resource('route53_txt_record', options, '--modulepath ../')
+        result = TestExecutor.puppet_resource('route53_txt_record', options, '--modulepath spec/fixtures/modules/')
         expect(result.stderr).not_to match(/Error:/)
         zone = find_zone(@config[:name])
         expect{ find_record(@config[:txt_record_name], zone, 'TXT')}.to raise_error
@@ -462,7 +462,7 @@ describe "route53_zone" do
 
       it 'route53_zone' do
         options = {:name => @config[:name], :ensure => 'absent'}
-        result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath ../')
+        result = TestExecutor.puppet_resource('route53_zone', options, '--modulepath spec/fixtures/modules/')
         expect(result.stderr).not_to match(/Error:/)
         expect{ find_zone(@config[:name])}.to raise_error
       end

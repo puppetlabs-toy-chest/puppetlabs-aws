@@ -16,9 +16,17 @@ ec2_autoscalinggroup { '{{asg_name}}':
   ensure               => {{ensure}},
   min_size             => {{min_size}},
   max_size             => {{max_size}},
+  desired_capacity     => {{desired_capacity}},
+  default_cooldown     => {{default_cooldown}},
+  health_check_type    => '{{health_check_type}}',
+  health_check_grace_period => {{health_check_grace_period}},
+  new_instances_protected_from_scale_in => {{new_instances_protected_from_scale_in}},
   region               => '{{region}}',
   launch_configuration => '{{lc_setting}}',
   availability_zones   => [{{#availability_zones}}'{{.}}',{{/availability_zones}}],
+  {{#optional_load_balancers}}
+  load_balancers       => [{{#load_balancers}}'{{.}}',{{/load_balancers}}],
+  {{/optional_load_balancers}}
   {{#optional_tags}}
   tags                 => {
   {{#tags}}

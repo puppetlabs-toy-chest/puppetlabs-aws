@@ -537,6 +537,21 @@ The Amazon Resource Name for the associated IAM profile.
 ##### `max_size`
 *Required* The maximum number of instances in the group.
 
+##### `desired_capacity`
+*Optional* The number of EC2 instances that should be running in the group. This number must be greater than or equal to the minimum size of the group and less than or equal to the maximum size of the group. Defaults to `min_size`.
+
+##### `default_cooldown`
+*Optional* The amount of time, in seconds, after a scaling activity completes before another scaling activity can start.
+
+##### `health_check_type`
+*Optional* The service to use for the health checks. The valid values are `'EC2'` and `'ELB'`.
+
+##### `health_check_grace_period`
+*Optional* The amount of time, in seconds, that Auto Scaling waits before checking the health status of an EC2 instance that has come into service. During this time, any health check failures for the instance are ignored. The default is 300. This parameter is required if you are adding an ELB health check.
+
+##### `new_instances_protected_from_scale_in`
+*Optional* Indicates whether newly launched instances are protected from termination by Auto Scaling when scaling in. Defaults to true.
+
 ##### `region`
 *Required* The region in which to launch the instances. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
@@ -545,6 +560,9 @@ The Amazon Resource Name for the associated IAM profile.
 
 ##### `availability_zones`
 *Required* The availability zones in which to launch the instances. Accepts an array of availability zone codes. For valid availability zone codes, see [AWS Regions and Availability Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html).
+
+##### `load_balancers`
+*Optional* A list of load balancer names that should be attached to this autoscaling group.
 
 ##### `subnets`
 *Optional* The subnets to associate with the autoscaling group.

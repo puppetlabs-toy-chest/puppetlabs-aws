@@ -110,7 +110,7 @@ describe "rds_instance" do
     context 'when viewing the database via puppet resource' do
 
       before(:all) do
-        @result = TestExecutor.puppet_resource('rds_instance', {:name => @config[:name]}, '--modulepath ../')
+        @result = TestExecutor.puppet_resource('rds_instance', {:name => @config[:name]}, '--modulepath spec/fixtures/modules/')
       end
 
       it 'ensure is correct' do
