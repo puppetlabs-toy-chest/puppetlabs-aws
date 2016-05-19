@@ -1,0 +1,78 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListUsers&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.0.5 ruby/2.2.3 x86_64-darwin15
+      X-Amz-Date:
+      - 20160520T211455Z
+      X-Amz-Content-Sha256:
+      - b6359072c78d70ebee1e81adcbab4f01bf2c23245fa365ef83fe8f1f955085e2
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacted/20160520/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
+        Signature=1ce46cedb9b20b7b53c30af0ec7c98e234f3b4fca9a35eee3baaa8ec1e8ce42f
+      Content-Length:
+      - '35'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - e67ddb11-1ecf-11e6-a9b3-9347fe68fd42
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1121'
+      Date:
+      - Fri, 20 May 2016 21:14:55 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListUsersResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListUsersResult>
+            <IsTruncated>false</IsTruncated>
+            <Users>
+              <member>
+                <Path>/</Path>
+                <PasswordLastUsed>2016-05-20T20:59:26Z</PasswordLastUsed>
+                <UserName>zleslie</UserName>
+                <Arn>arn:aws:iam::111111111111:user/zleslie</Arn>
+                <UserId>AAAAAAAAAAAAAAAAAAAAA</UserId>
+                <CreateDate>2016-05-20T20:58:02Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <UserName>zleslie2</UserName>
+                <Arn>arn:aws:iam::111111111111:user/zleslie2</Arn>
+                <UserId>AIDAJDVWXRMEXSPKTT6PW</UserId>
+                <CreateDate>2016-05-20T21:13:24Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <UserName>zleslie3</UserName>
+                <Arn>arn:aws:iam::111111111111:user/zleslie3</Arn>
+                <UserId>AIDAJM7L5OUPVRIXYNEB6</UserId>
+                <CreateDate>2016-05-20T21:13:24Z</CreateDate>
+              </member>
+            </Users>
+          </ListUsersResult>
+          <ResponseMetadata>
+            <RequestId>e67ddb11-1ecf-11e6-a9b3-9347fe68fd42</RequestId>
+          </ResponseMetadata>
+        </ListUsersResponse>
+    http_version: 
+  recorded_at: Fri, 20 May 2016 21:14:55 GMT
+recorded_with: VCR 3.0.1
