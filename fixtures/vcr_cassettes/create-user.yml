@@ -14,13 +14,13 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby2/2.0.5 ruby/2.2.3 x86_64-darwin15
       X-Amz-Date:
-      - 20160520T211454Z
+      - 20160523T185231Z
       X-Amz-Content-Sha256:
       - b6359072c78d70ebee1e81adcbab4f01bf2c23245fa365ef83fe8f1f955085e2
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=redacted/20160520/us-east-1/iam/aws4_request,
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160523/us-east-1/iam/aws4_request,
         SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
-        Signature=270839ae34b9e857252ec574d90da7a1396864421914927c612f6bc938dbcbb3
+        Signature=df19351c465e533b6168da0530af88b1e87f464e8fe7324a0cb97abb13bac5c8
       Content-Length:
       - '35'
       Accept:
@@ -31,13 +31,13 @@ http_interactions:
       message: OK
     headers:
       X-Amzn-Requestid:
-      - e61b2219-1ecf-11e6-b905-2f308342ffb7
+      - 812d8fd4-2117-11e6-a813-d3092ea6021a
       Content-Type:
       - text/xml
       Content-Length:
-      - '1121'
+      - '617'
       Date:
-      - Fri, 20 May 2016 21:14:54 GMT
+      - Mon, 23 May 2016 18:52:31 GMT
     body:
       encoding: UTF-8
       string: |
@@ -48,33 +48,19 @@ http_interactions:
               <member>
                 <Path>/</Path>
                 <PasswordLastUsed>2016-05-20T20:59:26Z</PasswordLastUsed>
-                <UserName>zleslie</UserName>
                 <Arn>arn:aws:iam::111111111111:user/zleslie</Arn>
+                <UserName>zleslie</UserName>
                 <UserId>AAAAAAAAAAAAAAAAAAAAA</UserId>
                 <CreateDate>2016-05-20T20:58:02Z</CreateDate>
-              </member>
-              <member>
-                <Path>/</Path>
-                <UserName>zleslie2</UserName>
-                <Arn>arn:aws:iam::111111111111:user/zleslie2</Arn>
-                <UserId>AIDAJDVWXRMEXSPKTT6PW</UserId>
-                <CreateDate>2016-05-20T21:13:24Z</CreateDate>
-              </member>
-              <member>
-                <Path>/</Path>
-                <UserName>zleslie3</UserName>
-                <Arn>arn:aws:iam::111111111111:user/zleslie3</Arn>
-                <UserId>AIDAJM7L5OUPVRIXYNEB6</UserId>
-                <CreateDate>2016-05-20T21:13:24Z</CreateDate>
               </member>
             </Users>
           </ListUsersResult>
           <ResponseMetadata>
-            <RequestId>e61b2219-1ecf-11e6-b905-2f308342ffb7</RequestId>
+            <RequestId>812d8fd4-2117-11e6-a813-d3092ea6021a</RequestId>
           </ResponseMetadata>
         </ListUsersResponse>
     http_version: 
-  recorded_at: Fri, 20 May 2016 21:14:54 GMT
+  recorded_at: Mon, 23 May 2016 18:52:31 GMT
 - request:
     method: post
     uri: https://iam.amazonaws.com/
@@ -89,13 +75,13 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby2/2.0.5 ruby/2.2.3 x86_64-darwin15
       X-Amz-Date:
-      - 20160520T211454Z
+      - 20160523T185231Z
       X-Amz-Content-Sha256:
       - b6359072c78d70ebee1e81adcbab4f01bf2c23245fa365ef83fe8f1f955085e2
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=redacted/20160520/us-east-1/iam/aws4_request,
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160523/us-east-1/iam/aws4_request,
         SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
-        Signature=270839ae34b9e857252ec574d90da7a1396864421914927c612f6bc938dbcbb3
+        Signature=df19351c465e533b6168da0530af88b1e87f464e8fe7324a0cb97abb13bac5c8
       Content-Length:
       - '35'
       Accept:
@@ -106,13 +92,13 @@ http_interactions:
       message: OK
     headers:
       X-Amzn-Requestid:
-      - e64c1d1e-1ecf-11e6-8976-4705a560bd07
+      - 816011c3-2117-11e6-b1c6-3fe7c950cb83
       Content-Type:
       - text/xml
       Content-Length:
-      - '1121'
+      - '617'
       Date:
-      - Fri, 20 May 2016 21:14:54 GMT
+      - Mon, 23 May 2016 18:52:31 GMT
     body:
       encoding: UTF-8
       string: |
@@ -128,26 +114,12 @@ http_interactions:
                 <UserId>AAAAAAAAAAAAAAAAAAAAA</UserId>
                 <CreateDate>2016-05-20T20:58:02Z</CreateDate>
               </member>
-              <member>
-                <Path>/</Path>
-                <UserName>zleslie2</UserName>
-                <Arn>arn:aws:iam::111111111111:user/zleslie2</Arn>
-                <UserId>AIDAJDVWXRMEXSPKTT6PW</UserId>
-                <CreateDate>2016-05-20T21:13:24Z</CreateDate>
-              </member>
-              <member>
-                <Path>/</Path>
-                <UserName>zleslie3</UserName>
-                <Arn>arn:aws:iam::111111111111:user/zleslie3</Arn>
-                <UserId>AIDAJM7L5OUPVRIXYNEB6</UserId>
-                <CreateDate>2016-05-20T21:13:24Z</CreateDate>
-              </member>
             </Users>
           </ListUsersResult>
           <ResponseMetadata>
-            <RequestId>e64c1d1e-1ecf-11e6-8976-4705a560bd07</RequestId>
+            <RequestId>816011c3-2117-11e6-b1c6-3fe7c950cb83</RequestId>
           </ResponseMetadata>
         </ListUsersResponse>
     http_version: 
-  recorded_at: Fri, 20 May 2016 21:14:55 GMT
+  recorded_at: Mon, 23 May 2016 18:52:32 GMT
 recorded_with: VCR 3.0.1

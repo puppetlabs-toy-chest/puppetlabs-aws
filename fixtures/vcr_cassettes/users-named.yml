@@ -14,13 +14,13 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby2/2.0.5 ruby/2.2.3 x86_64-darwin15
       X-Amz-Date:
-      - 20160520T211455Z
+      - 20160523T185044Z
       X-Amz-Content-Sha256:
       - b6359072c78d70ebee1e81adcbab4f01bf2c23245fa365ef83fe8f1f955085e2
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=redacted/20160520/us-east-1/iam/aws4_request,
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160523/us-east-1/iam/aws4_request,
         SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
-        Signature=1ce46cedb9b20b7b53c30af0ec7c98e234f3b4fca9a35eee3baaa8ec1e8ce42f
+        Signature=2ad7d5b547cd50d5a3fdbf10459923397e13b1f433b346ea179f76ecddce5d7d
       Content-Length:
       - '35'
       Accept:
@@ -31,13 +31,13 @@ http_interactions:
       message: OK
     headers:
       X-Amzn-Requestid:
-      - e67ddb11-1ecf-11e6-a9b3-9347fe68fd42
+      - 41a1dcdb-2117-11e6-8976-4705a560bd07
       Content-Type:
       - text/xml
       Content-Length:
-      - '1121'
+      - '617'
       Date:
-      - Fri, 20 May 2016 21:14:55 GMT
+      - Mon, 23 May 2016 18:50:44 GMT
     body:
       encoding: UTF-8
       string: |
@@ -53,26 +53,12 @@ http_interactions:
                 <UserId>AAAAAAAAAAAAAAAAAAAAA</UserId>
                 <CreateDate>2016-05-20T20:58:02Z</CreateDate>
               </member>
-              <member>
-                <Path>/</Path>
-                <UserName>zleslie2</UserName>
-                <Arn>arn:aws:iam::111111111111:user/zleslie2</Arn>
-                <UserId>AIDAJDVWXRMEXSPKTT6PW</UserId>
-                <CreateDate>2016-05-20T21:13:24Z</CreateDate>
-              </member>
-              <member>
-                <Path>/</Path>
-                <UserName>zleslie3</UserName>
-                <Arn>arn:aws:iam::111111111111:user/zleslie3</Arn>
-                <UserId>AIDAJM7L5OUPVRIXYNEB6</UserId>
-                <CreateDate>2016-05-20T21:13:24Z</CreateDate>
-              </member>
             </Users>
           </ListUsersResult>
           <ResponseMetadata>
-            <RequestId>e67ddb11-1ecf-11e6-a9b3-9347fe68fd42</RequestId>
+            <RequestId>41a1dcdb-2117-11e6-8976-4705a560bd07</RequestId>
           </ResponseMetadata>
         </ListUsersResponse>
     http_version: 
-  recorded_at: Fri, 20 May 2016 21:14:55 GMT
+  recorded_at: Mon, 23 May 2016 18:50:45 GMT
 recorded_with: VCR 3.0.1
