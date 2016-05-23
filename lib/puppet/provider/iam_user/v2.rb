@@ -31,9 +31,9 @@ Puppet::Type.type(:iam_user).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) d
 
   def create
     Puppet.info("Creating IAM user #{name}")
-    iam_client.create_user(
+    iam_client.create_user({
       user_name: name,
-    )
+    })
     @property_hash[:ensure] = :present
   end
 
