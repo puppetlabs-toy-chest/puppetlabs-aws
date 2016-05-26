@@ -82,6 +82,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       ensure: instance.state.name.to_sym,
       tags: tags,
       region: region,
+      tenancy: instance.placement.tenancy,
       hypervisor: instance.hypervisor,
       iam_instance_profile_arn: instance.iam_instance_profile ? instance.iam_instance_profile.arn : nil,
       virtualization_type: instance.virtualization_type,
@@ -278,7 +279,8 @@ Found #{matching_groups.length}:
           Hash['arn' => resource[:iam_instance_profile_arn]] :
           Hash['name' => resource[:iam_instance_profile_name]],
         placement: {
-          availability_zone: resource[:availability_zone]
+          availability_zone: resource[:availability_zone],
+          tenancy: resource[:tenancy],
         },
         monitoring: {
           enabled: resource[:monitoring].to_s,

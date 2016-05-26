@@ -53,6 +53,7 @@ ec2_instance { ['web-1', 'web-2']:
   image_id        => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
   security_groups => ['web-sg'],
   instance_type   => 't1.micro',
+  tenancy         => 'default',
   tags            => {
     department => 'engineering',
     project    => 'cloud',
@@ -66,6 +67,7 @@ ec2_instance { 'db-1':
   security_groups => ['db-sg'],
   instance_type   => 't1.micro',
   monitoring      => true,
+  tenancy         => 'default',
   tags            => {
     department => 'engineering',
     project    => 'cloud',

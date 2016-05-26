@@ -128,6 +128,12 @@ Puppet::Type.newtype(:ec2_instance) do
     end
   end
 
+  newproperty(:tenancy) do
+    desc 'The instance tenancy: default or dedicated.'
+    defaultto :default
+    newvalues(:default, :dedicated)
+  end
+
   newproperty(:instance_id) do
     desc 'The AWS generated id for the instance.'
     validate do |value|
