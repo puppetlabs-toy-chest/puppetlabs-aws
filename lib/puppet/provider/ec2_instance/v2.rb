@@ -279,6 +279,7 @@ Found #{matching_groups.length}:
           Hash['name' => resource[:iam_instance_profile_name]],
         placement: {
           availability_zone: resource[:availability_zone]
+          tenancy: resource[:instance_tenancy]
         },
         monitoring: {
           enabled: resource[:monitoring].to_s,
