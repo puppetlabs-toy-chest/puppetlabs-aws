@@ -29,6 +29,7 @@ describe type_class do
       :master_username,
       :multi_az,
       :db_security_groups,
+      :vpc_security_groups,
       :endpoint,
       :port,
       :db_parameter_group,
