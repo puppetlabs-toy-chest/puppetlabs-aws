@@ -1,3 +1,5 @@
+require 'puppet/parameter/boolean'
+
 Puppet::Type.newtype(:ec2_launchconfiguration) do
   @doc = 'Type representing an EC2 launch configuration.'
 

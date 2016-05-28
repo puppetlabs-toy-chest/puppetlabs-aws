@@ -7,6 +7,7 @@ def launchconfig_config
     instance_type: 't1.micro',
     region: 'sa-east-1',
     security_groups: ['test-sg'],
+    associate_public_ip_address: false,
   }
 end
 
@@ -30,6 +31,7 @@ describe type_class do
       :instance_type,
       :image_id,
       :key_name,
+      :associate_public_ip_address,
     ]
   end
 
@@ -81,4 +83,13 @@ describe type_class do
     end
   end
 
+  context 'with a full set of properties' do
+    before :all do
+      @instance = type_class.new(launchconfig_config)
+    end
+
+    it "should convert associate_public_ip_address to a boolean" do
+      expect(@instance[:associate_public_ip_address].kind_of?(TrueClass) || @instance[:associate_public_ip_address].kind_of?(FalseClass)).to be true
+    end
+  end
 end
