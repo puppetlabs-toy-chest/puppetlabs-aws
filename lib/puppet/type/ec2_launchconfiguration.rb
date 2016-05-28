@@ -69,15 +69,17 @@ Puppet::Type.newtype(:ec2_launchconfiguration) do
 
   newproperty(:block_device_mappings, :array_matching => :all) do
     desc "One or more mappings that specify how block devices are exposed to the instance."
+    defaultto []
     validate do |value|
-      Puppet.warning "validate(#{value})"
+      puts "validate(#{value})"
       devices = value.is_a?(Array) ? value : [value]
       devices.each do |device|
-        fail "block device must be named" unless value.keys.include?('device_name')
+puts "device: #{device} keys: #{device.keys} includes: #{device.keys.include?('device_name')}"
+        fail "block device must be named" unless device.keys.include?('device_name')
         choices = ['volume_size', 'snapshot_id']
-        fail "block device must include at least one of: " + choices.join(' ') if (value.keys & choices).empty?
-        if value['volume_type'] == 'io1'
-          fail 'must specify iops if using provisioned iops volumes' unless value.keys.include?('iops')
+        fail "block device must include at least one of: " + choices.join(' ') if (device.keys & choices).empty?
+        if device['volume_type'] == 'io1'
+          fail 'must specify iops if using provisioned iops volumes' unless device.keys.include?('iops')
         end
       end
     end

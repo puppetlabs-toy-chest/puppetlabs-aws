@@ -18,6 +18,20 @@ describe provider_class do
     )
   }
 
+  let(:resource_with_block_devices) {
+    Puppet::Type.type(:ec2_launchconfiguration).new(
+      name: 'test-lc',
+      image_id: 'ami-67a60d7a',
+      instance_type: 't1.micro',
+      region: 'sa-east-1',
+      security_groups: ['test-sg'],
+      block_device_mappings: [
+        { 'device_name' => '/dev/sda1', 'volume_size' => 8 },
+        { 'device_name' => '/dev/sdb', 'volume_size' => 50 },
+      ]
+    )
+  }
+
   let(:provider) { resource.provider }
 
   let(:instance) { provider.class.instances.first }
