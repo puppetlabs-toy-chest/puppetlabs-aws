@@ -16,6 +16,7 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
             launch_configs << new(hash)
           end
         end
+puts "launch_configs: #{launch_configs}"
         launch_configs
       rescue Timeout::Error, StandardError => e
         raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
@@ -36,6 +37,7 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
   def self.config_to_hash(region, config)
     # It appears possible to get launch configurations manually to a state where
     # they return the identifier of an invalid or a non-existent security groups
+# puts "config_to_hash(#{config})"
     security_group_names = begin
       group_response = ec2_client(region).describe_security_groups(group_ids: config.security_groups)
       group_response.data.security_groups.collect(&:group_name)
@@ -49,7 +51,11 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
       image_id: config.image_id,
       key_name: config.key_name,
       ensure: :present,
-      region: region
+      region: region,
+      block_device_mappings: config.block_device_mappings,
+      spot_price: config.spot_price,
+      ebs_optimized: config.ebs_optimized,
+      associate_public_ip_address: config.associate_public_ip_address || true,
     }
   end
 
@@ -82,13 +88,17 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
     end
 
     data = resource[:user_data].nil? ? nil : Base64.encode64(resource[:user_data])
-
+assoc = resource[:associate_public_ip_address]
+puts "create associate: #{assoc.class} #{assoc}"
     config = {
       launch_configuration_name: name,
       image_id: resource[:image_id],
       security_groups: group_ids,
       instance_type: resource[:instance_type],
       user_data: data,
+      associate_public_ip_address: resource[:associate_public_ip_address],
+      # block_device_mappings: resource[:block_device_mappings],
+      
     }
 
     key = resource[:key_name] ? resource[:key_name] : false

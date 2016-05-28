@@ -67,6 +67,45 @@ Puppet::Type.newtype(:ec2_launchconfiguration) do
     end
   end
 
+  newproperty(:block_device_mappings, :array_matching => :all) do
+    desc "One or more mappings that specify how block devices are exposed to the instance."
+    validate do |value|
+      Puppet.warning "validate(#{value})"
+      devices = value.is_a?(Array) ? value : [value]
+      devices.each do |device|
+        fail "block device must be named" unless value.keys.include?('device_name')
+        choices = ['volume_size', 'snapshot_id']
+        fail "block device must include at least one of: " + choices.join(' ') if (value.keys & choices).empty?
+        if value['volume_type'] == 'io1'
+          fail 'must specify iops if using provisioned iops volumes' unless value.keys.include?('iops')
+        end
+      end
+    end
+
+    def insync?(is)
+      existing_devices = is.collect { |device| device[:device_name] }
+      specified_devices = should.collect { |device| device['device_name'] }
+      existing_devices.to_set == specified_devices.to_set
+    end
+
+    def set(value)
+      read_only_warning(value, self, should)
+    end
+  end
+
+  newproperty(:associate_public_ip_address, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+    desc 'Specifies whether to assign a public IP address to each instance launched in a Amazon VPC. If the instance is launched into a default subnet, the default is true.'
+    defaultto :true
+    newvalues(:true, :false)
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+
+    def set(value)
+      read_only_warning(value, self, should)
+    end
+  end
+
   autorequire(:ec2_securitygroup) do
     groups = self[:security_groups]
     groups.is_a?(Array) ? groups : [groups]
@@ -76,4 +115,10 @@ Puppet::Type.newtype(:ec2_launchconfiguration) do
     self[:vpc]
   end
 
+end
+def read_only_warning(value, property, should)
+  msg = "#{property.name} is read-only. Cannot set to: #{should}"
+  Puppet.warning msg
+  #raise Puppet::Error, msg
+  false
 end
