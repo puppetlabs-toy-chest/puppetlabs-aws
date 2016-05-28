@@ -375,7 +375,7 @@ The name of the key pair associated with this instance. This must be an existing
 #####`tenancy`
 *Optional* Dedicated instances are Amazon EC2 instances that run in a virtual private cloud (VPC) on hardware that's dedicated to a single customer. Choices are 'dedicated' and 'default'. Defaults to shared (default) hardware.
 
-#####`private_ip_addresS`
+#####`private_ip_address`
 *Optional* The private IP address for the instance. This parameter is set at creation only; it is not affected by updates. Must be a valid IPv4 address.
 
 #####`associate_public_ip_address`
@@ -610,6 +610,27 @@ Specifies that basic state of the resource. Valid values are 'attached', 'detach
 
 #####`image_id`
 *Required* The image id to use for the instances. This parameter is set at creation only; it is not affected by updates. For more information, see AWS documentation on finding your [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html).
+
+#####`block_device_mappings`
+*Optional* A list of block devices to associate with the instance. This parameter is set at creation only; it is not affected by updates. Accepts an array of hashes with the device name and either the volume size or snapshot id specified:
+
+~~~
+block_devices => [
+  {
+    device_name  => '/dev/sda1',
+    volume_size  => 8,
+  }
+]
+~~~
+
+~~~
+block_devices => [
+  {
+    device_name  => '/dev/sda1',
+    volume_type => 'gp2',
+  }
+]
+~~~
 
 #####`vpc`
 *Optional* A hint to specify the VPC. This is useful when detecting ambiguously named security groups that might exist in different VPCs, such as 'default'. This parameter is set at creation only; it is not affected by updates.
