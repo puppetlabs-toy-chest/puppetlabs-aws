@@ -1,4 +1,4 @@
-require 'puppet/parameter/boolean'
+require 'puppet/property/boolean'
 
 Puppet::Type.newtype(:ec2_launchconfiguration) do
   @doc = 'Type representing an EC2 launch configuration.'
@@ -69,7 +69,7 @@ Puppet::Type.newtype(:ec2_launchconfiguration) do
     end
   end
 
-  newproperty(:associate_public_ip_address, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+  newproperty(:associate_public_ip_address, :boolean => true, :parent => Puppet::Property::Boolean) do
     desc 'Specifies whether to assign a public IP address to each instance launched in a Amazon VPC. If the instance is launched into a default subnet, the default is true.'
     defaultto :true
     newvalues(:true, :false)
