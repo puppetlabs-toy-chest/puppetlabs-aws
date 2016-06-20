@@ -148,7 +148,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
         ip_protocol: protocol,
       }
       permission[:to_port] = protocol == 'icmp' ? -1 : to_port.to_i
-      permission[:from_port] = protocol == 'icmp' ? -1 : from_port.to_i
+      permission[:from_port] = from_port.to_i
       if rule.key? 'security_group'
         source_group_name = rule['security_group']
 
