@@ -202,6 +202,13 @@ This could be because some other process is modifying AWS at the same time."""
         ::Aws::SQS::Client.new({region: region})
       end
 
+      def self.iam_client(region = default_region)
+        ::Aws::IAM::Client.new(client_config(region))
+      end
+
+      def iam_client(region = default_region)
+        self.class.iam_client(region)
+      end
 
       def tags_for_resource
         tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
