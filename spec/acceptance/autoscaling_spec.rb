@@ -352,6 +352,10 @@ describe "ec2_autoscalinggroup" do
           end
         end
 
+        it 'load_balancers' do
+          regex = /load_balancers\s*=>\s*\[\s*'#{@lb_name}'\]/
+          expect(@result.stdout).to match(regex)
+        end
       end
 
       context 'launch_configuration' do
