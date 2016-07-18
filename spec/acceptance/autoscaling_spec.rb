@@ -174,7 +174,7 @@ describe "ec2_autoscalinggroup" do
           expect(@group.min_size).to eq(@asg_config[:min_size])
           expect(@group.max_size).to eq(@asg_config[:max_size])
           expect(@group.launch_configuration_name).to eq(@asg_config[:lc_setting])
-          expect(@group.availability_zones).to eq(['sa-east-1a', 'sa-east-1b'])
+          expect(@group.availability_zones).to contain_exactly('sa-east-1a', 'sa-east-1b')
           expect(@group.tags).to have_attributes(size: 4)
 
           custom_name_tag = @group.tags.select { |t| t.key == 'custom_name' }
@@ -607,7 +607,7 @@ describe "ec2_autoscalinggroup" do
         r = PuppetManifest.new(@asg_template, config).apply
         expect(r.stderr).not_to match(/error/i)
         group = find_autoscaling_group(@asg_config[:asg_name])
-        expect(group.availability_zones.sort).to eq(config[:availability_zones].sort)
+        expect(group.availability_zones).to contain_exactly(*config[:availability_zones])
       end
 
     end

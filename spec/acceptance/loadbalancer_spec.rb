@@ -86,7 +86,7 @@ describe "elb_loadbalancer" do
     end
 
     it "with the specified availability zone" do
-      expect(@loadbalancer.availability_zones).to eq(@lb_config[:availability_zones])
+      expect(@loadbalancer.availability_zones).to contain_exactly(*@lb_config[:availability_zones])
     end
 
     it "with the default scheme" do
