@@ -223,7 +223,7 @@ Found #{matching_groups.length}:
           volume_size: device['volume_size'],
           snapshot_id: device['snapshot_id'],
           delete_on_termination: device['delete_on_termination'] || true,
-          volume_type: device['volume_type'] || 'standard',
+          volume_type: device['volume_type'] || 'gp2',
           iops: device['iops'],
           encrypted: device['encrypted'] ? true : nil
         },
