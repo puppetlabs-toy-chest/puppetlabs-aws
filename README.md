@@ -320,6 +320,10 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `ec2_vpc_subnet`: Sets up a VPC subnet.
 * `ec2_vpc_vpn`: Sets up an AWS Virtual Private Network.
 * `ec2_vpc_vpn_gateway`: Sets up a VPN gateway.
+* `iam_group`: Manage IAM groups and their membership.
+* `iam_policy`: Manage an IAM 'managed' policy.
+* `iam_policy_attachment`: Manage an IAM 'managed' policy attachments.
+* `iam_user`: Manage IAM users.
 * `rds_db_parameter_group`: Allows read access to DB Parameter Groups.
 * `rds_db_securitygroup`: Sets up an RDS DB Security Group.
 * `rds_instance`: Sets up an RDS Database instance.
@@ -834,6 +838,92 @@ routes => [
 
 #####`type`
 *Optional* The type of VPN gateway. This parameter is set at creation only; it is not affected by updates. The only currently supported value --- and the default --- is 'ipsec.1'.
+
+#### Type: iam_group
+
+```Puppet
+iam_group { 'root':
+  ensure  => present,
+  members => [ 'alice', 'bob' ]
+}
+```
+
+#####`members`
+*Required* An array of user names to include in the group.  Users not specified in this array will be removed.
+
+#### Type: iam_policy
+
+[IAM
+Policies](http://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html)
+manage access to AWS resources.  The `iam_policy` type only manages the
+document content of the policy, and not which entities have the policy
+attached.  See the `iam_policy_attachment` type for managing the application of
+the policy created with the `iam_policy` type.
+
+```Puppet
+iam_policy { 'root':
+  ensure      => present,
+  document    => '{
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "*",
+          "Resource": "*"
+        }
+      ]
+    }',
+}
+```
+
+It is worth noting here that the `iam_policy` type will allow the creation of
+an IAM policy who's name is identical to the built-in policies.  In such a case
+when two policies exist with the same name, one built-in and one user-defined,
+the user-defined is selected for management.
+
+#####`document`
+*Required* A string containing the IAM policy in JSON format.
+
+#### Type: iam_policy_attachment
+The `iam_policy_attachment` resource manages which entities are attached to the
+named policy.  See the note in the `iam_policy` above about duplicate policy
+name selection.
+
+You only need to set the `users`, `groups` or `roles` parameters to manage the
+policy attachments for those resources.  Leaving one of those parameters
+undefined ignores the attachment for those entities.  Defining attachment for
+an entity as an empty array will detach all entities of that flavor from the
+named policy.
+
+```Puppet
+iam_policy_attachment { 'root':
+  groups => ['root'],
+  users  => [],
+}
+```
+
+#####`groups`
+*Optional* An array of group names to attach to the policy.  **Group names not mentioned in this array will be detached from the policy.**
+
+#####`users`
+*Optional* An array of user names to attach to the policy.  **User names not mentioned in this array will be detached from the policy.**
+
+#####`roles`
+*Optional* An array of role names to attach to the policy.  **Role names not mentioned in this array will be detached from the policy.**
+
+#### Type: iam_user
+The `iam_user` type manages user accounts in IAM.  Only the user's name is
+required as the title of the resource.
+
+```
+iam_user { 'alice':
+  ensure => present,
+}
+
+iam_user { 'bob':
+  ensure => present,
+}
+```
 
 #### Type: rds_db_parameter_group
 
