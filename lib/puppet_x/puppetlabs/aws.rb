@@ -218,6 +218,14 @@ This could be because some other process is modifying AWS at the same time."""
         self.class.s3_client(region)
       end
 
+      def self.ecs_client(region = default_region)
+        ::Aws::ECS::Client.new(client_config(region))
+      end
+
+      def ecs_client(region = default_region)
+        self.class.ecs_client(region)
+      end
+
       def tags_for_resource
         tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
         tags << {key: 'Name', value: name}
@@ -339,6 +347,65 @@ This could be because some other process is modifying AWS at the same time."""
           end
         end
         @gateways[gateway_id]
+      end
+
+      def self.normalize_hash(hash)
+        # Sort and format the received hash for simpler comparison.
+        #
+        # Symbolized keys are converted to string'd keys.  Values are sent to the
+        # normalize_values method for processing.  Returns a hash sorted by keys.
+        #
+        data = {}
+        hash.keys.sort_by{|k|k.to_s}.each {|k|
+          value = hash[k]
+          data[k.to_s] = self.normalize_values(value)
+        }
+        sorted_hash = {}
+        data.keys.sort.each {|k|
+          sorted_hash[k] = data[k]
+        }
+        sorted_hash
+      end
+
+      def self.normalize_values(value)
+        # Convert the received value data into a standard format for simpler
+        # comparison.
+        #
+        # This results in the conversion of boolean strings to booleans, string
+        # integers to integers, etc.  Array values are recursively normalized.
+        # Hash values are normalized using the normalize_hash method.
+        #
+        if value.is_a? String
+          return true if value == 'true'
+          return false if value == 'false'
+
+          begin
+            return Integer(value)
+          rescue ArgumentError
+            return value
+          end
+
+        elsif value.is_a? true.class or value.is_a? false.class
+          return value
+        elsif value.is_a? Numeric
+          return value
+        elsif value.is_a? Symbol
+          return value.to_s
+        elsif value.is_a? Hash
+          return self.normalize_hash(value)
+        elsif value.is_a? Array
+          #return nil if value.size == 0
+          results = value.map {|v|
+            self.normalize_values(v)
+          }
+          class_list = results.map {|v| v.class}.uniq
+          if class_list.include? Hash
+            results = results.sort_by{|k| k.flatten}
+          end
+          return results
+        else
+          Puppet.debug("Value class #{value.class} not handled")
+        end
       end
 
     end

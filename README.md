@@ -327,6 +327,9 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `ec2_vpc_subnet`: Sets up a VPC subnet.
 * `ec2_vpc_vpn`: Sets up an AWS Virtual Private Network.
 * `ec2_vpc_vpn_gateway`: Sets up a VPN gateway.
+* `ecs_cluster`: Manage an Ec2 Container Service cluster.
+* `ecs_service`: Manage an Ec2 Container Service service.
+* `ecs_task_definition`: Manage an Ec2 Container Service task definition.
 * `iam_group`: Manage IAM groups and their membership.
 * `iam_policy`: Manage an IAM 'managed' policy.
 * `iam_policy_attachment`: Manage an IAM 'managed' policy attachments.
@@ -855,6 +858,83 @@ routes => [
 
 #####`type`
 *Optional* The type of VPN gateway. This parameter is set at creation only; it is not affected by updates. The only currently supported value --- and the default --- is 'ipsec.1'.
+
+#### Type: ecs_cluster
+
+```Puppet
+ecs_cluster { 'medium':
+  ensure => present,
+}
+```
+
+#### Type: ecs_service
+
+```Puppet
+ecs_service { 'dockerdockerdockerdocker':
+  ensure          => present,
+  desired_count   => 1,
+  task_definition => 'dockerdocker',
+  cluster         => 'medium',
+}
+
+```
+
+#### Type: ecs_task_definition
+
+ECS task definitions can be a bit fussy.  To discover the existing containers
+we use the 'name' option within a container definition to calculate the
+differences between what is, and what should be.  Omitting the 'name' option may
+be done, but it would result in a new container being generated each Puppet
+run, and thus a new task definition.  For this reason it is recommended that
+the 'name' option be defined in each container definition and that the name
+chosen be unique within an `ecs_task_definition` resource.
+
+```Puppet
+ecs_task_definition { 'dockerdocker':
+  container_definitions => [
+    {
+      'name'          => 'zleslietesting',
+      'cpu'           => '1024',
+      'environment'   => {
+        'one' => '1',
+        'two' => '2',
+      },
+      'essential'     => 'true',
+      'image'         => 'debian:jessie',
+      'memory'        => '512',
+      'port_mappings' => [
+        {
+          'container_port' => '8081',
+          'host_port'      => '8082',
+          'protocol'       => 'tcp',
+        },
+      ],
+    }
+  ],
+}
+
+```
+
+Please note, it's important to take into consideration the behavior of the
+provider in the case of missing container options.
+
+If the task for an `ecs_task_definition` has been discovered to exist, then the
+discovered container options are merged with the requested options.  This
+results in the following behavior: *Container options not defined in the puppet
+resource, but are found to exist in the discovered running container are copied
+from the running container.*
+
+In the case where a user wishes to remove an option from the container, one of the following can be applied.
+
+* Name the container something else.  This results in a failure to match the
+  existing container against the desired container, and replaces the container
+  entirely.
+
+* Set an empty value for the option.  This results in the option specified by
+  the user replacing the value defined in the existing container.  For string
+  options, simply setting the value to `''`, or as an array value `[]`, etc.
+
+It's a small kludge, I know.
 
 #### Type: iam_group
 
