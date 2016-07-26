@@ -278,6 +278,9 @@ class AwsHelper
     @iam_client.list_users.users.select { |user| user.user_name == name }
   end
 
+  def get_iam_roles(name)
+    @iam_client.list_roles.roles.select { |role| role.role_name == name }
+  end
 end
 
 class TestExecutor
