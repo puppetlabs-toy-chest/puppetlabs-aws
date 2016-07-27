@@ -194,6 +194,112 @@ You can run the acceptance tests as well by issuing the following command
 
 Note however that this will cost you money as it launches resources in AWS.
 
+Unit Testing with VCR
+---------------------
+
+VCR is a utility for testing which is used to capture the requests and
+responses to the AWS APIs.  The results of a transaction are stored in a YAML
+file that can then be loaded later and used to validate data structures etc
+without requiring access to AWS.  This comes in handy when unit testing using
+Rspec.
+
+Consider the following test for a new provider.
+
+
+```Ruby
+require 'spec_helper'
+
+provider_class = Puppet::Type.type(:snazzy_new_type).provider(:v2)
+
+describe provider_class do
+
+  before do
+    ENV['AWS_ACCESS_KEY_ID'] = 'something goes here'
+    ENV['AWS_SECRET_ACCESS_KEY'] = 'something else goes here'
+    ENV['AWS_REGION'] = 'us-west-2'
+  end
+
+  let(:provider) { resource.provider }
+```
+
+The `_spec.rb` file here begins with the usual bit of boiler plate.  In the
+`before` block here, we define three environment variables that will get loaded
+into the environment for each test within scope.  This is where you put the
+access credentials for AWS.  You may wish to create a separate AWS account for
+testing purposes to avoid leaking data from your production systems.
+
+```Ruby
+  VCR.use_cassette('snazzy-setup') do
+    let(:instance) { provider.class.instances.first }
+  end
+```
+
+Continuing on, the `VCR` block here tells the code within in the block to refer
+to a "cassette" called `snazzy-setup` for all API calls.  If this file is not
+present, then the API calls must be made so the requests may be stored in the
+given cassette.  This will require the credentials be actually loaded above.
+Once the responses are cached, the access credentials above are no longer
+required.
+
+The cassette here refers to a file in the `fixtures/vcr_cassettes` directory.
+So here, we specify `snazzy-setup`, and so the resulting file that gets created
+and loaded is located at `fixtures/vcr_cassettes/snazzy-setup.yml`.
+
+This first use of `VCR` is here just to cache the data necessary for the rest
+of the tests.
+
+```Ruby
+  describe 'some_instance_method' do
+    it 'should exist' do
+      VCR.use_cassette('snazzy-setup') do
+        instance = provider.class.instances.first
+        expect(instance.someproperty).to eq(512)
+      end
+    end
+  end
+end
+```
+
+Wrapping up our example here, we test an instance method called
+`some_instance_method`.  We do this by loading the `snazzy-setup` cassette,
+then calling the provider `instances` method and store the first result in a
+variable called `instance`.  Now we can make assertions about what we expect
+from that instance to test our provider functionality.
+
+The instance on which we are making assertions needs to actually exist when the
+initial `VCR` setup is done above.  Once the results are cached in the YAML
+file, then you can tear it down and still test effectively.
+
+You may notice that some tests make use of multiple cassettes.  One might test
+the environment for creating a resource.  One might test the environment for
+tearing down a resource.  This is all an exercise left to the developer.
+
+### Tidying up!  IMPORTANT
+
+Its important to tidy up on spec tests before committing.  Its easy to do, so
+just remember to tidy up.  You don't want to commit your credentials to GitHub,
+as I have done this morning.
+
+Firstly, replace the credentials in the `before` block within any spec files
+that you have written.
+
+Secondly, replace the credential reference in the resulting cassette yaml
+files.  I use something like the following.
+
+```
+sed -i '' -e 's/ABCEFGOOOOOOOOOOOOOOR/AAAAAAAAAAAAAAAAAAAAA/g' -e 's/123456789101/111111111111/g' fixtures/vcr_cassettes/*.yml
+```
+
+The above 'sed' replaces my account id of '123456789101' with a string of
+matching length which is not my account id.  Also above, we replace the access
+credential of 'ABCEFGOOOOOOOOOOOOOOR' with a string of matching length.  I
+don't believe keeping the length of the strings is required, but I do it
+anyway.
+
+If you do both of the above, then you should not have account information,
+identity information, or credential information in either the `_sepc.rb` test
+files, or the VCR cassette files.
+
 
 If you have commit access to the repository
 ===========================================
