@@ -8,17 +8,25 @@ class Puppet::Provider::Route53Record < PuppetX::Puppetlabs::Aws
       records = []
       zones_response.data.hosted_zones.each do |zone|
         route53_client.list_resource_record_sets(hosted_zone_id: zone.id).each do |records_response|
-        records_response.data.resource_record_sets.each do |record|
-          records << new({
-            name: record.name,
-            ensure: :present,
-            zone: zone.name,
-            ttl: record.ttl,
-            values: record.resource_records.map(&:value),
-          }) if record.type == record_type
+          records_response.data.resource_record_sets.each do |record|
+
+            resource_record = {
+              name: record.name,
+              ensure: :present,
+              zone: zone.name,
+              ttl: record.ttl,
+              values: record.resource_records.map(&:value),
+            }
+
+            unless record.alias_target.is_a? NilClass
+              resource_record[:alias_target] = record.alias_target.dns_name
+              resource_record[:alias_target_zone] = record.alias_target.hosted_zone_id
+            end
+
+            records << new(resource_record) if record.type == record_type
+          end
         end
       end
-    end
       records
     rescue Timeout::Error, StandardError => e
       raise PuppetX::Puppetlabs::FetchingAWSDataError.new("Route 53", self.resource_type.name.to_s, e.message)
@@ -39,10 +47,12 @@ class Puppet::Provider::Route53Record < PuppetX::Puppetlabs::Aws
   end
 
   def record_hash(action)
-    values = resource[:values] || @property_hash[:values]
+    values = resource[:values]
     records = values ? values.map { |v| {value: v} } : []
+    alias_target = resource[:alias_target]
+    alias_target_zone = resource[:alias_target_zone]
     ttl = resource[:ttl] || @property_hash[:ttl]
-    {
+    data = {
       hosted_zone_id: zone_id,
       change_batch: {
         changes: [{
@@ -50,12 +60,35 @@ class Puppet::Provider::Route53Record < PuppetX::Puppetlabs::Aws
           resource_record_set: {
             name: resource[:name],
             type: self.class.record_type,
-            ttl: ttl,
-            resource_records: records,
           }
         }]
       }
     }
+
+    if alias_target and not records.empty?
+      fail('route53_record property conflict detected.  route53_record
+           resources must have only one pair of properties: ("values" + "ttl")
+           set, or ("alias_target" + "alias_target_zone set").')
+    end
+
+    if alias_target and alias_target_zone
+      alias_target_hash = {
+        hosted_zone_id: alias_target_zone,
+        dns_name: alias_target,
+        evaluate_target_health: false,
+      }
+
+      data[:change_batch][:changes][0][:resource_record_set][:alias_target] = alias_target_hash
+    elsif alias_target or alias_target_zone
+      fail('Management of alias_target requires both alias_target and
+                     alias_target_zone parameters.')
+    elsif not records.empty?
+      data[:change_batch][:changes][0][:resource_record_set][:resource_records] = records
+      # TTL is here because it should be omitted from the request when we're managing the alias_target
+      data[:change_batch][:changes][0][:resource_record_set][:ttl] = ttl
+    end
+
+    data
   end
 
   def zone_id

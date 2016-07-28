@@ -40,6 +40,21 @@ module PuppetX
           end
         end
 
+        newproperty(:alias_target) do
+          desc 'The name of the alias resource to target'
+          validate do |value|
+            fail 'alias_target values must be strings' unless value.is_a? String
+            fail 'Record names must end with a .' if value[-1] != '.'
+          end
+        end
+
+        newproperty(:alias_target_zone) do
+          desc 'The ID of the zone in which the alias_target resides'
+          validate do |value|
+            fail 'alias_target_zone values must be strings' unless value.is_a? String
+          end
+        end
+
         autorequire(:route53_zone) do
           self[:zone]
         end

@@ -1097,10 +1097,18 @@ All Route53 record types use the same parameters:
 *Optional* The time to live for the record. Accepts an integer.
 
 #####`values`
-*Required* The values of the record. Accepts an array.
+*Required when not using alias_target* The values of the record. Accepts an array.
+*Conflicts with alias_target*
 
 #####`name`
 *Required* The name of DNS zone group. This is the value of the AWS Name tag.
+
+#####`alias_target`
+*Required when not using values* The name of the alias resource to target.
+*Conflicts with values*
+
+#####`alias_target_zone`
+*Required when using alias_target* The ID of the zone in which the alias_target resides.
 
 #### Type: route53_zone
 
