@@ -92,6 +92,10 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     end
   end
 
+  newproperty(:dns_name) do
+    desc 'The DNS name of the load balancer'
+  end
+
   validate do
     subnets = self[:subnets] || []
     zones = self[:availability_zones] || []
