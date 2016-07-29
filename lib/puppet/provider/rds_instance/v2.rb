@@ -65,7 +65,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def exists?
     dest_region = resource[:region] if resource
-    Puppet.info("Checking if instance #{name} exists in region #{dest_region || region}")
+    Puppet.debug("Checking if instance #{name} exists in region #{dest_region || region}")
     [:present, :creating, :available, :backing_up].include? @property_hash[:ensure]
   end
 

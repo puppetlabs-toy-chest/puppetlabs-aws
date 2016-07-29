@@ -102,17 +102,17 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def exists?
-    Puppet.info("Checking if instance #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if instance #{name} exists in region #{target_region}")
     running? || stopped?
   end
 
   def running?
-    Puppet.info("Checking if instance #{name} is running in region #{target_region}")
+    Puppet.debug("Checking if instance #{name} is running in region #{target_region}")
     [:present, :pending, :running].include? @property_hash[:ensure]
   end
 
   def stopped?
-    Puppet.info("Checking if instance #{name} is stopped in region #{target_region}")
+    Puppet.debug("Checking if instance #{name} is stopped in region #{target_region}")
     [:stopping, :stopped].include? @property_hash[:ensure]
   end
 

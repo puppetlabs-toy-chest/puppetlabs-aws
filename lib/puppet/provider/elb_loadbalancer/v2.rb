@@ -96,7 +96,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def exists?
-    Puppet.info("Checking if load balancer #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if load balancer #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 

@@ -49,7 +49,7 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def exists?
-    Puppet.info("Checking if Customer gateway #{name} exists in #{target_region}")
+    Puppet.debug("Checking if Customer gateway #{name} exists in #{target_region}")
     @property_hash[:ensure] == :present
   end
 

@@ -30,7 +30,7 @@ Puppet::Type.type(:iam_group).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) 
   end
 
   def exists?
-    Puppet.info("Checking if IAM group #{name} exists")
+    Puppet.debug("Checking if IAM group #{name} exists")
     @property_hash[:ensure] == :present
   end
 

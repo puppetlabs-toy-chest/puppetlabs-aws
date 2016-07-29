@@ -54,7 +54,7 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
   end
 
   def exists?
-    Puppet.info("Checking if launch configuration #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if launch configuration #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 

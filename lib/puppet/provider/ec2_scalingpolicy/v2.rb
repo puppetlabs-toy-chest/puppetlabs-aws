@@ -44,7 +44,7 @@ Puppet::Type.type(:ec2_scalingpolicy).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def exists?
-    Puppet.info("Checking if scaling policy #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if scaling policy #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 

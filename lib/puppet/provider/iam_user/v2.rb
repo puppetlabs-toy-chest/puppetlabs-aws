@@ -25,7 +25,7 @@ Puppet::Type.type(:iam_user).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) d
   end
 
   def exists?
-    Puppet.info("Checking if IAM user #{name} exists")
+    Puppet.debug("Checking if IAM user #{name} exists")
     @property_hash[:ensure] == :present
   end
 

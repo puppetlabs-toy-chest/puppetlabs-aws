@@ -55,7 +55,7 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
   end
 
   def exists?
-    Puppet.info("Checking if DHCP options #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if DHCP options #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 

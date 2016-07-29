@@ -43,7 +43,7 @@ Puppet::Type.type(:iam_policy).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
   end
 
   def exists?
-    Puppet.info("Checking if IAM policy #{name} exists")
+    Puppet.debug("Checking if IAM policy #{name} exists")
     @property_hash[:ensure] == :present
   end
 

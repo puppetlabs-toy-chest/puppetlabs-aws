@@ -91,7 +91,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def exists?
-    Puppet.info("Checking if security group #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if security group #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 

@@ -25,7 +25,7 @@ Puppet::Type.type(:route53_zone).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def exists?
-    Puppet.info("Checking if zone #{name} exists")
+    Puppet.debug("Checking if zone #{name} exists")
     @property_hash[:ensure] == :present
   end
 
