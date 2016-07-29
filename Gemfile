@@ -21,6 +21,7 @@ group :test do
   gem 'vcr'
   gem 'rspec-puppet', :git => 'https://github.com/rodjek/rspec-puppet.git'
   gem 'metadata-json-lint'
+  gem 'json_pure', '~>1.0' if RUBY_VERSION == '1.9.3'
 end
 
 group :development do
