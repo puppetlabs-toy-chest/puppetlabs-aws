@@ -1,0 +1,507 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.22 ruby/2.1.2 x86_64-darwin15.0
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListClusters
+      X-Amz-Date:
+      - 20160801T223714Z
+      X-Amz-Content-Sha256:
+      - 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160801/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=703de8a29d4515513c54ddced9fe6c9df7b259b0ac55e25959993b72124a5969
+      Content-Length:
+      - '2'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Mon, 01 Aug 2016 22:37:14 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '70'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7ea9f860-5838-11e6-b123-0d6ff5d80840
+    body:
+      encoding: UTF-8
+      string: '{"clusterArns":["arn:aws:ecs:us-west-2:111111111111:cluster/zleslie"]}'
+    http_version: 
+  recorded_at: Mon, 01 Aug 2016 22:37:14 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:111111111111:cluster/zleslie"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.22 ruby/2.1.2 x86_64-darwin15.0
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListServices
+      X-Amz-Date:
+      - 20160801T223714Z
+      X-Amz-Content-Sha256:
+      - 537b417af8208177ebdbb47afcfa6462c3b19bc144ea126047855a6c4821ff3b
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160801/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=cd9f15da552331aa29f4b8bd67d5380f28854451cacfa83d791ba27c48ff6043
+      Content-Length:
+      - '64'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Mon, 01 Aug 2016 22:37:14 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '74'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7ec08e49-5838-11e6-977d-5f5e74dc3386
+    body:
+      encoding: UTF-8
+      string: '{"serviceArns":["arn:aws:ecs:us-west-2:111111111111:service/netflix-ice"]}'
+    http_version: 
+  recorded_at: Mon, 01 Aug 2016 22:37:14 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:111111111111:cluster/zleslie","services":["arn:aws:ecs:us-west-2:111111111111:service/netflix-ice"]}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.22 ruby/2.1.2 x86_64-darwin15.0
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeServices
+      X-Amz-Date:
+      - 20160801T223714Z
+      X-Amz-Content-Sha256:
+      - c44e35d7bb974d8a0a562b33d09e355e6b6964a1e35bd4850163aaa80c29ca30
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160801/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=66300138122f70c298e4556a59a2c5f1fcba8e60f4cc9ca39b0af66489c0bac1
+      Content-Length:
+      - '134'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Mon, 01 Aug 2016 22:37:15 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '3621'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7ed30432-5838-11e6-b123-0d6ff5d80840
+    body:
+      encoding: UTF-8
+      string: '{"failures":[],"services":[{"clusterArn":"arn:aws:ecs:us-west-2:111111111111:cluster/zleslie","createdAt":1.469637628671E9,"deploymentConfiguration":{"maximumPercent":200,"minimumHealthyPercent":100},"deployments":[{"createdAt":1.469637628671E9,"desiredCount":0,"id":"ecs-svc/9223370567217147128","pendingCount":0,"runningCount":0,"status":"PRIMARY","taskDefinition":"arn:aws:ecs:us-west-2:111111111111:task-definition/netflix-ice:30","updatedAt":1.469637628671E9}],"desiredCount":0,"events":[{"createdAt":1.470069887643E9,"id":"afeb8fc9-7dff-425d-9723-9dc6392702b3","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.470048261521E9,"id":"ba93794a-ddee-47a8-87b0-c5282b1c3f03","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.470026639099E9,"id":"cec1c78f-301e-4593-b7fd-79b9f907052f","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.470005024165E9,"id":"41769e97-fb45-4600-abb7-55615e22aa42","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.4699834144E9,"id":"e936db17-e05c-404e-ba5e-e07843a82721","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469961814258E9,"id":"7e228a56-1d76-4a38-88e1-a9fdf0f9e2cb","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469940196823E9,"id":"cab8a403-d9d9-4e07-ac68-8501a79780b7","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469918588348E9,"id":"e4c9afcf-b48a-4566-b2a9-b1790d506f02","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46989697723E9,"id":"4b19f863-35fb-4eba-9617-d75e49f78110","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469875345099E9,"id":"b8969e63-6080-4bfc-8f02-89dc42b994da","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469853726707E9,"id":"38972468-9477-488d-b9c3-3d9c709b5bbe","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46983212157E9,"id":"432dcfb0-6fa0-4613-807c-cd3d7a93f37b","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469810506433E9,"id":"be544d09-91ff-4512-884f-455874e48fbf","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469788905003E9,"id":"1ab21f17-cb26-47d8-864d-b4780eb5bfec","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469767301462E9,"id":"941ff5b8-ef46-48a0-8bba-d7bda2509bc2","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469745681305E9,"id":"53e4e256-17cb-44bb-9e64-e0b185a9735f","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469724067804E9,"id":"e917a1dd-6ae1-4649-9efa-6ed42902568f","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46970246178E9,"id":"c71e7b0d-787f-4a23-bc4f-70fe99869c51","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469680861439E9,"id":"04f4f14b-a0d8-4e69-bc0e-22c36fce15a3","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46965924988E9,"id":"2d35c0c3-ccfb-4f1e-84ec-9f7959cbac74","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469637631371E9,"id":"1fd1dbf9-a4ad-46c4-8905-9ae893ce3747","message":"(service
+        netflix-ice) has reached a steady state."}],"loadBalancers":[],"pendingCount":0,"runningCount":0,"serviceArn":"arn:aws:ecs:us-west-2:111111111111:service/netflix-ice","serviceName":"netflix-ice","status":"ACTIVE","taskDefinition":"arn:aws:ecs:us-west-2:111111111111:task-definition/netflix-ice:30"}]}'
+    http_version: 
+  recorded_at: Mon, 01 Aug 2016 22:37:15 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.22 ruby/2.1.2 x86_64-darwin15.0
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListClusters
+      X-Amz-Date:
+      - 20160801T223715Z
+      X-Amz-Content-Sha256:
+      - 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160801/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=510f2f9029b31cff1b4d4d295d1668718d3b70f0e0ef37fad3982c3b58141a08
+      Content-Length:
+      - '2'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Mon, 01 Aug 2016 22:37:15 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '70'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7ee4b7e4-5838-11e6-b537-c5d54ab9cbd5
+    body:
+      encoding: UTF-8
+      string: '{"clusterArns":["arn:aws:ecs:us-west-2:111111111111:cluster/zleslie"]}'
+    http_version: 
+  recorded_at: Mon, 01 Aug 2016 22:37:15 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:111111111111:cluster/zleslie"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.22 ruby/2.1.2 x86_64-darwin15.0
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListServices
+      X-Amz-Date:
+      - 20160801T223715Z
+      X-Amz-Content-Sha256:
+      - 537b417af8208177ebdbb47afcfa6462c3b19bc144ea126047855a6c4821ff3b
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160801/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=bba70547a97ca7f3d90548f1c3ea4512c482ee3f9b5783834561c7696a539448
+      Content-Length:
+      - '64'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Mon, 01 Aug 2016 22:37:15 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '74'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7ef5cf1c-5838-11e6-977d-5f5e74dc3386
+    body:
+      encoding: UTF-8
+      string: '{"serviceArns":["arn:aws:ecs:us-west-2:111111111111:service/netflix-ice"]}'
+    http_version: 
+  recorded_at: Mon, 01 Aug 2016 22:37:15 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:111111111111:cluster/zleslie","services":["arn:aws:ecs:us-west-2:111111111111:service/netflix-ice"]}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.22 ruby/2.1.2 x86_64-darwin15.0
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeServices
+      X-Amz-Date:
+      - 20160801T223715Z
+      X-Amz-Content-Sha256:
+      - c44e35d7bb974d8a0a562b33d09e355e6b6964a1e35bd4850163aaa80c29ca30
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160801/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=39873d9d27e03f50602d6de50c32d03daf4598a715ca12e68dc896340032a97a
+      Content-Length:
+      - '134'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Mon, 01 Aug 2016 22:37:15 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '3621'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7f06e5ea-5838-11e6-b537-c5d54ab9cbd5
+    body:
+      encoding: UTF-8
+      string: '{"failures":[],"services":[{"clusterArn":"arn:aws:ecs:us-west-2:111111111111:cluster/zleslie","createdAt":1.469637628671E9,"deploymentConfiguration":{"maximumPercent":200,"minimumHealthyPercent":100},"deployments":[{"createdAt":1.469637628671E9,"desiredCount":0,"id":"ecs-svc/9223370567217147128","pendingCount":0,"runningCount":0,"status":"PRIMARY","taskDefinition":"arn:aws:ecs:us-west-2:111111111111:task-definition/netflix-ice:30","updatedAt":1.469637628671E9}],"desiredCount":0,"events":[{"createdAt":1.470069887643E9,"id":"afeb8fc9-7dff-425d-9723-9dc6392702b3","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.470048261521E9,"id":"ba93794a-ddee-47a8-87b0-c5282b1c3f03","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.470026639099E9,"id":"cec1c78f-301e-4593-b7fd-79b9f907052f","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.470005024165E9,"id":"41769e97-fb45-4600-abb7-55615e22aa42","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.4699834144E9,"id":"e936db17-e05c-404e-ba5e-e07843a82721","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469961814258E9,"id":"7e228a56-1d76-4a38-88e1-a9fdf0f9e2cb","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469940196823E9,"id":"cab8a403-d9d9-4e07-ac68-8501a79780b7","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469918588348E9,"id":"e4c9afcf-b48a-4566-b2a9-b1790d506f02","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46989697723E9,"id":"4b19f863-35fb-4eba-9617-d75e49f78110","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469875345099E9,"id":"b8969e63-6080-4bfc-8f02-89dc42b994da","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469853726707E9,"id":"38972468-9477-488d-b9c3-3d9c709b5bbe","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46983212157E9,"id":"432dcfb0-6fa0-4613-807c-cd3d7a93f37b","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469810506433E9,"id":"be544d09-91ff-4512-884f-455874e48fbf","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469788905003E9,"id":"1ab21f17-cb26-47d8-864d-b4780eb5bfec","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469767301462E9,"id":"941ff5b8-ef46-48a0-8bba-d7bda2509bc2","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469745681305E9,"id":"53e4e256-17cb-44bb-9e64-e0b185a9735f","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469724067804E9,"id":"e917a1dd-6ae1-4649-9efa-6ed42902568f","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46970246178E9,"id":"c71e7b0d-787f-4a23-bc4f-70fe99869c51","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469680861439E9,"id":"04f4f14b-a0d8-4e69-bc0e-22c36fce15a3","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46965924988E9,"id":"2d35c0c3-ccfb-4f1e-84ec-9f7959cbac74","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469637631371E9,"id":"1fd1dbf9-a4ad-46c4-8905-9ae893ce3747","message":"(service
+        netflix-ice) has reached a steady state."}],"loadBalancers":[],"pendingCount":0,"runningCount":0,"serviceArn":"arn:aws:ecs:us-west-2:111111111111:service/netflix-ice","serviceName":"netflix-ice","status":"ACTIVE","taskDefinition":"arn:aws:ecs:us-west-2:111111111111:task-definition/netflix-ice:30"}]}'
+    http_version: 
+  recorded_at: Mon, 01 Aug 2016 22:37:15 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.22 ruby/2.1.2 x86_64-darwin15.0
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListClusters
+      X-Amz-Date:
+      - 20160801T223715Z
+      X-Amz-Content-Sha256:
+      - 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160801/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=510f2f9029b31cff1b4d4d295d1668718d3b70f0e0ef37fad3982c3b58141a08
+      Content-Length:
+      - '2'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Mon, 01 Aug 2016 22:37:15 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '70'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7f1898b0-5838-11e6-8f3f-af71e704ebce
+    body:
+      encoding: UTF-8
+      string: '{"clusterArns":["arn:aws:ecs:us-west-2:111111111111:cluster/zleslie"]}'
+    http_version: 
+  recorded_at: Mon, 01 Aug 2016 22:37:15 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:111111111111:cluster/zleslie"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.22 ruby/2.1.2 x86_64-darwin15.0
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListServices
+      X-Amz-Date:
+      - 20160801T223715Z
+      X-Amz-Content-Sha256:
+      - 537b417af8208177ebdbb47afcfa6462c3b19bc144ea126047855a6c4821ff3b
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160801/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=bba70547a97ca7f3d90548f1c3ea4512c482ee3f9b5783834561c7696a539448
+      Content-Length:
+      - '64'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Mon, 01 Aug 2016 22:37:15 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '74'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7f2c4805-5838-11e6-a2f8-5b25449583a6
+    body:
+      encoding: UTF-8
+      string: '{"serviceArns":["arn:aws:ecs:us-west-2:111111111111:service/netflix-ice"]}'
+    http_version: 
+  recorded_at: Mon, 01 Aug 2016 22:37:15 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:111111111111:cluster/zleslie","services":["arn:aws:ecs:us-west-2:111111111111:service/netflix-ice"]}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.22 ruby/2.1.2 x86_64-darwin15.0
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeServices
+      X-Amz-Date:
+      - 20160801T223715Z
+      X-Amz-Content-Sha256:
+      - c44e35d7bb974d8a0a562b33d09e355e6b6964a1e35bd4850163aaa80c29ca30
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacterd/20160801/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=39873d9d27e03f50602d6de50c32d03daf4598a715ca12e68dc896340032a97a
+      Content-Length:
+      - '134'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Mon, 01 Aug 2016 22:37:15 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '3621'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 7f3dd3f7-5838-11e6-b123-0d6ff5d80840
+    body:
+      encoding: UTF-8
+      string: '{"failures":[],"services":[{"clusterArn":"arn:aws:ecs:us-west-2:111111111111:cluster/zleslie","createdAt":1.469637628671E9,"deploymentConfiguration":{"maximumPercent":200,"minimumHealthyPercent":100},"deployments":[{"createdAt":1.469637628671E9,"desiredCount":0,"id":"ecs-svc/9223370567217147128","pendingCount":0,"runningCount":0,"status":"PRIMARY","taskDefinition":"arn:aws:ecs:us-west-2:111111111111:task-definition/netflix-ice:30","updatedAt":1.469637628671E9}],"desiredCount":0,"events":[{"createdAt":1.470069887643E9,"id":"afeb8fc9-7dff-425d-9723-9dc6392702b3","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.470048261521E9,"id":"ba93794a-ddee-47a8-87b0-c5282b1c3f03","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.470026639099E9,"id":"cec1c78f-301e-4593-b7fd-79b9f907052f","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.470005024165E9,"id":"41769e97-fb45-4600-abb7-55615e22aa42","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.4699834144E9,"id":"e936db17-e05c-404e-ba5e-e07843a82721","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469961814258E9,"id":"7e228a56-1d76-4a38-88e1-a9fdf0f9e2cb","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469940196823E9,"id":"cab8a403-d9d9-4e07-ac68-8501a79780b7","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469918588348E9,"id":"e4c9afcf-b48a-4566-b2a9-b1790d506f02","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46989697723E9,"id":"4b19f863-35fb-4eba-9617-d75e49f78110","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469875345099E9,"id":"b8969e63-6080-4bfc-8f02-89dc42b994da","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469853726707E9,"id":"38972468-9477-488d-b9c3-3d9c709b5bbe","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46983212157E9,"id":"432dcfb0-6fa0-4613-807c-cd3d7a93f37b","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469810506433E9,"id":"be544d09-91ff-4512-884f-455874e48fbf","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469788905003E9,"id":"1ab21f17-cb26-47d8-864d-b4780eb5bfec","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469767301462E9,"id":"941ff5b8-ef46-48a0-8bba-d7bda2509bc2","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469745681305E9,"id":"53e4e256-17cb-44bb-9e64-e0b185a9735f","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469724067804E9,"id":"e917a1dd-6ae1-4649-9efa-6ed42902568f","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46970246178E9,"id":"c71e7b0d-787f-4a23-bc4f-70fe99869c51","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469680861439E9,"id":"04f4f14b-a0d8-4e69-bc0e-22c36fce15a3","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.46965924988E9,"id":"2d35c0c3-ccfb-4f1e-84ec-9f7959cbac74","message":"(service
+        netflix-ice) has reached a steady state."},{"createdAt":1.469637631371E9,"id":"1fd1dbf9-a4ad-46c4-8905-9ae893ce3747","message":"(service
+        netflix-ice) has reached a steady state."}],"loadBalancers":[],"pendingCount":0,"runningCount":0,"serviceArn":"arn:aws:ecs:us-west-2:111111111111:service/netflix-ice","serviceName":"netflix-ice","status":"ACTIVE","taskDefinition":"arn:aws:ecs:us-west-2:111111111111:task-definition/netflix-ice:30"}]}'
+    http_version: 
+  recorded_at: Mon, 01 Aug 2016 22:37:15 GMT
+recorded_with: VCR 3.0.3

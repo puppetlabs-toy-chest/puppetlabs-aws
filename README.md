@@ -861,25 +861,65 @@ routes => [
 
 #### Type: ecs_cluster
 
+Type representing ECS clusters.
+
 ```Puppet
 ecs_cluster { 'medium':
   ensure => present,
 }
 ```
 
+##### `name`
+*Required* The name of the cluster to manage.
+
 #### Type: ecs_service
 
 ```Puppet
 ecs_service { 'dockerdockerdockerdocker':
-  ensure          => present,
-  desired_count   => 1,
-  task_definition => 'dockerdocker',
-  cluster         => 'medium',
+  ensure                   => present,
+  desired_count            => 1,
+  task_definition          => 'dockerdocker',
+  cluster                  => 'medium',
+  deployment_configuration => {
+    'maximum_percent'         => 200,
+    'minimum_healthy_percent' => 50
+  },
+  load_balancers           => [
+    {
+      'container_name'     => 'mycontainername',
+      'container_port'     => '8080',
+      'load_balancer_name' => 'name-of-loadbalancer-elb'
+    }
 }
-
 ```
 
+##### `cluster`
+*Required* The name of the cluster to assign the service to
+
+##### `deployment_configuration`
+The deployment configuration of the service.
+
+A hash with the keys of "maximum_percent" and "minimum_healthy_percent"
+with integer values represnting percent.'
+
+##### `desired_count`
+A count of this service that should be running.
+
+##### `load_balancers`
+An array of hashes representing the load balancers to assign to a service.
+
+##### `name`
+*Required* The name of the cluster to manage.
+
+##### `role`
+The short name of the role to assign to the cluster upon creation.
+
+##### `task_definition`
+*Required* The name of the task definition to run.
+
 #### Type: ecs_task_definition
+
+Type representing ECS clusters.
 
 ECS task definitions can be a bit fussy.  To discover the existing containers
 we use the 'name' option within a container definition to calculate the
@@ -912,7 +952,6 @@ ecs_task_definition { 'dockerdocker':
     }
   ],
 }
-
 ```
 
 Please note, it's important to take into consideration the behavior of the
@@ -935,6 +974,18 @@ In the case where a user wishes to remove an option from the container, one of t
   options, simply setting the value to `''`, or as an array value `[]`, etc.
 
 It's a small kludge, I know.
+
+
+
+##### `container_definitions`
+An array of hashes representing the container definition.  See the example
+above.
+
+##### `name`
+*Required* The name of the task to manage.
+
+##### `volumes`
+An array of hashes to handle for the task.
 
 #### Type: iam_group
 

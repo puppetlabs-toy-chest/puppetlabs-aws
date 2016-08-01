@@ -1,7 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
-require 'pp'
-
 
 Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
@@ -33,7 +31,6 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
         ensure: :present,
         arn: task.task_definition_arn,
         revision: task.revision,
-        requires_attributes: task.requires_attributes,
         volumes: task.volumes,
         container_definitions: container_defs,
       })
@@ -78,7 +75,7 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     data = normalize_values(defs)
 
     data.collect {|cd|
-      if cd.keys.include? 'environment'
+      unless cd['environment'].nil?
         cd['environment'] = deserialize_environment(cd['environment'])
       end
       cd
@@ -93,7 +90,7 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     # method.
     #
     container_definitions.collect {|cd|
-      if cd.keys.include? 'environment'
+      unless cd['environment'].nil?
         cd['environment'] = serialize_environment(cd['environment'])
       end
       cd
@@ -128,7 +125,7 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     Puppet.debug("Flushing ECS task definition for #{@property_hash[:name]}")
 
     containers = []
-    if @property_hash.keys.include? :container_definitions and @property_flush.keys.include? :container_definitions
+    if @property_hash[:container_definitions] and @property_flush[:container_definitions]
       Puppet.debug("Comparing container definitions for #{@property_hash[:name]}")
         is_containers = self.class.normalize_values(@property_hash[:container_definitions])
         should_containers = self.class.normalize_values(@property_flush[:container_definitions])

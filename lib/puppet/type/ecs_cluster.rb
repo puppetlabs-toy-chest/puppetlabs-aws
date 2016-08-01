@@ -10,11 +10,28 @@ Puppet::Type.newtype(:ecs_cluster) do
     end
   end
 
-  newproperty(:arn)
-  newproperty(:status)
-  newproperty(:registered_container_instances_count)
-  newproperty(:running_tasks_count)
-  newproperty(:pending_tasks_count)
-  newproperty(:active_services_count)
+  newproperty(:arn) do
+    desc 'Read-only unique AWS resource name assigned to the cluster'
+  end
+
+  newproperty(:status) do
+    desc 'Read-only status of the ECS cluster'
+  end
+
+  newproperty(:registered_container_instances_count) do
+    desc 'Read-only count of the registerd containers for the cluster'
+  end
+
+  newproperty(:running_tasks_count) do
+    desc 'Read-only count of the running ECS tasks on the cluster'
+  end
+
+  newproperty(:pending_tasks_count) do
+    desc 'Read-only count of the tasks in a pending state on the cluster'
+  end
+
+  newproperty(:active_services_count) do
+    desc 'Read-only count of the number of services in an active state'
+  end
 end
 

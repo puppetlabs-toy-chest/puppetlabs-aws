@@ -56,7 +56,8 @@ Puppet::Type.type(:ecs_service).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
       ecs_service_descriptions.collect do |service|
 
         task_family = service.task_definition.match(/^(.*)\/([_\w\d-]+):(\d+)$/)[2]
-        new({
+
+        ecs_service = {
           name: service.service_name,
           ensure: :present,
           status: service.status,
@@ -67,9 +68,15 @@ Puppet::Type.type(:ecs_service).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
           pending_count: service.pending_count,
           task_definition: task_family,
           deployment_configuration: deserialize_deployment_configuration(service.deployment_configuration),
-          role_arn: service.role_arn,
           cluster: cluster_name,
-        })
+        }
+
+        unless service.role_arn.is_a? NilClass
+          ecs_service[:role] = service.role_arn.match(/^(.*)\/([_\w\d-]+)$/)[2]
+          ecs_service[:role_arn] =  service.role_arn
+        end
+
+        new(ecs_service)
 
       end
     end
@@ -77,7 +84,7 @@ Puppet::Type.type(:ecs_service).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
     results.flatten.select {|i| i }
   end
 
-  read_only(:load_balancers)
+  read_only(:load_balancers, :role_arn, :role)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -119,20 +126,33 @@ Puppet::Type.type(:ecs_service).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   end
 
   def exists?
-    Puppet.debug("Checking if ECS service #{resource[:name]} exists")
-
+    Puppet.debug("Checking if ECS service #{name} exists")
     @property_hash[:ensure] == :present
   end
 
   def create
     Puppet.debug("Creating ecs_service #{resource[:name]}")
 
-    ecs_client.create_service({
+    ecs_service = {
       service_name: resource[:name],
       desired_count: resource[:desired_count],
       task_definition: resource[:task_definition],
       cluster: resource[:cluster],
-    })
+    }
+
+    if resource[:load_balancers]
+      ecs_service[:load_balancers] = resource[:load_balancers]
+    end
+
+    if resource[:role]
+      ecs_service[:role] = resource[:role]
+    end
+
+    if resource[:deployment_configuration]
+      ecs_service[:deployment_configuration] = resource[:deployment_configuration]
+    end
+
+    ecs_client.create_service(ecs_service)
     @property_hash[:ensure] = :present
   end
 
@@ -147,30 +167,30 @@ Puppet::Type.type(:ecs_service).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   end
 
   def flush
-    Puppet.debug("Flushing ECS service for #{@property_hash[:name]}")
+    if @property_hash[:ensure] != :absent
+      Puppet.debug("Flushing ECS service for #{@property_hash[:name]}")
 
-    if @property_flush.keys.size > 0
-      service_def = {
-        service: @property_hash[:name],
-        cluster: @property_hash[:cluster],
-      }
+      if @property_flush.keys.size > 0
+        service_def = {
+          service: @property_hash[:name],
+          cluster: @property_hash[:cluster],
+        }
 
-      if @property_flush.keys.include? :deployment_configuration
-        service_def[:deployment_configuration] = @property_flush[:deployment_configuration]
+        unless @property_flush[:deployment_configuration].nil?
+          service_def[:deployment_configuration] = @property_flush[:deployment_configuration]
+        end
+
+        unless @property_flush[:desired_count].nil?
+          service_def[:desired_count] = @property_flush[:desired_count]
+        end
+
+        unless @property_flush[:task_definition].nil?
+          service_def[:task_definition] = @property_flush[:task_definition]
+        end
+
+        ecs_client.update_service(service_def)
       end
-
-      if @property_flush.keys.include? :desired_count
-        service_def[:desired_count] = @property_flush[:desired_count]
-      end
-
-      if @property_flush.keys.include? :task_definition
-        service_def[:task_definition] = @property_flush[:task_definition]
-      end
-
-      ecs_client.update_service(service_def)
     end
-
   end
 
 end
-

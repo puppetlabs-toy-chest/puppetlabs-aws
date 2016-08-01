@@ -23,6 +23,9 @@ Puppet::Type.type(:ecs_cluster).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
     results.flatten.select {|i| i }
   end
 
+  read_only(:arn, :status, :pending_tasks_count, :running_tasks_count,
+            :active_services_count, :registered_container_instances_count)
+
   def self.prefetch(resources)
     instances.each do |prov|
       if resource = resources[prov.name]
