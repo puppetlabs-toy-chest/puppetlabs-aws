@@ -69,11 +69,9 @@ describe provider_class do
     end
   end
 
-  describe 'rectify_container_delta' do
+  describe 'self.rectify_container_delta' do
     it 'should return zero results when containers match' do
       VCR.use_cassette('ecs-setup') do
-        instance = provider.class.instances.first
-
         container_defs = [
           {
             'cpu'       => 1,
@@ -98,15 +96,13 @@ describe provider_class do
           }
         ]
 
-        instance.container_definitions=container_defs
-        result = instance.rectify_container_delta
+        result = provider.class.rectify_container_delta(container_defs, {})
         expect(result.size).to eq(0)
       end
     end
 
     it 'should use discovered values in palce of missing values' do
       VCR.use_cassette('ecs-setup') do
-        instance = provider.class.instances.first
 
         hsh = [
           {
@@ -122,7 +118,7 @@ describe provider_class do
               "two" => 2
           },
             "essential"     => true,
-            "image"         => "debian:jessie",
+            #"image"         => "debian:jessie",
             "memory"        => 512,
             "name"          => "zleslietesting",
             #"port_mappings" => [
@@ -156,9 +152,10 @@ describe provider_class do
           }
         ]
 
-        instance.container_definitions=hsh
-        result = instance.rectify_container_delta
+        result = provider.class.rectify_container_delta(hsh, wanted)
         expect(result).to eq(wanted)
+        expect(result[0]['image']).to eq('debian:jessie')
+        expect(result[1]['image']).to eq('debian:jessie')
       end
     end
 

@@ -127,7 +127,19 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
   def flush
     Puppet.debug("Flushing ECS task definition for #{@property_hash[:name]}")
 
-    containers = rectify_container_delta
+    containers = []
+    if @property_hash.keys.include? :container_definitions and @property_flush.keys.include? :container_definitions
+      Puppet.debug("Comparing container definitions for #{@property_hash[:name]}")
+        is_containers = self.class.normalize_values(@property_hash[:container_definitions])
+        should_containers = self.class.normalize_values(@property_flush[:container_definitions])
+
+        if is_containers != should_containers
+          containers = self.class.rectify_container_delta(is_containers, should_containers)
+        else
+          Puppet.debug('Containers are equivlient')
+        end
+    end
+
     if containers.size > 0
       Puppet.debug("Registering new task definition for #{@property_hash[:name]}")
 
@@ -140,7 +152,7 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     end
   end
 
-  def rectify_container_delta
+  def self.rectify_container_delta(is_containers, should_containers)
     # Compares two container_definition data strucutures.
     #
     # The assumption here is that each container will be uniquly named.  Though
@@ -160,50 +172,44 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     # register_task_definition() method.
     #
     containers = []
+    if is_containers != should_containers
+      should_containers.each do |should_container|
+        Puppet.debug("Inspecting container")
 
-    if @property_flush.keys.include? :container_definitions
-      should_containers = self.class.normalize_values(@property_flush[:container_definitions])
-      is_containers = self.class.normalize_values(@property_hash[:container_definitions])
+        # Check if the current 'should' container is already correct
+        if is_containers.include? should_container
+          Puppet.debug('Current container is correct')
+          containers << should_container
+          next
+        else
+          matches = is_containers.select {|c|
+            c['name'] == should_container['name']
+          }
 
-      if self.class.normalize_values(should_containers) != self.class.normalize_values(is_containers)
+          if matches.size == 1
+            matched_container = matches.first
+            Puppet.debug("Discovered same-named container definition, inspecting")
 
-        should_containers.each do |should_container|
-          Puppet.debug("Working on #{should_container} for task #{@property_hash[:name]}")
-          should_container = self.class.normalize_values(should_container)
+            merged_container = matched_container.merge(should_container)
 
-          # Check if the current 'should' container is already correct
-          if is_containers.include? should_container
-            Puppet.debug("Container discovered to be accurate for task #{@property_hash[:name]}")
-            containers << should_container
+            containers << merged_container
+          elsif matches.size > 1
+            Puppet.error("Multiple containers with matching names discovered, not handling")
             next
           else
-            Puppet.debug("Desired container not found in task container list for task #{@property_hash[:name]}")
-            matches = is_containers.select {|c|
-              c['name'] == should_container['name']
-            }
-
-            if matches.size == 1
-              matched_container = self.class.normalize_values(matches.first)
-              Puppet.debug("Discovered same-named container definition, inspecting for task #{@property_hash[:name]}")
-
-              merged_container = matched_container.merge(should_container)
-
-              containers << merged_container
-            elsif matches.size > 1
-              Puppet.error("Multiple containers with matching names discovered for task #{@property_hash[:name]}")
-              next
-            else
-              Puppet.debug("Requested container matches no existing named container, adding for task #{@property_hash[:name]}")
-              containers << should_container
-              next
-            end
-
+            Puppet.debug("Requested container matches no existing named container, adding")
+            containers << should_container
+            next
           end
-        end
 
+        end
       end
+
+    else
+      Puppet.debug('Compared container_definitions already match')
     end
-    containers
+
+    normalize_values(containers)
   end
 
   def self.deserialize_environment(array)
