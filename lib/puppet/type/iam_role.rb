@@ -31,10 +31,10 @@ Puppet::Type.newtype(:iam_role) do
 
     munge do |value|
       begin
-        data = JSON.parse(value)
+        data = JSON.parse(CGI::unescapeHTML(value))
         JSON.pretty_generate(data)
-      rescue
-        fail('Document string is not valid JSON')
+      rescue Exception => e
+        fail("Document string is not valid JSON: #{e}")
       end
     end
   end
