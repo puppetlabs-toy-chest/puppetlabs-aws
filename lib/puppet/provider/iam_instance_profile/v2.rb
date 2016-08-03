@@ -7,6 +7,8 @@ Puppet::Type.type(:iam_instance_profile).provide(:v2, :parent => PuppetX::Puppet
 
   mk_resource_methods
 
+  read_only(:arn)
+
   def self.instances
     response = iam_client.list_instance_profiles()
     response.instance_profiles.collect do |instance_profile|
@@ -43,10 +45,47 @@ Puppet::Type.type(:iam_instance_profile).provide(:v2, :parent => PuppetX::Puppet
     @property_hash[:ensure] = :present
   end
 
-  def destroy
-    Puppet.info("Deleting IAM instnace profile #{name}")
+  def roles=(value)
+    Puppet.info("Updating roles for #{name} instance profile")
 
-    iam_client.delete_instance_profile({ instance_profile_name: name })
+    value.to_a.each do |role|
+      Puppet.info("Adding #{role} to instance profile #{name}")
+
+      iam_client.add_role_to_instance_profile({
+                                                  instance_profile_name: name,
+                                                  role_name: role
+                                              })
+    end
+
+    missing_roles = resource[:roles].to_a - value.to_a
+    missing_roles.to_a.each do |role|
+      Puppet.info("Removing #{role} from instance profile #{name}")
+
+      iam_client.remove_role_from_instance_profile({
+                                                  instance_profile_name: name,
+                                                  role_name: role
+                                              })
+    end
+  end
+
+  def destroy
+    Puppet.info("Deleting IAM instance profile #{name}")
+
+    @property_hash[:roles].to_a.each do |role|
+      Puppet.info("Removing #{role.role_name} from instance profile #{name}")
+
+      begin
+        iam_client.remove_role_from_instance_profile({
+                                                         instance_profile_name: name,
+                                                         role_name: role.role_name
+                                                     })
+      rescue Exception => e
+        Puppet.warning("Cannot remove: #{e}")
+      end
+
+    end
+
+    iam_client.delete_instance_profile({instance_profile_name: name})
 
     @property_hash[:ensure] = :absent
   end
