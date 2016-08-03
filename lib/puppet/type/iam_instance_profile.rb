@@ -23,5 +23,18 @@ Puppet::Type.newtype(:iam_instance_profile) do
 
   newproperty(:arn)
 
-  newproperty(:roles)
+  newproperty(:roles, :array_matching => :all) do
+    desc 'The roles to associate the instance profile.'
+    def insync?(is)
+      is.to_set == should.to_set
+    end
+    validate do |value|
+      fail 'roles should be a String' unless value.is_a?(String)
+    end
+  end
+
+  autorequire(:iam_role) do
+    roles = self[:roles]
+    roles.is_a?(Array) ? roles : [roles]
+  end
 end

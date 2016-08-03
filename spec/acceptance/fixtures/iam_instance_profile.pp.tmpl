@@ -1,0 +1,9 @@
+iam_role { '{{role_name}}':
+  ensure          => {{ensure}},
+  policy_document => '{{role_policy_document}}',
+}
+
+iam_instance_profile { '{{profile_name}}':
+  ensure => {{ensure}},
+  roles  => [ '{{role_name}}' ],
+}
