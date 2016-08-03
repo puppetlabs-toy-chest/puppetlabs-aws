@@ -44,7 +44,7 @@ Puppet::Type.type(:rds_db_securitygroup).provide(:v2, :parent => PuppetX::Puppet
   end
 
   def exists?
-    Puppet.info("Checking if DB Security Group #{name} exists")
+    Puppet.debug("Checking if DB Security Group #{name} exists")
     [:present, :creating, :available].include? @property_hash[:ensure]
   end
 

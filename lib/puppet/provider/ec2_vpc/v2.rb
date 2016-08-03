@@ -49,7 +49,7 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   end
 
   def exists?
-    Puppet.info("Checking if VPC #{name} exists in #{target_region}")
+    Puppet.debug("Checking if VPC #{name} exists in #{target_region}")
     @property_hash[:ensure] == :present
   end
 

@@ -61,7 +61,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   end
 
   def exists?
-    Puppet.info("Checking if VPN #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if VPN #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 

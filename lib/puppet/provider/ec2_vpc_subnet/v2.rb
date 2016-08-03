@@ -58,7 +58,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
   end
 
   def exists?
-    Puppet.info("Checking if subnet #{name} exists in #{target_region}")
+    Puppet.debug("Checking if subnet #{name} exists in #{target_region}")
     @property_hash[:ensure] == :present
   end
 

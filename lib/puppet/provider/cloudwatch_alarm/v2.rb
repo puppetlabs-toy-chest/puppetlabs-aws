@@ -54,7 +54,7 @@ Puppet::Type.type(:cloudwatch_alarm).provide(:v2, :parent => PuppetX::Puppetlabs
   end
 
   def exists?
-    Puppet.info("Checking if alarm #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if alarm #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 

@@ -73,7 +73,7 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
   end
 
   def exists?
-    Puppet.info("Checking if auto scaling group #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if auto scaling group #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 

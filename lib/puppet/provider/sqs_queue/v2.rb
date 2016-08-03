@@ -57,7 +57,7 @@ Puppet::Type.type(:sqs_queue).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) 
   end
 
   def exists?
-    Puppet.info("Checking if queue is present")
+    Puppet.debug("Checking if queue is present")
     @property_hash[:ensure] == :present
   end
 

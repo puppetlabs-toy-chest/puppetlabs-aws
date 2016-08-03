@@ -60,7 +60,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def exists?
-    Puppet.info("Checking if VPN gateway #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if VPN gateway #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 
