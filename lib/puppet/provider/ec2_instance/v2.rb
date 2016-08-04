@@ -37,9 +37,9 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end.flatten
   end
 
-  read_only(:instance_id, :instance_type, :region, :user_data, :key_name,
-            :availability_zones, :security_groups, :monitoring, :subnet,
-            :ebs_optimized, :block_devices, :private_ip_address,
+  read_only(:instance_id, :instance_type, :image_id, :region, :user_data,
+            :key_name, :availability_zones, :security_groups, :monitoring,
+            :subnet, :ebs_optimized, :block_devices, :private_ip_address,
             :iam_instance_profile_arn, :iam_instance_profile_name)
 
   def self.prefetch(resources)
