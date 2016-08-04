@@ -7,6 +7,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
   def self.instances
     regions.collect do |region|
+      retries = 0
       begin
         load_balancers = []
         region_client = elb_client(region)
@@ -16,6 +17,16 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
           end
         end
         load_balancers
+      rescue Aws::EC2::Errors::RequestLimitExceeded => e
+        retries += 1
+        if retries <= 8
+          sleep_time = 2 ** retries
+          Puppet.debug("Request limit exceeded, retry in #{sleep_time} seconds")
+          sleep(sleep_time)
+          retry
+        else
+          raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
+        end
       rescue Timeout::Error, StandardError => e
         raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
