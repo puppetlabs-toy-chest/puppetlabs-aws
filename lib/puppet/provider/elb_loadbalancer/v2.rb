@@ -33,7 +33,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     end.flatten
   end
 
-  read_only(:region, :scheme, :listeners, :tags)
+  read_only(:region, :scheme, :listeners, :tags, :dns_name)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -103,6 +103,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       subnets: subnet_names,
       security_groups: security_group_names,
       scheme: load_balancer.scheme,
+      dns_name: load_balancer.dns_name,
     }
   end
 
