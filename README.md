@@ -321,6 +321,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `ec2_vpc_vpn`: Sets up an AWS Virtual Private Network.
 * `ec2_vpc_vpn_gateway`: Sets up a VPN gateway.
 * `iam_group`: Manage IAM groups and their membership.
+* `iam_instance_profile`: Manage IAM instance profiles.
 * `iam_policy`: Manage an IAM 'managed' policy.
 * `iam_policy_attachment`: Manage an IAM 'managed' policy attachments.
 * `iam_role`: Manage an IAM role.
@@ -851,6 +852,24 @@ iam_group { 'root':
 
 #####`members`
 *Required* An array of user names to include in the group.  Users not specified in this array will be removed.
+
+#### Type: iam_instance_profile
+
+```Puppet
+iam_instance_profile { 'my_iam_role':
+  ensure  => present,
+  roles => [ 'my_iam_role' ],
+}
+```
+
+#####`ensure`
+Specifies the basic state of the resource. Valid values are 'present', 'absent'.
+
+#####`name`
+*Required* The name of the IAM instance profile.
+
+#####`roles`
+*Optional* The IAM role(s) to associate this instance profile with.  Accepts an array for multiple roles.
 
 #### Type: iam_policy
 
