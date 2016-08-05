@@ -67,7 +67,7 @@ Puppet::Type.type(:iam_role).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) d
     profiles = get_iam_instance_profiles_for_role(name)
 
     profiles.each do |profile|
-      Puppet.info("Removing #{name} from instance profile #{profile.instance_profile_name}")
+      Puppet.debug("Removing #{name} from instance profile #{profile.instance_profile_name}")
 
       iam_client.remove_role_from_instance_profile({
                                                        instance_profile_name: profile.instance_profile_name,
@@ -78,7 +78,7 @@ Puppet::Type.type(:iam_role).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) d
     policies = get_iam_attached_policies_for_role(name)
 
     policies.each do |policy|
-      Puppet.info("Detaching #{policy.policy_arn} from role #{name}")
+      Puppet.debug("Detaching #{policy.policy_arn} from role #{name}")
 
       iam_client.detach_role_policy({
                                         role_name: name,

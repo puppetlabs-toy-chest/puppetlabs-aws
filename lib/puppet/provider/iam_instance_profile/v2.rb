@@ -31,7 +31,7 @@ Puppet::Type.type(:iam_instance_profile).provide(:v2, :parent => PuppetX::Puppet
   end
 
   def exists?
-    Puppet.info("Checking if IAM instance profile #{name} exists")
+    Puppet.debug("Checking if IAM instance profile #{name} exists")
     @property_hash[:ensure] == :present
   end
 
@@ -46,10 +46,10 @@ Puppet::Type.type(:iam_instance_profile).provide(:v2, :parent => PuppetX::Puppet
   end
 
   def roles=(value)
-    Puppet.info("Updating roles for #{name} instance profile")
+    Puppet.debug("Updating roles for #{name} instance profile")
 
     value.to_a.each do |role|
-      Puppet.info("Adding #{role} to instance profile #{name}")
+      Puppet.debug("Adding #{role} to instance profile #{name}")
 
       iam_client.add_role_to_instance_profile({
                                                   instance_profile_name: name,
@@ -59,7 +59,7 @@ Puppet::Type.type(:iam_instance_profile).provide(:v2, :parent => PuppetX::Puppet
 
     missing_roles = resource[:roles].to_a - value.to_a
     missing_roles.to_a.each do |role|
-      Puppet.info("Removing #{role} from instance profile #{name}")
+      Puppet.debug("Removing #{role} from instance profile #{name}")
 
       iam_client.remove_role_from_instance_profile({
                                                   instance_profile_name: name,
@@ -72,7 +72,7 @@ Puppet::Type.type(:iam_instance_profile).provide(:v2, :parent => PuppetX::Puppet
     Puppet.info("Deleting IAM instance profile #{name}")
 
     @property_hash[:roles].to_a.each do |role|
-      Puppet.info("Removing #{role.role_name} from instance profile #{name}")
+      Puppet.debug("Removing #{role.role_name} from instance profile #{name}")
 
       begin
         iam_client.remove_role_from_instance_profile({
