@@ -41,6 +41,7 @@ Puppet::Type.type(:iam_role).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) d
 
     iam_client.create_role({
                                role_name: name,
+                               path: resource[:path],
                                assume_role_policy_document: resource[:policy_document]
                            })
 
