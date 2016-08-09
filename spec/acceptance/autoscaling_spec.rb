@@ -42,6 +42,7 @@ describe "ec2_autoscalinggroup" do
       @lb_template = 'autoscaling_configurable_lbs.pp.tmpl'
       @lb_template_delete = 'autoscaling_configurable_lbs_delete.pp.tmpl'
       @duplicate_asg_template = 'autoscaling_duplicate.pp.tmpl'
+      @dup_template_delete = 'autoscaling_duplicate_delete.pp.tmpl'
       @sg_delete = 'sg_delete.pp.tmpl'
 
       @lb_name = "#{name}-lb".gsub(/[^a-zA-Z0-9]/, '')[0...31] # adhere to the LB's naming restrictions
@@ -104,57 +105,51 @@ describe "ec2_autoscalinggroup" do
             :created_by => 'aws-acceptance'
         }
       }
-      # Mustache doesn't do nested data very well, so this creates a separate template renders for the main config and load balancers.
-      # This is primarily to keep the templates and config similar to hte elb_loadbalancer tests, and not have to rename everything from there.
-      asg_render = PuppetManifest.new(@asg_template, @asg_config).render
-      lb_render = PuppetManifest.new(@lb_template, @lb_config).render
-
-      r = PuppetRunProxy.new.apply(asg_render + lb_render)
-
-      expect(r.stderr).not_to match(/error/i)
-      # launch duplicate resources
       @duplicate_asg_config = {
         :region       => @default_region,
-        :sg_name      => "#{name}-sg2",
-        :lc_name      => "#{name}-lc2",
+        :sg2_name      => "#{name}-sg2",
+        :lc2_name      => "#{name}-lc2",
       }
-      r2 = PuppetManifest.new(@duplicate_asg_template, @duplicate_asg_config).apply
-      expect(r2.stderr).not_to match(/error/i)
+      # Mustache doesn't do nested data very well, so this creates a separate template renders for the main config and load balancers.
+      # This is primarily to keep the templates and config similar to the elb_loadbalancer tests, and not have to rename everything from there.
+      asg_render = PuppetManifest.new(@asg_template, @asg_config).render
+      lb_render = PuppetManifest.new(@lb_template, @lb_config).render
+      dup_render = PuppetManifest.new(@duplicate_asg_template, @duplicate_asg_config).render
+
+      Aws.config[:http_wire_trace] = true
+      r = PuppetRunProxy.new.apply(asg_render + "\n" + lb_render + "\n" + dup_render)
+
+      expect(r.stderr).not_to match(/error/i)
     end
 
     after(:all) do
-      #audit this entire teardown
+      puts "Tearing down all resources for autoscaling_spec"
       @asg_config[:ensure] = 'absent'
       @duplicate_asg_config[:ensure] = 'absent'
-      duplicate_delete = 'duplicate_asg_delete.pp.tmpl'
 
       asg_render = PuppetManifest.new(@asg_template_delete, @asg_config).render
       lb_render = PuppetManifest.new(@lb_template_delete, @lb_config).render
+      dup_render = PuppetManifest.new(@dup_template_delete, @duplicate_asg_config).render
 
-      r = PuppetRunProxy.new.apply(asg_render + lb_render)
-      # assert that none of the results contain 'Error:'
+      puts asg_render + "\n" + lb_render + "\n" + dup_render
+      r = PuppetRunProxy.new.apply(asg_render + "\n" + lb_render + "\n" + dup_render)
       expect(r.stderr).not_to match(/error/i)
 
+      # The security group can only be deleted after lingering instances have terminated
       response = @aws.autoscaling_client.describe_auto_scaling_groups(
         auto_scaling_group_names: [@asg_config[:asg_name]],
       )
-      id = Array.new
-      response.data[:auto_scaling_groups].first[:instances].each do |x|
-        id.push(x[:instance_id])
-      end
-      @aws.ec2_client.wait_until(:instance_terminated, instance_ids: id)
-      # delete the security group
+      ids = response.data[:auto_scaling_groups].first[:instances].collect { |x| x[:instance_id] }
+      @aws.ec2_client.wait_until(:instance_terminated, instance_ids: ids)
+
       options = {
         :ensure   => 'absent',
         :name     => @asg_config[:sg_name],
-        :region   => @default_region
+        :region   => @default_region,
       }
       ENV['AWS_REGION'] = @default_region
       r2 = TestExecutor.puppet_resource('ec2_securitygroup', options, '--modulepath spec/fixtures/modules/')
       expect(r2.stderr).not_to match(/error/i)
-      # terminate duplicate resources
-      r3 = PuppetManifest.new(duplicate_delete, @duplicate_asg_config).apply
-      expect(r3.stderr).not_to match(/error/i)
     end
 
     it 'should run idempotently' do
@@ -216,7 +211,7 @@ describe "ec2_autoscalinggroup" do
 
       end
 
-      context 'should create scaling policies' do
+      context 'two scaling policies' do
 
         before(:all) do
           @policy = find_scaling_policy(@asg_config[:policy_name], @asg_config[:asg_name])
@@ -594,11 +589,11 @@ describe "ec2_autoscalinggroup" do
 
       it 'launch_configuration' do
         config = @asg_config.clone
-        config[:lc_setting] = @duplicate_asg_config[:lc_name]
+        config[:lc_setting] = @duplicate_asg_config[:lc2_name]
         r = PuppetManifest.new(@asg_template, config).apply
         expect(r.stderr).not_to match(/error/i)
         group = find_autoscaling_group(@asg_config[:asg_name])
-        expect(group.launch_configuration_name).to eq(@duplicate_asg_config[:lc_name])
+        expect(group.launch_configuration_name).to eq(@duplicate_asg_config[:lc2_name])
       end
 
       it 'availability_zones' do
