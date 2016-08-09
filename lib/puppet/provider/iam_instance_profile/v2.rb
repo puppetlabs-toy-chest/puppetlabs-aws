@@ -40,6 +40,7 @@ Puppet::Type.type(:iam_instance_profile).provide(:v2, :parent => PuppetX::Puppet
 
     iam_client.create_instance_profile({
                                            instance_profile_name: name,
+                                           path: resource[:path],
                                        })
 
     @property_hash[:ensure] = :present
