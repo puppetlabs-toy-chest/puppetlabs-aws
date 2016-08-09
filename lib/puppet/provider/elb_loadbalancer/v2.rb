@@ -45,6 +45,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
   def self.load_balancer_to_hash(region, load_balancer)
     instance_ids = load_balancer.instances.map(&:instance_id)
+
     instance_names = []
     unless instance_ids.empty?
       instances = ec2_client(region).describe_instances(instance_ids: instance_ids).collect do |response|
@@ -60,6 +61,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         instance_names << name if name
       end
     end
+
     listeners = load_balancer.listener_descriptions.collect do |listener|
       result = {
         'protocol' => listener.listener.protocol,
@@ -70,15 +72,18 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       result['ssl_certificate_id'] = listener.listener.ssl_certificate_id unless listener.listener.ssl_certificate_id.nil?
       result
     end
+
     tag_response = elb_client(region).describe_tags(
       load_balancer_names: [load_balancer.load_balancer_name]
     )
+
     tags = {}
     unless tag_response.tag_descriptions.nil? || tag_response.tag_descriptions.empty?
       tag_response.tag_descriptions.first.tags.each do |tag|
         tags[tag.key] = tag.value unless tag.key == 'Name'
       end
     end
+
     subnet_names = []
     unless load_balancer.subnets.nil? || load_balancer.subnets.empty?
       response = ec2_client(region).describe_subnets(subnet_ids: load_balancer.subnets)
@@ -87,11 +92,23 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         subnet_name_tag ? subnet_name_tag.value : nil
       end.reject(&:nil?)
     end
+
     security_group_names = []
     unless load_balancer.security_groups.nil? || load_balancer.security_groups.empty?
       group_response = ec2_client(region).describe_security_groups(group_ids: load_balancer.security_groups)
       security_group_names = group_response.data.security_groups.collect(&:group_name)
     end
+
+    unless load_balancer.health_check.nil?
+      health_check = {
+        'target' => load_balancer.health_check.target,
+        'interval' => load_balancer.health_check.interval,
+        'timeout' => load_balancer.health_check.timeout,
+        'unhealthy_threshold' => load_balancer.health_check.unhealthy_threshold,
+        'healthy_threshold' => load_balancer.health_check.healthy_threshold,
+      }
+    end
+
     {
       name: load_balancer.load_balancer_name,
       ensure: :present,
@@ -99,6 +116,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       availability_zones: load_balancer.availability_zones,
       instances: instance_names,
       listeners: listeners,
+      health_check: health_check,
       tags: tags,
       subnets: subnet_names,
       security_groups: security_group_names,
@@ -129,6 +147,13 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         security_groups: ids,
       ) unless ids.empty?
     end
+  end
+
+  def health_check=(value)
+    elb_client(resource[:region]).configure_health_check({
+      load_balancer_name: name,
+      health_check: value.inject({}){|keep,(k,v)| keep[k.to_sym] = v; keep},
+    })
   end
 
   def update
