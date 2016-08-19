@@ -344,6 +344,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `route53_srv_record`: Sets up a Route53 SRV record.
 * `route53_txt_record`: Sets up a Route53 TXT record.
 * `route53_zone`: Sets up a Route53 DNS zone.
+* `s3_bucket`: Sets up an S3 bucket.
 * `sqs_queue`: Sets up an SQS queue.
 
 ###Parameters
@@ -1130,6 +1131,11 @@ All Route53 record types use the same parameters:
 
 #####`name`
 *Required* The name of DNS zone group. This is the value of the AWS Name tag.
+
+#### Type: s3_bucket
+
+#####`name`
+*Required* The name of the bucket to managed.
 
 #### Type: sqs_queue
 #####`name`
