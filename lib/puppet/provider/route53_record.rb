@@ -42,7 +42,7 @@ class Puppet::Provider::Route53Record < PuppetX::Puppetlabs::Aws
   end
 
   def exists?
-    Puppet.info("Checking if #{self.class.record_type} record #{name} exists")
+    Puppet.debug("Checking if #{self.class.record_type} record #{name} exists")
     @property_hash[:ensure] == :present
   end
 
