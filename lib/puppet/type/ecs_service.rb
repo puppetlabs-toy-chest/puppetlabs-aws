@@ -31,6 +31,10 @@ Puppet::Type.newtype(:ecs_service) do
     munge do |value|
       provider.class.normalize_values(value)
     end
+
+    def insync?(is)
+      provider.class.normalize_values(should) == provider.class.normalize_values(is)
+    end
   end
 
   newproperty(:desired_count) do
