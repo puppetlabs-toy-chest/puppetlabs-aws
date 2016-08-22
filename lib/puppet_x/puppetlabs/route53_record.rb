@@ -44,7 +44,7 @@ module PuppetX
           desc 'The name of the alias resource to target'
           validate do |value|
             fail 'alias_target values must be strings' unless value.is_a? String
-            fail 'Record names must end with a .' if value[-1] != '.'
+            fail 'alias_target names must end with a .' if value[-1] != '.'
           end
         end
 
