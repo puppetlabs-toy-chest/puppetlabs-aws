@@ -1,4 +1,5 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
+require_relative '../../../puppet_x/puppetlabs/iam_policy'
 
 require 'uri'
 
@@ -7,8 +8,8 @@ Puppet::Type.type(:iam_policy).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
   mk_resource_methods
 
   def self.instances
-    response = iam_client.list_policies()
-    response.policies.collect do |policy|
+    policies = PuppetX::Puppetlabs::Iam_policy.get_policies
+    policies.collect do |policy|
 
       policy_document_versions = iam_client.list_policy_versions({
         policy_arn: policy.arn,
