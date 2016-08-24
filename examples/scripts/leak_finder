@@ -1,0 +1,13 @@
+#!/bin/bash
+
+for i in spec/acceptance/*_spec.rb; do
+  echo testing $i
+  time bundle exec rspec $i
+
+  if ! examples/scripts/list_resources > /dev/null ; then
+    echo Found leaked resources after testing $i
+    exit 1
+  else
+    echo No leaked resources found
+  fi
+done
