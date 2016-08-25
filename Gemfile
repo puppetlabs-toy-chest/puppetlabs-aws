@@ -30,7 +30,11 @@ group :development do
   gem 'puppet-blacksmith'
   gem 'guard-rake'
   gem 'listen', '= 3.0.7' # last version to support ruby 1.9; the proper fix would be to not install the development group in our internal CI
-  gem 'rubocop', require: false
+  if RUBY_VERSION =~ /^1\./
+    gem 'rubocop', '0.41.2'
+  else
+    gem 'rubocop'
+  end
   gem 'pry'
   gem 'librarian-puppet'
 end
