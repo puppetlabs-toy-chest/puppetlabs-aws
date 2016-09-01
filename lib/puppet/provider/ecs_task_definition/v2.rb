@@ -127,14 +127,14 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     containers = []
     if @property_hash[:container_definitions] and @property_flush[:container_definitions]
       Puppet.debug("Comparing container definitions for #{@property_hash[:name]}")
-        is_containers = self.class.normalize_values(@property_hash[:container_definitions])
-        should_containers = self.class.normalize_values(@property_flush[:container_definitions])
+      is_containers = self.class.normalize_values(@property_hash[:container_definitions])
+      should_containers = self.class.normalize_values(@property_flush[:container_definitions])
 
-        if is_containers != should_containers
-          containers = self.class.rectify_container_delta(is_containers, should_containers)
-        else
-          Puppet.debug('Containers are equivlient')
-        end
+      if is_containers != should_containers
+        containers = rectify_container_delta(is_containers, should_containers)
+      else
+        Puppet.debug('Containers are equivlient')
+      end
     end
 
     if containers.size > 0
@@ -149,7 +149,7 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     end
   end
 
-  def self.rectify_container_delta(is_containers, should_containers)
+  def rectify_container_delta(is_containers, should_containers)
     # Compares two container_definition data strucutures.
     #
     # The assumption here is that each container will be uniquly named.  Though
@@ -168,27 +168,37 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     # Returns an array of container hashes that can be sent to the ecs_client's
     # register_task_definition() method.
     #
-    containers = []
-    if is_containers != should_containers
-      should_containers.each do |should_container|
-        Puppet.debug("Inspecting container")
+
+    is = self.class.normalize_values(is_containers)
+    should = self.class.normalize_values(should_containers)
+
+    if is != should
+
+      containers = []
+      should.each do |should_container|
+        Puppet.debug("Inspecting container #{should_container}")
 
         # Check if the current 'should' container is already correct
-        if is_containers.include? should_container
+        if is.include? should_container
           Puppet.debug('Current container is correct')
           containers << should_container
           next
         else
-          matches = is_containers.select {|c|
+          Puppet.debug('Container should be present, but was not found')
+          matches = is.select {|c|
             c['name'] == should_container['name']
           }
 
           if matches.size == 1
             matched_container = matches.first
-            Puppet.debug("Discovered same-named container definition, inspecting")
+            Puppet.debug("Matched existing container name, inspecting")
+
+            if self.resource[:replace_image] == :false
+              Puppet.debug('Copying image from matched existing container as requested')
+              should_container['image'] = matched_container['image']
+            end
 
             merged_container = matched_container.merge(should_container)
-
             containers << merged_container
           elsif matches.size > 1
             Puppet.error("Multiple containers with matching names discovered, not handling")
@@ -202,11 +212,12 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
         end
       end
 
+      Puppet.debug('Returning merged container results')
+      return self.class.normalize_values(containers)
     else
       Puppet.debug('Compared container_definitions already match')
+      return is
     end
-
-    normalize_values(containers)
   end
 
   def self.deserialize_environment(array)

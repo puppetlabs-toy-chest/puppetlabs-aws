@@ -69,7 +69,7 @@ describe provider_class do
     end
   end
 
-  describe 'self.rectify_container_delta' do
+  describe 'rectify_container_delta' do
     it 'should return zero results when containers match' do
       VCR.use_cassette('ecs-setup') do
         container_defs = [
@@ -96,7 +96,7 @@ describe provider_class do
           }
         ]
 
-        result = provider.class.rectify_container_delta(container_defs, {})
+        result = provider.rectify_container_delta(container_defs, {})
         expect(result.size).to eq(0)
       end
     end
@@ -152,7 +152,7 @@ describe provider_class do
           }
         ]
 
-        result = provider.class.rectify_container_delta(hsh, wanted)
+        result = provider.rectify_container_delta(hsh, wanted)
         expect(result).to eq(wanted)
         expect(result[0]['image']).to eq('debian:jessie')
         expect(result[1]['image']).to eq('debian:jessie')
