@@ -987,6 +987,14 @@ above.
 ##### `volumes`
 An array of hashes to handle for the task.
 
+##### `replace_image`
+A boolean to turn off the replacement of container images.  This enables Puppet
+to create, but not modify the image of a container once created.
+
+This is useful in environments where external CI tooling is responsible for
+modifying the image of a container, allowing a dualistic approach for managing
+ECS.
+
 #### Type: iam_group
 
 ```Puppet

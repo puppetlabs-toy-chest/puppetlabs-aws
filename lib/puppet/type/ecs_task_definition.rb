@@ -10,6 +10,12 @@ Puppet::Type.newtype(:ecs_task_definition) do
     end
   end
 
+  newparam(:replace_image) do
+    desc 'Take the image into consideration when comparing the containers'
+    newvalues(:true, :false)
+    defaultto :true
+  end
+
   newproperty(:arn) do
     desc 'Read-only unique AWS resource name assigned to the ECS service'
   end
@@ -27,10 +33,11 @@ Puppet::Type.newtype(:ecs_task_definition) do
     isrequired
     def insync?(is)
       # Compare the merged result of the container_definitions with what *is* currently.
-      one = provider.class.rectify_container_delta(is, should)
+      one = provider.rectify_container_delta(is, should)
       two = provider.class.normalize_values(is)
       one == two
     end
+
   end
 end
 
