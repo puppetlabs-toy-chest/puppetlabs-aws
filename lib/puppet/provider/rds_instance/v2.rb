@@ -54,7 +54,8 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       db_parameter_group: instance.db_parameter_groups.collect(&:db_parameter_group_name).first,
       db_security_groups: instance.db_security_groups.collect(&:db_security_group_name),
       vpc_security_groups: instance.vpc_security_groups.collect(&:vpc_security_group_id),
-      backup_retention_period: instance.backup_retention_period
+      backup_retention_period: instance.backup_retention_period,
+      availability_zone: instance.availability_zone
     }
     if instance.respond_to?('endpoint') && !instance.endpoint.nil?
       config[:endpoint] = instance.endpoint.address
@@ -89,6 +90,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       db_parameter_group_name: resource[:db_parameter_group],
       vpc_security_group_ids: resource[:vpc_security_groups],
       backup_retention_period: resource[:backup_retention_period],
+      availability_zone: resource[:availability_zone],
     }
 
     rds_client(resource[:region]).create_db_instance(config)
