@@ -42,7 +42,7 @@ add to this profile.
         "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
         "elasticloadbalancing:DeleteLoadBalancer",
         "ec2:DescribeSecurityGroups",
-        "ec2:CreateSecurityGroups",
+        "ec2:CreateSecurityGroup",
         "ec2:AuthorizeSecurityGroupIngress",
         "ec2:RevokeSecurityGroupIngress",
         "ec2:DeleteSecurityGroup",
