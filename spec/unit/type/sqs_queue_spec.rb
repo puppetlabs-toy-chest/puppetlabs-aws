@@ -17,6 +17,7 @@ describe type_class do
           :delay_seconds,
           :maximum_message_size,
           :message_retention_period,
+          :visibility_timeout,
       ]
     end
 
@@ -31,7 +32,6 @@ describe type_class do
       type_class.new({name: 'name', region: 'us-east-1'})
     end
 
-
     it 'should set delay seconds should get set with a valid value' do
       queue = type_class.new({name: 'queue', region: 'us-east-1', delay_seconds: 450})
       expect(queue[:delay_seconds]).to eq("450")
@@ -40,6 +40,16 @@ describe type_class do
     it 'delay seconds should default to 0' do
       queue = type_class.new({name: 'queue', region: 'us-east-1'})
       expect(queue[:delay_seconds]).to eq("0")
+    end
+
+    it 'visibility_timeout should default to 30' do
+      queue = type_class.new({name: 'queue', region: 'us-east-1'})
+      expect(queue[:visibility_timeout]).to eq('30')
+    end
+
+    it 'should set visibility_timeout with a valid value' do
+      queue = type_class.new({name: 'queue', region: 'us-east-1', visibility_timeout: 123})
+      expect(queue[:visibility_timeout]).to eq("123")
     end
 
     it 'should set message_retention_period should get set with a valid value' do
@@ -61,7 +71,6 @@ describe type_class do
       queue = type_class.new({name: 'queue', region: 'us-east-1'})
       expect(queue[:maximum_message_size]).to eq("262144")
     end
-
 
     it 'should have expected parameters' do
       params.each do |param|
