@@ -191,7 +191,7 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def self.rds_client(region = default_region)
-        ::Aws::RDS::Client.new({region: region})
+        ::Aws::RDS::Client.new(client_config(region))
       end
 
       def sqs_client(region = default_region)
@@ -199,7 +199,7 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def self.sqs_client(region = default_region)
-        ::Aws::SQS::Client.new({region: region})
+        ::Aws::SQS::Client.new(client_config(region))
       end
 
       def self.iam_client(region = default_region)
