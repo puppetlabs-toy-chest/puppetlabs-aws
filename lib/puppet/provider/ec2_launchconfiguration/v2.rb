@@ -42,15 +42,28 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
     rescue Aws::EC2::Errors::InvalidGroupIdMalformed, Aws::EC2::Errors::InvalidGroupNotFound
       []
     end
-    {
+    devices = config.block_device_mappings.collect do |mapping|
+      Puppet.debug "mapping: #{mapping}"
+      device = {
+        device_name: mapping.device_name,
+        volume_size: mapping.ebs.volume_size,
+        volume_type: mapping.ebs.volume_type || 'standard',
+      }
+      device
+    end
+    config = {
       name: config.launch_configuration_name,
       security_groups: security_group_names,
       instance_type: config.instance_type,
       image_id: config.image_id,
       key_name: config.key_name,
       ensure: :present,
-      region: region
+      region: region,
+      spot_price: config.spot_price,
+      ebs_optimized: config.ebs_optimized,
     }
+    config[:block_device_mappings] = devices unless devices.empty?
+    config
   end
 
   def exists?
@@ -82,7 +95,6 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
     end
 
     data = resource[:user_data].nil? ? nil : Base64.encode64(resource[:user_data])
-
     config = {
       launch_configuration_name: name,
       image_id: resource[:image_id],
@@ -93,6 +105,8 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
 
     key = resource[:key_name] ? resource[:key_name] : false
     config['key_name'] = key if key
+
+    config = config_with_devices(config)
 
     autoscaling_client(target_region).create_launch_configuration(config)
 
@@ -106,4 +120,26 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
     )
     @property_hash[:ensure] = :absent
   end
+
+  def config_with_devices(config)
+    devices = resource[:block_device_mappings]
+    devices = [devices] unless devices.is_a?(Array)
+    devices = devices.reject(&:nil?)
+    mappings = devices.collect do |device|
+      {
+        device_name: device['device_name'],
+        ebs: {
+          volume_size: device['volume_size'],
+          snapshot_id: device['snapshot_id'],
+          delete_on_termination: device['delete_on_termination'] || true,
+          volume_type: device['volume_type'] || 'standard',
+          iops: device['iops'],
+          encrypted: device['encrypted'] ? true : nil
+        },
+      }
+    end
+    config['block_device_mappings'] = mappings unless mappings.empty?
+    config
+  end
+
 end
