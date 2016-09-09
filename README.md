@@ -638,6 +638,9 @@ Specifies that basic state of the resource. Valid values are 'attached', 'detach
 #####`vpc`
 *Optional* A hint to specify the VPC. This is useful when detecting ambiguously named security groups that might exist in different VPCs, such as 'default'. This parameter is set at creation only; it is not affected by updates.
 
+#####`associate_public_ip_address`
+*Optional* One or more mappings that specify how block devices are exposed to the instance. For more information, see [Block Device Mapping](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html) in the Amazon Elastic Compute Cloud User Guide.  This parameter is set at creation only; it is not affected by updates.
+
 #### Type: ec2_scalingpolicy
 
 #####`name`

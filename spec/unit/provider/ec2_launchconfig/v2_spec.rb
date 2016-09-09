@@ -15,6 +15,7 @@ describe provider_class do
       instance_type: 't1.micro',
       region: 'sa-east-1',
       security_groups: ['test-sg'],
+      associate_public_ip_address: false,
     )
   }
 
