@@ -52,7 +52,7 @@ This could be because some other process is modifying AWS at the same time."""
       def self.read_only(*methods)
         methods.each do |method|
           define_method("#{method}=") do |v|
-            fail "#{method} property is read-only once #{resource.type} created."
+            Puppet.warning "#{method} property is read-only once #{resource.type} created."
           end
         end
       end
