@@ -5,9 +5,27 @@ Puppet::Type.type(:iam_user).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) d
 
   mk_resource_methods
 
+  def self.get_users
+    user_results = iam_client.list_users()
+    users = user_results.users
+
+    truncated = user_results.is_truncated
+    marker = user_results.marker
+
+    while truncated and marker
+      Puppet.debug('iam_user results truncated, proceeding with discovery')
+      response = iam_client.list_users({marker: marker})
+      response.users.each {|u| users << u }
+      truncated = response.is_truncated
+      marker = response.marker
+    end
+
+    users
+  end
+
   def self.instances
-    response = iam_client.list_users()
-    response.users.collect do |user|
+    users = get_users()
+    users.collect do |user|
       new({
         name: user.user_name,
         ensure: :present,
