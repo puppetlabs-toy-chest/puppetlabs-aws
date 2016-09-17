@@ -51,7 +51,7 @@ add to this profile.
         "ec2:DeleteVpc",
         "ec2:DescribeDhcpOptions",
         "ec2:CreateDhcpOptions",
-        "ec2:DeleteDhcp_options",
+        "ec2:DeleteDhcpOptions",
         "ec2:DescribeCustomerGateways",
         "ec2:CreateCustomerGateway",
         "ec2:DeleteCustomerGateway",
