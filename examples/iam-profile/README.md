@@ -49,6 +49,7 @@ add to this profile.
         "ec2:DescribeVpcs",
         "ec2:CreateVpc",
         "ec2:DeleteVpc",
+        "ec2:AssociateDhcpOptions",
         "ec2:DescribeDhcpOptions",
         "ec2:CreateDhcpOptions",
         "ec2:DeleteDhcpOptions",
