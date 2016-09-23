@@ -5,6 +5,11 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   mk_resource_methods
 
+  def initialize(value={})
+    super(value)
+    @property_flush = {}
+  end
+
   def self.instances
     regions.collect do |region|
       instances = []
@@ -20,11 +25,10 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end.flatten
   end
 
-  read_only(:iops, :master_username, :multi_az, :license_model, :db_name,
-            :region, :db_instance_class, :availability_zone, :engine,
-            :engine_version, :allocated_storage, :storage_type,
-            :db_security_groups, :db_parameter_group, :backup_retention_period,
-            :db_subnet, :vpc_security_groups)
+  read_only(:master_username, :multi_az, :license_model, :db_name, :region,
+            :availability_zone, :engine, :engine_version, :db_security_groups,
+            :db_parameter_group, :backup_retention_period, :db_subnet,
+            :vpc_security_groups)
 
   def self.prefetch(resources)
     instances.each do |prov|
@@ -62,6 +66,22 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       config[:port]     = instance.endpoint.port
     end
     config
+  end
+
+  def db_instance_class=(value)
+    @property_flush[:db_instance_class] = value
+  end
+
+  def allocated_storage=(value)
+    @property_flush[:allocated_storage] = value
+  end
+
+  def storage_type=(value)
+    @property_flush[:storage_type] = value
+  end
+
+  def iops=(value)
+    @property_flush[:iops] = value
   end
 
   def exists?
@@ -111,6 +131,30 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     }
     rds.delete_db_instance(config)
     @property_hash[:ensure] = :absent
+  end
+
+  def flush
+    if @property_hash[:ensure] != :absent
+      Puppet.debug("Flushing RDS instance for #{@property_hash[:name]}")
+
+      if @property_flush.keys.size > 0
+        rds_instance_update = {
+          db_instance_identifier: @property_hash[:name]
+        }
+
+        # The only items in the @property_flush should map directly to the
+        # key/values of the modify_db_instance method on the client.  To add
+        # modify support for more values, create a setter method for the type's
+        # parameter matching the RDS client update hash.
+        #
+        @property_flush.each {|k,v|
+          rds_instance_update[k] = v
+        }
+
+        rds_client.modify_db_instance(rds_instance_update)
+      end
+    end
+
   end
 
 end
