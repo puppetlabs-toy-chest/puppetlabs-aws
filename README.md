@@ -1297,6 +1297,9 @@ All Route53 record types use the same parameters:
 #####`name`
 *Required* The name of the bucket to managed.
 
+#####`policy`
+A JSON parsable string of the policy to apply to the bucket.
+
 #### Type: sqs_queue
 #####`name`
 *Required* The name of the SQS queue.
