@@ -12,14 +12,14 @@ http_interactions:
       Accept-Encoding:
       - ''
       User-Agent:
-      - aws-sdk-ruby2/2.3.3 ruby/2.2.5 x86_64-darwin15
+      - aws-sdk-ruby2/2.3.22 ruby/2.2.5 x86_64-darwin15
       X-Amz-Date:
-      - 20160819T190239Z
+      - 20161003T175451Z
       X-Amz-Content-Sha256:
       - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=redacterd/20160819/us-west-2/s3/aws4_request,
-        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=f958293f021f88ad47c2135b8840b8b8c746a4f732c1dba34507db62916db4de
+      - AWS4-HMAC-SHA256 Credential=redacterd/20161003/us-west-2/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=5223213dc365212e97be9ec8187a610d4afd536ac4918a32534bf288992f8111
       Content-Length:
       - '0'
       Accept:
@@ -30,11 +30,11 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - GsjSiJHbHA3DVKAod1GOCk62CqkfNWav90yl49i9qHE4U3NQd8xCXyNe3rjIJx7YfUkT/ucXmZg=
+      - kzxyZKE1VVrl283VFWefo/1mEMfjb+PPuGXmcqhHKLmA6MFczM+XHtSl+shdPz9cNyQ0PdBZ77M=
       X-Amz-Request-Id:
-      - AC45F56D4CD32875
+      - 7710E7151EB59B92
       Date:
-      - Fri, 19 Aug 2016 19:02:40 GMT
+      - Mon, 03 Oct 2016 17:54:52 GMT
       Content-Type:
       - application/xml
       Transfer-Encoding:
@@ -45,9 +45,57 @@ http_interactions:
       encoding: UTF-8
       string: |-
         <?xml version="1.0" encoding="UTF-8"?>
-        <ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>577c9c2d571b1e27f12e417c5835e62c7e8c062a9290027c399719177d9631f4</ID><DisplayName>zleslie</DisplayName></Owner><Buckets><Bucket><Name>zlesliebucketnamegoeshere</Name><CreationDate>2016-08-19T19:01:34.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>
+        <ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>577c9c2d571b1e27f12e417c5835e62c7e8c062a9290027c399719177d9631f4</ID><DisplayName>zleslie</DisplayName></Owner><Buckets><Bucket><Name>zlesliebucketnamegoeshere</Name><CreationDate>2016-10-03T17:54:33.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>
     http_version: 
-  recorded_at: Fri, 19 Aug 2016 19:02:39 GMT
+  recorded_at: Mon, 03 Oct 2016 17:54:51 GMT
+- request:
+    method: get
+    uri: https://zlesliebucketnamegoeshere.s3-us-west-2.amazonaws.com/?policy
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.22 ruby/2.2.5 x86_64-darwin15
+      X-Amz-Date:
+      - 20161003T175451Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacterd/20161003/us-west-2/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=9319d9bbd8074a772afb85528acf89fc694644f4bbba63d5db8e16c7931de3ed
+      Content-Length:
+      - '0'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      X-Amz-Request-Id:
+      - 2890EB2EB669B1D8
+      X-Amz-Id-2:
+      - zlw94CgEcb1B7iGAW7qIuWOZML4IEv0zANmOMxAOOs+BILfx1je1R2HR2Tx/ykT+Kk/Q6RG8RpY=
+      Content-Type:
+      - application/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Mon, 03 Oct 2016 17:54:51 GMT
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Error><Code>NoSuchBucketPolicy</Code><Message>The bucket policy does not exist</Message><BucketName>zlesliebucketnamegoeshere</BucketName><RequestId>2890EB2EB669B1D8</RequestId><HostId>zlw94CgEcb1B7iGAW7qIuWOZML4IEv0zANmOMxAOOs+BILfx1je1R2HR2Tx/ykT+Kk/Q6RG8RpY=</HostId></Error>
+    http_version: 
+  recorded_at: Mon, 03 Oct 2016 17:54:52 GMT
 - request:
     method: get
     uri: https://s3-us-west-2.amazonaws.com/
@@ -60,14 +108,14 @@ http_interactions:
       Accept-Encoding:
       - ''
       User-Agent:
-      - aws-sdk-ruby2/2.3.3 ruby/2.2.5 x86_64-darwin15
+      - aws-sdk-ruby2/2.3.22 ruby/2.2.5 x86_64-darwin15
       X-Amz-Date:
-      - 20160819T190239Z
+      - 20161003T175452Z
       X-Amz-Content-Sha256:
       - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=redacterd/20160819/us-west-2/s3/aws4_request,
-        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=f958293f021f88ad47c2135b8840b8b8c746a4f732c1dba34507db62916db4de
+      - AWS4-HMAC-SHA256 Credential=redacterd/20161003/us-west-2/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=8b75f520648d7eb0b1470ba41c9476e2e136ac60c89ca702f1dbd0ee494e4924
       Content-Length:
       - '0'
       Accept:
@@ -78,11 +126,11 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - k/YbPXIWR26WiBkmhil4YJ9hfEexvBEWKkMeuAAQk31C9NLYsh0JAmnXHbwt3BebW7+D4xGmDj0=
+      - Jrp4qujYZ9obm4WXVT3OANYpLBzMzgCW3PCUS/09JamyQ44RqXdxFEahkIB7w6YUdIk3BICH7cE=
       X-Amz-Request-Id:
-      - 75728B354E3C2E03
+      - 2A7CA4B018ABA890
       Date:
-      - Fri, 19 Aug 2016 19:02:41 GMT
+      - Mon, 03 Oct 2016 17:54:53 GMT
       Content-Type:
       - application/xml
       Transfer-Encoding:
@@ -93,7 +141,55 @@ http_interactions:
       encoding: UTF-8
       string: |-
         <?xml version="1.0" encoding="UTF-8"?>
-        <ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>577c9c2d571b1e27f12e417c5835e62c7e8c062a9290027c399719177d9631f4</ID><DisplayName>zleslie</DisplayName></Owner><Buckets><Bucket><Name>zlesliebucketnamegoeshere</Name><CreationDate>2016-08-19T19:01:34.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>
+        <ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>577c9c2d571b1e27f12e417c5835e62c7e8c062a9290027c399719177d9631f4</ID><DisplayName>zleslie</DisplayName></Owner><Buckets><Bucket><Name>zlesliebucketnamegoeshere</Name><CreationDate>2016-10-03T17:54:33.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>
     http_version: 
-  recorded_at: Fri, 19 Aug 2016 19:02:40 GMT
+  recorded_at: Mon, 03 Oct 2016 17:54:52 GMT
+- request:
+    method: get
+    uri: https://zlesliebucketnamegoeshere.s3-us-west-2.amazonaws.com/?policy
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.22 ruby/2.2.5 x86_64-darwin15
+      X-Amz-Date:
+      - 20161003T175452Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacterd/20161003/us-west-2/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=8ae8f90ceda8b5dc4afd1f17b6962ff223c674a8c99779b4f3711254098a5be5
+      Content-Length:
+      - '0'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      X-Amz-Request-Id:
+      - A9DF0A30C0E89FEB
+      X-Amz-Id-2:
+      - k1IYDVZkceHv4Kp7+aDS3EwhshQm3gjS7tjLk0pSR6sL5CoOoCaaLfPivzGyP9Y5o5RbeC1iEqQ=
+      Content-Type:
+      - application/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Mon, 03 Oct 2016 17:54:51 GMT
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Error><Code>NoSuchBucketPolicy</Code><Message>The bucket policy does not exist</Message><BucketName>zlesliebucketnamegoeshere</BucketName><RequestId>A9DF0A30C0E89FEB</RequestId><HostId>k1IYDVZkceHv4Kp7+aDS3EwhshQm3gjS7tjLk0pSR6sL5CoOoCaaLfPivzGyP9Y5o5RbeC1iEqQ=</HostId></Error>
+    http_version: 
+  recorded_at: Mon, 03 Oct 2016 17:54:52 GMT
 recorded_with: VCR 3.0.3
