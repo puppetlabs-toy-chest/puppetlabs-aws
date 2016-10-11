@@ -17,6 +17,7 @@ describe type_class do
       :region,
       :availability_zone,
       :vpc,
+      :id,
     ]
   end
 

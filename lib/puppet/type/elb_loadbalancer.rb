@@ -45,7 +45,7 @@ Puppet::Type.newtype(:elb_loadbalancer) do
   newproperty(:health_check) do
     desc 'The health check configuration for the load balancer'
     def insync?(is)
-      is.sort.to_h == should.sort.to_h
+      provider.class.normalize_values(is) == provider.class.normalize_values(should)
     end
     validate do |value|
       ['target', 'interval', 'timeout', 'unhealthy_threshold', 'healthy_threshold'].each do |key|

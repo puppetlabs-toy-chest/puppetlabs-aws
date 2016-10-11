@@ -5,60 +5,112 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
   mk_resource_methods
 
-  def self.instances
+  def self.instances(ref_catalog=nil)
+    Puppet.debug('Fetching ELB instances')
     regions.collect do |region|
-      retries = 0
-      begin
         load_balancers = []
-        region_client = elb_client(region)
-        region_client.describe_load_balancers.each do |response|
-          response.data.load_balancer_descriptions.collect do |lb|
-            load_balancers << new(load_balancer_to_hash(region, lb))
+        elbs do |lb|
+          retries = 0
+          begin
+            load_balancers << new(load_balancer_to_hash(region, lb, ref_catalog))
+          rescue Aws::EC2::Errors::RequestLimitExceeded => e
+            retries += 1
+            if retries <= 8
+              sleep_time = 2 ** retries
+              Puppet.debug("Request limit exceeded, retry in #{sleep_time} seconds")
+              sleep(sleep_time)
+              retry
+            else
+              raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
+            end
+          rescue Timeout::Error, StandardError => e
+            raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
           end
         end
-        load_balancers
-      rescue Aws::EC2::Errors::RequestLimitExceeded => e
-        retries += 1
-        if retries <= 8
-          sleep_time = 2 ** retries
-          Puppet.debug("Request limit exceeded, retry in #{sleep_time} seconds")
-          sleep(sleep_time)
-          retry
-        else
-          raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
-        end
-      rescue Timeout::Error, StandardError => e
-        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
-      end
+
+      load_balancers
     end.flatten
+  end
+
+  def self.elbs
+    # Make the calls to elb_client for each of the regions to fetch the ELB
+    # resource information, yielding the individual ELB objects.
+    regions.collect do |region|
+
+      region_client = elb_client(region)
+      Puppet.debug("Calling for ELB descriptions")
+      response = region_client.describe_load_balancers()
+      marker = response.next_marker
+
+      response.load_balancer_descriptions.each do |lb|
+        yield lb
+      end
+
+      while marker
+        Puppet.debug("Calling for marked ELB description")
+        response = region_client.describe_load_balancers({
+          marker: marker
+        })
+        marker = response.next_marker
+        response.load_balancer_descriptions.each do |lb|
+          yield lb
+        end
+      end
+    end
   end
 
   read_only(:region, :scheme, :listeners, :tags, :dns_name)
 
   def self.prefetch(resources)
-    instances.each do |prov|
+    ref_catalog = resources.values.first.respond_to?(:catalog) ? resources.values.first.catalog : nil
+
+    instances(ref_catalog).each do |prov|
       if resource = resources[prov.name]  # rubocop:disable Lint/AssignmentInCondition
         resource.provider = prov
       end
     end
   end
 
-  def self.load_balancer_to_hash(region, load_balancer)
+  def self.load_balancer_to_hash(region, load_balancer, ref_catalog=nil)
+    Puppet.debug("Generating load_balancer hash for #{load_balancer.load_balancer_name}")
     instance_ids = load_balancer.instances.map(&:instance_id)
 
     instance_names = []
     unless instance_ids.empty?
-      instances = ec2_client(region).describe_instances(instance_ids: instance_ids).collect do |response|
-        response.data.reservations.collect do |reservation|
-          reservation.instances.collect do |instance|
-            instance
-          end
+      instances_to_resolve = instance_ids.dup
+
+      unless ref_catalog.nil?
+        # If we have received a reference catalog, look for the resources that
+        # have already been resolved to get hte data we require in the
+        # conversion from ID to names.
+        catalog_instances = ref_catalog.resources.select do |rec|
+          rec.is_a? Puppet::Type::Ec2_instance and instance_ids.include? rec.provider.instance_id
+        end
+
+        catalog_instances.each do |rec|
+          instance_names << rec.provider.name
+          instances_to_resolve.delete(rec.provider.instance_id)
+        end
+      end
+
+      if instances_to_resolve.size > 0
+        # We arrive here when the instances that we are looking to convert from
+        # ID to Name have not been found in the reference catalog.  As such,
+        # here we need to make the call to ec2_client to resolve the instances
+        # that are missing.
+        Puppet.debug('calling ec2_client for instances')
+        instances = ec2_client(region).describe_instances(instance_ids: instance_ids).collect do |response|
+          response.data.reservations.collect do |reservation|
+            reservation.instances.collect do |instance|
+              instance
+            end
+          end.flatten
         end.flatten
-      end.flatten
-      instances.each do |instance|
-        name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
-        name = name_tag ? name_tag.value : nil
-        instance_names << name if name
+        instances.each do |instance|
+          name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
+          name = name_tag ? name_tag.value : nil
+          instance_names << name if name
+        end
       end
     end
 
@@ -86,17 +138,66 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
     subnet_names = []
     unless load_balancer.subnets.nil? || load_balancer.subnets.empty?
-      response = ec2_client(region).describe_subnets(subnet_ids: load_balancer.subnets)
-      subnet_names = response.data.subnets.collect do |subnet|
-        subnet_name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
-        subnet_name_tag ? subnet_name_tag.value : nil
-      end.reject(&:nil?)
+      subnets_to_resolve = load_balancer.subnets.dup
+
+      unless ref_catalog.nil?
+        # If we have received a reference catalog, look for the resources that
+        # have already been resolved to get hte data we require in the
+        # conversion from ID to names.
+        catalog_subnets = ref_catalog.resources.select do |rec|
+          rec.is_a? Puppet::Type::Ec2_vpc_subnet and load_balancer.subnets.include? rec.provider.id
+        end
+
+        catalog_subnets.each do |rec|
+          subnet_names << rec.provider.name
+          subnets_to_resolve.delete(rec.provider.id)
+        end
+      end
+
+      if subnets_to_resolve.size > 0
+        # We arrive here when the subnet that we are looking to convert from ID
+        # to Name is not found in the catalog.  This requires us to make the
+        # call to ec2_client to get the subnet information we need.
+        Puppet.debug('calling ec2_client for subnets')
+        subnent_response = ec2_client(region).describe_subnets(subnet_ids: load_balancer.subnets)
+        subnent_response.data.subnets.each do |subnet|
+          subnet_name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
+          if subnet_name_tag
+            subnet_names << subnet_name_tag.value
+          end
+        end
+      end
     end
 
     security_group_names = []
     unless load_balancer.security_groups.nil? || load_balancer.security_groups.empty?
-      group_response = ec2_client(region).describe_security_groups(group_ids: load_balancer.security_groups)
-      security_group_names = group_response.data.security_groups.collect(&:group_name)
+      security_groups_to_resolve = load_balancer.security_groups.dup
+
+      unless ref_catalog.nil?
+        # If we have received a reference catalog, look for the resources that
+        # have already been resolved to get hte data we require in the
+        # conversion from ID to names.
+        catalog_security_groups = ref_catalog.resources.select do |rec|
+          rec.is_a? Puppet::Type::Ec2_securitygroup and load_balancer.security_groups.include? rec.provider.id
+        end
+      end
+
+      catalog_security_groups.each do |rec|
+        security_group_names << rec.provider.name
+        security_groups_to_resolve.delete(rec.provider.id)
+      end
+
+      if security_groups_to_resolve.size > 0
+        # We arrive here when the security groups that we are looking to
+        # convert from IDs to names have not been found in the catalog, in
+        # which case, we must make the call to AWS to get the security group
+        # information we need to make the translation.
+        Puppet.debug('calling ec2_client for security_groups')
+        group_response = ec2_client(region).describe_security_groups(group_ids: security_groups_to_resolve)
+        group_response.data.security_groups.collect(&:group_name).each do |sg_name|
+          security_group_names << sg_name
+        end
+      end
     end
 
     unless load_balancer.health_check.nil?
