@@ -1316,6 +1316,9 @@ A JSON parsable string of the policy to apply to the bucket.
 #####`maximum_message_size`
 *Optional* The limit of how many bytes a message can contain before Amazon SQS rejects it.
 
+#####`visibility_timeout`
+*Optional* The number of seconds during which Amazon SQS prevents other consuming components from receiving and processing a message. Default value: 30
+
 
 ##Limitations
 
