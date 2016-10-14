@@ -17,6 +17,7 @@ describe type_class do
       :region,
       :ingress,
       :tags,
+      :id,
     ]
   end
 

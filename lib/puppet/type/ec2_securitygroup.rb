@@ -56,6 +56,8 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
+  newproperty(:id)
+
   def should_autorequire?(rule)
     !rule.nil? and rule.key? 'security_group' and rule['security_group'] != name
   end

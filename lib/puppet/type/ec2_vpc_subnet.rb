@@ -62,6 +62,8 @@ Puppet::Type.newtype(:ec2_vpc_subnet) do
     end
   end
 
+  newproperty(:id)
+
   autorequire(:ec2_vpc) do
     self[:vpc]
   end

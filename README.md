@@ -465,6 +465,9 @@ The Amazon Resource Name for the associated IAM profile.
 ##### `ingress`
 *Optional* Rules for ingress traffic. Accepts an array.
 
+##### `id`
+*Read-only* Unique string enumerated from existing resources uniquely identifying the security group.
+
 ##### `tags`
 *Optional* The tags for the security group. Accepts a 'key => value' hash of tags.
 
@@ -816,6 +819,9 @@ The route table to attach to the subnet. This parameter is set at creation only;
 
 #####`routes`
 *Optional* Individual routes for the routing table. Accepts an array of 'destination_cidr_block' and 'gateway' values:
+
+##### `id`
+*Read-only* Unique string enumerated from existing resources uniquely identifying the subnet.
 
 
 ~~~
