@@ -35,6 +35,7 @@ describe type_class do
       :db_parameter_group,
       :backup_retention_period,
       :db_subnet,
+      :restore_snapshot,
     ]
   end
 
@@ -91,6 +92,7 @@ describe type_class do
     'master_user_password',
     :db_parameter_group,
     'final_db_snapshot_identifier',
+    'restore_snapshot',
   ].each do |property|
     it "should require #{property} to be a string" do
       expect(type_class).to require_string_for(property)

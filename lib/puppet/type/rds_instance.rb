@@ -213,6 +213,13 @@ Not applicable. Must be null.'
     end
   end
 
+  newproperty(:restore_snapshot) do
+    desc 'The database snapshot to restore as this RDS instance.'
+    validate do |value|
+      fail 'restore_snapshot should be a String' unless value.is_a?(String)
+    end
+  end
+
   autorequire(:rds_db_securitygroup) do
     groups = self[:db_security_groups]
     groups.is_a?(Array) ? groups : [groups]
