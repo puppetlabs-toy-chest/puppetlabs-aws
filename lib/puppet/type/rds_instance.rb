@@ -1,4 +1,5 @@
 require_relative '../../puppet_x/puppetlabs/property/region.rb'
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
 
 Puppet::Type.newtype(:rds_instance) do
   @doc = 'Type representing an RDS instance.'
@@ -223,4 +224,7 @@ Not applicable. Must be null.'
     groups.is_a?(Array) ? groups : [groups]
   end
 
+  newproperty(:rds_tags, :parent => PuppetX::Property::AwsTag) do
+    desc 'The tags for the db instance.'
+  end
 end

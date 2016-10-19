@@ -274,6 +274,20 @@ This could be because some other process is modifying AWS at the same time."""
         ) unless missing_tags.empty?
       end
 
+      def rds_tags=(value)
+        Puppet.info("Updating RDS tags for #{name} in region #{target_region}")
+        rds = rds_client(target_region)
+        rds.add_tags_to_resource(
+          resource_name: @property_hash[:arn],
+          tags: value.collect { |k,v| { :key => k, :value => v } }
+        ) unless value.empty?
+        missing_tags = rds_tags.keys - value.keys
+        rds.remove_tags_from_resource(
+          resource_name: @property_hash[:arn],
+          tag_keys: missing_tags.collect { |k| { :key => k } }
+        ) unless missing_tags.empty?
+      end
+
       def self.has_name?(hash)
         !hash[:name].nil? && !hash[:name].empty?
       end
