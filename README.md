@@ -1396,6 +1396,9 @@ that skip_final_snapshot must be set to false.
 #####`backup_retention_period`
 The number of days to retain backups. Defaults to 30 days.
 
+#####`tags`
+*Optional* The tags for the instance. Accepts a 'key => value' hash of tags.
+
 #### Type: route53
 
 The route53 types set up various types of Route53 records:
