@@ -15,6 +15,7 @@ describe type_class do
       :ensure,
       :creation_date,
       :policy,
+      :region,
     ]
   end
 
