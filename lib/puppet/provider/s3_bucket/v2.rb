@@ -47,7 +47,7 @@ Puppet::Type.type(:s3_bucket).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) 
     Puppet.debug("Creating S3 Bucket #{name} in #{target_region}")
     s3_client(target_region).create_bucket({
       bucket: name,
-      create_bucket_configuration: { location_constraint: resource[:region]}
+      create_bucket_configuration: { location_constraint: resource[:region] }
     })
   end
 
