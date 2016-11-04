@@ -454,6 +454,9 @@ instance.
 #####`iam_instance_profile_arn`
 The Amazon Resource Name for the associated IAM profile.
 
+#####`interfaces`
+The AWS generated interfaces hash for the instance.  Read-only.
+
 #### Type: ec2_securitygroup
 
 ##### `name`
