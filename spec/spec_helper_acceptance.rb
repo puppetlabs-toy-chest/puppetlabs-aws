@@ -140,6 +140,13 @@ class AwsHelper
     response.data.db_security_groups
   end
 
+  def get_db_subnet_groups(name)
+    response = @rds_client.describe_db_subnet_groups(
+      db_subnet_group_name: name
+    )
+    response.data.db_subnet_groups
+  end
+
   def get_instances(name)
     response = @ec2_client.describe_instances(filters: [
       {name: 'tag:Name', values: [name]},
