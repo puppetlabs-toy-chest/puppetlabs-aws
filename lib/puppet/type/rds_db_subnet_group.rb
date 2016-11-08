@@ -1,7 +1,7 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
 
 Puppet::Type.newtype(:rds_db_subnet_group) do
-  @doc = 'Type for the RDS DB subnet group which relies on the existence of corresponding ec2_subnets'
+  @doc = 'Type for the RDS DB subnet group which relies on the existence of corresponding ec2_subnets. Subnets are required to be in seperate AZs'
 
   ensurable
 
