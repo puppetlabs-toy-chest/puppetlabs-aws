@@ -59,6 +59,8 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
       health_check_grace_period: group.health_check_grace_period,
       new_instances_protected_from_scale_in: group.new_instances_protected_from_scale_in,
       load_balancers: fetch_load_balancers(autoscaling_client(region), group.auto_scaling_group_name),
+      target_groups: fetch_target_groups(region, group.auto_scaling_group_name),
+      termination_policies: group.termination_policies,
       instance_count: group.instances.count,
       ensure: :present,
       subnets: subnet_names,
@@ -70,6 +72,17 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
   def self.fetch_load_balancers(client, name)
     response = client.describe_load_balancers(auto_scaling_group_name: name)
     response.load_balancers.collect { |lb| lb.load_balancer_name }
+  end
+
+  def self.fetch_target_groups(region, name)
+    response = autoscaling_client(region).describe_load_balancer_target_groups(auto_scaling_group_name: name)
+    response.load_balancer_target_groups.collect { |tg| fetch_target_group_name(region, tg.load_balancer_target_group_arn) }.flatten
+  end
+
+  def self.fetch_target_group_name(region, value)
+    arn = value.is_a?(Array) ? value : [value]
+    response = elbv2_client(region).describe_target_groups(target_group_arns: arn)
+    response.target_groups.collect { |tg| tg.target_group_name }
   end
 
   def exists?
@@ -177,12 +190,43 @@ Puppet::Type.type(:ec2_autoscalinggroup).provide(:v2, :parent => PuppetX::Puppet
     )
   end
 
+  def termination_policies=(value)
+    policies = value.is_a?(Array) ? value : [value]
+    autoscaling_client(target_region).update_auto_scaling_group(
+      auto_scaling_group_name: name,
+      termination_policies: policies,
+    )
+  end
+
   def availability_zones=(value)
     zones = value.is_a?(Array) ? value : [value]
     autoscaling_client(target_region).update_auto_scaling_group(
       auto_scaling_group_name: name,
       availability_zones: zones,
     )
+  end
+
+  def target_groups=(value)
+    should_names = value.is_a?(Array) ? value : [value]
+
+    response = elbv2_client(target_region).describe_target_groups(names: should_names)
+    should = (response.target_groups.collect { |tg| tg.target_group_arn }).to_set
+
+    response = elbv2_client(target_region).describe_target_groups(names: target_groups)
+    is = (response.target_groups.collect { |tg| tg.target_group_arn }).to_set
+
+    to_delete = is - should
+    to_add = should - is
+
+    autoscaling_client(target_region).attach_load_balancer_target_groups(
+      auto_scaling_group_name: name,
+      target_group_arns: to_add,
+    )
+    autoscaling_client(target_region).detach_load_balancer_target_groups(
+      auto_scaling_group_name: name,
+      target_group_arns: to_delete,
+    )
+
   end
 
   def load_balancers=(value)
