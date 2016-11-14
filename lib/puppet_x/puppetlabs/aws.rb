@@ -162,6 +162,14 @@ This could be because some other process is modifying AWS at the same time."""
         self.class.elb_client(region)
       end
 
+      def self.elbv2_client(region = default_region)
+        ::Aws::ElasticLoadBalancingV2::Client.new(client_config(region))
+      end
+
+      def elbv2_client(region = default_region)
+        self.class.elbv2_client(region)
+      end
+
       def self.autoscaling_client(region = default_region)
         ::Aws::AutoScaling::Client.new(client_config(region))
       end

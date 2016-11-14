@@ -601,8 +601,14 @@ back- end instances.  Accepts a hash with the following keys:
 ##### `load_balancers`
 *Optional* A list of load balancer names that should be attached to this autoscaling group.
 
+##### `target_groups`
+*Optional* A list of ELBv2 Target Group names that should be attached to this autoscaling group.
+
 ##### `subnets`
 *Optional* The subnets to associate with the autoscaling group.
+
+##### `termination_policies`
+*Optional* A list of termination policies to use when scaling in instances. For valid termination policies, see [Controlling Which Instances Auto Scaling Terminates During Scale In](http://docs.aws.amazon.com/autoscaling/latest/userguide/as-instance-termination.html).
 
 #####`tags`
 *Optional* The tags to assign to the autoscaling group. Accepts a 'key => value' hash of tags. The tags are not propagated to launched instances.

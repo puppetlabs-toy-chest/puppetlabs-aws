@@ -62,7 +62,11 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
       spot_price: config.spot_price,
       ebs_optimized: config.ebs_optimized,
     }
-    config[:block_device_mappings] = devices unless devices.empty?
+    if devices.empty?
+      config[:block_device_mappings] = [ ]
+    else
+      config[:block_device_mappings] = devices
+    end
     config
   end
 
