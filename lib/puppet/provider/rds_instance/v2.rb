@@ -134,7 +134,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def flush
-    if @property_hash[:ensure] != :absent
+    if @property_hash[:ensure] != :absent and not @property_flush.nil?
       Puppet.debug("Flushing RDS instance for #{@property_hash[:name]}")
 
       if @property_flush.keys.size > 0
