@@ -24,12 +24,13 @@ Puppet::Type.newtype(:elb_loadbalancer) do
   newproperty(:listeners, :array_matching => :all) do
     desc 'The ports and protocols the load balancer listens to.'
     def insync?(is)
-      normalise(is).to_set == normalise(should).to_set
-    end
-    def normalise(listeners)
-      listeners.collect do |obj|
+      one = provider.class.normalize_values(is).collect do |obj|
         obj.each { |k,v| obj[k] = v.to_s.downcase }
       end
+      two = provider.class.normalize_values(should).collect do |obj|
+        obj.each { |k,v| obj[k] = v.to_s.downcase }
+      end
+      one == two
     end
     validate do |value|
       value = [value] unless value.is_a?(Array)
