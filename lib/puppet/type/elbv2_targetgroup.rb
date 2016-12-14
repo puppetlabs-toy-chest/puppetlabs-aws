@@ -1,4 +1,5 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require 'puppet/property/boolean'
 
 Puppet::Type.newtype(:elbv2_targetgroup) do
   @doc = 'Type representing an ELBv2 target group.'
