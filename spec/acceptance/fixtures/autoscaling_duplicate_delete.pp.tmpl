@@ -1,16 +1,14 @@
-ec2_launchconfiguration { '{{lc_name}}':
+ec2_launchconfiguration { '{{lc2_name}}':
   ensure          => absent,
-  security_groups => ['{{sg_name}}'],
+  security_groups => ['{{sg2_name}}'],
   region          => '{{region}}',
   image_id        => 'ami-67a60d7a',
   instance_type   => 't1.micro',
 }
 ~>
 
-ec2_securitygroup { '{{sg_name}}':
+ec2_securitygroup { '{{sg2_name}}':
   ensure      => absent,
   description => 'group for testing autoscaling group',
   region      => '{{region}}',
 }
-
-

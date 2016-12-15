@@ -1,0 +1,5 @@
+#!/bin/bash
+
+grep -E "^[^ ].*'(1\.?4|david)" tmp/resources | cut -d \  -f 1,3 | tr -d \': | while read type title; do
+    bundle exec puppet resource --libdir lib "$type" "$title" region=$AWS_REGION ensure=absent
+done

@@ -27,6 +27,7 @@ describe type_class do
       :subnet,
       :ebs_optimized,
       :iam_instance_profile_arn,
+      :interfaces,
     ]
   end
 

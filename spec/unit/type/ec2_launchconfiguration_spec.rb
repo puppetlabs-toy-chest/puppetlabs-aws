@@ -67,6 +67,22 @@ describe type_class do
     end
   end
 
+  it 'if block device included must include a device name' do
+    expect {
+      type_class.new({:name => 'sample', :block_device_mappings => [
+        {'volume_size' => 8}
+      ]})
+    }.to raise_error(Puppet::Error, /block device must be named/)
+  end
+
+  it 'if block device included must include a volume size or snapshot' do
+    expect {
+      type_class.new({:name => 'sample', :block_device_mappings => [
+        {'device_name' => '/dev/sda1'}
+      ]})
+    }.to raise_error(Puppet::Error, /block device must include at least one of: volume_size snapshot_id/)
+  end
+
   [
     'name',
     'security_groups',

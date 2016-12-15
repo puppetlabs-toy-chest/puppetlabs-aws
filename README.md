@@ -187,25 +187,32 @@ ec2_securitygroup { 'name-of-group':
 
 ~~~
 elb_loadbalancer { 'name-of-load-balancer':
-  ensure               => present,
-  region               => 'us-east-1',
-  availability_zones   => ['us-east-1a', 'us-east-1b'],
-  instances            => ['name-of-instance', 'another-instance'],
-  security_groups      => ['name-of-security-group'],
-  listeners            => [{
-    protocol           => 'HTTP',
-    load_balancer_port => 80,
-    instance_protocol  => 'HTTP',
-    instance_port      => 80,
+  ensure                  => present,
+  region                  => 'us-east-1',
+  availability_zones      => ['us-east-1a', 'us-east-1b'],
+  instances               => ['name-of-instance', 'another-instance'],
+  security_groups         => ['name-of-security-group'],
+  listeners               => [{
+    protocol              => 'HTTP',
+    load_balancer_port    => 80,
+    instance_protocol     => 'HTTP',
+    instance_port         => 80,
   },{
-    protocol           => 'HTTPS',
-    load_balancer_port => 443,
-    instance_protocol  => 'HTTPS',
-    instance_port      => 8080,
-    ssl_certificate_id => 'arn:aws:iam::123456789000:server-certificate/yourcert.com',
+    protocol              => 'HTTPS',
+    load_balancer_port    => 443,
+    instance_protocol     => 'HTTPS',
+    instance_port         => 8080,
+    ssl_certificate_id    => 'arn:aws:iam::123456789000:server-certificate/yourcert.com',
   }],
-  tags                 => {
-    tag_name => 'value',
+  health_check            => {
+    'healthy_threshold'   => '10',
+    'interval'            => '30',
+    'target'              => 'HTTP:80/health_check',
+    'timeout'             => '5',
+    'unhealthy_threshold' => '2'
+  },
+  tags                    => {
+    tag_name              => 'value',
   },
 }
 ~~~
@@ -320,6 +327,9 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `ec2_vpc_subnet`: Sets up a VPC subnet.
 * `ec2_vpc_vpn`: Sets up an AWS Virtual Private Network.
 * `ec2_vpc_vpn_gateway`: Sets up a VPN gateway.
+* `ecs_cluster`: Manage an Ec2 Container Service cluster.
+* `ecs_service`: Manage an Ec2 Container Service service.
+* `ecs_task_definition`: Manage an Ec2 Container Service task definition.
 * `iam_group`: Manage IAM groups and their membership.
 * `iam_policy`: Manage an IAM 'managed' policy.
 * `iam_policy_attachment`: Manage an IAM 'managed' policy attachments.
@@ -337,6 +347,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `route53_srv_record`: Sets up a Route53 SRV record.
 * `route53_txt_record`: Sets up a Route53 TXT record.
 * `route53_zone`: Sets up a Route53 DNS zone.
+* `s3_bucket`: Sets up an S3 bucket.
 * `sqs_queue`: Sets up an SQS queue.
 
 ###Parameters
@@ -379,7 +390,7 @@ The name of the key pair associated with this instance. This must be an existing
 #####`tenancy`
 *Optional* Dedicated instances are Amazon EC2 instances that run in a virtual private cloud (VPC) on hardware that's dedicated to a single customer. Choices are 'dedicated' and 'default'. Defaults to shared (default) hardware.
 
-#####`private_ip_addresS`
+#####`private_ip_address`
 *Optional* The private IP address for the instance. This parameter is set at creation only; it is not affected by updates. Must be a valid IPv4 address.
 
 #####`associate_public_ip_address`
@@ -443,6 +454,9 @@ instance.
 #####`iam_instance_profile_arn`
 The Amazon Resource Name for the associated IAM profile.
 
+#####`interfaces`
+The AWS generated interfaces hash for the instance.  Read-only.
+
 #### Type: ec2_securitygroup
 
 ##### `name`
@@ -453,6 +467,9 @@ The Amazon Resource Name for the associated IAM profile.
 
 ##### `ingress`
 *Optional* Rules for ingress traffic. Accepts an array.
+
+##### `id`
+*Read-only* Unique string enumerated from existing resources uniquely identifying the security group.
 
 ##### `tags`
 *Optional* The tags for the security group. Accepts a 'key => value' hash of tags.
@@ -479,6 +496,15 @@ The Amazon Resource Name for the associated IAM profile.
   * instance_protocol
   * instance_port
   * ssl_certificate_id (optional if protocol is HTTPS )
+
+#####`health_check`
+The configuration for an ELB health check used to determine the health of the
+back- end instances.  Accepts a hash with the following keys:
+  * healthy_threshold
+  * interval
+  * target
+  * timeout
+  * unhealthy_threshold
 
 #####`tags`
 *Optional* The tags for the load balancer. This parameter is set at creation only; it is not affected by updates. Accepts a 'key => value' hash of tags.
@@ -614,6 +640,27 @@ Specifies that basic state of the resource. Valid values are 'attached', 'detach
 
 #####`image_id`
 *Required* The image id to use for the instances. This parameter is set at creation only; it is not affected by updates. For more information, see AWS documentation on finding your [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html).
+
+#####`block_device_mappings`
+*Optional* A list of block devices to associate with the instance. This parameter is set at creation only; it is not affected by updates. Accepts an array of hashes with the device name and either the volume size or snapshot id specified:
+
+~~~
+block_devices => [
+  {
+    device_name  => '/dev/sda1',
+    volume_size  => 8,
+  }
+]
+~~~
+
+~~~
+block_devices => [
+  {
+    device_name  => '/dev/sda1',
+    volume_type => 'gp2',
+  }
+]
+~~~
 
 #####`vpc`
 *Optional* A hint to specify the VPC. This is useful when detecting ambiguously named security groups that might exist in different VPCs, such as 'default'. This parameter is set at creation only; it is not affected by updates.
@@ -773,6 +820,9 @@ The route table to attach to the subnet. This parameter is set at creation only;
 #####`routes`
 *Optional* Individual routes for the routing table. Accepts an array of 'destination_cidr_block' and 'gateway' values:
 
+##### `id`
+*Read-only* Unique string enumerated from existing resources uniquely identifying the subnet.
+
 
 ~~~
 routes => [
@@ -835,6 +885,142 @@ routes => [
 
 #####`type`
 *Optional* The type of VPN gateway. This parameter is set at creation only; it is not affected by updates. The only currently supported value --- and the default --- is 'ipsec.1'.
+
+#### Type: ecs_cluster
+
+Type representing ECS clusters.
+
+```Puppet
+ecs_cluster { 'medium':
+  ensure => present,
+}
+```
+
+##### `name`
+*Required* The name of the cluster to manage.
+
+#### Type: ecs_service
+
+```Puppet
+ecs_service { 'dockerdockerdockerdocker':
+  ensure                   => present,
+  desired_count            => 1,
+  task_definition          => 'dockerdocker',
+  cluster                  => 'medium',
+  deployment_configuration => {
+    'maximum_percent'         => 200,
+    'minimum_healthy_percent' => 50
+  },
+  load_balancers           => [
+    {
+      'container_name'     => 'mycontainername',
+      'container_port'     => '8080',
+      'load_balancer_name' => 'name-of-loadbalancer-elb'
+    }
+}
+```
+
+##### `cluster`
+*Required* The name of the cluster to assign the service to
+
+##### `deployment_configuration`
+The deployment configuration of the service.
+
+A hash with the keys of "maximum_percent" and "minimum_healthy_percent"
+with integer values represnting percent.'
+
+##### `desired_count`
+A count of this service that should be running.
+
+##### `load_balancers`
+An array of hashes representing the load balancers to assign to a service.
+
+##### `name`
+*Required* The name of the cluster to manage.
+
+##### `role`
+The short name of the role to assign to the cluster upon creation.
+
+##### `task_definition`
+*Required* The name of the task definition to run.
+
+#### Type: ecs_task_definition
+
+Type representing ECS clusters.
+
+ECS task definitions can be a bit fussy.  To discover the existing containers
+we use the 'name' option within a container definition to calculate the
+differences between what is, and what should be.  Omitting the 'name' option may
+be done, but it would result in a new container being generated each Puppet
+run, and thus a new task definition.  For this reason it is recommended that
+the 'name' option be defined in each container definition and that the name
+chosen be unique within an `ecs_task_definition` resource.
+
+```Puppet
+ecs_task_definition { 'dockerdocker':
+  container_definitions => [
+    {
+      'name'          => 'zleslietesting',
+      'cpu'           => '1024',
+      'environment'   => {
+        'one' => '1',
+        'two' => '2',
+      },
+      'essential'     => 'true',
+      'image'         => 'debian:jessie',
+      'memory'        => '512',
+      'port_mappings' => [
+        {
+          'container_port' => '8081',
+          'host_port'      => '8082',
+          'protocol'       => 'tcp',
+        },
+      ],
+    }
+  ],
+}
+```
+
+Please note, it's important to take into consideration the behavior of the
+provider in the case of missing container options.
+
+If the task for an `ecs_task_definition` has been discovered to exist, then the
+discovered container options are merged with the requested options.  This
+results in the following behavior: *Container options not defined in the puppet
+resource, but are found to exist in the discovered running container are copied
+from the running container.*
+
+In the case where a user wishes to remove an option from the container, one of the following can be applied.
+
+* Name the container something else.  This results in a failure to match the
+  existing container against the desired container, and replaces the container
+  entirely.
+
+* Set an empty value for the option.  This results in the option specified by
+  the user replacing the value defined in the existing container.  For string
+  options, simply setting the value to `''`, or as an array value `[]`, etc.
+
+It's a small kludge, I know.
+
+
+
+##### `container_definitions`
+An array of hashes representing the container definition.  See the example
+above.
+
+##### `name`
+*Required* The name of the task to manage.
+
+##### `volumes`
+An array of hashes to handle for the task.
+
+##### `replace_image`
+A boolean to turn off the replacement of container images.  This enables Puppet
+to create, but not modify the image of a container once created.
+
+This is useful in environments where external CI tooling is responsible for
+modifying the image of a container, allowing a dualistic approach for managing
+ECS.
 
 #### Type: iam_group
 
@@ -1094,15 +1280,31 @@ All Route53 record types use the same parameters:
 *Optional* The time to live for the record. Accepts an integer.
 
 #####`values`
-*Required* The values of the record. Accepts an array.
+*Required when not using alias_target* The values of the record. Accepts an array.
+*Conflicts with alias_target*
 
 #####`name`
 *Required* The name of DNS zone group. This is the value of the AWS Name tag.
+
+#####`alias_target`
+*Required when not using values* The name of the alias resource to target.
+*Conflicts with values*
+
+#####`alias_target_zone`
+*Required when using alias_target* The ID of the zone in which the alias_target resides.
 
 #### Type: route53_zone
 
 #####`name`
 *Required* The name of DNS zone group. This is the value of the AWS Name tag.
+
+#### Type: s3_bucket
+
+#####`name`
+*Required* The name of the bucket to managed.
+
+#####`policy`
+A JSON parsable string of the policy to apply to the bucket.
 
 #### Type: sqs_queue
 #####`name`
@@ -1119,6 +1321,9 @@ All Route53 record types use the same parameters:
 
 #####`maximum_message_size`
 *Optional* The limit of how many bytes a message can contain before Amazon SQS rejects it.
+
+#####`visibility_timeout`
+*Optional* The number of seconds during which Amazon SQS prevents other consuming components from receiving and processing a message. Default value: 30
 
 
 ##Limitations

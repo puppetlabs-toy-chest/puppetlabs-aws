@@ -67,6 +67,40 @@ Puppet::Type.newtype(:ec2_launchconfiguration) do
     end
   end
 
+  newproperty(:block_device_mappings, :array_matching => :all) do
+    desc "One or more mappings that specify how block devices are exposed to the instance."
+    defaultto []
+    validate do |value|
+      Puppet.debug "validate(#{value})"
+      devices = value.is_a?(Array) ? value : [value]
+      devices.each do |device|
+        Puppet.debug "device: #{device} keys: #{device.keys} includes: #{device.keys.include?('device_name')}"
+        fail "block device must be named" unless device.keys.include?('device_name')
+        choices = ['volume_size', 'snapshot_id']
+        fail "block device must include at least one of: " + choices.join(' ') if (device.keys & choices).empty?
+        if device['volume_type'] == 'io1'
+          fail 'must specify iops if using provisioned iops volumes' unless device.keys.include?('iops')
+        end
+      end
+    end
+
+    def insync?(is)
+      existing_devices = is.collect { |device| Hash[device.map { |k, v| [k.to_sym, v] }] }
+      specified_devices = should.collect { |device|
+        dev = Hash[device.map { |k, v| [k.to_sym, v] }]
+        dev[:volume_type] ||= 'standard'
+        dev
+      }
+      Puppet.debug "existing_devices: #{existing_devices.to_set.inspect}"
+      Puppet.debug "specified_devices: #{specified_devices.to_set.inspect}"
+      existing_devices.to_set == specified_devices.to_set
+    end
+
+    def set(value)
+      read_only_warning(value, self, should)
+    end
+  end
+
   autorequire(:ec2_securitygroup) do
     groups = self[:security_groups]
     groups.is_a?(Array) ? groups : [groups]
@@ -76,4 +110,10 @@ Puppet::Type.newtype(:ec2_launchconfiguration) do
     self[:vpc]
   end
 
+end
+def read_only_warning(value, property, should)
+  msg = "#{property.name} is read-only. Cannot set to: #{should}"
+  Puppet.warning msg
+  #raise Puppet::Error, msg
+  false
 end

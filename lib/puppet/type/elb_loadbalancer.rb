@@ -42,6 +42,18 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     end
   end
 
+  newproperty(:health_check) do
+    desc 'The health check configuration for the load balancer'
+    def insync?(is)
+      provider.class.normalize_values(is) == provider.class.normalize_values(should)
+    end
+    validate do |value|
+      ['target', 'interval', 'timeout', 'unhealthy_threshold', 'healthy_threshold'].each do |key|
+        fail "health_check must include #{key}" unless value.keys.include?(key)
+      end
+    end
+  end
+
   newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'The tags for the load balancer.'
   end
@@ -90,6 +102,10 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     def insync?(is)
       is.to_s == should.to_s
     end
+  end
+
+  newproperty(:dns_name) do
+    desc 'The DNS name of the load balancer'
   end
 
   validate do

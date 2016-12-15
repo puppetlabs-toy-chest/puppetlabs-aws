@@ -75,6 +75,10 @@ Puppet::Type.type(:sqs_queue).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) 
     @property_flush[:message_retention_period] = value
   end
 
+  def visibility_timeout=(value)
+    @property_flush[:visibility_timeout=] = value
+  end
+
   def maximum_message_size=(value)
     @property_flush[:maximum_message_size] = value
   end
@@ -86,7 +90,7 @@ Puppet::Type.type(:sqs_queue).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) 
 
   def get_queue_api_attributes (attrs)
     transformations = {:delay_seconds => :DelaySeconds, :message_retention_period => :MessageRetentionPeriod,
-                       :maximum_message_size => :MaximumMessageSize}
+                       :maximum_message_size => :MaximumMessageSize, :visibility_timeout => :VisibilityTimeout}
     new_hash = {}
     transformations.map do |k, v|
       new_hash[v] = attrs[k]
@@ -117,6 +121,7 @@ Puppet::Type.type(:sqs_queue).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) 
         url: queue_url,
         delay_seconds: attrs['DelaySeconds'],
         message_retention_period: attrs['MessageRetentionPeriod'],
+        visibility_timeout: attrs['VisibilityTimeout'],
         maximum_message_size: attrs['MaximumMessageSize'],
     }
   end

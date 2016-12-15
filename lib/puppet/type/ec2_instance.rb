@@ -235,6 +235,10 @@ Puppet::Type.newtype(:ec2_instance) do
     end
   end
 
+  newproperty(:interfaces) do
+    desc 'A collected property of the interfaces attached to an instance'
+  end
+
   autorequire(:ec2_securitygroup) do
     groups = self[:security_groups]
     groups.is_a?(Array) ? groups : [groups]

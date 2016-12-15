@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+mkdir -p tmp
+rm -f tmp/resources
+
+for i in $(find lib/puppet/type -type f); do
+    type="$(basename "$i" .rb)"
+    echo "Checking for $type" >&2
+    bundle exec puppet resource --libdir=lib "$type" | tee -a tmp/resources
+done
+
+if grep -qE "^[^ ].*'(1\.?4|david)" tmp/resources; then
+  echo Leaked Resources: >&2
+  grep -E "^[^ ].*'(1\.?4|david)" tmp/resources >&2
+  exit 1
+else
+  echo No leaked resources >&2
+fi

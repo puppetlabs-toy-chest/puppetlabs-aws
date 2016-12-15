@@ -36,6 +36,7 @@ describe type_class do
       :security_groups,
       :subnets,
       :scheme,
+      :dns_name,
     ]
   end
 
