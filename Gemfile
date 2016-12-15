@@ -50,8 +50,9 @@ group :development do
   gem 'rubocop-rspec', '~> 1.6',            :require => false if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.3.0')
   gem 'pry',                                :require => false
   gem 'json_pure', '<= 2.0.1',              :require => false if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')
-  gem 'json', '<= 2.0.0',              :require => false if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')
-  gem 'webmock'
+  gem 'json', '<= 2.0.0',                   :require => false if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')
+  gem 'webmock',                            :require => false if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.0.0')
+  gem 'webmock', '~> 1.24',                 :require => false if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')
   gem 'public_suffix', '< 1.5.0'            if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')
   gem 'vcr'
 end
