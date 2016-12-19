@@ -30,7 +30,7 @@ end
 # Used for gem conditionals
 supports_windows = false
 
-gem 'aws-sdk-core', '2.3.22'
+gem 'aws-sdk-core', '2.6.38'
 gem 'retries'
 
 group :development do
