@@ -1181,7 +1181,7 @@ using the `rds-describe-db-engine-versions` command from the AWS CLI.
 This parameter is set at creation only; it is not affected by updates.
 
 #####`allocated_storage`
-The size of the database in gigabytes. Note that minimum size constraints
+*Required* The size of the database in gigabytes. Note that minimum size constraints
 exist, which vary depending on the database engine selected.
 This parameter is set at creation only; it is not affected by updates.
 
