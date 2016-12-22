@@ -42,12 +42,12 @@ Puppet::Type.newtype(:elbv2_targetgroup) do
     end
   end
 
-#  newproperty(:vpc) do
-#    desc 'Id of the virtual private cloud (VPC)'
-#    validate do |value|
-#      fail 'VPC ID must be specified' unless value
-#    end
-#  end
+  newproperty(:vpc) do
+    desc 'Id of the virtual private cloud (VPC)'
+    validate do |value|
+      fail 'VPC ID must be specified' unless value
+    end
+  end
 
   newproperty(:load_balancers) do
     desc 'The load balancer to assign this target group too'
@@ -124,6 +124,13 @@ Puppet::Type.newtype(:elbv2_targetgroup) do
     end
     munge do |value|
       value.to_i
+    end
+  end
+
+  newproperty(:arn) do
+    desc 'ARN of target group'
+    validate do |value|
+      fail 'arn is a readonly property'
     end
   end
 
