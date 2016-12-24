@@ -225,6 +225,14 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
 #        tags: tags ? tags.map { |k,v| { key: k, value: v, } } : []
 #      )
 
+  def stickiness_duration=(value)
+    Puppet.debug("Updating target group #{name} stickiness_duration")
+    elbv2_client(region).modify_target_group_attributes( {
+      target_group_arn: arn,
+      attributes: [ { key: 'stickiness.lb_cookie.duration_seconds',
+                      value: value.to_s } ],
+    })
+    @property_hash[:stickiness_duration] = value
   end
 
   def create
