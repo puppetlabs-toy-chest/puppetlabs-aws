@@ -98,7 +98,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
       health_check_success_codes: target_group.matcher.http_code,
       health_check_timeout: target_group.health_check_timeout_seconds,
       deregistration_delay: attributes['deregistration_delay.timeout_seconds'],
-      stickiness: attributes['stickiness.enabled'],
+      stickiness: (attributes['stickiness.enabled'] == true ? :enabled : :disabled),
       stickiness_duration: attributes['stickiness.lb_cookie.duration_seconds'],
       tags: tags,
     }
@@ -108,27 +108,103 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
     @property_hash[:ensure] == :present
   end
 
-  def health_check_success_codes=
-    Puppet.info("Updating target group #{name}")
+  def healthy_threshold=(value)
+    Puppet.debug("Updating target group #{name} healthy_threshold")
+    elbv2_client(region).modify_target_group( {
+      target_group_arn: arn,
+      healthy_threshold_count: value,
+    })
+  end
 
+  def unhealthy_threshold=(value)
+    Puppet.debug("Updating target group #{name} unhealthy_threshold")
+    elbv2_client(region).modify_target_group( {
+      target_group_arn: arn,
+      unhealthy_threshold_count: value,
+    })
+  end
+
+  def health_check_path=(value)
+    Puppet.debug("Updating target group #{name} health_check_path")
+    elbv2_client(region).modify_target_group( {
+      target_group_arn: arn,
+      health_check_path: value,
+    })
+  end
+
+  def health_check_port=(value)
+    Puppet.debug("Updating target group #{name} health_check_port")
+    elbv2_client(region).modify_target_group( {
+      target_group_arn: arn,
+      health_check_port: value,
+    })
+  end
+
+  def health_check_protocol=(value)
+    Puppet.debug("Updating target group #{name} health_check_protocol")
+    elbv2_client(region).modify_target_group( {
+      target_group_arn: arn,
+      health_check_protocol: value,
+    })
+  end
+
+  def health_check_interval=(value)
+    Puppet.debug("Updating target group #{name} health_check_interval")
+    elbv2_client(region).modify_target_group( {
+      target_group_arn: arn,
+      health_check_interval_seconds: value,
+    })
+  end
+
+  def health_check_success_codes=(value)
+    Puppet.debug("Updating target group #{name} #{arn} health_check_success_codes")
+    elbv2_client(region).modify_target_group( {
+      target_group_arn: arn,
+      matcher: { http_code: value },
+    })
+  end
+
+  def health_check_timeout=(value)
+    Puppet.debug("Updating target group #{name} health_check_timeout")
+    elbv2_client(region).modify_target_group( {
+      target_group_arn: arn,
+      health_check_timeout_seconds: value,
+    })
+  end
+
+  def stickiness=(value)
+    Puppet.debug("Updating target group #{name} stickiness to '#{value.to_s}'")
+    elbv2_client(region).modify_target_group_attributes( {
+      target_group_arn: arn,
+      attributes: [ { key: 'stickiness.enabled',
+                      value: ( value == :enabled ? 'true' : 'false' ), } ],
+    })
+    @property_hash[:stickiness] = value
+  end
+
+  def stickiness_duration=(value)
+    Puppet.debug("Updating target group #{name} stickiness_duration")
+    elbv2_client(region).modify_target_group_attributes( {
+      target_group_arn: arn,
+      attributes: [ { key: 'stickiness.lb_cookie.duration_seconds',
+                      value: value.to_s } ],
+    })
+    @property_hash[:stickiness_duration] = value
   end
 
   def create
-    Puppet.info("Creating target group #{name} #{resource[:protocol]} #{resource[:port]} in region #{target_region}")
+    Puppet.debug("Creating target group #{name} #{resource[:protocol]} #{resource[:port]} in region #{target_region}")
     fail('You must specify the AWS region') unless target_region != :absent
     fail('You must specify the Target protocol') if resource[:protocol].nil?
     fail('You must specify the Target port') if resource[:port].nil?
 
     vpc_name = resource[:vpc]
     if vpc_name
-    Puppet.info("Step3 #{vpc_name}")
       vpc_response = ec2_client(target_region).describe_vpcs(filters: [
         {name: 'tag:Name', values: [vpc_name]}
       ])
-    Puppet.info("Step4")
       fail("No VPC found called #{vpc_name}") if vpc_response.data.vpcs.count == 0
       vpc_id = vpc_response.data.vpcs.first.vpc_id
-    Puppet.info("Step5 #{vpc_id}")
       Puppet.warning "Multiple VPCs found called #{vpc_name}, using #{vpc_id}" if vpc_response.data.vpcs.count > 1
       @property_hash[:vpc_id] = vpc_id
       @property_hash[:vpc] = vpc_name
@@ -155,10 +231,11 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
     
     tg_arn = tg_response.data.target_groups.first.target_group_arn
 
-    Puppet.info("TargetGroup Arn: #{tg_arn}")
-    attrs = {}
-    attrs['stickiness.enabled'] = resource[:stickiness] unless resource[:stickiness].nil?
-    attrs['stickiness.lb_cookie.duration_seconds'] = resource[:stickiness_duration] unless resource[:stickiness_duration].nil?
+    attrs = []
+    attrs << { key: 'stickiness.enabled',
+               value: resource[:stickiness] } unless resource[:stickiness].nil?
+    attrs << { key: 'stickiness.lb_cookie.duration_seconds',
+               value: resource[:stickiness_duration] } unless resource[:stickiness_duration].nil?
 
     mtga_response = elbv2_client(target_region).modify_target_group_attributes( {
       targetgrouparn: tg_arn,
@@ -168,7 +245,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def destroy
-    Puppet.info("Deleting target group #{name} in region #{target_region} #{resources}")
+    Puppet.debug("Deleting target group #{name} in region #{target_region}")
     elbv2 = elbv2_client(target_region)
     elbv2.delete_target_group(target_group_arn: arn)
     @property_hash[:ensure] = :absent

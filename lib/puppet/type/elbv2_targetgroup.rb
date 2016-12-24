@@ -74,6 +74,9 @@ Puppet::Type.newtype(:elbv2_targetgroup) do
     validate do |value|
       fail 'Invalid health check protocol - must be HTTP or HTTPS' unless value.upcase =~ /^HTTPS?$/
     end
+    munge do |value|
+      value.upcase
+    end
   end
 
   newproperty(:health_check_interval) do
@@ -134,7 +137,8 @@ Puppet::Type.newtype(:elbv2_targetgroup) do
     end
   end
 
-  newproperty(:stickiness, parent: Puppet::Property::Boolean) do
+  newproperty(:stickiness) do
+    newvalues(:enabled, :disabled)
     desc 'Indicates whether sticky sessions are enabled'
   end
 
