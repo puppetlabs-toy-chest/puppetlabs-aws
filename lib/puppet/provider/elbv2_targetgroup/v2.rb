@@ -235,6 +235,31 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
     @property_hash[:stickiness_duration] = value
   end
 
+  def tags=(value)
+    Puppet.debug("Updating target group #{name} tags to '#{value}'")
+    client = elbv2_client(region)
+    resp = client.describe_tags( resource_arns: [ arn ] )
+    is = resp.tag_descriptions.collect do |tds|
+      tds.tags.collect do |tag|
+        tag.key
+      end
+    end.flatten
+    should = value.keys
+    to_del = is - should
+    Puppet.info("Response: #{to_del}")
+
+    client.remove_tags( resource_arns: [ arn ],
+                        tag_keys: to_del )
+    client.add_tags( resource_arns: [ arn ],
+                     tags: value ? value.map{ |k,v| { key: k, value: v, } } : [] )
+                        
+
+#      client.create_or_update_tags(
+#        tags: tags ? tags.map { |k,v| { key: k, value: v, } } : []
+#      )
+
+  end
+
   def create
     Puppet.debug("Creating target group #{name} in region #{target_region} using #{resource[:protocol]}:#{resource[:port]}")
     fail('You must specify the AWS region') unless target_region != :absent
