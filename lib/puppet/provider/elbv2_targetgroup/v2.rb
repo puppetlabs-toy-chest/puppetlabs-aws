@@ -35,33 +35,27 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def self.tgs(region)
-    Puppet.debug('Fetching ELBv2 Target Groups (tgs)')
-#    regions.collect do |region|
-      region_client = elbv2_client(region)
+    region_client = elbv2_client(region)
 
-      response = region_client.describe_target_groups()
+    response = region_client.describe_target_groups()
+    marker = response.next_marker
+
+    response.target_groups.each do |tg|
+      yield tg
+    end
+
+    while marker
+      response = region_client.describe_target_groups( {
+        marker: marker
+      })
       marker = response.next_marker
-
-      response.target_groups.each do |tg|
+      response.target_group_descriptions.each do |tg|
         yield tg
       end
-
-      while marker
-        Puppet.debug("Calling for marked TargetGroup description")
-        response = region_client.describe_target_groups( {
-          marker: marker
-        })
-        marker = response.next_marker
-        response.target_group_descriptions.each do |tg|
-          yield tg
-        end
-      end
-#    end
+    end
   end
 
   def self.target_group_to_hash(region, target_group, vpcs)
-    Puppet.debug("target_group_to_hash for #{target_group.target_group_name}")
-
     attributes = { }
     response = elbv2_client(region).describe_target_group_attributes(target_group_arn: target_group.target_group_arn)
     response.attributes.collect do |attribute|
@@ -98,7 +92,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
       health_check_success_codes: target_group.matcher.http_code,
       health_check_timeout: target_group.health_check_timeout_seconds,
       deregistration_delay: attributes['deregistration_delay.timeout_seconds'],
-      stickiness: (attributes['stickiness.enabled'] == true ? :enabled : :disabled),
+      stickiness: (attributes['stickiness.enabled'] == 'true' ? :enabled : :disabled),
       stickiness_duration: attributes['stickiness.lb_cookie.duration_seconds'],
       tags: tags,
     }
@@ -109,7 +103,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def healthy_threshold=(value)
-    Puppet.debug("Updating target group #{name} healthy_threshold")
+    Puppet.debug("Updating target group #{name} healthy_threshold to '#{value}'")
     elbv2_client(region).modify_target_group( {
       target_group_arn: arn,
       healthy_threshold_count: value,
@@ -117,7 +111,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def unhealthy_threshold=(value)
-    Puppet.debug("Updating target group #{name} unhealthy_threshold")
+    Puppet.debug("Updating target group #{name} unhealthy_threshold to '#{value}'")
     elbv2_client(region).modify_target_group( {
       target_group_arn: arn,
       unhealthy_threshold_count: value,
@@ -125,7 +119,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def health_check_path=(value)
-    Puppet.debug("Updating target group #{name} health_check_path")
+    Puppet.debug("Updating target group #{name} health_check_path to '#{value}'")
     elbv2_client(region).modify_target_group( {
       target_group_arn: arn,
       health_check_path: value,
@@ -133,7 +127,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def health_check_port=(value)
-    Puppet.debug("Updating target group #{name} health_check_port")
+    Puppet.debug("Updating target group #{name} health_check_port to '#{value}'")
     elbv2_client(region).modify_target_group( {
       target_group_arn: arn,
       health_check_port: value,
@@ -141,7 +135,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def health_check_protocol=(value)
-    Puppet.debug("Updating target group #{name} health_check_protocol")
+    Puppet.debug("Updating target group #{name} health_check_protocol to '#{value}'")
     elbv2_client(region).modify_target_group( {
       target_group_arn: arn,
       health_check_protocol: value,
@@ -149,7 +143,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def health_check_interval=(value)
-    Puppet.debug("Updating target group #{name} health_check_interval")
+    Puppet.debug("Updating target group #{name} health_check_interval to '#{value}'")
     elbv2_client(region).modify_target_group( {
       target_group_arn: arn,
       health_check_interval_seconds: value,
@@ -157,7 +151,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def health_check_success_codes=(value)
-    Puppet.debug("Updating target group #{name} #{arn} health_check_success_codes")
+    Puppet.debug("Updating target group #{name} #{arn} health_check_success_codes to '#{value}'")
     elbv2_client(region).modify_target_group( {
       target_group_arn: arn,
       matcher: { http_code: value },
@@ -165,7 +159,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def health_check_timeout=(value)
-    Puppet.debug("Updating target group #{name} health_check_timeout")
+    Puppet.debug("Updating target group #{name} health_check_timeout to '#{value}'")
     elbv2_client(region).modify_target_group( {
       target_group_arn: arn,
       health_check_timeout_seconds: value,
@@ -183,7 +177,7 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def stickiness_duration=(value)
-    Puppet.debug("Updating target group #{name} stickiness_duration")
+    Puppet.debug("Updating target group #{name} stickiness_duration to '#{value}'")
     elbv2_client(region).modify_target_group_attributes( {
       target_group_arn: arn,
       attributes: [ { key: 'stickiness.lb_cookie.duration_seconds',
@@ -192,8 +186,33 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
     @property_hash[:stickiness_duration] = value
   end
 
+  def tags=(value)
+    Puppet.debug("Updating target group #{name} tags to '#{value}'")
+    client = elbv2_client(region)
+    resp = client.describe_tags( resource_arns: [ arn ] )
+    is = resp.tag_descriptions.collect do |tds|
+      tds.tags.collect do |tag|
+        tag.key
+      end
+    end.flatten
+    should = value.keys
+    to_del = is - should
+    Puppet.info("Response: #{to_del}")
+
+    client.remove_tags( resource_arns: [ arn ],
+                        tag_keys: to_del )
+    client.add_tags( resource_arns: [ arn ],
+                     tags: value ? value.map{ |k,v| { key: k, value: v, } } : [] )
+                        
+
+#      client.create_or_update_tags(
+#        tags: tags ? tags.map { |k,v| { key: k, value: v, } } : []
+#      )
+
+  end
+
   def create
-    Puppet.debug("Creating target group #{name} #{resource[:protocol]} #{resource[:port]} in region #{target_region}")
+    Puppet.debug("Creating target group #{name} in region #{target_region} using #{resource[:protocol]}:#{resource[:port]}")
     fail('You must specify the AWS region') unless target_region != :absent
     fail('You must specify the Target protocol') if resource[:protocol].nil?
     fail('You must specify the Target port') if resource[:port].nil?
@@ -227,13 +246,12 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
     config[:matcher] = { http_code: resource[:health_check_success_codes] } unless resource[:health_check_success_codes].nil?
 
     tg_response = elbv2_client(target_region).create_target_group(config)
-    Puppet.info("Config: #{tg_response.data}")
     
     tg_arn = tg_response.data.target_groups.first.target_group_arn
 
     attrs = []
     attrs << { key: 'stickiness.enabled',
-               value: resource[:stickiness] } unless resource[:stickiness].nil?
+               value: ( resource[:stickiness] == :enabled ? 'true' : 'false' ) } unless resource[:stickiness].nil?
     attrs << { key: 'stickiness.lb_cookie.duration_seconds',
                value: resource[:stickiness_duration] } unless resource[:stickiness_duration].nil?
 
@@ -241,6 +259,8 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
       targetgrouparn: tg_arn,
       attributes: attrs,
     }) unless attrs.empty?
+
+    tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
 
   end
 
