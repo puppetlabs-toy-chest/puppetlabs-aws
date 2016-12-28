@@ -15,7 +15,6 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
         vpc_name = name_from_tag(vpc)
         vpc_names[vpc.vpc_id] = vpc_name if vpc_name
       end
-    Puppet.debug("instances region: #{region}")
       target_groups = []
       tgs(region) do |tg|
         target_groups << new(target_group_to_hash(region, tg, vpc_names) )
@@ -29,7 +28,24 @@ Puppet::Type.type(:elbv2_targetgroup).provide(:v2, :parent => PuppetX::Puppetlab
     instances.each do |prov|
       Puppet.debug("Prefetching #{prov.name}")
       if resource = resources[prov.name] # rubocop:disable Lint/AssignmentInCondition
-        resource.provider = prov if resource[:region] == prov.region
+        if resource[:region] == prov.region
+          Puppet.debug("Updating resource for #{prov.name}")
+          resource.provider = prov
+          resource[:port] = prov.port
+          resource[:protocol] = prov.protocol
+#          resource[:healthy_threshold] = prov.healthy_threshold
+#          resource[:unhealthy_threshold] = prov.unhealthy_threshold
+          resource[:health_check_path] = prov.health_check_path
+          resource[:health_check_port] = prov.health_check_port
+          resource[:health_check_protocol] = prov.health_check_protocol
+#          resource[:health_check_interval] = prov.health_check_interval
+          resource[:health_check_success_codes] = prov.health_check_success_codes
+#          resource[:health_check_timeout] = prov.health_check_timeout
+#          resource[:deregistration_delay] = prov.deregistration_delay
+          resource[:stickiness] = prov.stickiness
+#          resource[:stickiness_duration] = prov.stickiness_duration
+          resource[:tags] = prov.tags
+        end
       end
     end
   end
