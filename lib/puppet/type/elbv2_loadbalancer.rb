@@ -82,17 +82,6 @@ Puppet::Type.newtype(:elbv2_loadbalancer) do
     desc 'The DNS name of the load balancer'
   end
 
-  validate do
-    subnets = self[:subnets] || []
-    zones = self[:availability_zones] || []
-    fail "You can specify either subnets or availability_zones for the ELB #{self[:name]}" if !zones.empty? && !subnets.empty?
-  end
-
-  autorequire(:ec2_instance) do
-    instances = self[:instances]
-    instances.is_a?(Array) ? instances : [instances]
-  end
-
   autorequire(:ec2_securitygroup) do
     groups = self[:security_groups]
     groups.is_a?(Array) ? groups : [groups]
