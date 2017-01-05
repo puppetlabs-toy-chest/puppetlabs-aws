@@ -490,12 +490,14 @@ The AWS generated interfaces hash for the instance.  Read-only.
 *Required* The region in which to launch the load balancer. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 #####`listeners`
-*Required* The ports and protocols the load balancer listens to. This parameter is set at creation only; it is not affected by updates. Accepts an array of the following values:
+*Required* The ports and protocols the load balancer listens to.  Accepts an
+array of the following values:
   * protocol
   * load_balancer_port
   * instance_protocol
   * instance_port
-  * ssl_certificate_id (optional if protocol is HTTPS )
+  * ssl_certificate_id (required if protocol is HTTPS)
+  * policy_names (optional array of policy name strings for HTTPS)
 
 #####`health_check`
 The configuration for an ELB health check used to determine the health of the

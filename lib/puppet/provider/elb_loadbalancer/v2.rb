@@ -59,7 +59,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     end
   end
 
-  read_only(:region, :scheme, :listeners, :tags, :dns_name)
+  read_only(:region, :scheme, :tags, :dns_name)
 
   def self.prefetch(resources)
     ref_catalog = resources.values.first.respond_to?(:catalog) ? resources.values.first.catalog : nil
@@ -98,7 +98,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         # ID to Name have not been found in the reference catalog.  As such,
         # here we need to make the call to ec2_client to resolve the instances
         # that are missing.
-        Puppet.debug('calling ec2_client for instances')
+        Puppet.debug('Calling ec2_client for instances')
         instances = ec2_client(region).describe_instances(instance_ids: instance_ids).collect do |response|
           response.data.reservations.collect do |reservation|
             reservation.instances.collect do |instance|
@@ -122,6 +122,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         'instance_port' => listener.listener.instance_port,
       }
       result['ssl_certificate_id'] = listener.listener.ssl_certificate_id unless listener.listener.ssl_certificate_id.nil?
+      result['policy_names'] = listener.policy_names unless listener.policy_names.nil? or listener.policy_names.size == 0
       result
     end
 
@@ -158,7 +159,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         # We arrive here when the subnet that we are looking to convert from ID
         # to Name is not found in the catalog.  This requires us to make the
         # call to ec2_client to get the subnet information we need.
-        Puppet.debug('calling ec2_client for subnets')
+        Puppet.debug('Calling ec2_client for subnets')
         subnent_response = ec2_client(region).describe_subnets(subnet_ids: load_balancer.subnets)
         subnent_response.data.subnets.each do |subnet|
           subnet_name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
@@ -180,11 +181,11 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         catalog_security_groups = ref_catalog.resources.select do |rec|
           rec.is_a? Puppet::Type::Ec2_securitygroup and load_balancer.security_groups.include? rec.provider.id
         end
-      end
 
-      catalog_security_groups.each do |rec|
-        security_group_names << rec.provider.name
-        security_groups_to_resolve.delete(rec.provider.id)
+        catalog_security_groups.each do |rec|
+          security_group_names << rec.provider.name
+          security_groups_to_resolve.delete(rec.provider.id)
+        end
       end
 
       if security_groups_to_resolve.size > 0
@@ -192,7 +193,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         # convert from IDs to names have not been found in the catalog, in
         # which case, we must make the call to AWS to get the security group
         # information we need to make the translation.
-        Puppet.debug('calling ec2_client for security_groups')
+        Puppet.debug('Calling ec2_client for security_groups')
         group_response = ec2_client(region).describe_security_groups(group_ids: security_groups_to_resolve)
         group_response.data.security_groups.collect(&:group_name).each do |sg_name|
           security_group_names << sg_name
@@ -257,6 +258,10 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     })
   end
 
+  def listeners=(value)
+    Puppet.debug("Requesting listeners #{value.inspect} for ELB #{name} in region #{target_region}")
+  end
+
   def update
     Puppet.info("Updating load balancer #{name} in region #{target_region}")
     instances = resource[:instances]
@@ -273,11 +278,150 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         update_subnets(resource[:subnets])
       end
     end
+
+    unless @property_hash[:listeners] == resource[:listeners]
+      update_listeners
+    end
+
   end
 
   def fail_if_availability_zones_changed
     if resource[:availability_zones].to_set != @property_hash[:availability_zones].to_set
       fail "availability_zones property is read-only once elb_loadbalancer is created."
+    end
+  end
+
+  def update_listeners
+    # Listeners are identified uniquely by their 'load_balancer_port' key.  As
+    # such, we can collect a list of ports that should exist, and compare that
+    # to the ones that already exist to make decisions about which to remove,
+    # which to add, and which need modification.  The modification is a bit of
+    # a misnomer, since it really ends up being a delete followed by an add.
+
+    is_listener_ports = @property_hash[:listeners].collect {|x| x['load_balancer_port'].to_i }
+    should_listener_ports = resource[:listeners].collect {|x| x['load_balancer_port'].to_i }
+
+    # Collect a list of ports for listeners that should be deleted
+    listeners_to_delete = is_listener_ports.collect {|listener_port|
+      # Get the 'is' listener port and check if it 'should' exist
+      listener_port unless should_listener_ports.include? listener_port
+    }.compact
+
+    # Collect a list of ports for listeners that should be created
+    listeners_to_create = should_listener_ports.collect {|listener_port|
+      # Get the 'should' listener port and check if already exists in 'is'
+      listener_port unless is_listener_ports.include? listener_port
+    }.compact
+
+    resource[:listeners].each do |should_listener|
+      # If our current should listeners is already known to need creating, then
+      # we can safely skip comparison
+      next if listeners_to_create.include? should_listener['load_balancer_port']
+
+      # Identify and retrieve the existing listener to our current 'should'
+      # listener by port
+      is_listener = @property_hash[:listeners].select {|x|
+        x['load_balancer_port'].to_i == should_listener['load_balancer_port'].to_i
+      }.first
+
+      # Unless we found a match, there is no comparison needed
+      next unless is_listener
+
+      # We arrive here if the load_balancer_ports match, but
+      # @property_hash[:listeners] needs updating.  Thus we must compare what
+      # is to what should be.
+
+      # When comparing listeners, the following are possible keys to look at.
+      # There is also a key for 'policy_names', but that is updated separated,
+      # so when identifying equality of what is and what should be, the
+      # following list of keys is sufficient.
+      keys_to_compare = [ 'instance_port', 'instance_protocol',
+                          'load_balancer_port', 'protocol',
+                          'ssl_certificate_id' ]
+
+      # Build the hashes to compare from what is and what should be, using the
+      # above keys.
+      should_hash = {}
+      is_hash = {}
+      keys_to_compare.each do |k|
+        if should_listener[k]
+          should_hash[k] = should_listener[k]
+        end
+
+        if is_listener[k]
+          is_hash[k] = is_listener[k]
+        end
+      end
+
+      # Perform the comparison after normalizing the values from each.
+      if self.class.normalize_values(is_hash) != self.class.normalize_values(should_hash)
+        # This queues up the modify by adding the load_balancer_port to both
+        # the add and delete arrays.
+
+        # Add the port for deletion if its not already there
+        unless listeners_to_delete.include? is_listener['load_balancer_port'].to_i
+          listeners_to_delete << is_listener['load_balancer_port'].to_i
+        end
+
+        # Add the port for creation if its not already there
+        unless listeners_to_create.include? should_listener['load_balancer_port'].to_i
+          listeners_to_create << should_listener['load_balancer_port'].to_i
+        end
+      end
+    end
+
+    # Perform the delete for listeners that need not exist
+    if listeners_to_delete.size > 0
+      Puppet.debug("deleting listeners #{listeners_to_delete} on ELB #{resource[:name]}")
+      elb_client.delete_load_balancer_listeners({
+        load_balancer_name: resource[:name],
+        load_balancer_ports: listeners_to_delete,
+      })
+    end
+
+    # Perform the create for listeners that should exist but don't
+    if listeners_to_create.size > 0
+      listeners = resource[:listeners].collect {|listener|
+        if listeners_to_create.include? listener['load_balancer_port'].to_i
+          hsh = {
+            protocol: listener['protocol'],
+            load_balancer_port: listener['load_balancer_port'],
+            instance_protocol: listener['instance_protocol'],
+            instance_port: listener['instance_port'],
+          }
+          if listener['ssl_certificate_id']
+            hsh['ssl_certificate_id'] = listener['ssl_certificate_id']
+          end
+
+          hsh
+        end
+      }.compact
+
+      Puppet.debug("Creating listeners #{listeners} on ELB #{resource[:name]}")
+      elb_client.create_load_balancer_listeners({
+        load_balancer_name: resource[:name],
+        listeners: listeners
+      })
+    end
+
+    resource[:listeners].each do |should_listener|
+      # If the resource does not specify a policy_name, do nothing
+      next unless should_listener['policy_names']
+
+      # Match the should_listener to the is_listener
+      is_listener = @property_hash[:listeners].select {|x|
+        x['load_balancer_port'].to_i == should_listener['load_balancer_port'].to_i
+      }.first
+
+      # Update the working listener policy if requested
+      if should_listener['policy_names'] and should_listener['policy_names'] != is_listener['policy_names']
+        Puppet.debug("Calling elb_client for policy_names update on #{resource[:name]}")
+        elb_client.set_load_balancer_policies_of_listener({
+          load_balancer_name: resource[:name],
+          load_balancer_port: should_listener['load_balancer_port'],
+          policy_names: should_listener['policy_names'],
+        })
+      end
     end
   end
 
