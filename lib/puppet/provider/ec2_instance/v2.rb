@@ -261,12 +261,7 @@ Found #{matching_groups.length}:
     config
   end
 
-  def config_with_private_ip(config)
-    config['private_ip_address'] = resource['private_ip_address'] if resource['private_ip_address'] && using_vpc?
-    config
-  end
-
-  def config_with_public_interface(config)
+  def config_with_ip(config)
     if resource[:associate_public_ip_address] == :true
       config[:network_interfaces] = [{
         device_index: 0,
@@ -274,9 +269,16 @@ Found #{matching_groups.length}:
         groups: config[:security_group_ids],
         associate_public_ip_address: true,
       }]
+      # If both public and private ip specified, then the private_ip_address must be within the network_interfaces structure
+      if resource['private_ip_address'] && using_vpc?
+      	config[:network_interfaces].first[:private_ip_address] = resource['private_ip_address']
+      end
       config[:subnet_id] = nil
       config[:security_group_ids] = nil
+    elsif resource['private_ip_address'] && using_vpc?
+      config['private_ip_address'] = resource['private_ip_address'] if resource['private_ip_address'] && using_vpc?
     end
+
     config
   end
 
@@ -312,8 +314,7 @@ Found #{matching_groups.length}:
       config = config_with_key_details(config)
       config = config_with_devices(config)
       config = config_with_network_details(config)
-      config = config_with_private_ip(config)
-      config = config_with_public_interface(config)
+      config = config_with_ip(config)
 
       response = ec2.run_instances(config)
 
