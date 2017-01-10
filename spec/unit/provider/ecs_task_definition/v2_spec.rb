@@ -5,12 +5,6 @@ provider_class = Puppet::Type.type(:ecs_task_definition).provider(:v2)
 
 describe provider_class do
 
-  before do
-    ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-    ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-    ENV['AWS_REGION'] = 'us-west-2'
-  end
-
   let(:resource) {
     Puppet::Type.type(:ecs_task_definition).new(
       name: 'omgolly123',

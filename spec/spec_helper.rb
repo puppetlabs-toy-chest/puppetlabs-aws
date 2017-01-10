@@ -5,9 +5,40 @@ require 'vcr'
 
 WebMock.disable_net_connect!
 
+unless ENV['AWS_ACCESS_KEY_ID']
+  ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
+end
+
+unless ENV['AWS_SECRET_ACCESS_KEY']
+  ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
+end
+
+unless ENV['AWS_REGION']
+  ENV['AWS_REGION'] = 'sa-east-1'
+end
+
 VCR.configure do |c|
   c.cassette_library_dir = 'fixtures/vcr_cassettes'
   c.hook_into :webmock
+  c.filter_sensitive_data('111111111111') { ENV['AWS_ACCESS_KEY_ID'] }
+
+  # Filter the account number from arn references
+  c.filter_sensitive_data('123456789012') {|i|
+    # arn:aws:component:region:account:otherstuff
+    if matches = /arn:aws:\w+:([\-\w]+)?:(\d{12}):/.match(i.response.body)
+      matches[2]
+    end
+  }
+
+  # Filter account from ELB Data
+  c.filter_sensitive_data('123456789012') {|i|
+    if matches = /<OwnerAlias>(\d{12})<\/OwnerAlias>/.match(i.response.body)
+      matches[1]
+    elsif matches = /<ownerId>(\d{12})<\/ownerId>/.match(i.response.body)
+      matches[1]
+    end
+  }
+
 end
 
 if ENV['PARSER'] == 'future'
