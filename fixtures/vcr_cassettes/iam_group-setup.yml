@@ -1,0 +1,385 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListGroups&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172007Z
+      X-Amz-Content-Sha256:
+      - 5f776d91509b9c99b8cb5eb5d6d4a787a33ae41c8cd6e7b69effca69080e1e1f
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=d4329173997e2d0aee1dc70df5e5a310ac480d7a4b97981df28d64e1deb56105
+      Content-Length:
+      - '36'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 334d4b83-d822-11e6-ab10-214f93a0c1e1
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '807'
+      Date:
+      - Wed, 11 Jan 2017 17:20:08 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListGroupsResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListGroupsResult>
+            <IsTruncated>false</IsTruncated>
+            <Groups>
+              <member>
+                <Path>/</Path>
+                <GroupName>notops</GroupName>
+                <Arn>arn:aws:iam::123456789012:group/notops</Arn>
+                <GroupId>AGPAJBN5CML7FQ5J7JD26</GroupId>
+                <CreateDate>2016-08-23T19:23:16Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <GroupName>ops</GroupName>
+                <Arn>arn:aws:iam::123456789012:group/ops</Arn>
+                <GroupId>AGPAIQCI4K2HPEBNN6QQM</GroupId>
+                <CreateDate>2016-06-16T18:23:08Z</CreateDate>
+              </member>
+            </Groups>
+          </ListGroupsResult>
+          <ResponseMetadata>
+            <RequestId>334d4b83-d822-11e6-ab10-214f93a0c1e1</RequestId>
+          </ResponseMetadata>
+        </ListGroupsResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:08 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=GetGroup&GroupName=notops&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172008Z
+      X-Amz-Content-Sha256:
+      - cf68c015f2417aea8bd48137c559a758527a2a67deb4dbe8ba6210da16b707be
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=2466706c76044a9db064ac819072378137859b1e4f8514c3dde669a9422dfc09
+      Content-Length:
+      - '51'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 3399bdad-d822-11e6-bd77-5d62273fd38b
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '522'
+      Date:
+      - Wed, 11 Jan 2017 17:20:08 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <GetGroupResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <GetGroupResult>
+            <IsTruncated>false</IsTruncated>
+            <Users/>
+            <Group>
+              <Path>/</Path>
+              <GroupName>notops</GroupName>
+              <Arn>arn:aws:iam::123456789012:group/notops</Arn>
+              <GroupId>AGPAJBN5CML7FQ5J7JD26</GroupId>
+              <CreateDate>2016-08-23T19:23:16Z</CreateDate>
+            </Group>
+          </GetGroupResult>
+          <ResponseMetadata>
+            <RequestId>3399bdad-d822-11e6-bd77-5d62273fd38b</RequestId>
+          </ResponseMetadata>
+        </GetGroupResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:08 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=GetGroup&GroupName=ops&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172008Z
+      X-Amz-Content-Sha256:
+      - db0f03bb6c536b0da1477fdd4e528f491b1c6ed8ca6ca34908ecf34329b9e685
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=0e64fa2ac31d780e5b16356698079f0a02a5fe69c3568581ccfda2db8c537b14
+      Content-Length:
+      - '48'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 33dba8df-d822-11e6-8b9d-ff7b08faab19
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '846'
+      Date:
+      - Wed, 11 Jan 2017 17:20:08 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <GetGroupResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <GetGroupResult>
+            <IsTruncated>false</IsTruncated>
+            <Users>
+              <member>
+                <Path>/</Path>
+                <PasswordLastUsed>2017-01-11T16:16:54Z</PasswordLastUsed>
+                <UserName>ishearin</UserName>
+                <Arn>arn:aws:iam::123456789012:user/ishearin</Arn>
+                <UserId>AIDAJD5YADU67WPGYXKYK</UserId>
+                <CreateDate>2016-06-16T20:28:41Z</CreateDate>
+              </member>
+            </Users>
+            <Group>
+              <Path>/</Path>
+              <GroupName>ops</GroupName>
+              <Arn>arn:aws:iam::123456789012:group/ops</Arn>
+              <GroupId>AGPAIQCI4K2HPEBNN6QQM</GroupId>
+              <CreateDate>2016-06-16T18:23:08Z</CreateDate>
+            </Group>
+          </GetGroupResult>
+          <ResponseMetadata>
+            <RequestId>33dba8df-d822-11e6-8b9d-ff7b08faab19</RequestId>
+          </ResponseMetadata>
+        </GetGroupResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:09 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListGroups&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172009Z
+      X-Amz-Content-Sha256:
+      - 5f776d91509b9c99b8cb5eb5d6d4a787a33ae41c8cd6e7b69effca69080e1e1f
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=8eeb9f4d1171c4ddb3728af4fd3e835f419e734b4b250c48f54ff8b8813c64f1
+      Content-Length:
+      - '36'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 341bbf93-d822-11e6-ab10-214f93a0c1e1
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '807'
+      Date:
+      - Wed, 11 Jan 2017 17:20:09 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListGroupsResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListGroupsResult>
+            <IsTruncated>false</IsTruncated>
+            <Groups>
+              <member>
+                <Path>/</Path>
+                <GroupName>notops</GroupName>
+                <Arn>arn:aws:iam::123456789012:group/notops</Arn>
+                <GroupId>AGPAJBN5CML7FQ5J7JD26</GroupId>
+                <CreateDate>2016-08-23T19:23:16Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <GroupName>ops</GroupName>
+                <Arn>arn:aws:iam::123456789012:group/ops</Arn>
+                <GroupId>AGPAIQCI4K2HPEBNN6QQM</GroupId>
+                <CreateDate>2016-06-16T18:23:08Z</CreateDate>
+              </member>
+            </Groups>
+          </ListGroupsResult>
+          <ResponseMetadata>
+            <RequestId>341bbf93-d822-11e6-ab10-214f93a0c1e1</RequestId>
+          </ResponseMetadata>
+        </ListGroupsResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:09 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=GetGroup&GroupName=notops&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172009Z
+      X-Amz-Content-Sha256:
+      - cf68c015f2417aea8bd48137c559a758527a2a67deb4dbe8ba6210da16b707be
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=a1659d294b493cd39e24acfc1d3f42dddaf1a9562db5484d663fdc85b153bde2
+      Content-Length:
+      - '51'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 345b60ab-d822-11e6-940d-b79303d6a8dd
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '522'
+      Date:
+      - Wed, 11 Jan 2017 17:20:09 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <GetGroupResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <GetGroupResult>
+            <IsTruncated>false</IsTruncated>
+            <Users/>
+            <Group>
+              <Path>/</Path>
+              <GroupName>notops</GroupName>
+              <Arn>arn:aws:iam::123456789012:group/notops</Arn>
+              <GroupId>AGPAJBN5CML7FQ5J7JD26</GroupId>
+              <CreateDate>2016-08-23T19:23:16Z</CreateDate>
+            </Group>
+          </GetGroupResult>
+          <ResponseMetadata>
+            <RequestId>345b60ab-d822-11e6-940d-b79303d6a8dd</RequestId>
+          </ResponseMetadata>
+        </GetGroupResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:10 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=GetGroup&GroupName=ops&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172010Z
+      X-Amz-Content-Sha256:
+      - db0f03bb6c536b0da1477fdd4e528f491b1c6ed8ca6ca34908ecf34329b9e685
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=791e4fa0cf54d56361e8ed043eb07524844d7a5958ae8b4d772370becbd74a78
+      Content-Length:
+      - '48'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 3498debc-d822-11e6-ab10-214f93a0c1e1
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '846'
+      Date:
+      - Wed, 11 Jan 2017 17:20:10 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <GetGroupResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <GetGroupResult>
+            <IsTruncated>false</IsTruncated>
+            <Users>
+              <member>
+                <Path>/</Path>
+                <PasswordLastUsed>2017-01-11T16:16:54Z</PasswordLastUsed>
+                <UserName>ishearin</UserName>
+                <Arn>arn:aws:iam::123456789012:user/ishearin</Arn>
+                <UserId>AIDAJD5YADU67WPGYXKYK</UserId>
+                <CreateDate>2016-06-16T20:28:41Z</CreateDate>
+              </member>
+            </Users>
+            <Group>
+              <Path>/</Path>
+              <GroupName>ops</GroupName>
+              <Arn>arn:aws:iam::123456789012:group/ops</Arn>
+              <GroupId>AGPAIQCI4K2HPEBNN6QQM</GroupId>
+              <CreateDate>2016-06-16T18:23:08Z</CreateDate>
+            </Group>
+          </GetGroupResult>
+          <ResponseMetadata>
+            <RequestId>3498debc-d822-11e6-ab10-214f93a0c1e1</RequestId>
+          </ResponseMetadata>
+        </GetGroupResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:10 GMT
+recorded_with: VCR 3.0.3
