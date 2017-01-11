@@ -4,12 +4,6 @@ provider_class = Puppet::Type.type(:iam_role).provider(:v2)
 
 describe provider_class do
 
-  before do
-    ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-    ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-    ENV['AWS_REGION'] = 'sa-east-1'
-  end
-
   context 'with the minimum params' do
     let(:resource) {
       Puppet::Type.type(:iam_role).new(

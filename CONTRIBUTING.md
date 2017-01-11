@@ -288,9 +288,9 @@ functionality.
 
 ### Tidying up!  IMPORTANT
 
-Its important to tidy up on spec tests before committing.  Its easy to do, so
-just remember to tidy up.  You don't want to commit your credentials to GitHub,
-as I have done this morning.
+Its important to tidy up on spec tests before committing.  This is easy to do,
+so just remember to tidy up.  You don't want to commit your credentials to
+GitHub, as I have done this morning.
 
 It is no longer necessary to write your credentials anywhere in the spec test
 files.  Exporting the variables is all that is required now, so that the

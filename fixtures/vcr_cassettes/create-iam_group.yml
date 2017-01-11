@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=CreateGroup&GroupName=tgroup&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172010Z
+      X-Amz-Content-Sha256:
+      - 97315f7d6b878790d6aeb8f04a806f120ec57d8baa84f4a398028e34530a6e72
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=461a1299024b2173ba80385a19e7090f94b96ea714c5068c2b7b0bde1ffe00ba
+      Content-Length:
+      - '54'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 34dc773a-d822-11e6-bd77-5d62273fd38b
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '488'
+      Date:
+      - Wed, 11 Jan 2017 17:20:10 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <CreateGroupResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <CreateGroupResult>
+            <Group>
+              <Path>/</Path>
+              <GroupName>tgroup</GroupName>
+              <Arn>arn:aws:iam::123456789012:group/tgroup</Arn>
+              <GroupId>AGPAID3BRVWPWS7SXRYHC</GroupId>
+              <CreateDate>2017-01-11T17:20:10.888Z</CreateDate>
+            </Group>
+          </CreateGroupResult>
+          <ResponseMetadata>
+            <RequestId>34dc773a-d822-11e6-bd77-5d62273fd38b</RequestId>
+          </ResponseMetadata>
+        </CreateGroupResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:10 GMT
+recorded_with: VCR 3.0.3

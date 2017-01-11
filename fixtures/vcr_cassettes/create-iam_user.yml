@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=CreateUser&UserName=tuser&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172014Z
+      X-Amz-Content-Sha256:
+      - 89c195b7f373d1fbed01b2e87d2ecd8622f4215ce20449b6dbeef2dc82e2a5ea
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=1e1b398886049727f64114ad877e05fce3ecdab9a072101afd1072a5f8a586c2
+      Content-Length:
+      - '51'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 37745f8b-d822-11e6-9deb-11451b078a2d
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '475'
+      Date:
+      - Wed, 11 Jan 2017 17:20:14 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <CreateUserResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <CreateUserResult>
+            <User>
+              <Path>/</Path>
+              <UserName>tuser</UserName>
+              <Arn>arn:aws:iam::123456789012:user/tuser</Arn>
+              <UserId>AIDAIXE6MBUG4WUE4SEIO</UserId>
+              <CreateDate>2017-01-11T17:20:15.237Z</CreateDate>
+            </User>
+          </CreateUserResult>
+          <ResponseMetadata>
+            <RequestId>37745f8b-d822-11e6-9deb-11451b078a2d</RequestId>
+          </ResponseMetadata>
+        </CreateUserResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:15 GMT
+recorded_with: VCR 3.0.3

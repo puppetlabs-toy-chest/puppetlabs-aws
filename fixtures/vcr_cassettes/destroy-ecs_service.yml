@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"service":"testservice","cluster":"test"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DeleteService
+      X-Amz-Date:
+      - 20170111T222403Z
+      X-Amz-Content-Sha256:
+      - f1c61043a1dea46cf96c7345abe115c06fe034113cf07334197a1421c0c6d2a2
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=90f901145083f98f21884842ce9ce7154fbb5b369a683f388ffdcbfed414b95e
+      Content-Length:
+      - '42'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 22:24:03 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '774'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a83fdaf6-d84c-11e6-9f70-5f80690e25cf
+    body:
+      encoding: UTF-8
+      string: '{"service":{"clusterArn":"arn:aws:ecs:us-west-2:123456789012:cluster/test","createdAt":1.484173441895E9,"deploymentConfiguration":{"maximumPercent":200,"minimumHealthyPercent":100},"deployments":[{"createdAt":1.484173441895E9,"desiredCount":0,"id":"ecs-svc/9223370552681333906","pendingCount":0,"runningCount":0,"status":"PRIMARY","taskDefinition":"arn:aws:ecs:us-west-2:123456789012:task-definition/testtask:6","updatedAt":1.484173441895E9}],"desiredCount":0,"events":[],"loadBalancers":[],"pendingCount":0,"placementConstraints":[],"placementStrategy":[],"runningCount":0,"serviceArn":"arn:aws:ecs:us-west-2:123456789012:service/testservice","serviceName":"testservice","status":"DRAINING","taskDefinition":"arn:aws:ecs:us-west-2:123456789012:task-definition/testtask:6"}}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 22:24:03 GMT
+recorded_with: VCR 3.0.3

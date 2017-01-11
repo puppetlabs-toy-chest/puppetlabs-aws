@@ -483,15 +483,15 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       tags: tags_for_resource,
     )
 
-    @property_hash[:ensure] = :present
-    @property_hash[:availability_zones] = zones
-    @property_hash[:subnets] = subnets
-
     instances = resource[:instances]
     if ! instances.nil?
       instances = [instances] unless instances.is_a?(Array)
       self.class.add_instances_to_load_balancer(resource[:region], name, instances)
     end
+
+    @property_hash[:ensure] = :present
+    @property_hash[:availability_zones] = zones
+    @property_hash[:subnets] = subnets
   end
 
   def self.add_instances_to_load_balancer(region, load_balancer_name, instance_names)
