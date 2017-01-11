@@ -160,8 +160,8 @@ Puppet::Type.type(:ecs_service).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
     Puppet.debug("Destroying ecs_service #{@property_hash[:name]}")
 
     ecs_client.delete_service({
-      service: @property_hash[:name],
-      cluster: @property_hash[:cluster]
+      service: resource[:name],
+      cluster: resource[:cluster]
     })
     @property_hash[:ensure] = :absent
   end

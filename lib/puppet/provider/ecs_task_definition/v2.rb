@@ -34,8 +34,7 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
         volumes: task.volumes,
         container_definitions: container_defs,
       })
-    end
-    results.flatten.select {|i| i }
+    end.compact
   end
 
   def self.prefetch(resources)

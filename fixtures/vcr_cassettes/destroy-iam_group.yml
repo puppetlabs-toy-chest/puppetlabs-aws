@@ -1,0 +1,225 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListGroups&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172010Z
+      X-Amz-Content-Sha256:
+      - 5f776d91509b9c99b8cb5eb5d6d4a787a33ae41c8cd6e7b69effca69080e1e1f
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=e478778bd42b10d59a4bedb02e8616eddc49673bac64e6978f4a299e946bac58
+      Content-Length:
+      - '36'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 350e0ebd-d822-11e6-bd77-5d62273fd38b
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1060'
+      Date:
+      - Wed, 11 Jan 2017 17:20:10 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListGroupsResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListGroupsResult>
+            <IsTruncated>false</IsTruncated>
+            <Groups>
+              <member>
+                <Path>/</Path>
+                <GroupName>notops</GroupName>
+                <Arn>arn:aws:iam::123456789012:group/notops</Arn>
+                <GroupId>AGPAJBN5CML7FQ5J7JD26</GroupId>
+                <CreateDate>2016-08-23T19:23:16Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <GroupName>ops</GroupName>
+                <Arn>arn:aws:iam::123456789012:group/ops</Arn>
+                <GroupId>AGPAIQCI4K2HPEBNN6QQM</GroupId>
+                <CreateDate>2016-06-16T18:23:08Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <GroupName>tgroup</GroupName>
+                <Arn>arn:aws:iam::123456789012:group/tgroup</Arn>
+                <GroupId>AGPAID3BRVWPWS7SXRYHC</GroupId>
+                <CreateDate>2017-01-11T17:20:10Z</CreateDate>
+              </member>
+            </Groups>
+          </ListGroupsResult>
+          <ResponseMetadata>
+            <RequestId>350e0ebd-d822-11e6-bd77-5d62273fd38b</RequestId>
+          </ResponseMetadata>
+        </ListGroupsResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:11 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListGroupPolicies&GroupName=tgroup&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172011Z
+      X-Amz-Content-Sha256:
+      - 3b1ad7eb460cab3b197e1e426b9e23698616b2f97209ed5e649f59327deb6642
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=87e167878095a80f9918a1fbf13e46049a67b51e6c6985518242648a91ad2933
+      Content-Length:
+      - '60'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 3552430e-d822-11e6-9deb-11451b078a2d
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '327'
+      Date:
+      - Wed, 11 Jan 2017 17:20:11 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListGroupPoliciesResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListGroupPoliciesResult>
+            <IsTruncated>false</IsTruncated>
+            <PolicyNames/>
+          </ListGroupPoliciesResult>
+          <ResponseMetadata>
+            <RequestId>3552430e-d822-11e6-9deb-11451b078a2d</RequestId>
+          </ResponseMetadata>
+        </ListGroupPoliciesResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:11 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListAttachedGroupPolicies&GroupName=tgroup&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172011Z
+      X-Amz-Content-Sha256:
+      - f5206b2c3a76d51ef5980965af46fd9484df7250ddf1d4a1872f49484455726b
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=91e68b3ae6cdd9a7bc235d8e33905633fde00bdab11bc5fece7969dc3eaaf35d
+      Content-Length:
+      - '68'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 35e0eef5-d822-11e6-bd77-5d62273fd38b
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '364'
+      Date:
+      - Wed, 11 Jan 2017 17:20:11 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListAttachedGroupPoliciesResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListAttachedGroupPoliciesResult>
+            <IsTruncated>false</IsTruncated>
+            <AttachedPolicies/>
+          </ListAttachedGroupPoliciesResult>
+          <ResponseMetadata>
+            <RequestId>35e0eef5-d822-11e6-bd77-5d62273fd38b</RequestId>
+          </ResponseMetadata>
+        </ListAttachedGroupPoliciesResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:12 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DeleteGroup&GroupName=tgroup&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172012Z
+      X-Amz-Content-Sha256:
+      - 288338ec2165b0579b11b01751e470bcf2a85c4e1807f8ff9b96f90a1905fa8b
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=fb31fef652acec286585e0e6ee709aef22ce033acb1ac025d27683d83787f5d3
+      Content-Length:
+      - '54'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 362068a9-d822-11e6-ab10-214f93a0c1e1
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '202'
+      Date:
+      - Wed, 11 Jan 2017 17:20:12 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <DeleteGroupResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ResponseMetadata>
+            <RequestId>362068a9-d822-11e6-ab10-214f93a0c1e1</RequestId>
+          </ResponseMetadata>
+        </DeleteGroupResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:13 GMT
+recorded_with: VCR 3.0.3

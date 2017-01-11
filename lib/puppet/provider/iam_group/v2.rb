@@ -68,13 +68,15 @@ Puppet::Type.type(:iam_group).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) 
       }
 
       # Delete all the members from the group
-      @property_hash[:members].each {|member|
-        Puppet.debug("Removing user #{member} from IAM group #{group.group_name}")
-        iam_client.remove_user_from_group({
-          group_name: group.group_name,
-          user_name: member
-        })
-      }
+      if @property_hash[:members]
+        @property_hash[:members].each {|member|
+          Puppet.debug("Removing user #{member} from IAM group #{group.group_name}")
+          iam_client.remove_user_from_group({
+            group_name: group.group_name,
+            user_name: member
+          })
+        }
+      end
 
       Puppet.info("Deleting IAM group #{group}")
       iam_client.delete_group({group_name: group.group_name})
