@@ -819,9 +819,6 @@ routes => [
 #####`route_table`
 The route table to attach to the subnet. This parameter is set at creation only; it is not affected by updates.
 
-#####`region`
-*Optional* Region in which to launch the route table. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
-
 #####`routes`
 *Optional* Individual routes for the routing table. Accepts an array of 'destination_cidr_block' and 'gateway' values:
 
