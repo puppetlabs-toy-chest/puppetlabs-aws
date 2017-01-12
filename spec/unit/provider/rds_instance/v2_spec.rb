@@ -24,6 +24,7 @@ describe provider_class do
       master_username: 'awsusername',
       master_user_password: 'the-master-password',
       multi_az: false,
+      restore_snapshot: 'some-snapshot-name',
     )
   }
 
