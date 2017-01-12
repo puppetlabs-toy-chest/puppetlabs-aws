@@ -748,7 +748,7 @@ The type of customer gateway. The only currently supported value --- and the def
 *Optional* A list of netbios name servers to use for the DHCP options set. This parameter is set at creation only; it is not affected by updates. Accepts an array.
 
 #####`netbios_node_type`
-*Optional* The netbios node type. This parameter is set at creation only; it is not affected by updates. Valid values are '1', '2', '4', '8'. Defaults to '2'.
+*Optional* The netbios node type. This parameter is set at creation only; it is not affected by updates. Valid values are '1', '2', '4', '8'.
 
 
 #### Type: ec2_vpc_internet_gateway
