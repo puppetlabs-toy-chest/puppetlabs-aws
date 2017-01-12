@@ -278,6 +278,22 @@ class AwsHelper
     @iam_client.list_users.users.select { |user| user.user_name == name }
   end
 
+  def get_iam_roles(name)
+    @iam_client.list_roles.roles.select { |role| role.role_name == name }
+  end
+
+  def get_iam_instance_profiles(name)
+    @iam_client.list_instance_profiles.instance_profiles.select { |instance_profile|
+      instance_profile.instance_profile_name == name
+    }
+  end
+
+  def get_iam_instance_profiles_for_role(name)
+    response = @iam_client.list_instance_profiles_for_role(
+        role_name: [name]
+    )
+    response.data.instance_profiles
+  end
 end
 
 class TestExecutor

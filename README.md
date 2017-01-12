@@ -331,8 +331,10 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `ecs_service`: Manage an Ec2 Container Service service.
 * `ecs_task_definition`: Manage an Ec2 Container Service task definition.
 * `iam_group`: Manage IAM groups and their membership.
+* `iam_instance_profile`: Manage IAM instance profiles.
 * `iam_policy`: Manage an IAM 'managed' policy.
 * `iam_policy_attachment`: Manage an IAM 'managed' policy attachments.
+* `iam_role`: Manage an IAM role.
 * `iam_user`: Manage IAM users.
 * `rds_db_parameter_group`: Allows read access to DB Parameter Groups.
 * `rds_db_securitygroup`: Sets up an RDS DB Security Group.
@@ -1036,6 +1038,24 @@ iam_group { 'root':
 #####`members`
 *Required* An array of user names to include in the group.  Users not specified in this array will be removed.
 
+#### Type: iam_instance_profile
+
+```Puppet
+iam_instance_profile { 'my_iam_role':
+  ensure  => present,
+  roles => [ 'my_iam_role' ],
+}
+```
+
+#####`ensure`
+Specifies the basic state of the resource. Valid values are 'present', 'absent'.
+
+#####`name`
+*Required* The name of the IAM instance profile.
+
+#####`roles`
+*Optional* The IAM role(s) to associate this instance profile with.  Accepts an array for multiple roles.
+
 #### Type: iam_policy
 
 [IAM
@@ -1095,6 +1115,56 @@ iam_policy_attachment { 'root':
 
 #####`roles`
 *Optional* An array of role names to attach to the policy.  **Role names not mentioned in this array will be detached from the policy.**
+
+#### Type: iam_role
+The `iam_role` type manages IAM roles.  
+
+```
+iam_role { 'devtesting':
+  ensure => present,
+  policy_document => '[
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ec2.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]',
+}
+```
+
+All parameters are read-only once created.
+
+#####`ensure`
+Specifies the basic state of the resource. Valid values are 'present', 'absent'
+
+#####`name`
+The name of the IAM role
+
+#####`path`
+Role path (optional)
+
+#####`policy_document`
+A string containing the IAM policy in JSON format which controls which entities may assume this role, e.g. the default:
+ 
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+#####`arn`
+The Amazon Resource Name for this IAM role.
 
 #### Type: iam_user
 The `iam_user` type manages user accounts in IAM.  Only the user's name is
