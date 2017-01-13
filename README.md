@@ -192,18 +192,29 @@ elb_loadbalancer { 'name-of-load-balancer':
   availability_zones      => ['us-east-1a', 'us-east-1b'],
   instances               => ['name-of-instance', 'another-instance'],
   security_groups         => ['name-of-security-group'],
-  listeners               => [{
-    protocol              => 'HTTP',
-    load_balancer_port    => 80,
-    instance_protocol     => 'HTTP',
-    instance_port         => 80,
-  },{
-    protocol              => 'HTTPS',
-    load_balancer_port    => 443,
-    instance_protocol     => 'HTTPS',
-    instance_port         => 8080,
-    ssl_certificate_id    => 'arn:aws:iam::123456789000:server-certificate/yourcert.com',
-  }],
+  listeners               => [
+    {
+      protocol              => 'HTTP',
+      load_balancer_port    => 80,
+      instance_protocol     => 'HTTP',
+      instance_port         => 80,
+    },{
+      protocol              => 'HTTPS',
+      load_balancer_port    => 443,
+      instance_protocol     => 'HTTPS',
+      instance_port         => 8080,
+      ssl_certificate_id    => 'arn:aws:iam::123456789000:server-certificate/yourcert.com',
+      policies              =>  [
+        {
+          'policy_type'       => 'SSLNegotiationPolicyType',
+          'policy_attributes' => {
+            'Protocol-TLSv1.1' => false,
+            'Protocol-TLSv1.2' => true,
+          }
+        }
+      ]
+    }
+  ],
   health_check            => {
     'healthy_threshold'   => '10',
     'interval'            => '30',

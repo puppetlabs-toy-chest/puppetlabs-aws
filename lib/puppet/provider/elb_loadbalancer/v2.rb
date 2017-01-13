@@ -122,7 +122,15 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         'instance_port' => listener.listener.instance_port,
       }
       result['ssl_certificate_id'] = listener.listener.ssl_certificate_id unless listener.listener.ssl_certificate_id.nil?
-      result['policy_names'] = listener.policy_names unless listener.policy_names.nil? or listener.policy_names.size == 0
+      unless listener.policy_names.nil? or listener.policy_names.length == 0
+        policy_names = listener.policy_names
+      end
+
+      if policy_names
+        result['policy_names'] = policy_names
+        result['policies'] = load_balancer_policies(load_balancer.load_balancer_name, policy_names)
+      end
+
       result
     end
 
@@ -217,7 +225,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       region: region,
       availability_zones: load_balancer.availability_zones,
       instances: instance_names,
-      listeners: listeners,
+      listeners: normalize_values(listeners),
       health_check: health_check,
       tags: tags,
       subnets: subnet_names,
@@ -225,6 +233,102 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       scheme: load_balancer.scheme,
       dns_name: load_balancer.dns_name,
     }
+  end
+
+  def self.load_balancer_policies(load_balancer_name, policy_names)
+    results = elb_client.describe_load_balancer_policies(
+      load_balancer_name: load_balancer_name,
+      policy_names: policy_names
+    )
+
+    results.policy_descriptions.collect {|policy|
+      policy_attributes = {}
+
+      next unless policy_names.include? policy.policy_name
+
+      policy.policy_attribute_descriptions.each {|pa|
+        policy_attributes[pa.attribute_name] = pa.attribute_value
+      }
+
+      {
+        policy.policy_type_name => policy_attributes
+      }
+    }.compact
+  end
+
+  # Call for the policy type information and cache it
+  #
+  # This is not specific to the individual ELB, but rather this information
+  # pertains to which policy types may be managed, and furthermore, the
+  # attributes on those policy types as well as their data type, and
+  # (sometimes) their default values.
+  #
+  def self.load_balancer_policy_types
+    unless @load_balancer_policy_types
+      results = elb_client.describe_load_balancer_policy_types
+      @load_balancer_policy_types = results.policy_type_descriptions
+    end
+    @load_balancer_policy_types
+  end
+
+  # Return a list of valid Policy Type strings
+  def self.valid_policy_types
+    self.load_balancer_policy_types.map {|p|
+      p.policy_type_name
+    }
+  end
+
+  # Returns attribute information for the specified policy_type
+  def self.valid_policy_attributes(policy_type)
+    valid_policy_type_attributes = {}
+
+    load_balancer_policy_type(policy_type).policy_attribute_type_descriptions.each {|p|
+      valid_policy_type_attributes[p.attribute_name] = {'attribute_type' => p.attribute_type }
+
+      if p.respond_to? :default_value
+        valid_policy_type_attributes[p.attribute_type] = p.default_value
+      end
+    }
+    valid_policy_type_attributes
+  end
+
+  def self.load_balancer_policy_type(policy_type)
+    load_balancer_policy_types.select {|p|
+      p.policy_type_name == policy_type
+    }[0]
+  end
+
+  def self.default_policy_attributes(policy_type)
+    defaults = {}
+
+    self.load_balancer_policy_type(policy_type).policy_attribute_type_descriptions.map {|p|
+      if p.respond_to? :default_value
+        defaults[p.attribute_name] = p.default_value
+      end
+    }
+    defaults
+  end
+
+  # Takes two arrays of policy hashes
+  #
+  # Update the keys on each 'is' policy with that from the 'should' policy.
+  # Useful for determining if a two hashses are deemed identical, given a
+  # partial 'should' policy.
+  def self.merge_policies(is_policies, should_policies)
+    should_policies.collect do |should_policy|
+      is_policy = is_policies.select do |x|
+        should_policy.keys == x.keys
+      end.first
+
+      unless is_policy
+        Puppet.warning('When comparing policies, a matching is_policy was not found')
+        next
+      end
+
+      is_policy.collect do |k, v|
+        {k => v.merge(should_policy[k])}
+      end.first
+    end.compact
   end
 
   def exists?
@@ -411,11 +515,11 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         load_balancer_name: resource[:name],
         listeners: listeners
       })
+
     end
 
+    # Process the listener policies and update if necessary
     resource[:listeners].each do |should_listener|
-      # If the resource does not specify a policy_name, do nothing
-      next unless should_listener['policy_names']
 
       # Match the should_listener to the is_listener
       is_listener = if @property_hash[:listeners]
@@ -426,15 +530,90 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         {}
       end
 
-      # Update the working listener policy if requested
-      if should_listener['policy_names'] and should_listener['policy_names'] != is_listener['policy_names']
-        Puppet.debug("Calling elb_client for policy_names update on #{resource[:name]}")
-        elb_client.set_load_balancer_policies_of_listener({
-          load_balancer_name: resource[:name],
-          load_balancer_port: should_listener['load_balancer_port'],
-          policy_names: should_listener['policy_names'],
-        })
+      generated_policy_names = []
+
+      # Proceed only if the current listener has requested a set of policies
+
+      if should_listener['policies']
+        should_listener['policies'].each do |should_policy|
+
+          # Match the current listener policy to what currently exists
+          is_policy = is_listener['policies'].select do |x|
+            should_policy.keys == x.keys
+          end.first
+
+          # Get a policy based on the existing policy and update its keys with
+          # that from what should be
+          merged_policy = is_policy.collect do |k, v|
+            {k => v.merge(should_policy[k])}
+          end.first
+
+          # Skip proceeding if the merged policy alread matches what exists
+          next if merged_policy == is_policy
+
+          # Create the new set of policies
+          merged_policy.each do |policy_type, policy_attributes|
+            merged_policy_attributes = policy_attributes.map do |attribute_name, attribute_value|
+
+              # Reference-Security-Policy is the name in use by the default
+              # policy set on ELBs upon creation.  As such, we skip this name,
+              # since we are in the process of modifying the ELB policy, we are
+              # no longer the default.
+              next if attribute_name == 'Reference-Security-Policy'
+
+              {
+                attribute_name: attribute_name,
+                attribute_value: attribute_value.to_s
+              }
+            end.compact
+
+            # Make new policy from merged
+            generated_policy_name = "PuppetManaged-#{Time.now.to_i}"
+
+            Puppet.debug("Creating new policy #{generated_policy_name} for ELB #{resource[:name]}")
+            elb_client.create_load_balancer_policy(
+              load_balancer_name: resource[:name],
+              policy_attributes: merged_policy_attributes,
+              policy_name: generated_policy_name,
+              policy_type_name: policy_type
+            )
+
+            generated_policy_names << generated_policy_name
+          end
+
+        end
+
+        # TODO: BUG: It is possible to arrive at a situation where multiple
+        # policies currently exiset, and we have only updated one of them.  In
+        # which case, the updated policy gets tracked, and below we st the
+        # active policies on the ELB only to what has been udpated, which would
+        # drop the policy that did exist, but an update was not requested.  We
+        # should track the policy types that we are updating to ensure that
+        # when we set the policies for an ELB listener, that we also include
+        # the previous policiy that was not udpated as part of this run.
+        #
+        # Fixing this might be as simple as tracking the policy names that were
+        # captured on the ELB during the call to instances, and determining the
+        # type of those that existed.  Once we have the name of the type that
+        # matches that which we create below, we can ensure that the names for
+        # policy types not being created below can be added to the array also.
+        #
+        # In any case, this is not a good situation, but will only come up when
+        # multiple policies are in use on a single ELB lisitener, and I have no
+        # idea how common that is.
+
+        # Set the policies to what has been requested.
+        if generated_policy_names.length > 0
+          Puppet.debug("Calling elb_client for policy_names update on #{resource[:name]} listener #{should_listener['load_balancer_port']}")
+          elb_client.set_load_balancer_policies_of_listener({
+            load_balancer_name: resource[:name],
+            load_balancer_port: should_listener['load_balancer_port'],
+            policy_names: generated_policy_names,
+          })
+        end
+
       end
+
     end
   end
 
