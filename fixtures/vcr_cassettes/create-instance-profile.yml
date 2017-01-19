@@ -1,0 +1,141 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListInstanceProfiles&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.3 ruby/2.1.7 x86_64-darwin14.0
+      X-Amz-Date:
+      - 20160802T182439Z
+      X-Amz-Content-Sha256:
+      - 44d83e3a0f5f6915cab0b95802111050b054a3353097341089af8a6c2ee48399
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacted/20160802/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=222a01c263b05370d9bac5ddcd7ef1b5072e241be12b2726f5ca3e970ee2b5d1
+      Content-Length:
+      - '46'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 5fc48fe5-58de-11e6-b882-5bb35db703fa
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1253'
+      Date:
+      - Tue, 02 Aug 2016 18:24:38 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListInstanceProfilesResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListInstanceProfilesResult>
+            <IsTruncated>false</IsTruncated>
+            <InstanceProfiles>
+              <member>
+                <Path>/</Path>
+                <Roles>
+                  <member>
+                    <Path>/</Path>
+                    <AssumeRolePolicyDocument>%7B%22Version%22%3A%222012-10-17%22%2C%22Statement%22%3A%5B%7B%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22ec2.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D</AssumeRolePolicyDocument>
+                    <RoleId>AROAJTVOOGRMNHXZHEQKU</RoleId>
+                    <RoleName>devtest</RoleName>
+                    <Arn>arn:aws:iam::111111111111:role/devtest</Arn>
+                    <CreateDate>2016-07-28T20:22:30Z</CreateDate>
+                  </member>
+                </Roles>
+                <InstanceProfileName>devtest</InstanceProfileName>
+                <Arn>arn:aws:iam::111111111111:instance-profile/devtest</Arn>
+                <InstanceProfileId>AIPAIQX3NLS3B64FZNPAU</InstanceProfileId>
+                <CreateDate>2016-07-28T20:22:31Z</CreateDate>
+              </member>
+            </InstanceProfiles>
+          </ListInstanceProfilesResult>
+          <ResponseMetadata>
+            <RequestId>5fc48fe5-58de-11e6-b882-5bb35db703fa</RequestId>
+          </ResponseMetadata>
+        </ListInstanceProfilesResponse>
+    http_version: 
+  recorded_at: Tue, 02 Aug 2016 18:24:39 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListInstanceProfiles&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.3.3 ruby/2.1.7 x86_64-darwin14.0
+      X-Amz-Date:
+      - 20160802T182439Z
+      X-Amz-Content-Sha256:
+      - 44d83e3a0f5f6915cab0b95802111050b054a3353097341089af8a6c2ee48399
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=redacted/20160802/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=222a01c263b05370d9bac5ddcd7ef1b5072e241be12b2726f5ca3e970ee2b5d1
+      Content-Length:
+      - '46'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 5fd46e73-58de-11e6-b882-5bb35db703fa
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1253'
+      Date:
+      - Tue, 02 Aug 2016 18:24:38 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListInstanceProfilesResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListInstanceProfilesResult>
+            <IsTruncated>false</IsTruncated>
+            <InstanceProfiles>
+              <member>
+                <Path>/</Path>
+                <Roles>
+                  <member>
+                    <Path>/</Path>
+                    <AssumeRolePolicyDocument>%7B%22Version%22%3A%222012-10-17%22%2C%22Statement%22%3A%5B%7B%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22ec2.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D</AssumeRolePolicyDocument>
+                    <RoleId>AROAJTVOOGRMNHXZHEQKU</RoleId>
+                    <RoleName>devtest</RoleName>
+                    <Arn>arn:aws:iam::111111111111:role/devtest</Arn>
+                    <CreateDate>2016-07-28T20:22:30Z</CreateDate>
+                  </member>
+                </Roles>
+                <InstanceProfileName>devtest</InstanceProfileName>
+                <Arn>arn:aws:iam::111111111111:instance-profile/devtest</Arn>
+                <InstanceProfileId>AIPAIQX3NLS3B64FZNPAU</InstanceProfileId>
+                <CreateDate>2016-07-28T20:22:31Z</CreateDate>
+              </member>
+            </InstanceProfiles>
+          </ListInstanceProfilesResult>
+          <ResponseMetadata>
+            <RequestId>5fd46e73-58de-11e6-b882-5bb35db703fa</RequestId>
+          </ResponseMetadata>
+        </ListInstanceProfilesResponse>
+    http_version: 
+  recorded_at: Tue, 02 Aug 2016 18:24:39 GMT
+recorded_with: VCR 3.0.3

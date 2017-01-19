@@ -331,8 +331,10 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `ecs_service`: Manage an Ec2 Container Service service.
 * `ecs_task_definition`: Manage an Ec2 Container Service task definition.
 * `iam_group`: Manage IAM groups and their membership.
+* `iam_instance_profile`: Manage IAM instance profiles.
 * `iam_policy`: Manage an IAM 'managed' policy.
 * `iam_policy_attachment`: Manage an IAM 'managed' policy attachments.
+* `iam_role`: Manage an IAM role.
 * `iam_user`: Manage IAM users.
 * `rds_db_parameter_group`: Allows read access to DB Parameter Groups.
 * `rds_db_securitygroup`: Sets up an RDS DB Security Group.
@@ -490,12 +492,14 @@ The AWS generated interfaces hash for the instance.  Read-only.
 *Required* The region in which to launch the load balancer. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 #####`listeners`
-*Required* The ports and protocols the load balancer listens to. This parameter is set at creation only; it is not affected by updates. Accepts an array of the following values:
+*Required* The ports and protocols the load balancer listens to.  Accepts an
+array of the following values:
   * protocol
   * load_balancer_port
   * instance_protocol
   * instance_port
-  * ssl_certificate_id (optional if protocol is HTTPS )
+  * ssl_certificate_id (required if protocol is HTTPS)
+  * policy_names (optional array of policy name strings for HTTPS)
 
 #####`health_check`
 The configuration for an ELB health check used to determine the health of the
@@ -597,8 +601,14 @@ back- end instances.  Accepts a hash with the following keys:
 ##### `load_balancers`
 *Optional* A list of load balancer names that should be attached to this autoscaling group.
 
+##### `target_groups`
+*Optional* A list of ELBv2 Target Group names that should be attached to this autoscaling group.
+
 ##### `subnets`
 *Optional* The subnets to associate with the autoscaling group.
+
+##### `termination_policies`
+*Optional* A list of termination policies to use when scaling in instances. For valid termination policies, see [Controlling Which Instances Auto Scaling Terminates During Scale In](http://docs.aws.amazon.com/autoscaling/latest/userguide/as-instance-termination.html).
 
 #####`tags`
 *Optional* The tags to assign to the autoscaling group. Accepts a 'key => value' hash of tags. The tags are not propagated to launched instances.
@@ -746,7 +756,7 @@ The type of customer gateway. The only currently supported value --- and the def
 *Optional* A list of netbios name servers to use for the DHCP options set. This parameter is set at creation only; it is not affected by updates. Accepts an array.
 
 #####`netbios_node_type`
-*Optional* The netbios node type. This parameter is set at creation only; it is not affected by updates. Valid values are '1', '2', '4', '8'. Defaults to '2'.
+*Optional* The netbios node type. This parameter is set at creation only; it is not affected by updates. Valid values are '1', '2', '4', '8'.
 
 
 #### Type: ec2_vpc_internet_gateway
@@ -816,9 +826,6 @@ routes => [
 
 #####`route_table`
 The route table to attach to the subnet. This parameter is set at creation only; it is not affected by updates.
-
-#####`region`
-*Optional* Region in which to launch the route table. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 #####`routes`
 *Optional* Individual routes for the routing table. Accepts an array of 'destination_cidr_block' and 'gateway' values:
@@ -1037,6 +1044,24 @@ iam_group { 'root':
 #####`members`
 *Required* An array of user names to include in the group.  Users not specified in this array will be removed.
 
+#### Type: iam_instance_profile
+
+```Puppet
+iam_instance_profile { 'my_iam_role':
+  ensure  => present,
+  roles => [ 'my_iam_role' ],
+}
+```
+
+#####`ensure`
+Specifies the basic state of the resource. Valid values are 'present', 'absent'.
+
+#####`name`
+*Required* The name of the IAM instance profile.
+
+#####`roles`
+*Optional* The IAM role(s) to associate this instance profile with.  Accepts an array for multiple roles.
+
 #### Type: iam_policy
 
 [IAM
@@ -1096,6 +1121,56 @@ iam_policy_attachment { 'root':
 
 #####`roles`
 *Optional* An array of role names to attach to the policy.  **Role names not mentioned in this array will be detached from the policy.**
+
+#### Type: iam_role
+The `iam_role` type manages IAM roles.  
+
+```
+iam_role { 'devtesting':
+  ensure => present,
+  policy_document => '[
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ec2.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]',
+}
+```
+
+All parameters are read-only once created.
+
+#####`ensure`
+Specifies the basic state of the resource. Valid values are 'present', 'absent'
+
+#####`name`
+The name of the IAM role
+
+#####`path`
+Role path (optional)
+
+#####`policy_document`
+A string containing the IAM policy in JSON format which controls which entities may assume this role, e.g. the default:
+ 
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+#####`arn`
+The Amazon Resource Name for this IAM role.
 
 #### Type: iam_user
 The `iam_user` type manages user accounts in IAM.  Only the user's name is
@@ -1181,7 +1256,7 @@ using the `rds-describe-db-engine-versions` command from the AWS CLI.
 This parameter is set at creation only; it is not affected by updates.
 
 #####`allocated_storage`
-The size of the database in gigabytes. Note that minimum size constraints
+*Required* The size of the database in gigabytes. Note that minimum size constraints
 exist, which vary depending on the database engine selected.
 This parameter is set at creation only; it is not affected by updates.
 
@@ -1239,6 +1314,9 @@ is deleted. Defaults to false.
 #####`db_parameter_group`
 The name of an associated DB parameter group. Should be a string. This
 parameter is set at creation only; it is not affected by updates.
+
+#####`restore_snapshot
+Specify the snapshot name to optionally trigger creating the RDS DB from a snapshot.
 
 #####`final_db_snapshot_identifier`
 The name of the snapshot created when the instance is terminated. Note

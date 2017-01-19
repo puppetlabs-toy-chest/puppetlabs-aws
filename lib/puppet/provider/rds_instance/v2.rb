@@ -113,8 +113,15 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       availability_zone: resource[:availability_zone],
     }
 
-    rds_client(resource[:region]).create_db_instance(config)
-
+    if resource[:restore_snapshot]
+      Puppet.info("Restoring DB instance #{name} from snapshot #{resource[:restore_snapshot]}")
+      [:engine_version, :backup_retention_period].each { |k| config.delete(k) }
+      config[:db_snapshot_identifier] = resource[:restore_snapshot]
+      rds_client(resource[:region]).restore_db_instance_from_db_snapshot(config)
+    else
+      Puppet.info("Starting DB instance #{name}")
+      rds_client(resource[:region]).create_db_instance(config)
+    end
     @property_hash[:ensure] = :present
   end
 
@@ -134,7 +141,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def flush
-    if @property_hash[:ensure] != :absent
+    if @property_hash[:ensure] != :absent and not @property_flush.nil?
       Puppet.debug("Flushing RDS instance for #{@property_hash[:name]}")
 
       if @property_flush.keys.size > 0

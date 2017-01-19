@@ -68,8 +68,7 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
   end
 
   newproperty(:netbios_node_type) do
-    desc 'The netbios node type, defaults to 2.'
-    defaultto '2'
+    desc 'The netbios node type, the recommended value is 2 (Point-to-Point). Required if Netbios name server is used.'
     munge do |value|
       value.to_s
     end
@@ -78,5 +77,9 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
         fail "'%s' is not a valid netbios_node_type, can be [1248]" % value
       end
     end
+  end
+
+  validate do
+    fail ('You must specify netbios node type, when using netbios name server.Recommended value is 2') if !self[:netbios_name_servers].nil? && self[:netbios_node_type].nil?
   end
 end
