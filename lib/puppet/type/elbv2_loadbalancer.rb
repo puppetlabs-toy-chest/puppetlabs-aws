@@ -42,6 +42,9 @@ Puppet::Type.newtype(:elbv2_loadbalancer) do
     end
   end
 
+  newproperty(:arn)
+  newproperty(:vpc)
+
   newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'The tags for the load balancer.'
   end
@@ -70,9 +73,6 @@ Puppet::Type.newtype(:elbv2_loadbalancer) do
     desc 'Whether the load balancer is internal or public facing.'
     defaultto :'internet-facing'
     newvalues(:'internet-facing', :internal)
-    def insync?(is)
-      is.to_s == should.to_s
-    end
   end
 
   newproperty(:dns_name) do
