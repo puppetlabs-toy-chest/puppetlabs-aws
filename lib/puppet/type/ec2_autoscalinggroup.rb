@@ -135,6 +135,24 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     end
   end
 
+  newproperty(:target_groups, :array_matching => :all) do
+    desc 'The target groups attached to this group.'
+    validate do |value|
+      fail 'target_groups cannot be blank' if value == ''
+      fail 'target_groups should be a String' unless value.is_a?(String)
+    end
+    def insync?(is)
+      is.to_set == should.to_set
+    end
+  end
+
+  newproperty(:termination_policies, :array_matching => :all) do
+    desc 'The termination policies attached to this group.'
+    def insync?(is)
+      is.to_set == should.to_set
+    end
+  end
+
   newproperty(:subnets, :array_matching => :all) do
     desc 'The subnets to associate the autoscaling group.'
     validate do |value|
