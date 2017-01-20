@@ -29,46 +29,46 @@ describe type_class do
     end
 
     it 'should create a valid instance' do
-      type_class.new({name: 'name', region: 'us-east-1'})
+      type_class.new({name: 'name', region: 'sa-east-1'})
     end
 
     it 'should set delay seconds should get set with a valid value' do
-      queue = type_class.new({name: 'queue', region: 'us-east-1', delay_seconds: 450})
+      queue = type_class.new({name: 'queue', region: 'sa-east-1', delay_seconds: 450})
       expect(queue[:delay_seconds]).to eq("450")
     end
 
     it 'delay seconds should default to 0' do
-      queue = type_class.new({name: 'queue', region: 'us-east-1'})
+      queue = type_class.new({name: 'queue', region: 'sa-east-1'})
       expect(queue[:delay_seconds]).to eq("0")
     end
 
     it 'visibility_timeout should default to 30' do
-      queue = type_class.new({name: 'queue', region: 'us-east-1'})
+      queue = type_class.new({name: 'queue', region: 'sa-east-1'})
       expect(queue[:visibility_timeout]).to eq('30')
     end
 
     it 'should set visibility_timeout with a valid value' do
-      queue = type_class.new({name: 'queue', region: 'us-east-1', visibility_timeout: 123})
+      queue = type_class.new({name: 'queue', region: 'sa-east-1', visibility_timeout: 123})
       expect(queue[:visibility_timeout]).to eq("123")
     end
 
     it 'should set message_retention_period should get set with a valid value' do
-      queue = type_class.new({name: 'queue', region: 'us-east-1', message_retention_period: 360})
+      queue = type_class.new({name: 'queue', region: 'sa-east-1', message_retention_period: 360})
       expect(queue[:message_retention_period]).to eq("360")
     end
 
     it 'should set message_retention_period to default to 345600' do
-      queue = type_class.new({name: 'queue', region: 'us-east-1'})
+      queue = type_class.new({name: 'queue', region: 'sa-east-1'})
       expect(queue[:message_retention_period]).to eq("345600")
     end
 
     it 'should set maximum_message_size should get set with a valid value' do
-      queue = type_class.new({name: 'queue', region: 'us-east-1', maximum_message_size: 2048})
+      queue = type_class.new({name: 'queue', region: 'sa-east-1', maximum_message_size: 2048})
       expect(queue[:maximum_message_size]).to eq("2048")
     end
 
     it 'should set maximum_message_size to default to 262144' do
-      queue = type_class.new({name: 'queue', region: 'us-east-1'})
+      queue = type_class.new({name: 'queue', region: 'sa-east-1'})
       expect(queue[:maximum_message_size]).to eq("262144")
     end
 
@@ -81,26 +81,23 @@ describe type_class do
   context 'erroring values' do
     it 'should error with incorrect range value for delay seconds' do
       expect do
-        type_class.new({name: 'queue', region: 'us-east-1', delay_seconds: 1024})
+        type_class.new({name: 'queue', region: 'sa-east-1', delay_seconds: 1024})
       end.to raise_error(Puppet::Error, /delay_seconds must be an integer between 0 and 900/)
     end
 
      it 'should require something that looks like a region' do
       expect do
-        type_class.new ({name: 'somename', :region => 'us_east_1'})
-      end.to raise_error(Puppet::Error, /The name of a region should contain only alphanumeric characters or dashes/)
+        type_class.new ({name: 'somename', :region => 'sa-east-1 '})
+      end.to raise_error(Puppet::Error, /region should be a valid AWS region/)
       expect do
-        type_class.new ({name: 'somename', :region => '123'})
-      end.to raise_error(Puppet::Error, /The name of a region should contain only alphanumeric characters or dashes/)
-      expect do
-        type_class.new ({name: 'somename', :region => 'europe'})
-      end.to raise_error(Puppet::Error, /The name of a region should contain only alphanumeric characters or dashes/)
+        type_class.new ({name: 'somename', :region => 1})
+      end.to raise_error(Puppet::Error, /region should be a String/)
      end
 
      it 'should require a non-blank region' do
       expect do
         type_class.new ({name: 'somename', region: ''})
-      end.to raise_error(Puppet::Error, /You must provide a non-blank region name for SQS Queues/)
+      end.to raise_error(Puppet::Error, /region should be a valid AWS region/)
     end
     it 'should require a name' do
       expect do

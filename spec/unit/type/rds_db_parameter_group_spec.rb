@@ -39,7 +39,7 @@ describe type_class do
   it 'should require a valid looking region' do
     expect {
       type_class.new({:name => 'sample', :region => 'definitely invalid'})
-    }.to raise_error(Puppet::Error, /region should not contain spaces/)
+    }.to raise_error(Puppet::Error, /region should be a valid AWS region/)
   end
 
   [

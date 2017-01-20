@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
+
 Puppet::Type.newtype(:rds_db_securitygroup) do
   @doc = 'Type representing an RDS instance.'
 
@@ -32,12 +34,8 @@ Puppet::Type.newtype(:rds_db_securitygroup) do
     end
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to create the db_securitygroup.'
-    validate do |value|
-      fail 'region should be a String' unless value.is_a?(String)
-      fail 'region should not contain spaces' if value =~ /\s/
-    end
   end
 
   newproperty(:ip_ranges, :array_matching => :all) do

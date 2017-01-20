@@ -45,7 +45,7 @@ describe type_class do
   it 'should require a region to be specified' do
     expect {
       type_class.new({ name: '10.0.0.1', region: '' })
-    }.to raise_error(Puppet::Error, /region should not be blank/)
+    }.to raise_error(Puppet::Error, /region should be a valid AWS region/)
   end
 
   it 'should require an instance to be specified' do

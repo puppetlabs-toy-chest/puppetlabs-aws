@@ -1,4 +1,4 @@
-require_relative '../../puppet_x/puppetlabs/property/region'
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
 
 Puppet::Type.newtype(:cloudwatch_alarm) do
   @doc = 'Type representing an AWS CloudWatch Alarm.'

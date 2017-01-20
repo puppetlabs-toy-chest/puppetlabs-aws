@@ -1,4 +1,4 @@
-require_relative '../../puppet_x/puppetlabs/property/region'
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
 
 Puppet::Type.newtype(:ec2_elastic_ip) do
   @doc = "Type representing an Elastic IP and it's association."

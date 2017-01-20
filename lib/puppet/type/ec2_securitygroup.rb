@@ -1,5 +1,5 @@
-require_relative '../../puppet_x/puppetlabs/property/tag'
-require_relative '../../puppet_x/puppetlabs/property/region'
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
 require_relative '../../puppet_x/puppetlabs/aws_ingress_rules_parser'
 
 Puppet::Type.newtype(:ec2_securitygroup) do

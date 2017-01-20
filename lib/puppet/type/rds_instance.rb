@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
+
 Puppet::Type.newtype(:rds_instance) do
   @doc = 'Type representing an RDS instance.'
 
@@ -49,12 +51,8 @@ SQL Server
 Not applicable. Must be null.'
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to launch the instance.'
-    validate do |value|
-      fail 'region should be a String' unless value.is_a?(String)
-      fail 'region should not contain spaces' if value =~ /\s/
-    end
   end
 
   newproperty(:db_instance_class) do

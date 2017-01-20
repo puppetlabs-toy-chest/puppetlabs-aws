@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
+
 Puppet::Type.newtype(:sqs_queue) do
   @doc = "Type representing a SQS Queue"
   ensurable
@@ -43,13 +45,8 @@ Puppet::Type.newtype(:sqs_queue) do
      munge(&:to_s)
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The name of the region in which the SQS queue is located'
-    validate do |value|
-      fail 'region should be a String' unless value.is_a?(String)
-      fail 'You must provide a non-blank region name for SQS Queues' if value.nil? || value.empty?
-      fail 'The name of a region should contain only alphanumeric characters or dashes' unless value =~ /^([a-zA-Z]+-+)+\d$/
-    end
   end
 
   newproperty(:visibility_timeout) do
