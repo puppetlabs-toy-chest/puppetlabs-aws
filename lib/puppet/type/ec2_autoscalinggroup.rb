@@ -1,5 +1,5 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
-require_relative '../../puppet_x/puppetlabs/property/region'
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
 require 'puppet/property/boolean'
 
 Puppet::Type.newtype(:ec2_autoscalinggroup) do

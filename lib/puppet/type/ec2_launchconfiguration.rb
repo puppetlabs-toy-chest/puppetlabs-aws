@@ -1,4 +1,4 @@
-require_relative '../../puppet_x/puppetlabs/property/region'
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
 
 Puppet::Type.newtype(:ec2_launchconfiguration) do
   @doc = 'Type representing an EC2 launch configuration.'

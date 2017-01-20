@@ -12,7 +12,7 @@ describe provider_class do
     Puppet::Type.type(:rds_instance).new(
       ensure: 'present',
       name: 'awesome-db-5',
-      region: 'us-west-1',
+      region: 'sa-east-1',
       db_name:  'mysqldbname3',
       engine: 'mysql',
       engine_version: '5.6.19a',
