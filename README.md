@@ -408,13 +408,15 @@ The name of the key pair associated with this instance. This must be an existing
 *Optional* Whether the instance stops or terminates when you initiate shutdown from the instance. This parameter is set at creation only; it is not affected by updates. Valid values are 'stop', 'terminate'. Defaults to 'stop'.
 
 #####`block_devices`
-*Optional* A list of block devices to associate with the instance. This parameter is set at creation only; it is not affected by updates. Accepts an array of hashes with the device name and either the volume size or snapshot id specified:
+*Optional* A list of block devices to associate with the instance. This parameter is set at creation only; it is not affected by updates. Accepts an array of hashes with the device name, volume size, delete on termination flag, and volume type specified:
 
 ~~~
 block_devices => [
   {
-    device_name  => '/dev/sda1',
-    volume_size  => 8,
+    device_name           => '/dev/sda1',
+    volume_size           => 8,
+    delete_on_termination => 'true',
+    volume_type'          => 'gp2',
   }
 ]
 ~~~
