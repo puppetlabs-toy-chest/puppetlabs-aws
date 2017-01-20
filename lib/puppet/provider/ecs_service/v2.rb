@@ -166,6 +166,17 @@ Puppet::Type.type(:ecs_service).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
     @property_hash[:ensure] = :absent
   end
 
+  def update
+    service_def = {
+      service: resource[:name],
+      cluster: resource[:cluster],
+      task_definition: resource[:task_definition],
+    }
+    Puppet.debug("Updating ECS service #{resource[:name]} to latest task definition")
+
+    ecs_client.update_service(service_def)
+  end
+
   def flush
     if @property_hash[:ensure] != :absent
       Puppet.debug("Flushing ECS service for #{@property_hash[:name]}")
