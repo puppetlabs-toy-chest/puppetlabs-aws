@@ -1,4 +1,5 @@
-require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require_relative '../../puppet_x/puppetlabs/property/tag'
+require_relative '../../puppet_x/puppetlabs/property/region'
 
 Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
   @doc = 'Type representing a DHCP option set for AWS VPC.'
@@ -17,7 +18,7 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
     desc 'Tags for the DHCP option set.'
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to assign the DHCP option set.'
     validate do |value|
       fail 'region should not contain spaces' if value =~ /\s/

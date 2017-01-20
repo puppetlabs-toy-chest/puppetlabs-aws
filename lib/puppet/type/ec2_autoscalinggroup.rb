@@ -1,4 +1,5 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require_relative '../../puppet_x/puppetlabs/property/region'
 require 'puppet/property/boolean'
 
 Puppet::Type.newtype(:ec2_autoscalinggroup) do
@@ -87,13 +88,8 @@ Puppet::Type.newtype(:ec2_autoscalinggroup) do
     desc 'Indicates whether newly launched instances are protected from termination by Auto Scaling when scaling in.'
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to launch the instances.'
-    validate do |value|
-      fail 'region should not contain spaces' if value =~ /\s/
-      fail 'region should not be blank' if value == ''
-      fail 'region should be a String' unless value.is_a?(String)
-    end
   end
 
   newproperty(:launch_configuration) do
