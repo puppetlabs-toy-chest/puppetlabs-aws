@@ -56,6 +56,7 @@ Puppet::Type.newtype(:ecs_service) do
   newproperty(:task_definition) do
     isrequired
   end
+
   newproperty(:deployment_configuration) do
     desc 'The deployment configuration of the service.
 
@@ -84,5 +85,8 @@ Puppet::Type.newtype(:ecs_service) do
     isrequired
     defaultto "default"
   end
-end
 
+  def refresh
+    provider.update
+  end
+end
