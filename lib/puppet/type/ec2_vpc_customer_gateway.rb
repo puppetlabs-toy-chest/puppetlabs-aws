@@ -1,4 +1,5 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
 
 Puppet::Type.newtype(:ec2_vpc_customer_gateway) do
   @doc = 'Type representing an AWS VPC customer gateways.'
@@ -31,12 +32,8 @@ Puppet::Type.newtype(:ec2_vpc_customer_gateway) do
     desc 'The tags for the customer gateway.'
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to launch the customer gateway.'
-    validate do |value|
-      fail 'region should not contain spaces' if value =~ /\s/
-      fail 'region should be a String' unless value.is_a?(String)
-    end
   end
 
   newproperty(:type) do

@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
+
 Puppet::Type.newtype(:cloudwatch_alarm) do
   @doc = 'Type representing an AWS CloudWatch Alarm.'
 
@@ -73,13 +75,8 @@ Puppet::Type.newtype(:cloudwatch_alarm) do
     end
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to launch the instances.'
-    validate do |value|
-      fail 'region should not contain spaces' if value =~ /\s/
-      fail 'region should not be blank' if value == ''
-      fail 'region should be a String' unless value.is_a?(String)
-    end
   end
 
   newproperty(:dimensions, :array_matching => :all) do

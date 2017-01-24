@@ -45,12 +45,12 @@ describe type_class do
   it 'should require a region to be specified' do
     expect {
       type_class.new({ name: '10.0.0.1', region: '' })
-    }.to raise_error(Puppet::Error, /You must provide a region for Elastic IPs/)
+    }.to raise_error(Puppet::Error, /region should be a valid AWS region/)
   end
 
   it 'should require an instance to be specified' do
     expect {
-      type_class.new({ name: '10.0.0.1', region: 'us-east-1', instance: '' })
+      type_class.new({ name: '10.0.0.1', region: 'sa-east-1', instance: '' })
     }.to raise_error(Puppet::Error, /You must provide an instance for the Elastic IP association/)
   end
 
@@ -76,7 +76,7 @@ describe type_class do
 
   context 'with valid properties' do
     it 'should create a valid elastic ip ' do
-      type_class.new({ name: '10.0.0.1', region: 'us-east-1', instance: 'web-1' })
+      type_class.new({ name: '10.0.0.1', region: 'sa-east-1', instance: 'web-1' })
     end
   end
 

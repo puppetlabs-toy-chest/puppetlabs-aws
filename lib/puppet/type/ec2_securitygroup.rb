@@ -1,4 +1,5 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
 require_relative '../../puppet_x/puppetlabs/aws_ingress_rules_parser'
 
 Puppet::Type.newtype(:ec2_securitygroup) do
@@ -14,12 +15,8 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'the region in which to launch the security group'
-    validate do |value|
-      fail 'region should not contain spaces' if value =~ /\s/
-      fail 'region should be a String' unless value.is_a?(String)
-    end
   end
 
   newproperty(:ingress, :array_matching => :all) do
