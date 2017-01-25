@@ -319,6 +319,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `ec2_elastic_ip`: Sets up an Elastic IP and its association.
 * `ec2_launchconfiguration`: Sets up an EC2 launch configuration to provide autoscaling support.
 * `ec2_scalingpolicy`: Sets up an EC2 scaling policy.
+* `ec2_volume`: Ec2 block volume management.
 * `ec2_vpc`: Sets up an AWS VPC.
 * `ec2_vpc_customer_gateway`: Sets up an AWS VPC customer gateway.
 * `ec2_vpc_dhcp_options`: Sets a DHCP option AWS VPC.
@@ -693,6 +694,32 @@ block_devices => [
 
 #####`auto_scaling_group`
 *Required* The name of the auto scaling group to attach the policy to. This is the value of the AWS Name tag. This parameter is set at creation only; it is not affected by updates.
+
+#### Type: ec2_volume
+
+This type manges the creation and destruction of Ec2 volumes.  The naming of
+volumes is something users of this type should take into consideration.
+
+Volumes are most commonly referred to by the `volume_id` property of the
+volume, which represents the unique volume for the given availability zone.
+This presents a problem when referring to and creating volumes, since the
+`volume_id` is not known until after creation of the volume.  To work around
+this oddity, the `ec2_volume` type only recognizes volumes that have the 'Name'
+tag set.  This also means that the title of the `ec2_volume` will be set as the
+'Name' tag upon creation of a volume.  Volumes without a 'Name' tag are not
+seen and are ignored.
+
+#####`name`
+*Required* The name to give to a volume. This is the value of the AWS Name tag.
+
+#####`volume_type`
+This is the type of volume to create.  This value should be one of standard, gp2 or io1.
+
+#####`size`
+Number of gigabytes a volume should allocate.
+
+#####`availability_zone`
+The AWS availability zone in which to create and look for the volume.
 
 #### Type: ec2_vpc
 
