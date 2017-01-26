@@ -311,6 +311,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 
 ### Types
 
+* `cloudfront_distribution`: Sets up a CloudFront distribution.
 * `ec2_instance`: Sets up an EC2 instance.
 * `ec2_securitygroup`: Sets up an EC2 security group.
 * `elb_loadbalancer`: Sets up an ELB load balancer.
@@ -353,6 +354,44 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `sqs_queue`: Sets up an SQS queue.
 
 ###Parameters
+
+#### Type: cloudfront_distribution
+
+##### `ensure`
+Specifies the basic state of the resource. Valid values are 'present', 'absent'.
+
+##### `arn`
+The AWS-generated ARN of the distribution. Read only.
+
+##### `id`
+The AWS-generated ID of the distribution. Read only.
+
+##### `status`
+The AWS-reported status of the distribution. Read only.
+
+##### `comment`
+*Optional* The comment on the distribution.
+
+##### `enabled`
+*Optional* Whether the distribution is enabled.
+
+##### `price_class`
+*Optional* The price class of the distribution. Takes one of 'all' (default), '100', '200'.
+
+##### `origins`
+*Required* An array of at least one origin. Each origin is a hash with the following keys:
+
+* `type` — *Required* The origin type. One of 'custom', 'S3' (not yet supported).
+* `id` — *Required* The origin ID. Must be unique within the distribution. Used to identify the origin for caching rules.
+* `domain_name` — *Required* The origin domain name.
+* `path` — *Optional* The origin path. Defaults to no path.
+* `http_port` — *Required for custom origins* The port the origin is listening on for HTTP connections.
+* `https_port` — *Required for custom origins* The port the origin is listening on for HTTPS connections.
+* `protocol_policy` — *Required for custom origins* Which protocols the origin accepts. One of 'http-only', 'https-only', 'match-viewer'.
+* `protocols` — *Required for custom origins* An array of SSL and TLS versions the origin accepts. At least one of 'SSLv3', 'TLSv1', 'TLSv1.1', 'TLSv1.2'.
+
+##### `tags`
+*Optional* The tags for the distribution. Accepts a 'key => value' hash of tags. Excludes 'Name' tag.
 
 ####Type: ec2_instance
 
