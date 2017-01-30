@@ -347,6 +347,198 @@ describe provider_class do
       expect(normalized['essential'].class).to be(TrueClass)
       expect(normalized['cpu'].class).to be(Fixnum)
     end
+
+    it 'should sort array when processing array values' do
+
+      hsh = {
+        "Sid"=>"Allow access for Key Administrators",
+        "Effect"=>"Allow",
+        "Principal"=> {
+          "AWS"=> [
+            "arn:aws:iam::123456789012:user/u3",
+            "arn:aws:iam::123456789012:user/u2",
+            "arn:aws:iam::123456789012:user/u1",
+            "arn:aws:iam::123456789012:user/u4"
+          ]
+        },
+        "Action"=> [
+          "kms:Describe*",
+          "kms:Enable*",
+          "kms:Update*",
+          "kms:Revoke*",
+          "kms:ScheduleKeyDeletion",
+          "kms:CancelKeyDeletion",
+          "kms:List*",
+          "kms:Put*",
+          "kms:Disable*",
+          "kms:Get*",
+          "kms:Delete*",
+          "kms:Create*"
+        ],
+        "Resource"=>"*"
+      }
+
+      wanted = {
+        "Sid"=>"Allow access for Key Administrators",
+        "Effect"=>"Allow",
+        "Principal"=> {
+          "AWS"=> [
+            "arn:aws:iam::123456789012:user/u1",
+            "arn:aws:iam::123456789012:user/u2",
+            "arn:aws:iam::123456789012:user/u3",
+            "arn:aws:iam::123456789012:user/u4"
+          ]
+        },
+        "Action"=> [
+          "kms:Create*",
+          "kms:Describe*",
+          "kms:Enable*",
+          "kms:List*",
+          "kms:Put*",
+          "kms:Update*",
+          "kms:Revoke*",
+          "kms:Disable*",
+          "kms:Get*",
+          "kms:Delete*",
+          "kms:ScheduleKeyDeletion",
+          "kms:CancelKeyDeletion"
+        ],
+        "Resource"=>"*"
+      }
+
+      normalized = provider.class.normalize_hash(hsh)
+      expect(normalized).to eq(provider.class.normalize_hash(wanted))
+    end
+
+    it 'should fail when incorrect data type is passed' do
+      expect do
+        provider.class.normalize_hash([1,2,3])
+      end.to raise_error(RuntimeError, /Invalid data type/)
+    end
+
+    it 'should handle a kms policy example' do
+
+      hsh = {"Version"=>"2012-10-17", "Id"=>"key-consolepolicy-2",
+             "Statement"=> [{"Sid"=>"Enable IAM User Permissions",
+                             "Effect"=>"Allow",
+                             "Principal"=>{"AWS"=>"arn:aws:iam::123456789012:root"},
+                             "Action"=>"kms:*", "Resource"=>"*"},
+                             {"Sid"=>"Allow access for Key Administrators",
+                              "Effect"=>"Allow", "Principal"=> {"AWS"=>
+                                                                ["arn:aws:iam::123456789012:user/t1",
+                                                                 "arn:aws:iam::123456789012:user/t2",
+                                                                 "arn:aws:iam::123456789012:user/t3",
+                                                                 "arn:aws:iam::123456789012:user/t4"]},
+                                                                 "Action"=>
+                                                                ["kms:Create*",
+                                                                 "kms:Describe*",
+                                                                 "kms:Enable*",
+                                                                 "kms:List*",
+                                                                 "kms:Put*",
+                                                                 "kms:Update*",
+                                                                 "kms:Revoke*",
+                                                                 "kms:Disable*",
+                                                                 "kms:Get*",
+                                                                 "kms:Delete*",
+                                                                 "kms:ScheduleKeyDeletion",
+                                                                 "kms:CancelKeyDeletion"],
+                                                                 "Resource"=>"*"},
+                                                                 {"Sid"=>"Allow
+                                                                  use of the
+                                                                key",
+                                                                "Effect"=>"Allow",
+                                                                "Principal"=>
+                                                                {"AWS"=>
+                                                                 ["arn:aws:iam::123456789012:user/t10",
+                                                                  "arn:aws:iam::123456789012:user/t11",
+                                                                  "arn:aws:iam::123456789012:user/t12",
+                                                                  "arn:aws:iam::123456789012:user/t13"]},
+                                                                  "Action"=>
+                                                                 ["kms:Encrypt",
+                                                                  "kms:Decrypt",
+                                                                  "kms:ReEncrypt*",
+                                                                  "kms:GenerateDataKey*",
+                                                                  "kms:DescribeKey"],
+                                                                  "Resource"=>"*"},
+                                                                  {"Sid"=>"Allow
+                                                                   attachment
+                                                                 of persistent
+                                                                 resources",
+                                                                 "Effect"=>"Allow",
+                                                                 "Principal"=>
+                                                                 {"AWS"=>
+                                                                  ["arn:aws:iam::123456789012:user/t10",
+                                                                   "arn:aws:iam::123456789012:user/t11",
+                                                                   "arn:aws:iam::123456789012:user/t12",
+                                                                   "arn:aws:iam::123456789012:user/t13"]},
+                                                                   "Action"=>["kms:CreateGrant",
+                                                                              "kms:ListGrants",
+                                                                              "kms:RevokeGrant"],
+                                                                              "Resource"=>"*",
+                                                                              "Condition"=>{"Bool"=>{"kms:GrantIsForAWSResource"=>"true"}}}]}
+
+      wanted = {"Version"=>"2012-10-17", "Id"=>"key-consolepolicy-2",
+             "Statement"=> [{"Sid"=>"Enable IAM User Permissions",
+                             "Effect"=>"Allow",
+                             "Principal"=>{"AWS"=>"arn:aws:iam::123456789012:root"},
+                             "Action"=>"kms:*", "Resource"=>"*"},
+                             {"Sid"=>"Allow access for Key Administrators",
+                              "Effect"=>"Allow", "Principal"=> {"AWS"=>
+                                                                ["arn:aws:iam::123456789012:user/t3",
+                                                                 "arn:aws:iam::123456789012:user/t4",
+                                                                 "arn:aws:iam::123456789012:user/t1",
+                                                                 "arn:aws:iam::123456789012:user/t2"]},
+                                                                 "Action"=>
+                                                                ["kms:Create*",
+                                                                 "kms:Get*",
+                                                                 "kms:Describe*",
+                                                                 "kms:Put*",
+                                                                 "kms:Update*",
+                                                                 "kms:Delete*",
+                                                                 "kms:Revoke*",
+                                                                 "kms:Disable*",
+                                                                 "kms:Enable*",
+                                                                 "kms:List*",
+                                                                 "kms:ScheduleKeyDeletion",
+                                                                 "kms:CancelKeyDeletion"],
+                                                                 "Resource"=>"*"},
+                                                                 {"Sid"=>"Allow
+                                                                  use of the
+                                                                key",
+                                                                "Effect"=>"Allow",
+                                                                "Principal"=>
+                                                                {"AWS"=>
+                                                                 ["arn:aws:iam::123456789012:user/t10",
+                                                                  "arn:aws:iam::123456789012:user/t11",
+                                                                  "arn:aws:iam::123456789012:user/t12",
+                                                                  "arn:aws:iam::123456789012:user/t13"]},
+                                                                  "Action"=>
+                                                                 ["kms:Encrypt",
+                                                                  "kms:Decrypt",
+                                                                  "kms:ReEncrypt*",
+                                                                  "kms:GenerateDataKey*",
+                                                                  "kms:DescribeKey"],
+                                                                  "Resource"=>"*"},
+                                                                  {"Sid"=>"Allow
+                                                                   attachment
+                                                                 of persistent
+                                                                 resources",
+                                                                 "Effect"=>"Allow",
+                                                                 "Principal"=>
+                                                                 {"AWS"=>
+                                                                  ["arn:aws:iam::123456789012:user/t10",
+                                                                   "arn:aws:iam::123456789012:user/t11",
+                                                                   "arn:aws:iam::123456789012:user/t12",
+                                                                   "arn:aws:iam::123456789012:user/t13"]},
+                                                                   "Action"=>["kms:CreateGrant",
+                                                                              "kms:ListGrants",
+                                                                              "kms:RevokeGrant"],
+                                                                              "Resource"=>"*",
+                                                                              "Condition"=>{"Bool"=>{"kms:GrantIsForAWSResource"=>"true"}}}]}
+
+
+
+    end
   end
 
   describe "self.serialize_container_definitions" do
