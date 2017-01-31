@@ -16,6 +16,7 @@ describe type_class do
       :revision,
       :volumes,
       :container_definitions,
+      :role,
     ]
   end
 

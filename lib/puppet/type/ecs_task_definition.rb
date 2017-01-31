@@ -1,6 +1,10 @@
 Puppet::Type.newtype(:ecs_task_definition) do
   @doc = 'Type representing ECS clusters.'
 
+  autorequire(:iam_role) do
+    self[:role]
+  end
+
   ensurable
 
   newparam(:name, namevar: true) do
@@ -28,7 +32,7 @@ Puppet::Type.newtype(:ecs_task_definition) do
     desc 'An array of hashes to handle for the task'
   end
 
-  newproperty( :container_definitions, :array_matching => :all) do
+  newproperty(:container_definitions, :array_matching => :all) do
     desc 'An array of hashes representing the container definition'
     isrequired
     def insync?(is)
@@ -38,6 +42,10 @@ Puppet::Type.newtype(:ecs_task_definition) do
       one == two
     end
 
+  end
+
+  newproperty(:role) do
+    desc 'The short name or full ARN of the IAM role that containers in this task can assume.'
   end
 end
 

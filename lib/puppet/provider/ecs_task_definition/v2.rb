@@ -25,6 +25,9 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
       end
 
       container_defs = deserialize_container_definitions(task.container_definitions)
+      if task.task_role_arn
+        task_role = /arn:aws:iam:.*:role\/(.*)/.match(task.task_role_arn)[1]
+      end
 
       new({
         name: task.family,
@@ -33,6 +36,7 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
         revision: task.revision,
         volumes: task.volumes,
         container_definitions: container_defs,
+        role: task_role
       })
     end.compact
   end
@@ -120,6 +124,10 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     @property_flush[:container_definitions] = value
   end
 
+  def role=(value)
+    @property_flush[:role] = value
+  end
+
   def flush
     Puppet.debug("Flushing ECS task definition for #{@property_hash[:name]}")
 
@@ -136,16 +144,24 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
       end
     end
 
-    if containers.size > 0
-      Puppet.debug("Registering new task definition for #{@property_hash[:name]}")
+    Puppet.debug("Registering new task definition for #{@property_hash[:name]}")
 
-      ecs_client.register_task_definition({
-        family: @property_hash[:name],
-        container_definitions: self.class.serialize_container_definitions(containers),
-      })
+    if containers.size > 0
+      container_definitions = containers
     else
-      Puppet.debug("No container modifications needed on ECS task #{@property_hash[:name]}")
+      container_definitions = @property_hash[:container_definitions]
     end
+
+    task = {
+      family: @property_hash[:name],
+      container_definitions: self.class.serialize_container_definitions(container_definitions),
+    }
+
+    if resource[:role]
+      task[:task_role_arn] = resource[:role]
+    end
+
+    ecs_client.register_task_definition(task)
   end
 
   def rectify_container_delta(is_containers, should_containers)
