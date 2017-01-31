@@ -1209,7 +1209,17 @@ above.
 *Required* The name of the task to manage.
 
 ##### `volumes`
-An array of hashes to handle for the task.
+An array of hashes to handle for the task.  The hashes representing a volume should be in the following form:
+
+```
+{
+  name => "StringNameForReference",
+  host => {
+    source_path => "/some/path",
+  },
+}
+
+```
 
 ##### `replace_image`
 A boolean to turn off the replacement of container images.  This enables Puppet

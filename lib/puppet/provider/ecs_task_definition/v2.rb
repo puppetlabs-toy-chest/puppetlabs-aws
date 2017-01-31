@@ -29,12 +29,23 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
         task_role = /arn:aws:iam:.*:role\/(.*)/.match(task.task_role_arn)[1]
       end
 
+      if task.volumes
+        task_volumes = task.volumes.collect do |v|
+          {
+            name: v.name,
+            host: {
+              source_path: v.host.source_path
+            }
+          }
+        end
+      end
+
       new({
         name: task.family,
         ensure: :present,
         arn: task.task_definition_arn,
         revision: task.revision,
-        volumes: task.volumes,
+        volumes: task_volumes,
         container_definitions: container_defs,
         role: task_role
       })
@@ -106,10 +117,20 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def create
-    ecs_client.register_task_definition({
+    task = {
       family: resource[:name],
       container_definitions: self.class.serialize_container_definitions(resource[:container_definitions]),
-    })
+    }
+
+    if resource[:role]
+      task[:task_role_arn] = resource[:role]
+    end
+
+    if resource[:volumes]
+      task[:volumes] = resource[:volumes]
+    end
+
+    ecs_client.register_task_definition(task)
     @property_hash[:ensure] = :present
   end
 
@@ -126,6 +147,10 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
 
   def role=(value)
     @property_flush[:role] = value
+  end
+
+  def volumes=(value)
+    @property_flush[:volumes] = value
   end
 
   def flush
@@ -159,6 +184,10 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
 
     if resource[:role]
       task[:task_role_arn] = resource[:role]
+    end
+
+    if resource[:volumes]
+      task[:volumes] = resource[:volumes]
     end
 
     ecs_client.register_task_definition(task)
