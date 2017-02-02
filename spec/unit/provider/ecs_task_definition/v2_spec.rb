@@ -5,48 +5,83 @@ provider_class = Puppet::Type.type(:ecs_task_definition).provider(:v2)
 
 describe provider_class do
 
+  let(:resource_hash) {
+    {
+      name: 'testtask',
+      container_definitions: [
+        {'cpu' => '1024', 'environment' => {'one' => 'one', 'two' => '2'}, 'essential' => 'true', 'image' => 'debian:jessie17', 'memory' => '512', 'name' => 'zleslietesting', 'port_mappings' => [{'container_port' => '8081', 'host_port' => '8082', 'protocol' => 'tcp'}]},
+        {'cpu' => '1024', 'environment' => {'one' => 'one', 'two' => '2'}, 'essential' => 'true', 'image' => 'debian:jessie17', 'memory' => '512', 'name' => 'zleslietesting2', 'port_mappings' => [{'container_port' => '8082', 'host_port' => '8083', 'protocol' => 'tcp'}]},
+      ]
+    }
+  }
+
+  let(:resource) {
+    Puppet::Type.type(:ecs_task_definition).new(resource_hash)
+  }
+
   before do
-    ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-    ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
+    # ECS is not supported in the spec_helper default region
     ENV['AWS_REGION'] = 'us-west-2'
   end
 
-  let(:resource) {
-    Puppet::Type.type(:ecs_task_definition).new(
-      name: 'omgolly123',
-      container_definitions: []
-    )
-  }
-
   let(:provider) { resource.provider }
-  VCR.use_cassette('ecs-setup') do
-    let(:instance) { provider.class.instances.first }
-  end
+  let(:instance) {
+    provider.class.instances.select {|i|
+      i.name == 'testtask'
+    }[0]
+  }
 
   it 'should be an instance of the ProviderV2' do
     expect(provider).to be_an_instance_of Puppet::Type::Ecs_task_definition::ProviderV2
   end
 
   describe 'self.prefetch' do
-    it 'should exist' do
-      VCR.use_cassette('ecs-setup') do
+    it 'exists' do
+      VCR.use_cassette('ecs_task_definition-setup') do
         provider.class.instances
         provider.class.prefetch({})
-        expect(instance.exists?).to be_truthy
+      end
+    end
+  end
+
+  describe 'exists?' do
+    it 'should correctly report non-existent task definitions' do
+      VCR.use_cassette('ecs_task_definition-setup') do
+        expect(provider.exists?).to be_falsy
+      end
+    end
+  end
+
+  describe 'create' do
+    it 'shold make the call to create the task definition' do
+      VCR.use_cassette('create-ecs_task_definition') do
+        expect(provider.create).to be_truthy
+        expect(provider.exists?).to be_truthy
+      end
+    end
+  end
+
+  describe 'destroy' do
+    it 'shold make the call to create the task definition' do
+      VCR.use_cassette('destroy-ecs_task_definition') do
+        data = provider.class.prefetch({"lb-1" => resource})
+        prov = data.select {|m| m.name == 'testtask' }[0]
+        expect(prov.destroy).to be_truthy
+        expect(prov.exists?).to be_falsy
       end
     end
   end
 
   describe 'container_definitions' do
     it 'should retrieve the container_definition' do
-      VCR.use_cassette('ecs-setup') do
-        instance = provider.class.instances.first
-        expect(instance.container_definitions.size).to eq(2)
-        expect(instance.name).to eq('netflix-ice')
-        container1 = instance.container_definitions[1]
+      VCR.use_cassette('ecs_task_definition-setup') do
+        data = provider.class.prefetch({"lb-1" => resource})
+        prov = data.select {|m| m.name == 'testtask' }[0]
+        expect(prov.name).to eq('testtask')
+        container1 = prov.container_definitions[1]
         expect(container1['memory']).to eq(512)
-        expect(container1['image']).to eq('debian:jessie')
-        expect(container1['environment']['one']).to eq('1')
+        expect(container1['image']).to eq('debian:jessie17')
+        expect(container1['environment']['one']).to eq('one')
         expect(container1['environment']['two']).to eq('2')
       end
     end
@@ -54,7 +89,7 @@ describe provider_class do
 
   describe 'container_definitions=' do
     it 'should set the container_definition' do
-      VCR.use_cassette('ecs-setup') do
+      VCR.use_cassette('ecs_task_definition-setup') do
         instance = provider.class.instances.first
 
         container_defs = [
@@ -71,7 +106,7 @@ describe provider_class do
 
   describe 'rectify_container_delta' do
     it 'should return zero results when containers match' do
-      VCR.use_cassette('ecs-setup') do
+      VCR.use_cassette('ecs_task_definition-setup') do
         container_defs = [
           {
             'cpu'       => 1,
@@ -102,7 +137,7 @@ describe provider_class do
     end
 
     it 'should use discovered values in palce of missing values' do
-      VCR.use_cassette('ecs-setup') do
+      VCR.use_cassette('ecs_task_definition-setup') do
 
         hsh = [
           {

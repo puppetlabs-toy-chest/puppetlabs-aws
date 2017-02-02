@@ -2,9 +2,6 @@ require 'spec_helper'
 
 provider_class = Puppet::Type.type(:ec2_securitygroup).provider(:v2)
 
-ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-ENV['AWS_REGION'] = 'sa-east-1'
 
 describe provider_class do
 

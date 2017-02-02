@@ -4,9 +4,6 @@ require_relative '../../../../lib/puppet_x/puppetlabs/aws.rb'
 provider_class = Puppet::Type.type(:sqs_queue).provider(:v2)
 
 
-ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-ENV['AWS_REGION'] = 'sa-east-1'
 
 describe provider_class do
   context 'with params' do

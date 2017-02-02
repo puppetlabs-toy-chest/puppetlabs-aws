@@ -1,0 +1,444 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListClusters
+      X-Amz-Date:
+      - 20170111T222401Z
+      X-Amz-Content-Sha256:
+      - 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=c7dbfdad453435523bb11b704263bc2fac941b807232162a73e0a362782ec22b
+      Content-Length:
+      - '2'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 22:24:02 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '67'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a77e120d-d84c-11e6-97a5-e15b5541a538
+    body:
+      encoding: UTF-8
+      string: '{"clusterArns":["arn:aws:ecs:us-west-2:123456789012:cluster/test"]}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 22:24:02 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:123456789012:cluster/test"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListServices
+      X-Amz-Date:
+      - 20170111T222402Z
+      X-Amz-Content-Sha256:
+      - b256c3f786d634c26b55172b3da5fef1a67e4f714e0bfeb4c618015ccb5e7dee
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=24b7183b277a7891642e26768eefd9f54af0d74894edb330d39ececaa9f49324
+      Content-Length:
+      - '61'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 22:24:02 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '74'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a7932105-d84c-11e6-9f70-5f80690e25cf
+    body:
+      encoding: UTF-8
+      string: '{"serviceArns":["arn:aws:ecs:us-west-2:123456789012:service/testservice"]}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 22:24:02 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:123456789012:cluster/test","services":["arn:aws:ecs:us-west-2:123456789012:service/testservice"]}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeServices
+      X-Amz-Date:
+      - 20170111T222402Z
+      X-Amz-Content-Sha256:
+      - 33f0f8c43969497fdcfd2f32708d282d88cee303f24dc0c0f0050fb0d2da27b7
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=b97cb3ac79fd7cf929112c69ae5e63af34ba71a4c60be91697ead8c82c7e2e2d
+      Content-Length:
+      - '131'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 22:24:02 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '789'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a7a7e165-d84c-11e6-ade8-4b8f80170e6e
+    body:
+      encoding: UTF-8
+      string: '{"failures":[],"services":[{"clusterArn":"arn:aws:ecs:us-west-2:123456789012:cluster/test","createdAt":1.484173441895E9,"deploymentConfiguration":{"maximumPercent":200,"minimumHealthyPercent":100},"deployments":[{"createdAt":1.484173441895E9,"desiredCount":0,"id":"ecs-svc/9223370552681333906","pendingCount":0,"runningCount":0,"status":"PRIMARY","taskDefinition":"arn:aws:ecs:us-west-2:123456789012:task-definition/testtask:6","updatedAt":1.484173441895E9}],"desiredCount":0,"events":[],"loadBalancers":[],"pendingCount":0,"placementConstraints":[],"placementStrategy":[],"runningCount":0,"serviceArn":"arn:aws:ecs:us-west-2:123456789012:service/testservice","serviceName":"testservice","status":"ACTIVE","taskDefinition":"arn:aws:ecs:us-west-2:123456789012:task-definition/testtask:6"}]}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 22:24:02 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListClusters
+      X-Amz-Date:
+      - 20170111T222402Z
+      X-Amz-Content-Sha256:
+      - 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=73322636a1e31276a1907064dba59c6a99201a6893126ffeabd8ee7ccaa96db7
+      Content-Length:
+      - '2'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 22:24:02 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '67'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a7bd6536-d84c-11e6-90fb-cb6c24bb816a
+    body:
+      encoding: UTF-8
+      string: '{"clusterArns":["arn:aws:ecs:us-west-2:123456789012:cluster/test"]}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 22:24:02 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:123456789012:cluster/test"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListServices
+      X-Amz-Date:
+      - 20170111T222402Z
+      X-Amz-Content-Sha256:
+      - b256c3f786d634c26b55172b3da5fef1a67e4f714e0bfeb4c618015ccb5e7dee
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=24b7183b277a7891642e26768eefd9f54af0d74894edb330d39ececaa9f49324
+      Content-Length:
+      - '61'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 22:24:02 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '74'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a7d1feaa-d84c-11e6-ade8-4b8f80170e6e
+    body:
+      encoding: UTF-8
+      string: '{"serviceArns":["arn:aws:ecs:us-west-2:123456789012:service/testservice"]}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 22:24:02 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:123456789012:cluster/test","services":["arn:aws:ecs:us-west-2:123456789012:service/testservice"]}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeServices
+      X-Amz-Date:
+      - 20170111T222402Z
+      X-Amz-Content-Sha256:
+      - 33f0f8c43969497fdcfd2f32708d282d88cee303f24dc0c0f0050fb0d2da27b7
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=b97cb3ac79fd7cf929112c69ae5e63af34ba71a4c60be91697ead8c82c7e2e2d
+      Content-Length:
+      - '131'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 22:24:02 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '789'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a7e6e63e-d84c-11e6-ade8-4b8f80170e6e
+    body:
+      encoding: UTF-8
+      string: '{"failures":[],"services":[{"clusterArn":"arn:aws:ecs:us-west-2:123456789012:cluster/test","createdAt":1.484173441895E9,"deploymentConfiguration":{"maximumPercent":200,"minimumHealthyPercent":100},"deployments":[{"createdAt":1.484173441895E9,"desiredCount":0,"id":"ecs-svc/9223370552681333906","pendingCount":0,"runningCount":0,"status":"PRIMARY","taskDefinition":"arn:aws:ecs:us-west-2:123456789012:task-definition/testtask:6","updatedAt":1.484173441895E9}],"desiredCount":0,"events":[],"loadBalancers":[],"pendingCount":0,"placementConstraints":[],"placementStrategy":[],"runningCount":0,"serviceArn":"arn:aws:ecs:us-west-2:123456789012:service/testservice","serviceName":"testservice","status":"ACTIVE","taskDefinition":"arn:aws:ecs:us-west-2:123456789012:task-definition/testtask:6"}]}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 22:24:02 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListClusters
+      X-Amz-Date:
+      - 20170111T222402Z
+      X-Amz-Content-Sha256:
+      - 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=73322636a1e31276a1907064dba59c6a99201a6893126ffeabd8ee7ccaa96db7
+      Content-Length:
+      - '2'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 22:24:02 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '67'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a7fd53a5-d84c-11e6-9f70-5f80690e25cf
+    body:
+      encoding: UTF-8
+      string: '{"clusterArns":["arn:aws:ecs:us-west-2:123456789012:cluster/test"]}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 22:24:02 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:123456789012:cluster/test"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListServices
+      X-Amz-Date:
+      - 20170111T222402Z
+      X-Amz-Content-Sha256:
+      - b256c3f786d634c26b55172b3da5fef1a67e4f714e0bfeb4c618015ccb5e7dee
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=24b7183b277a7891642e26768eefd9f54af0d74894edb330d39ececaa9f49324
+      Content-Length:
+      - '61'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 22:24:03 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '74'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a80f2e68-d84c-11e6-bc57-0d9a6fd42937
+    body:
+      encoding: UTF-8
+      string: '{"serviceArns":["arn:aws:ecs:us-west-2:123456789012:service/testservice"]}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 22:24:03 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"cluster":"arn:aws:ecs:us-west-2:123456789012:cluster/test","services":["arn:aws:ecs:us-west-2:123456789012:service/testservice"]}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeServices
+      X-Amz-Date:
+      - 20170111T222403Z
+      X-Amz-Content-Sha256:
+      - 33f0f8c43969497fdcfd2f32708d282d88cee303f24dc0c0f0050fb0d2da27b7
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=bc2cc7a814890eaace14276ffca46a97385b26ddf3d41161318b86170ed3d4d5
+      Content-Length:
+      - '131'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 22:24:03 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '789'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - a825c40b-d84c-11e6-ade8-4b8f80170e6e
+    body:
+      encoding: UTF-8
+      string: '{"failures":[],"services":[{"clusterArn":"arn:aws:ecs:us-west-2:123456789012:cluster/test","createdAt":1.484173441895E9,"deploymentConfiguration":{"maximumPercent":200,"minimumHealthyPercent":100},"deployments":[{"createdAt":1.484173441895E9,"desiredCount":0,"id":"ecs-svc/9223370552681333906","pendingCount":0,"runningCount":0,"status":"PRIMARY","taskDefinition":"arn:aws:ecs:us-west-2:123456789012:task-definition/testtask:6","updatedAt":1.484173441895E9}],"desiredCount":0,"events":[],"loadBalancers":[],"pendingCount":0,"placementConstraints":[],"placementStrategy":[],"runningCount":0,"serviceArn":"arn:aws:ecs:us-west-2:123456789012:service/testservice","serviceName":"testservice","status":"ACTIVE","taskDefinition":"arn:aws:ecs:us-west-2:123456789012:task-definition/testtask:6"}]}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 22:24:03 GMT
+recorded_with: VCR 3.0.3

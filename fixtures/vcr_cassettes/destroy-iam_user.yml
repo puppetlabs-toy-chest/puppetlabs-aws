@@ -1,0 +1,284 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListUsers&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172015Z
+      X-Amz-Content-Sha256:
+      - b6359072c78d70ebee1e81adcbab4f01bf2c23245fa365ef83fe8f1f955085e2
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=c17e4c6b0bc3c1ae53efaf8e9bb2e04166708ff1208594c9e9a3b5512fc86ba3
+      Content-Length:
+      - '35'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 37b18fe1-d822-11e6-bd77-5d62273fd38b
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1433'
+      Date:
+      - Wed, 11 Jan 2017 17:20:14 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListUsersResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListUsersResult>
+            <IsTruncated>false</IsTruncated>
+            <Users>
+              <member>
+                <Path>/</Path>
+                <PasswordLastUsed>2017-01-11T16:16:54Z</PasswordLastUsed>
+                <UserName>ishearin</UserName>
+                <Arn>arn:aws:iam::123456789012:user/ishearin</Arn>
+                <UserId>AIDAJD5YADU67WPGYXKYK</UserId>
+                <CreateDate>2016-06-16T20:28:41Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <UserName>tuser</UserName>
+                <Arn>arn:aws:iam::123456789012:user/tuser</Arn>
+                <UserId>AIDAIXE6MBUG4WUE4SEIO</UserId>
+                <CreateDate>2017-01-11T17:20:15Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <PasswordLastUsed>2017-01-10T19:07:58Z</PasswordLastUsed>
+                <UserName>zleslie</UserName>
+                <Arn>arn:aws:iam::123456789012:user/zleslie</Arn>
+                <UserId>AIDAJEOSIABK4O2G5JGRQ</UserId>
+                <CreateDate>2016-05-20T20:58:02Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <UserName>zleslie2</UserName>
+                <Arn>arn:aws:iam::123456789012:user/zleslie2</Arn>
+                <UserId>AIDAJXLSYDKUU7Q6G7F5S</UserId>
+                <CreateDate>2016-06-16T20:28:40Z</CreateDate>
+              </member>
+            </Users>
+          </ListUsersResult>
+          <ResponseMetadata>
+            <RequestId>37b18fe1-d822-11e6-bd77-5d62273fd38b</RequestId>
+          </ResponseMetadata>
+        </ListUsersResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:15 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DeleteLoginProfile&UserName=tuser&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172015Z
+      X-Amz-Content-Sha256:
+      - 7bb5ee2a5db4bcad69d516dc8fd77feb7568b4acf5eb75a6459dc8f93c9bf819
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=cd0e3ceb50233a068f4e54e1adb287bc7f5af8fa72e39e44119540973eb9de1f
+      Content-Length:
+      - '59'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      X-Amzn-Requestid:
+      - 37f04720-d822-11e6-ab10-214f93a0c1e1
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '284'
+      Date:
+      - Wed, 11 Jan 2017 17:20:15 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ErrorResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <Error>
+            <Type>Sender</Type>
+            <Code>NoSuchEntity</Code>
+            <Message>Cannot find Login Profile for User tuser</Message>
+          </Error>
+          <RequestId>37f04720-d822-11e6-ab10-214f93a0c1e1</RequestId>
+        </ErrorResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:16 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListAccessKeys&UserName=tuser&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172016Z
+      X-Amz-Content-Sha256:
+      - bdf6470fdf394978b19c4feeb008899b67a2cd1f5e34cc7ef176d94eaf9afbff
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=14e16b9f65e6495ebaa9f285c8c4ba271d8cedd92466162f3355d27e27a0f708
+      Content-Length:
+      - '55'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 3831e3db-d822-11e6-9a43-1f83f6da3a89
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '321'
+      Date:
+      - Wed, 11 Jan 2017 17:20:15 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListAccessKeysResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListAccessKeysResult>
+            <IsTruncated>false</IsTruncated>
+            <AccessKeyMetadata/>
+          </ListAccessKeysResult>
+          <ResponseMetadata>
+            <RequestId>3831e3db-d822-11e6-9a43-1f83f6da3a89</RequestId>
+          </ResponseMetadata>
+        </ListAccessKeysResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:16 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListMFADevices&UserName=tuser&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172016Z
+      X-Amz-Content-Sha256:
+      - 93547d81f5357984d5b979254906bef9a200b615d941af3a37faf8e36b5b6d6b
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=935f211dc3ca7988ee6770cfd1489f3d70ca6afa29264dedeea13e752b7202f3
+      Content-Length:
+      - '55'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 3861cdb9-d822-11e6-9a43-1f83f6da3a89
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '314'
+      Date:
+      - Wed, 11 Jan 2017 17:20:16 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListMFADevicesResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListMFADevicesResult>
+            <IsTruncated>false</IsTruncated>
+            <MFADevices/>
+          </ListMFADevicesResult>
+          <ResponseMetadata>
+            <RequestId>3861cdb9-d822-11e6-9a43-1f83f6da3a89</RequestId>
+          </ResponseMetadata>
+        </ListMFADevicesResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:16 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DeleteUser&UserName=tuser&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172016Z
+      X-Amz-Content-Sha256:
+      - 6d1f867eea3f5cc37413b6abd9b5b857235a79368268c69b723438e39c32219a
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=0372b6a930889513435d8b91386fb8c54b7dc978254da739503e9c63d8d8ae26
+      Content-Length:
+      - '51'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 38a3b869-d822-11e6-ab10-214f93a0c1e1
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '200'
+      Date:
+      - Wed, 11 Jan 2017 17:20:17 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <DeleteUserResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ResponseMetadata>
+            <RequestId>38a3b869-d822-11e6-ab10-214f93a0c1e1</RequestId>
+          </ResponseMetadata>
+        </DeleteUserResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:17 GMT
+recorded_with: VCR 3.0.3

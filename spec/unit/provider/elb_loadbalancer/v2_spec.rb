@@ -2,25 +2,32 @@ require 'spec_helper'
 
 provider_class = Puppet::Type.type(:elb_loadbalancer).provider(:v2)
 
-ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-ENV['AWS_REGION'] = 'sa-east-1'
 
 describe provider_class do
 
   context 'with the minimum params' do
-    let(:resource) {
-      Puppet::Type.type(:elb_loadbalancer).new(
+    let(:resource_hash) {
+       {
         name: 'lb-1',
         instances: ['web-1'],
-        listeners: [],
+        listeners: [
+          {
+            'instance_port'      => '80',
+            'instance_protocol'  => 'TCP',
+            'load_balancer_port' => '80',
+            'protocol'           => 'TCP'
+          }
+        ],
         availability_zones: ['sa-east-1a'],
         region: 'sa-east-1',
-      )
+      }
+    }
+
+    let(:resource) {
+      Puppet::Type.type(:elb_loadbalancer).new(resource_hash)
     }
 
     let(:provider) { resource.provider }
-
     let(:instance) { provider.class.instances.first }
 
     it 'should be an instance of the ProviderV2' do
@@ -39,13 +46,15 @@ describe provider_class do
     describe 'exists?' do
       it 'should correctly report non-existent load balancers' do
         VCR.use_cassette('no-elb-named-test') do
+          provider.class.prefetch({"lb-1" => resource})
           expect(provider.exists?).to be_falsy
         end
       end
 
       it 'should correctly find existing load balancers' do
         VCR.use_cassette('elb-named-test') do
-          expect(instance.exists?).to be_truthy
+          data = provider.class.prefetch({"lb-1" => resource})
+          expect(data[0].exists?).to be_truthy
         end
       end
     end

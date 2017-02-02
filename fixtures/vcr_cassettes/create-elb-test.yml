@@ -1,213 +1,102 @@
---- 
-  http_interactions: 
-    - request: 
-        method: post
-        uri: "https://elasticloadbalancing.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=CreateLoadBalancer&AvailabilityZones.member.1=sa-east-1a&Listeners.member.1.InstancePort=80&Listeners.member.1.InstanceProtocol=tcp&Listeners.member.1.LoadBalancerPort=80&Listeners.member.1.Protocol=tcp&LoadBalancerName=lb-1&SecurityGroups=&Version=2012-06-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
-          X-Amz-Date: 
-            - "20141003T115712Z"
-          Host: 
-            - elasticloadbalancing.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "157d28a0a1b02c3c4f0b2e4aaa534ee868b49c902628c268a84b55877d355462"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20141003/sa-east-1/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=redacted"
-          Content-Length: 
-            - "266"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          X-Amzn-Requestid: 
-            - "69bda78d-4af4-11e4-8264-99e567340869"
-          Content-Type: 
-            - text/xml
-          Content-Length: 
-            - "357"
-          Date: 
-            - "Fri, 03 Oct 2014 11:57:12 GMT"
-        body: 
-          encoding: UTF-8
-          string: "<CreateLoadBalancerResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <CreateLoadBalancerResult>\n    <DNSName>lb-1-580078311.sa-east-1.elb.amazonaws.com</DNSName>\n  </CreateLoadBalancerResult>\n  <ResponseMetadata>\n    <RequestId>69bda78d-4af4-11e4-8264-99e567340869</RequestId>\n  </ResponseMetadata>\n</CreateLoadBalancerResponse>\n"
-        http_version: 
-      recorded_at: "Fri, 03 Oct 2014 11:57:13 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "AWSAccessKeyId=redacted&Action=DescribeInstances&Filter.1.Name=tag%3AName&Filter.1.Value.1=web-1&Filter.2.Name=instance-state-name&Filter.2.Value.1=pending&Filter.2.Value.2=running&Signature=redacted&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2014-10-03T11%3A57%3A13Z&Version=2014-06-15"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
-          Content-Length: 
-            - "355"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Fri, 03 Oct 2014 11:57:14 GMT"
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-06-15/">
-                <requestId>581fe662-cf91-4b52-8eda-d2354ac9fb38</requestId>
-                <reservationSet>
-                    <item>
-                        <reservationId>r-8f11ba9a</reservationId>
-                        <ownerId>482693910459</ownerId>
-                        <groupSet>
-                            <item>
-                                <groupId>sg-d5d0f4c8</groupId>
-                                <groupName>web-sg</groupName>
-                            </item>
-                        </groupSet>
-                        <instancesSet>
-                            <item>
-                                <instanceId>i-1774f402</instanceId>
-                                <imageId>ami-41e85d5c</imageId>
-                                <instanceState>
-                                    <code>16</code>
-                                    <name>running</name>
-                                </instanceState>
-                                <privateDnsName>ip-10-252-14-59.sa-east-1.compute.internal</privateDnsName>
-                                <dnsName>ec2-54-207-152-222.sa-east-1.compute.amazonaws.com</dnsName>
-                                <reason/>
-                                <amiLaunchIndex>0</amiLaunchIndex>
-                                <productCodes/>
-                                <instanceType>t1.micro</instanceType>
-                                <launchTime>2014-10-01T12:06:56.000Z</launchTime>
-                                <placement>
-                                    <availabilityZone>sa-east-1a</availabilityZone>
-                                    <groupName/>
-                                    <tenancy>default</tenancy>
-                                </placement>
-                                <kernelId>aki-5553f448</kernelId>
-                                <monitoring>
-                                    <state>disabled</state>
-                                </monitoring>
-                                <privateIpAddress>10.252.14.59</privateIpAddress>
-                                <ipAddress>54.207.152.222</ipAddress>
-                                <groupSet>
-                                    <item>
-                                        <groupId>sg-d5d0f4c8</groupId>
-                                        <groupName>web-sg</groupName>
-                                    </item>
-                                </groupSet>
-                                <architecture>x86_64</architecture>
-                                <rootDeviceType>ebs</rootDeviceType>
-                                <rootDeviceName>/dev/sda1</rootDeviceName>
-                                <blockDeviceMapping>
-                                    <item>
-                                        <deviceName>/dev/sda1</deviceName>
-                                        <ebs>
-                                            <volumeId>vol-d32d86de</volumeId>
-                                            <status>attached</status>
-                                            <attachTime>2014-10-01T12:07:01.000Z</attachTime>
-                                            <deleteOnTermination>true</deleteOnTermination>
-                                        </ebs>
-                                    </item>
-                                </blockDeviceMapping>
-                                <virtualizationType>paravirtual</virtualizationType>
-                                <clientToken/>
-                                <tagSet>
-                                    <item>
-                                        <key>project</key>
-                                        <value>cloud</value>
-                                    </item>
-                                    <item>
-                                        <key>department</key>
-                                        <value>engineering</value>
-                                    </item>
-                                    <item>
-                                        <key>created_by</key>
-                                        <value>garethr</value>
-                                    </item>
-                                    <item>
-                                        <key>Name</key>
-                                        <value>web-1</value>
-                                    </item>
-                                </tagSet>
-                                <hypervisor>xen</hypervisor>
-                                <networkInterfaceSet/>
-                                <ebsOptimized>false</ebsOptimized>
-                            </item>
-                        </instancesSet>
-                    </item>
-                </reservationSet>
-            </DescribeInstancesResponse>
-        http_version: 
-      recorded_at: "Fri, 03 Oct 2014 11:57:14 GMT"
-    - request: 
-        method: post
-        uri: "https://elasticloadbalancing.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=RegisterInstancesWithLoadBalancer&Instances.member.1.InstanceId=i-1774f402&LoadBalancerName=lb-1&Version=2012-06-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
-          X-Amz-Date: 
-            - "20141003T115714Z"
-          Host: 
-            - elasticloadbalancing.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "9c627aff393df8a6c30c4e71c66385861cb3ec4c50659c3bd7d653f4e786e353"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20141003/sa-east-1/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=redacted"
-          Content-Length: 
-            - "122"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          X-Amzn-Requestid: 
-            - "6b283446-4af4-11e4-a56e-315151d8de86"
-          Content-Type: 
-            - text/xml
-          Content-Length: 
-            - "459"
-          Date: 
-            - "Fri, 03 Oct 2014 11:57:15 GMT"
-        body: 
-          encoding: UTF-8
-          string: "<RegisterInstancesWithLoadBalancerResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <RegisterInstancesWithLoadBalancerResult>\n    <Instances>\n      <member>\n        <InstanceId>i-1774f402</InstanceId>\n      </member>\n    </Instances>\n  </RegisterInstancesWithLoadBalancerResult>\n  <ResponseMetadata>\n    <RequestId>6b283446-4af4-11e4-a56e-315151d8de86</RequestId>\n  </ResponseMetadata>\n</RegisterInstancesWithLoadBalancerResponse>\n"
-        http_version: 
-      recorded_at: "Fri, 03 Oct 2014 11:57:15 GMT"
-  recorded_with: "VCR 2.9.3"
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://elasticloadbalancing.sa-east-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=CreateLoadBalancer&AvailabilityZones.member.1=sa-east-1a&Listeners.member.1.InstancePort=80&Listeners.member.1.LoadBalancerPort=80&Listeners.member.1.Protocol=TCP&LoadBalancerName=lb-1&Scheme=internet-facing&SecurityGroups=&Subnets=&Tags.member.1.Key=Name&Tags.member.1.Value=lb-1&Version=2012-06-01
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170112T183657Z
+      X-Amz-Content-Sha256:
+      - f0f21a0b0eea82f184d91ce551406194c9a85495a1afb46b0bf20a0eeeabeced
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170112/sa-east-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=88cc8056f70853377592d483b70c63864b99053b39db9b3ed9236a961a7cfade
+      Content-Length:
+      - '306'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 1943162d-d8f6-11e6-a828-4f226993f0a0
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '357'
+      Date:
+      - Thu, 12 Jan 2017 18:36:58 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <CreateLoadBalancerResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+          <CreateLoadBalancerResult>
+            <DNSName>lb-1-836530285.sa-east-1.elb.amazonaws.com</DNSName>
+          </CreateLoadBalancerResult>
+          <ResponseMetadata>
+            <RequestId>1943162d-d8f6-11e6-a828-4f226993f0a0</RequestId>
+          </ResponseMetadata>
+        </CreateLoadBalancerResponse>
+    http_version: 
+  recorded_at: Thu, 12 Jan 2017 18:36:59 GMT
+- request:
+    method: post
+    uri: https://ec2.sa-east-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DescribeInstances&Filter.1.Name=tag%3AName&Filter.1.Value.1=web-1&Filter.2.Name=instance-state-name&Filter.2.Value.1=pending&Filter.2.Value.2=running&Version=2016-11-15
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170112T183659Z
+      X-Amz-Content-Sha256:
+      - c56603cbdf45c89429925da0c8e72355856b953cba3fe6d7726125c3c3c7b073
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170112/sa-east-1/ec2/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=af05f831cbf8dbb3c5af46412651fcf37880a4a26c05f2bc9b761c48695be20d
+      Content-Length:
+      - '175'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Thu, 12 Jan 2017 18:36:59 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2016-11-15/">
+            <requestId>fd7c968d-19c5-45f2-b233-bbec5a41c986</requestId>
+            <reservationSet/>
+        </DescribeInstancesResponse>
+    http_version: 
+  recorded_at: Thu, 12 Jan 2017 18:37:00 GMT
+recorded_with: VCR 3.0.3

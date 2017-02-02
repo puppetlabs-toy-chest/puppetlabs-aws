@@ -1,48 +1,53 @@
---- 
-  http_interactions: 
-    - request: 
-        method: post
-        uri: "https://elasticloadbalancing.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeLoadBalancers&Version=2012-06-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
-          X-Amz-Date: 
-            - "20141003T115030Z"
-          Host: 
-            - elasticloadbalancing.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "236069f72bf74f0c7ddff0a34b0defa8a21d1d6a897e588764e1b2ff6319f94a"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20141003/sa-east-1/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=redacted"
-          Content-Length: 
-            - "47"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          X-Amzn-Requestid: 
-            - "7a3e9ee3-4af3-11e4-b00c-49c743b99f71"
-          Content-Type: 
-            - text/xml
-          Content-Length: 
-            - "2110"
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Fri, 03 Oct 2014 11:50:30 GMT"
-        body: 
-          encoding: UTF-8
-          string: "<DescribeLoadBalancersResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <DescribeLoadBalancersResult>\n    <LoadBalancerDescriptions>\n      <member>\n        <SecurityGroups/>\n        <CreatedTime>2014-10-01T12:06:59.550Z</CreatedTime>\n        <LoadBalancerName>lb-1</LoadBalancerName>\n        <HealthCheck>\n          <Interval>30</Interval>\n          <Target>TCP:80</Target>\n          <HealthyThreshold>10</HealthyThreshold>\n          <Timeout>5</Timeout>\n          <UnhealthyThreshold>2</UnhealthyThreshold>\n        </HealthCheck>\n        <ListenerDescriptions>\n          <member>\n            <PolicyNames/>\n            <Listener>\n              <Protocol>TCP</Protocol>\n              <LoadBalancerPort>80</LoadBalancerPort>\n              <InstanceProtocol>TCP</InstanceProtocol>\n              <InstancePort>80</InstancePort>\n            </Listener>\n          </member>\n        </ListenerDescriptions>\n        <Instances>\n          <member>\n            <InstanceId>i-3171f124</InstanceId>\n          </member>\n          <member>\n            <InstanceId>i-1774f402</InstanceId>\n          </member>\n        </Instances>\n        <Policies>\n          <AppCookieStickinessPolicies/>\n          <OtherPolicies/>\n          <LBCookieStickinessPolicies/>\n        </Policies>\n        <AvailabilityZones>\n          <member>sa-east-1a</member>\n        </AvailabilityZones>\n        <CanonicalHostedZoneName>lb-1-1058535709.sa-east-1.elb.amazonaws.com</CanonicalHostedZoneName>\n        <CanonicalHostedZoneNameID>Z2ES78Y61JGQKS</CanonicalHostedZoneNameID>\n        <Scheme>internet-facing</Scheme>\n        <SourceSecurityGroup>\n          <OwnerAlias>amazon-elb</OwnerAlias>\n          <GroupName>amazon-elb-sg</GroupName>\n        </SourceSecurityGroup>\n        <DNSName>lb-1-1058535709.sa-east-1.elb.amazonaws.com</DNSName>\n        <BackendServerDescriptions/>\n        <Subnets/>\n      </member>\n    </LoadBalancerDescriptions>\n  </DescribeLoadBalancersResult>\n  <ResponseMetadata>\n    <RequestId>7a3e9ee3-4af3-11e4-b00c-49c743b99f71</RequestId>\n  </ResponseMetadata>\n</DescribeLoadBalancersResponse>\n"
-        http_version: 
-      recorded_at: "Fri, 03 Oct 2014 11:50:31 GMT"
-  recorded_with: "VCR 2.9.3"
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://elasticloadbalancing.sa-east-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DescribeLoadBalancers&Version=2012-06-01
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170112T183144Z
+      X-Amz-Content-Sha256:
+      - 236069f72bf74f0c7ddff0a34b0defa8a21d1d6a897e588764e1b2ff6319f94a
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170112/sa-east-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=ba8de4cff157950664bcdd16a7b3d6fd3773d62111be884bbae93160cd94a6a9
+      Content-Length:
+      - '47'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 5f2d73df-d8f5-11e6-8071-ed1c1bc4d23b
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '335'
+      Date:
+      - Thu, 12 Jan 2017 18:31:45 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <DescribeLoadBalancersResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+          <DescribeLoadBalancersResult>
+            <LoadBalancerDescriptions/>
+          </DescribeLoadBalancersResult>
+          <ResponseMetadata>
+            <RequestId>5f2d73df-d8f5-11e6-8071-ed1c1bc4d23b</RequestId>
+          </ResponseMetadata>
+        </DescribeLoadBalancersResponse>
+    http_version: 
+  recorded_at: Thu, 12 Jan 2017 18:31:45 GMT
+recorded_with: VCR 3.0.3

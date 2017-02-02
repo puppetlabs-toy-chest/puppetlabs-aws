@@ -198,13 +198,25 @@ Unit Testing with VCR
 ---------------------
 
 VCR is a utility for testing which is used to capture the requests and
-responses to the AWS APIs.  The results of a transaction are stored in a YAML
-file that can then be loaded later and used to validate data structures etc
-without requiring access to AWS.  This comes in handy when unit testing using
-Rspec.
+responses to and from the AWS APIs.  The results of a transaction are stored in
+a YAML file that can then be loaded later and used to validate data structures
+etc without requiring access to AWS.  This comes in handy when unit testing
+using Rspec, as the calls can be made once, and the communication can be stored
+for future testing.
 
-Consider the following test for a new provider.
+Consider the following test for a new provider.  In order to create new fixture
+files, or to replace existing fixtures, you must have the following environment
+variables set.
 
+    AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY
+    AWS_REGION
+
+This will allow the spec tests to call out to AWS on your behalf and store the
+responses.  A minimal amount of automatic filtering is done to ensure that the
+stored YAML files do not contain sensitive information, like the account
+number, or your access credential ID.  This filtering is done in the
+`spec_helper`.
 
 ```Ruby
 require 'spec_helper'
@@ -212,12 +224,6 @@ require 'spec_helper'
 provider_class = Puppet::Type.type(:snazzy_new_type).provider(:v2)
 
 describe provider_class do
-
-  before do
-    ENV['AWS_ACCESS_KEY_ID'] = 'something goes here'
-    ENV['AWS_SECRET_ACCESS_KEY'] = 'something else goes here'
-    ENV['AWS_REGION'] = 'us-west-2'
-  end
 
   let(:provider) { resource.provider }
 ```
@@ -274,32 +280,34 @@ You may notice that some tests make use of multiple cassettes.  One might test
 the environment for creating a resource.  One might test the environment for
 tearing down a resource.  This is all an exercise left to the developer.
 
+Its worth noting, that perioically it may be advisiable to remove the exissting
+fixutre files and run the specs locally to allow new fixutres to be captured
+using VCR.  This might become more important if larg refactors are being done
+on an existing provider, or new calls need ot be made for extended
+functionality.
+
 ### Tidying up!  IMPORTANT
 
-Its important to tidy up on spec tests before committing.  Its easy to do, so
-just remember to tidy up.  You don't want to commit your credentials to GitHub,
-as I have done this morning.
+Its important to tidy up on spec tests before committing.  This is easy to do,
+so just remember to tidy up.  You don't want to commit your credentials to
+GitHub, as I have done this morning.
 
-Firstly, replace the credentials in the `before` block within any spec files
-that you have written.
+It is no longer necessary to write your credentials anywhere in the spec test
+files.  Exporting the variables is all that is required now, so that the
+version-tracked files never contain credential inforamtion, and there is not a
+concern of accidentally committing keys, as many of us have done.
 
-Secondly, replace the credential reference in the resulting cassette yaml
-files.  I use something like the following.
+As mentioned above, some of the responses may contain sensitive information,
+and a small amount of automatic filtering is done in `spec_helper.rb` to
+ensure that accout and credential information is not stored in the YAML.
 
-```
-sed -i '' -e 's/ABCEFGOOOOOOOOOOOOOOR/AAAAAAAAAAAAAAAAAAAAA/g' -e 's/123456789101/111111111111/g' fixtures/vcr_cassettes/*.yml
-```
+What you consider sensitive may depend on your organization.
 
-The above 'sed' replaces my account id of '123456789101' with a string of
-matching length which is not my account id.  Also above, we replace the access
-credential of 'ABCEFGOOOOOOOOOOOOOOR' with a string of matching length.  I
-don't believe keeping the length of the strings is required, but I do it
-anyway.
-
-If you do both of the above, then you should not have account information,
-identity information, or credential information in either the `_sepc.rb` test
-files, or the VCR cassette files.
-
+It is advisable to create a seperate AWS accout for testing, as some of the
+specs will store information like a list of users or groups for the given
+account.  For example, when working on the IAM providers, I would not want a
+list of users for my organization to be stored in YAML, but for a development
+account, this is more accaptable.  This is up to you.
 
 If you have commit access to the repository
 ===========================================
