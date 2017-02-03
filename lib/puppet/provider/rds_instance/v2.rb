@@ -2,8 +2,10 @@ require_relative '../../../puppet_x/puppetlabs/aws.rb'
 
 Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
+  confine feature: :retries
 
   mk_resource_methods
+  remove_method :rds_tags=
 
   def initialize(value={})
     super(value)
@@ -40,6 +42,14 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def self.db_instance_to_hash(region, instance)
     db_subnet = instance.db_subnet_group ? instance.db_subnet_group.db_subnet_group_name : nil
+
+    # tags stuff requires aws sdk >= 2.6.11
+    rds_tags = {}
+    db_tags = rds_client(region).list_tags_for_resource( resource_name: instance.db_instance_arn )
+    db_tags.tag_list.each do |rds_tag|
+      rds_tags[rds_tag.key] = rds_tag.value unless rds_tag.key == 'Name'
+    end
+
     config = {
       ensure: :present,
       name: instance.db_instance_identifier,
@@ -54,12 +64,14 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       license_model: instance.license_model,
       multi_az: instance.multi_az,
       iops: instance.iops,
+      rds_tags: rds_tags,
       db_subnet: db_subnet,
       db_parameter_group: instance.db_parameter_groups.collect(&:db_parameter_group_name).first,
       db_security_groups: instance.db_security_groups.collect(&:db_security_group_name),
       vpc_security_groups: instance.vpc_security_groups.collect(&:vpc_security_group_id),
       backup_retention_period: instance.backup_retention_period,
-      availability_zone: instance.availability_zone
+      availability_zone: instance.availability_zone,
+      arn: instance.db_instance_arn
     }
     if instance.respond_to?('endpoint') && !instance.endpoint.nil?
       config[:endpoint] = instance.endpoint.address
@@ -122,6 +134,14 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       Puppet.info("Starting DB instance #{name}")
       rds_client(resource[:region]).create_db_instance(config)
     end
+
+    with_retries(:max_tries => 5) do
+      rds_client(region).add_tags_to_resource(
+        resources: response.data.db_instance.db_instance_arn,
+        tags: tags_for_resource
+      )
+    end
+
     @property_hash[:ensure] = :present
   end
 
