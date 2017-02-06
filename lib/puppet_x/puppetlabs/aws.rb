@@ -178,6 +178,14 @@ This could be because some other process is modifying AWS at the same time."""
         self.class.autoscaling_client(region)
       end
 
+      def self.cloudformation_client(region = default_region)
+        ::Aws::CloudFormation::Client.new(client_config(region))
+      end
+
+      def cloudformation_client(region = default_region)
+        self.class.cloudformation_client(region)
+      end
+
       def self.cloudwatch_client(region = default_region)
         ::Aws::CloudWatch::Client.new(client_config(region))
       end
