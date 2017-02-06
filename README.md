@@ -311,6 +311,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 
 ### Types
 
+* `cloudformation_stack`: Create, update, or destroy a CloudFormation Stack.
 * `cloudfront_distribution`: Sets up a CloudFront distribution.
 * `ec2_instance`: Sets up an EC2 instance.
 * `ec2_securitygroup`: Sets up an EC2 security group.
@@ -355,6 +356,111 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `sqs_queue`: Sets up an SQS queue.
 
 ###Parameters
+
+#### Type: cloudformation_stack
+
+##### `capabilities`
+*Optional* The list of stack capabilities, including CAPABILITY_IAM,
+CAPABILITY_NAMED_IAM, an empty list, or unspecified.
+
+##### `change_set_id`
+*Readonly* Unique identifier of the stack.
+
+##### `creation_time`
+*Readonly* The time at which the stack was created.
+
+##### `description`
+*Readonly* A user-defined description found in the cloudformation template associated with the stack.
+
+##### `disable_rollback`
+*Optional* Whether to disable rollback on stack creation failures.
+Valid values are `true`, `false`.
+
+##### `ensure`
+*Required* The ensure value for the stack.
+
+"present" will create the stack but not apply updates.
+
+"updated" will create or apply any updates to the stack.
+
+"absent" will delete the stack.
+
+Valid values are `present`, `updated`, `absent`.
+
+##### `id`
+*Readonly* The unique ID of the stack.
+
+##### `last_updated_time`
+*Readonly* The time the stack was last updated.
+
+##### `name`
+*Required* The name of the stack.
+
+##### `notification_arns`
+*Optional* List of SNS topic ARNs to which stack related events are published.
+
+##### `on_failure`
+*Optional* Determines what action will be taken if stack creation fails. This must
+be one of: "DO_NOTHING", "ROLLBACK", or "DELETE". You can specify either
+on_failure or disable_rollback, but not both.
+Valid values are `DO_NOTHING`, `ROLLBACK`, `DELETE`.
+
+##### `outputs`
+*Readonly* A hash of stack outputs.
+
+##### `parameters`
+*Optional* A hash of input parameters.
+
+##### `policy_body`
+*Optional* Structure containing the stack policy body. For more information, go to
+Prevent Updates to Stack Resources in the AWS CloudFormation User Guide.
+You can specify either the policy_body or the policy_url parameter, but
+not both.
+
+##### `policy_url`
+*Optional* Location of a file containing the stack policy. The URL must point to a
+policy (maximum size: 16 KB) located in an S3 bucket in the same region
+as the stack. You can specify either the policy_body or the policy_url
+parameter, but not both.
+
+##### `region`
+*Required* The region in which to launch the stack.
+
+##### `resource_types`
+*Optional* The list of resource types that you have permissions to work with for
+this stack.
+
+##### `role_arn`
+*Optional* The Amazon Resource Name (ARN) of an AWS Identity and Access Management
+(IAM) role that is associated with the stack.
+
+##### `status`
+*Readonly* The status of the stack.
+Valid values are `CREATE_IN_PROGRESS`, `CREATE_FAILED`,
+`CREATE_COMPLETE`, `ROLLBACK_IN_PROGRESS`, `ROLLBACK_FAILED`,
+`ROLLBACK_COMPLETE`, `DELETE_IN_PROGRESS`, `DELETE_FAILED`,
+`DELETE_COMPLETE`, `UPDATE_IN_PROGRESS`,
+`UPDATE_COMPLETE_CLEANUP_IN_PROGRESS`, `UPDATE_COMPLETE`,
+`UPDATE_ROLLBACK_IN_PROGRESS`, `UPDATE_ROLLBACK_FAILED`,
+`UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS`,
+`UPDATE_ROLLBACK_COMPLETE`, `REVIEW_IN_PROGRESS`.
+
+##### `tags`
+*Optional* The tags for the instance.
+
+##### `template_body`
+*Optional* Structure containing the template body with a minimum length of 1 byte
+and a maximum length of 51,200 bytes. For more information, go to
+Template Anatomy in the AWS CloudFormation User Guide.
+
+##### `template_url`
+*Optional* Location of file containing the template body. The URL must point to a
+template (max size: 460,800 bytes) that is located in an Amazon S3
+bucket. For more information, go to the Template Anatomy in the AWS
+CloudFormation User Guide.
+
+##### `timeout_in_minutes`
+*Optional* The amount of time within which stack creation should complete.
 
 #### Type: cloudfront_distribution
 
@@ -1224,7 +1330,7 @@ Role path (optional)
 
 #####`policy_document`
 A string containing the IAM policy in JSON format which controls which entities may assume this role, e.g. the default:
- 
+
 ```
 {
   "Version": "2012-10-17",
