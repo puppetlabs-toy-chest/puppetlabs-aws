@@ -68,12 +68,14 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       rds_tags: rds_tags,
       db_subnet: db_subnet,
       db_parameter_group: instance.db_parameter_groups.collect(&:db_parameter_group_name).first,
+      db_option_group: instance.option_group_memberships.collect(&:option_group_name).first,
       db_security_groups: instance.db_security_groups.collect(&:db_security_group_name),
       vpc_security_groups: vpc_security_groups,
       backup_retention_period: instance.backup_retention_period,
       availability_zone: instance.availability_zone,
       arn: instance.db_instance_arn
     }
+
     if instance.respond_to?('endpoint') && !instance.endpoint.nil?
       config[:endpoint] = instance.endpoint.address
       config[:port]     = instance.endpoint.port
@@ -181,6 +183,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       db_security_groups: resource[:db_security_groups],
       db_parameter_group_name: resource[:db_parameter_group],
       vpc_security_group_ids: vpc_sg_ids,
+      option_group_name: resource[:db_option_group],
       backup_retention_period: resource[:backup_retention_period],
       availability_zone: resource[:availability_zone],
       tags: tags,

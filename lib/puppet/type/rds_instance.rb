@@ -196,6 +196,13 @@ Not applicable. Must be null.'
     end
   end
 
+  newproperty(:db_option_group) do
+    desc 'The DB option group for this RDS instance.'
+    validate do |value|
+      fail 'db_option_group should be a String' unless value.is_a?(String)
+    end
+  end
+
   newparam(:final_db_snapshot_identifier) do
     desc 'Name given to the last snapshot on deletion.'
     validate do |value|
