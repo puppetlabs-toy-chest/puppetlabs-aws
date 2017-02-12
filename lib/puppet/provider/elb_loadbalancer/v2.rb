@@ -298,7 +298,12 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     # which to add, and which need modification.  The modification is a bit of
     # a misnomer, since it really ends up being a delete followed by an add.
 
-    is_listener_ports = @property_hash[:listeners].collect {|x| x['load_balancer_port'].to_i }
+
+    is_listener_ports = if @property_hash[:listeners]
+      @property_hash[:listeners].collect {|x| x['load_balancer_port'].to_i }
+    else
+      []
+    end
     should_listener_ports = resource[:listeners].collect {|x| x['load_balancer_port'].to_i }
 
     # Collect a list of ports for listeners that should be deleted
@@ -320,9 +325,13 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
       # Identify and retrieve the existing listener to our current 'should'
       # listener by port
-      is_listener = @property_hash[:listeners].select {|x|
-        x['load_balancer_port'].to_i == should_listener['load_balancer_port'].to_i
-      }.first
+      is_listener = if @property_hash[:listeners]
+        @property_hash[:listeners].select {|x|
+          x['load_balancer_port'].to_i == should_listener['load_balancer_port'].to_i
+        }.first
+      else
+        nil
+      end
 
       # Unless we found a match, there is no comparison needed
       next unless is_listener
@@ -409,9 +418,13 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       next unless should_listener['policy_names']
 
       # Match the should_listener to the is_listener
-      is_listener = @property_hash[:listeners].select {|x|
-        x['load_balancer_port'].to_i == should_listener['load_balancer_port'].to_i
-      }.first
+      is_listener = if @property_hash[:listeners]
+        @property_hash[:listeners].select {|x|
+          x['load_balancer_port'].to_i == should_listener['load_balancer_port'].to_i
+        }.first
+      else
+        {}
+      end
 
       # Update the working listener policy if requested
       if should_listener['policy_names'] and should_listener['policy_names'] != is_listener['policy_names']
