@@ -308,16 +308,54 @@ This could be because some other process is modifying AWS at the same time."""
         !hash[:name].nil? && !hash[:name].empty?
       end
 
-      def self.vpc_name_from_id(region, vpc_id)
-        @vpcs ||= name_cache_hash do |ec2, key|
-          response = ec2.describe_vpcs(vpc_ids: [key])
-          if response.data.vpcs.first.to_hash.keys.include?(:group_name)
-            response.data.vpcs.first.group_name
-          elsif response.data.vpcs.first.to_hash.keys.include?(:tags)
-            name_from_tag(response.data.vpcs.first)
-          end
+      # Set up @vpcs. Always call this method before using @vpcs. @vpcs[region]
+      # keeps track of VPC IDs => names discovered per region, to prevent
+      # duplicate API calls.
+      def self.init_vpcs(region)
+        @vpcs ||= {}
+        @vpcs[region] ||= {}
+      end
+
+      def self.vpc_id_from_name(region, vpc_name)
+        self.init_vpcs(region)
+
+        unless @vpcs[region].key(vpc_name)
+          vpc_info = ec2_client(region).describe_vpcs(filters: [
+            {
+              name: 'tag-key',
+              values: ['Name'],
+            },
+            {
+              name: 'tag-value',
+              values: [vpc_name],
+            },
+          ])
+
+          return nil if vpc_info.vpcs.empty?
+
+          vpc_id = vpc_info.vpcs.first['vpc_id']
+          @vpcs[region][vpc_id] = vpc_name
         end
-        @vpcs[[region, vpc_id]]
+
+        @vpcs[region].key(vpc_name)
+      end
+
+      def self.vpc_name_from_id(region, vpc_id)
+        self.init_vpcs(region)
+
+        # Duplicate API calls will be made for unnamed VPCs, since they are
+        # saved with the name nil.
+        unless @vpcs[region][vpc_id]
+          response = ec2_client(region).describe_vpcs(vpc_ids: [vpc_id])
+          @vpcs[region][vpc_id] =
+            if response.data.vpcs.first.to_hash.keys.include?(:group_name)
+              response.data.vpcs.first.group_name
+            elsif response.data.vpcs.first.to_hash.keys.include?(:tags)
+              name_from_tag(response.data.vpcs.first)
+            end
+        end
+
+        @vpcs[region][vpc_id]
       end
 
       def self.security_group_name_from_id(region, group_id)
