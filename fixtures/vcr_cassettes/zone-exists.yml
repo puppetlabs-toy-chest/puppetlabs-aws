@@ -1,0 +1,91 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://route53.amazonaws.com/2013-04-01/hostedzone
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.3 x86_64-darwin15
+      X-Amz-Date:
+      - 20170228T211309Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170228/us-east-1/route53/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=2d5beb61691edb3fd999089c658e4f927c744bbfdd404df15bb7f47923424a34
+      Content-Length:
+      - '0'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - b4d97421-fdfa-11e6-89ca-b79ffd12e9a5
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '467'
+      Date:
+      - Tue, 28 Feb 2017 21:13:09 GMT
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0"?>
+        <ListHostedZonesResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><HostedZones><HostedZone><Id>/hostedzone/Z1Y34IMK1IXRPL</Id><Name>devopscentral.com.</Name><CallerReference>513225554085e039e1670470be830f76</CallerReference><Config><PrivateZone>false</PrivateZone></Config><ResourceRecordSetCount>2</ResourceRecordSetCount></HostedZone></HostedZones><IsTruncated>false</IsTruncated><MaxItems>100</MaxItems></ListHostedZonesResponse>
+    http_version: 
+  recorded_at: Tue, 28 Feb 2017 21:13:09 GMT
+- request:
+    method: get
+    uri: https://route53.amazonaws.com/2013-04-01/tags/hostedzone/Z1Y34IMK1IXRPL
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.3 x86_64-darwin15
+      X-Amz-Date:
+      - 20170228T211309Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170228/us-east-1/route53/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=0cf96433fe42d50910edc07db85c73c696f5257f91067ccb6be3149657415175
+      Content-Length:
+      - '0'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - b50a216a-fdfa-11e6-9beb-f3d90ff717ab
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '253'
+      Date:
+      - Tue, 28 Feb 2017 21:13:10 GMT
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0"?>
+        <ListTagsForResourceResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><ResourceTagSet><ResourceType>hostedzone</ResourceType><ResourceId>Z1Y34IMK1IXRPL</ResourceId><Tags/></ResourceTagSet></ListTagsForResourceResponse>
+    http_version: 
+  recorded_at: Tue, 28 Feb 2017 21:13:10 GMT
+recorded_with: VCR 3.0.3
