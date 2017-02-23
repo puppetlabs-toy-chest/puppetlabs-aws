@@ -1189,8 +1189,6 @@ In the case where a user wishes to remove an option from the container, one of t
 
 It's a small kludge, I know.
 
-
-
 ##### `container_definitions`
 An array of hashes representing the container definition.  See the example
 above.
@@ -1208,6 +1206,10 @@ to create, but not modify the image of a container once created.
 This is useful in environments where external CI tooling is responsible for
 modifying the image of a container, allowing a dualistic approach for managing
 ECS.
+
+##### `role`
+A string of the short name or full ARN of the IAM role that containers in this task should assume.
+
 
 #### Type: iam_group
 
