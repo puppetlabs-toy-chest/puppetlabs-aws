@@ -9,9 +9,9 @@ Puppet::Type.newtype(:iam_policy_attachment) do
     self[:users]
   end
 
-  #autorequire(:iam_role) do
-  #  self[:users]
-  #end
+  autorequire(:iam_role) do
+    self[:roles]
+  end
 
   autorequire(:iam_policy) do
     self[:name]
