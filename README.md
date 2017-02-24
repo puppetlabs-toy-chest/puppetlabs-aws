@@ -192,18 +192,29 @@ elb_loadbalancer { 'name-of-load-balancer':
   availability_zones      => ['us-east-1a', 'us-east-1b'],
   instances               => ['name-of-instance', 'another-instance'],
   security_groups         => ['name-of-security-group'],
-  listeners               => [{
-    protocol              => 'HTTP',
-    load_balancer_port    => 80,
-    instance_protocol     => 'HTTP',
-    instance_port         => 80,
-  },{
-    protocol              => 'HTTPS',
-    load_balancer_port    => 443,
-    instance_protocol     => 'HTTPS',
-    instance_port         => 8080,
-    ssl_certificate_id    => 'arn:aws:iam::123456789000:server-certificate/yourcert.com',
-  }],
+  listeners               => [
+    {
+      protocol              => 'HTTP',
+      load_balancer_port    => 80,
+      instance_protocol     => 'HTTP',
+      instance_port         => 80,
+    },{
+      protocol              => 'HTTPS',
+      load_balancer_port    => 443,
+      instance_protocol     => 'HTTPS',
+      instance_port         => 8080,
+      ssl_certificate_id    => 'arn:aws:iam::123456789000:server-certificate/yourcert.com',
+      policies              =>  [
+        {
+          'policy_type'       => 'SSLNegotiationPolicyType',
+          'policy_attributes' => {
+            'Protocol-TLSv1.1' => false,
+            'Protocol-TLSv1.2' => true,
+          }
+        }
+      ]
+    }
+  ],
   health_check            => {
     'healthy_threshold'   => '10',
     'interval'            => '30',
@@ -1190,8 +1201,6 @@ In the case where a user wishes to remove an option from the container, one of t
 
 It's a small kludge, I know.
 
-
-
 ##### `container_definitions`
 An array of hashes representing the container definition.  See the example
 above.
@@ -1209,6 +1218,10 @@ to create, but not modify the image of a container once created.
 This is useful in environments where external CI tooling is responsible for
 modifying the image of a container, allowing a dualistic approach for managing
 ECS.
+
+##### `role`
+A string of the short name or full ARN of the IAM role that containers in this task should assume.
+
 
 #### Type: iam_group
 

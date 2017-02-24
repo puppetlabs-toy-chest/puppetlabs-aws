@@ -64,7 +64,7 @@ describe provider_class do
   describe 'destroy' do
     it 'shold make the call to create the task definition' do
       VCR.use_cassette('destroy-ecs_task_definition') do
-        data = provider.class.prefetch({"lb-1" => resource})
+        data = provider.class.prefetch({"testtask" => resource})
         prov = data.select {|m| m.name == 'testtask' }[0]
         expect(prov.destroy).to be_truthy
         expect(prov.exists?).to be_falsy
@@ -75,7 +75,7 @@ describe provider_class do
   describe 'container_definitions' do
     it 'should retrieve the container_definition' do
       VCR.use_cassette('ecs_task_definition-setup') do
-        data = provider.class.prefetch({"lb-1" => resource})
+        data = provider.class.prefetch({"testtask" => resource})
         prov = data.select {|m| m.name == 'testtask' }[0]
         expect(prov.name).to eq('testtask')
         container1 = prov.container_definitions[1]
@@ -90,7 +90,8 @@ describe provider_class do
   describe 'container_definitions=' do
     it 'should set the container_definition' do
       VCR.use_cassette('ecs_task_definition-setup') do
-        instance = provider.class.instances.first
+        data = provider.class.prefetch({"testtask" => resource})
+        prov = data.select {|m| m.name == 'testtask' }[0]
 
         container_defs = [
           {
@@ -98,8 +99,8 @@ describe provider_class do
           }
         ]
 
-        instance.container_definitions=container_defs
-        instance.flush
+        prov.container_definitions=container_defs
+        prov.flush
       end
     end
   end

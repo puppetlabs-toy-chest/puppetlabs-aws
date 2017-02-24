@@ -74,21 +74,183 @@ describe type_class do
     }.to raise_error(Puppet::Error)
   end
 
-  it "should require a valid listener" do
+  context 'when validating a listener' do
+    context 'with all required keys are met' do
+      it 'should not fail' do
+        valid_listener = {
+          'protocol' => 'https',
+          'load_balancer_port' => 443,
+          'instance_protocol' => 'tcp',
+          'instance_port' => 80,
+        }
 
-    valid_listener = {
-      'protocol' => 'tcp',
-      'load_balancer_port' => 80,
-      'instance_protocol' => 'tcp',
-      'instance_port' => 80,
-    }
-
-    valid_listener.keys.each do |key|
-      listener = valid_listener.tap { |inner| inner.delete(key) }
-      expect {
-        type_class.new({:name => 'sample', :listener => [listener]})
-      }.to raise_error(Puppet::Error)
+        expect {
+          type_class.new({:name => 'sample', :listener => [valid_listener]})
+        }.to raise_error(Puppet::Error)
+      end
     end
+
+    context 'when not all requried keys are met' do
+      it 'should fail' do
+        valid_listener = {
+          'protocol' => 'https',
+          'load_balancer_port' => 443,
+          'instance_protocol' => 'tcp',
+          'instance_port' => 80,
+        }
+
+        valid_listener.keys.each do |key|
+          listener = valid_listener.tap { |inner| inner.delete(key) }
+          expect {
+            type_class.new({:name => 'sample', :listener => [listener]})
+          }.to raise_error(Puppet::Error)
+        end
+      end
+    end
+
+    context 'with https listener' do
+      it 'should raise an error when no ssl_certificate_id is present' do
+        invalid_listener = {
+          'protocol' => 'https',
+          'load_balancer_port' => 443,
+          'instance_protocol' => 'tcp',
+          'instance_port' => 80,
+        }
+
+        expect {
+          type_class.new(:name => 'sample', :listeners => [invalid_listener])
+        }.to raise_error(Puppet::Error)
+
+      end
+
+      it 'should not raise an error when ssl_certificate_id is present' do
+
+        valid_listener = {
+          'protocol' => 'https',
+          'load_balancer_port' => 443,
+          'instance_protocol' => 'tcp',
+          'instance_port' => 80,
+          'ssl_certificate_id' => 'something/made/up'
+        }
+
+        type_class.new(:name => 'sample', :listeners => [valid_listener])
+
+        expect {
+          type_class.new(:name => 'sample', :listeners => [valid_listener])
+        }.to_not raise_error
+      end
+    end
+
+    context 'when validating a listener policy' do
+      context 'a correct policy type is used' do
+        let(:listener) {
+          {
+            'protocol' => 'https',
+            'load_balancer_port' => 443,
+            'instance_protocol' => 'tcp',
+            'instance_port' => 80,
+            'ssl_certificate_id' => 'something/made/up',
+            'policies' => [
+              {
+                'SSLNegotiationPolicyType' => {
+                  'Protocol-TLSv1.1' => true,
+                }
+              }
+            ]
+          }
+        }
+
+        it 'should validate' do
+          VCR.use_cassette('elb_loadbalancer-policy-types') do
+            expect {
+              type_class.new(:name => 'sample', :listeners => [listener])
+            }.to_not raise_error
+          end
+        end
+
+        context 'with invalid policy_attribtues' do
+          let(:listener) {
+            {
+              'protocol' => 'https',
+              'load_balancer_port' => 443,
+              'instance_protocol' => 'tcp',
+              'instance_port' => 80,
+              'ssl_certificate_id' => 'something/made/up',
+              'policies' => [
+                {
+                  'SSLNegotiationPolicyType' => {
+                    'Protocol-TLSv0.9' => true,
+                  }
+                }
+              ]
+            }
+          }
+
+          it 'shoud not validate' do
+            VCR.use_cassette('elb_loadbalancer-policy-types') do
+              expect {
+                type_class.new(:name => 'sample', :listeners => [listener])
+              }.to raise_error(Puppet::Error, /Invalid attribute/)
+            end
+          end
+        end
+        context 'with valid policy_attribtues' do
+          let(:listener) {
+            {
+              'protocol' => 'https',
+              'load_balancer_port' => 443,
+              'instance_protocol' => 'tcp',
+              'instance_port' => 80,
+              'ssl_certificate_id' => 'something/made/up',
+              'policies' => [
+                {
+                  'SSLNegotiationPolicyType' => {
+                    'Protocol-TLSv1.1' => true,
+                    'Protocol-TLSv1.2' => true,
+                  }
+                }
+              ]
+            }
+          }
+          it 'shoud validate' do
+            VCR.use_cassette('elb_loadbalancer-policy-types') do
+              expect {
+                type_class.new(:name => 'sample', :listeners => [listener])
+              }.to_not raise_error
+            end
+          end
+        end
+      end
+
+      context 'when an invalid policy type is set' do
+        let(:listener) {
+          {
+            'protocol' => 'https',
+            'load_balancer_port' => 443,
+            'instance_protocol' => 'tcp',
+            'instance_port' => 80,
+            'ssl_certificate_id' => 'something/made/up',
+            'policies' => [
+              {
+                'SSLNegotiationPolicyTypo' => {
+                  'Protocol-TLSv1.1' => true,
+                }
+              }
+            ]
+          }
+        }
+
+        it 'should fail to validate' do
+          VCR.use_cassette('elb_loadbalancer-policy-types') do
+            expect {
+              type_class.new(:name => 'sample', :listeners => [listener])
+            }.to raise_error(Puppet::Error, /Invalid policy type/)
+          end
+        end
+
+      end
+    end
+
   end
 
   it 'with a valid config it should not error' do
