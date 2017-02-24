@@ -350,6 +350,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `iam_policy_attachment`: Manage an IAM 'managed' policy attachments.
 * `iam_role`: Manage an IAM role.
 * `iam_user`: Manage IAM users.
+* `kms`: Manage KMS keys and their policies.
 * `rds_db_parameter_group`: Allows read access to DB Parameter Groups.
 * `rds_db_securitygroup`: Sets up an RDS DB Security Group.
 * `rds_instance`: Sets up an RDS Database instance.
@@ -1375,6 +1376,23 @@ iam_user { 'bob':
   ensure => present,
 }
 ```
+
+#### Type: kms
+The `kms` type manages KMS key lifecycle and their policies.  The name of the
+resource is prefixed with `alias/` to set the alias of the KMS key, since keys
+themselves don't have any notion of name, outside of an attached alias.
+
+``` Puppet
+kms { 'somekey':
+  ensure => present,
+  policy => template('my/policy.json'),
+}
+```
+
+The above resource may be viewable elsewhere as `alias/somekey`.
+
+#####`policy`
+The JSON policy document to manage on the given KMS key.
 
 #### Type: rds_db_parameter_group
 
