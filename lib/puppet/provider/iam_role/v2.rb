@@ -32,12 +32,12 @@ Puppet::Type.type(:iam_role).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) d
   end
 
   def exists?
-    Puppet.info("Checking if IAM role #{name} exists")
+    Puppet.debug("Checking if IAM role #{name} exists")
     @property_hash[:ensure] == :present
   end
 
   def create
-    Puppet.info("Creating IAM role #{name}")
+    Puppet.debug("Creating IAM role #{name}")
 
     iam_client.create_role({
                                role_name: name,
@@ -63,7 +63,7 @@ Puppet::Type.type(:iam_role).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) d
   end
 
   def destroy
-    Puppet.info("Deleting IAM role #{name}")
+    Puppet.debug("Deleting IAM role #{name}")
 
     profiles = get_iam_instance_profiles_for_role(name)
 
