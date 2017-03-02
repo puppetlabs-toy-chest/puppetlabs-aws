@@ -51,7 +51,7 @@ Puppet::Type.newtype(:elb_loadbalancer) do
       matched_listeners = normal_should.collect do |should_listener|
         # Identify the is_listener that matches this should_listener
         is_listener_match = normal_is.select {|i| i['load_balancer_port'] == should_listener['load_balancer_port']}
-        unless is_listener_match
+        unless is_listener_match and is_listener_match.size > 0
           Puppet.debug("Mathing existing listener was not found for #{should_listener['load_balancer_port']}")
           next
         end
