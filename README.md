@@ -1604,7 +1604,38 @@ All Route53 record types use the same parameters:
 #### Type: route53_zone
 
 #####`name`
-*Required* The name of DNS zone group. This is the value of the AWS Name tag.
+*Required* The name of DNS zone. This is the value of the AWS Name tag.
+Trailing dot is optional.
+
+#####`id`
+*Readonly* The AWS-generated alphanumeric ID of the zone, excluding the leading
+"/hostedzone/".
+
+#####`is_private`
+*Optional* True if the zone is private. Private zones require at least one
+associated VPC. False if the zone is public (default). Set at creation and
+cannot be changed.
+
+#####`record_count`
+*Readonly* The AWS-reported number of records in the zone. Includes NS and SOA
+records, so new zones start with two records.
+
+#####`comment`
+*Optional* The comment on the zone.
+
+#####`tags`
+*Optional* The tags for the zone. Accepts a 'key => value' hash of tags.
+Excludes 'Name' tag.
+
+#####`vpcs`
+*Conditional* For private zones, an array of at least one VPC. Each VPC is a
+hash with the following keys:
+
+* `region` — *Required* Region the VPC is in.
+* `vpc` — *Required* Name of the VPC. Puppet will display the VPC ID if it has
+  no name, but cannot manage VPC associations by ID; they must be named.
+
+For public zones, validated but not used.
 
 #### Type: s3_bucket
 

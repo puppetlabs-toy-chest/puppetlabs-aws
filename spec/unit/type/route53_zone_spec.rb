@@ -37,7 +37,7 @@ describe type_class do
   it 'should require a non-blank name' do
     expect {
       type_class.new({ name: '' })
-    }.to raise_error(Puppet::Error, /Empty values are not allowed/)
+    }.to raise_error(Puppet::Error, /Empty zone names are not allowed/)
   end
 
   context 'with a valid name' do
