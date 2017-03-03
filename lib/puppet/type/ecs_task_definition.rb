@@ -28,8 +28,14 @@ Puppet::Type.newtype(:ecs_task_definition) do
     desc 'Read-only revision number of the task definition'
   end
 
-  newproperty(:volumes) do
+  newproperty(:volumes, :array_matching => :all) do
     desc 'An array of hashes to handle for the task'
+
+    def insync?(is)
+      one = provider.class.normalize_values(is)
+      two = provider.class.normalize_values(should)
+      one == two
+    end
   end
 
   newproperty(:container_definitions, :array_matching => :all) do
@@ -41,7 +47,6 @@ Puppet::Type.newtype(:ecs_task_definition) do
       two = provider.class.normalize_values(is)
       one == two
     end
-
   end
 
   newproperty(:role) do
