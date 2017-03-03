@@ -36,6 +36,7 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   def self.vpc_to_hash(region, vpc)
     name = name_from_tag(vpc)
     return {} unless name
+    ec2 = ec2_client(region)
     {
       name: name,
       id: vpc.vpc_id,
@@ -43,6 +44,8 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
       instance_tenancy: vpc.instance_tenancy,
       ensure: :present,
       region: region,
+      enable_dns_support: ec2.describe_vpc_attribute({vpc_id: vpc.vpc_id, attribute: "enableDnsSupport"}).enable_dns_support.value,
+      enable_dns_hostnames: ec2.describe_vpc_attribute({vpc_id: vpc.vpc_id, attribute: "enableDnsHostnames"}).enable_dns_hostnames.value,
       tags: tags_for(vpc),
       dhcp_options: options_name_from_id(region, vpc.dhcp_options_id),
     }
