@@ -886,6 +886,12 @@ block_devices => [
 #####`instance_tenancy`
 *Optional* The supported tenancy options for instances in this VPC. This parameter is set at creation only; it is not affected by updates. Valid values are 'default', 'dedicated'. Defaults to 'default'.
 
+#####`enable_dns_support`
+*Optional* Whether or not DNS resolution is supported for the VPC. Valid values are 'true', 'false'. Defaults to 'true'.
+
+#####`enable_dns_hostnames`
+*Optional* Whether or not instances launched in the VPC get public DNS hostnames. Valid values are 'true', 'false'. Defaults to 'true'.
+
 #####`tags`
 *Optional* The tags to assign to the VPC. Accepts a 'key => value' hash of tags.
 

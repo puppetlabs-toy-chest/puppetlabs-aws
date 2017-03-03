@@ -29,6 +29,24 @@ Puppet::Type.newtype(:ec2_vpc) do
     end
   end
 
+  newproperty(:enable_dns_support) do
+    desc 'Enable DNS support for this VPC.'
+    defaultto :true
+    newvalues(:true, :false)
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
+  newproperty(:enable_dns_hostnames) do
+    desc 'Enable DNS hostnames for this VPC.'
+    defaultto :true
+    newvalues(:true, :false)
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
   newproperty(:instance_tenancy) do
     desc 'The supported tenancy options for instances in this VPC.'
     defaultto 'default'
