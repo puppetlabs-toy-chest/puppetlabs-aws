@@ -178,7 +178,7 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     end
 
     task = {
-      family: @property_hash[:name],
+      family: resource[:name],
       container_definitions: self.class.serialize_container_definitions(container_definitions),
     }
 
