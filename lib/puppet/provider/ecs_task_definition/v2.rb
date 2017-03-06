@@ -169,12 +169,12 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
       end
     end
 
-    Puppet.debug("Registering new task definition for #{@property_hash[:name]}")
+    Puppet.debug("Registering new task definition for #{resource[:name]}")
 
     if containers.size > 0
       container_definitions = containers
     else
-      container_definitions = @property_hash[:container_definitions]
+      container_definitions = resource[:container_definitions]
     end
 
     task = {
