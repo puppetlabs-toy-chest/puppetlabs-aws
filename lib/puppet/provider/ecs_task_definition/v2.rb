@@ -177,8 +177,6 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
       container_definitions = resource[:container_definitions]
     end
 
-    Puppet.debug("#{task}")
-
     task = {
       family: resource[:name],
       container_definitions: self.class.serialize_container_definitions(container_definitions),
@@ -191,6 +189,8 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     if resource[:volumes]
       task[:volumes] = resource[:volumes]
     end
+
+    Puppet.debug("#{task}")
 
     ecs_client.register_task_definition(task)
   end
