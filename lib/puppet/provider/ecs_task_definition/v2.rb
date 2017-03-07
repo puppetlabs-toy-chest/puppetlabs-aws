@@ -13,9 +13,13 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
 
   def self.instances
 
-    task_families = ecs_client.list_task_definition_families({status: 'ACTIVE'}).families
+    task_families_results = ecs_client.list_task_definition_families({status: 'ACTIVE'})
+    task_families = task_families_results.families
 
-    results = task_families.collect do |task_family|
+    next_token = task_families_results.next_token
+    Puppet.debug("next token #{next_token}")
+
+    task_families.collect do |task_family|
 
       begin
         task = ecs_client.describe_task_definition({task_definition: task_family}).task_definition
@@ -154,7 +158,7 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def flush
-    Puppet.debug("Flushing ECS task definition for #{@property_hash[:name]}")
+    Puppet.debug("Flushing ECS task definition for #{resource[:name]}")
 
     containers = []
     if @property_hash[:container_definitions] and @property_flush[:container_definitions]
