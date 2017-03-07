@@ -15,9 +15,18 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
 
     task_families_results = ecs_client.list_task_definition_families({status: 'ACTIVE'})
     task_families = task_families_results.families
-
     next_token = task_families_results.next_token
-    Puppet.debug("next token #{next_token}")
+
+    while next_token
+      Puppet.debug('ecs_task_definition results truncated, proceeding with discovery')
+      response = ecs_client.list_task_definition_families({
+        status: 'ACTIVE',
+        next_token: next_token
+      })
+
+      response.families.each {|f| task_families << f }
+      next_token = response.next_token
+    end
 
     task_families.collect do |task_family|
 
