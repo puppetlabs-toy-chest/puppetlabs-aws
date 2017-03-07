@@ -177,6 +177,8 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
       container_definitions = resource[:container_definitions]
     end
 
+    Puppet.debug("#{container_definitions}")
+
     task = {
       family: resource[:name],
       container_definitions: self.class.serialize_container_definitions(container_definitions),
