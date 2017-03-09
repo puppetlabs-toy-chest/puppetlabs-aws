@@ -39,13 +39,14 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
     option.dhcp_configurations.each do |conf|
       config[conf[:key]] = conf[:values].collect(&:value)
     end
+    domain_name = config.keys.include?('domain-name') ? config['domain-name'].first.split(' ') : nil
     node_type = config.keys.include?('netbios-node-type') ? config['netbios-node-type'].first : nil
     {
       name: name_from_tag(option),
       id: option.dhcp_options_id,
       region: region,
       ensure: :present,
-      domain_name: config['domain-name'],
+      domain_name: domain_name,
       ntp_servers: config['ntp-servers'],
       domain_name_servers: config['domain-name-servers'],
       netbios_name_servers: config['netbios-name-servers'],
@@ -66,6 +67,7 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
     options = []
     ['domain_name', 'ntp_servers', 'domain_name_servers', 'netbios_name_servers', 'netbios_node_type'].each do |key|
       value = resource[key.to_sym]
+      value = value.join(' ') if key.eql?('domain_name') and value.is_a?(Array)
       options << {:key => key.gsub('_', '-'), :values => Array(value)} if value
     end
 
