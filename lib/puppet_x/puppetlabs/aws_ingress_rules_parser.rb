@@ -16,7 +16,7 @@ module PuppetX
             end
             # add default ports if missing
             unless new_rule.key? 'to_port'
-              if rule['protocol'] == 'icpm'
+              if rule['protocol'] == 'icmp'
                 new_rule['from_port']= -1
                 new_rule['to_port']= -1
               else
