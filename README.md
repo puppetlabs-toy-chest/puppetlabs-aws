@@ -333,6 +333,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `kms`: Manage KMS keys and their policies.
 * `rds_db_parameter_group`: Allows read access to DB Parameter Groups.
 * `rds_db_securitygroup`: Sets up an RDS DB Security Group.
+* `rds_db_subnet_group`: Sets up an RDS DB Subnet Group.
 * `rds_instance`: Sets up an RDS Database instance.
 * `route53_a_record`: Sets up a Route53 DNS record.
 * `route53_aaaa_record`: Sets up a Route53 DNS AAAA record.
@@ -1428,6 +1429,23 @@ Details of any EC2 security groups attached to the RDS security group. Read-only
 
 #####`ip_ranges`
 Details of any ip_ranges attached to the RDS security group and their current state. Read-only.
+
+#### Type: rds_db_subnet_group
+
+#####`name`
+*Required* The name of the RDS DB subnet group.
+
+#####`description`
+*Required* A description for the RDS DB subnet group.
+
+#####`region`
+*Required* The region in which to create the subnet group. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
+
+#####`vpc`
+*Required* The name of the VPC to create the subnet group in. This parameter is set at group creation only. It is not affected by updates.
+
+#####`subnets`
+*Required* A list of subnet names to include in the subnet group. AWS requires at least two subnets.
 
 #### Type: rds_instance
 
