@@ -1519,7 +1519,7 @@ is deleted. Defaults to false.
 The name of an associated DB parameter group. Should be a string. This
 parameter is set at creation only; it is not affected by updates.
 
-#####`restore_snapshot
+#####`restore_snapshot`
 Specify the snapshot name to optionally trigger creating the RDS DB from a snapshot.
 
 #####`final_db_snapshot_identifier`
