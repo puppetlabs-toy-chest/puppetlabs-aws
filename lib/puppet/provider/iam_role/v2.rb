@@ -48,6 +48,14 @@ Puppet::Type.type(:iam_role).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) d
     @property_hash[:ensure] = :present
   end
 
+  def policy_document=(value)
+    Puppet.debug('Updating assume_role policy')
+    iam_client.update_assume_role_policy({
+      role_name: @property_hash[:name],
+      policy_document: value,
+    })
+  end
+
   def get_iam_instance_profiles_for_role(role)
     response = iam_client.list_instance_profiles_for_role({
                                                               role_name: role
