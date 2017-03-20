@@ -129,16 +129,19 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       Puppet.info("Restoring DB instance #{name} from snapshot #{resource[:restore_snapshot]}")
       [:engine_version, :backup_retention_period].each { |k| config.delete(k) }
       config[:db_snapshot_identifier] = resource[:restore_snapshot]
-      rds_client(resource[:region]).restore_db_instance_from_db_snapshot(config)
+      response = rds_client(resource[:region]).restore_db_instance_from_db_snapshot(config)
     else
       Puppet.info("Starting DB instance #{name}")
-      rds_client(resource[:region]).create_db_instance(config)
+      response = rds_client(resource[:region]).create_db_instance(config)
     end
+
+    tags = resource[:rds_tags] ? resource[:rds_tags].map { |k,v| {key: k, value: v} } : []
+    tags << {key: 'Name', value: name}
 
     with_retries(:max_tries => 5) do
       rds_client(region).add_tags_to_resource(
-        resources: response.data.db_instance.db_instance_arn,
-        tags: tags_for_resource
+        resource_name: response.data.db_instance.db_instance_arn,
+        tags: tags,
       )
     end
 
