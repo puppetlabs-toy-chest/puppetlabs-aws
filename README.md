@@ -919,7 +919,7 @@ The type of customer gateway. The only currently supported value --- and the def
 *Optional* The region in which to assign the DHCP option set. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 #####`domain_name`
-*Optional* The domain name for the DHCP options. This parameter is set at creation only; it is not affected by updates. Accepts any valid domain.
+*Optional* The domain name for the DHCP options. This parameter is set at creation only; it is not affected by updates. Accepts an array or a single valid domain. An array is converted to a space separated list, as Linux supports. Other OSes may not support more than one according to Amazon.
 
 #####`domain_name_servers`
 *Optional* A list of domain name servers to use for the DHCP options set. This parameter is set at creation only; it is not affected by updates. Accepts an array of domain server names.
@@ -1340,7 +1340,7 @@ Role path (optional)
 
 #####`policy_document`
 A string containing the IAM policy in JSON format which controls which entities may assume this role, e.g. the default:
- 
+
 ```
 {
   "Version": "2012-10-17",
