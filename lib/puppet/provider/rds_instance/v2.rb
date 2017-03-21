@@ -103,7 +103,9 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def create
-    Puppet.info("Starting DB instance #{name}")
+    tags = resource[:rds_tags] ? resource[:rds_tags].map { |k,v| {key: k, value: v} } : []
+    tags << {key: 'Name', value: name}
+
     config = {
       db_instance_identifier: resource[:name],
       db_name: resource[:db_name],
@@ -123,26 +125,38 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       vpc_security_group_ids: resource[:vpc_security_groups],
       backup_retention_period: resource[:backup_retention_period],
       availability_zone: resource[:availability_zone],
+      tags: tags,
     }
 
     if resource[:restore_snapshot]
       Puppet.info("Restoring DB instance #{name} from snapshot #{resource[:restore_snapshot]}")
-      [:engine_version, :backup_retention_period].each { |k| config.delete(k) }
+
+      # Restoring from a snapshot implies these properties and they cannot be
+      # included in the call to the AWS API. If any don't match the resource,
+      # Puppet will (try to) change them next run.
+      remove_from_config = [
+        :allocated_storage,
+        :backup_retention_period,
+        :db_parameter_group_name,
+        :db_security_groups,
+        :engine_version,
+        :master_user_password,
+        :master_username,
+        :vpc_security_group_ids,
+      ]
+
+      if ['mysql', 'mariadb'].include?(resource[:engine].downcase)
+        remove_from_config << :db_name
+      end
+
+      remove_from_config.each { |k| config.delete(k) }
+
       config[:db_snapshot_identifier] = resource[:restore_snapshot]
-      response = rds_client(resource[:region]).restore_db_instance_from_db_snapshot(config)
+
+      rds_client(resource[:region]).restore_db_instance_from_db_snapshot(config)
     else
       Puppet.info("Starting DB instance #{name}")
-      response = rds_client(resource[:region]).create_db_instance(config)
-    end
-
-    tags = resource[:rds_tags] ? resource[:rds_tags].map { |k,v| {key: k, value: v} } : []
-    tags << {key: 'Name', value: name}
-
-    with_retries(:max_tries => 5) do
-      rds_client(region).add_tags_to_resource(
-        resource_name: response.data.db_instance.db_instance_arn,
-        tags: tags,
-      )
+      rds_client(resource[:region]).create_db_instance(config)
     end
 
     @property_hash[:ensure] = :present
