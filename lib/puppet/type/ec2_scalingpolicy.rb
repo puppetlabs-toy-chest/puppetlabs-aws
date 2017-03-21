@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
+
 Puppet::Type.newtype(:ec2_scalingpolicy) do
   @doc = 'Type representing an EC2 scaling policy.'
 
@@ -21,13 +23,8 @@ Puppet::Type.newtype(:ec2_scalingpolicy) do
     end
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to launch the policy.'
-    validate do |value|
-      fail 'region should not contain spaces' if value =~ /\s/
-      fail 'region should not be blank' if value == ''
-      fail 'region should be a String' unless value.is_a?(String)
-    end
   end
 
   newproperty(:adjustment_type) do

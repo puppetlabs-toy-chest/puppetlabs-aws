@@ -178,6 +178,14 @@ This could be because some other process is modifying AWS at the same time."""
         self.class.autoscaling_client(region)
       end
 
+      def self.cloudformation_client(region = default_region)
+        ::Aws::CloudFormation::Client.new(client_config(region))
+      end
+
+      def cloudformation_client(region = default_region)
+        self.class.cloudformation_client(region)
+      end
+
       def self.cloudwatch_client(region = default_region)
         ::Aws::CloudWatch::Client.new(client_config(region))
       end
@@ -218,6 +226,14 @@ This could be because some other process is modifying AWS at the same time."""
         self.class.iam_client(region)
       end
 
+      def self.kms_client(region = default_region)
+        ::Aws::KMS::Client.new(client_config(region))
+      end
+
+      def kms_client(region = default_region)
+        self.class.kms_client(region)
+      end
+
       def self.s3_client(region = default_region)
         ::Aws::S3::Client.new(client_config(region))
       end
@@ -232,6 +248,14 @@ This could be because some other process is modifying AWS at the same time."""
 
       def ecs_client(region = default_region)
         self.class.ecs_client(region)
+      end
+
+      def self.cloudfront_client(region = default_region)
+        ::Aws::CloudFront::Client.new(client_config(region))
+      end
+
+      def cloudfront_client(region = default_region)
+        self.class.cloudfront_client(region)
       end
 
       def tags_for_resource
@@ -266,20 +290,72 @@ This could be because some other process is modifying AWS at the same time."""
         ) unless missing_tags.empty?
       end
 
+      def rds_tags=(value)
+        Puppet.info("Updating RDS tags for #{name} in region #{target_region}")
+        rds = rds_client(target_region)
+        rds.add_tags_to_resource(
+          resource_name: @property_hash[:arn],
+          tags: value.collect { |k,v| { :key => k, :value => v } }
+        ) unless value.empty?
+        missing_tags = rds_tags.keys - value.keys
+        rds.remove_tags_from_resource(
+          resource_name: @property_hash[:arn],
+          tag_keys: missing_tags.collect { |k| { :key => k } }
+        ) unless missing_tags.empty?
+      end
+
       def self.has_name?(hash)
         !hash[:name].nil? && !hash[:name].empty?
       end
 
-      def self.vpc_name_from_id(region, vpc_id)
-        @vpcs ||= name_cache_hash do |ec2, key|
-          response = ec2.describe_vpcs(vpc_ids: [key])
-          if response.data.vpcs.first.to_hash.keys.include?(:group_name)
-            response.data.vpcs.first.group_name
-          elsif response.data.vpcs.first.to_hash.keys.include?(:tags)
-            name_from_tag(response.data.vpcs.first)
-          end
+      # Set up @vpcs. Always call this method before using @vpcs. @vpcs[region]
+      # keeps track of VPC IDs => names discovered per region, to prevent
+      # duplicate API calls.
+      def self.init_vpcs(region)
+        @vpcs ||= {}
+        @vpcs[region] ||= {}
+      end
+
+      def self.vpc_id_from_name(region, vpc_name)
+        self.init_vpcs(region)
+
+        unless @vpcs[region].key(vpc_name)
+          vpc_info = ec2_client(region).describe_vpcs(filters: [
+            {
+              name: 'tag-key',
+              values: ['Name'],
+            },
+            {
+              name: 'tag-value',
+              values: [vpc_name],
+            },
+          ])
+
+          return nil if vpc_info.vpcs.empty?
+
+          vpc_id = vpc_info.vpcs.first['vpc_id']
+          @vpcs[region][vpc_id] = vpc_name
         end
-        @vpcs[[region, vpc_id]]
+
+        @vpcs[region].key(vpc_name)
+      end
+
+      def self.vpc_name_from_id(region, vpc_id)
+        self.init_vpcs(region)
+
+        # Duplicate API calls will be made for unnamed VPCs, since they are
+        # saved with the name nil.
+        unless @vpcs[region][vpc_id]
+          response = ec2_client(region).describe_vpcs(vpc_ids: [vpc_id])
+          @vpcs[region][vpc_id] =
+            if response.data.vpcs.first.to_hash.keys.include?(:group_name)
+              response.data.vpcs.first.group_name
+            elsif response.data.vpcs.first.to_hash.keys.include?(:tags)
+              name_from_tag(response.data.vpcs.first)
+            end
+        end
+
+        @vpcs[region][vpc_id]
       end
 
       def self.security_group_name_from_id(region, group_id)
@@ -327,7 +403,7 @@ This could be because some other process is modifying AWS at the same time."""
         end
       end
 
-      def queue_url_from_name (queue_name )
+      def queue_url_from_name(queue_name )
         sqs = sqs_client(target_region)
         response = sqs.get_queue_url ({queue_name: name})
         response.data.queue_url
@@ -364,6 +440,9 @@ This could be because some other process is modifying AWS at the same time."""
         # normalize_values method for processing.  Returns a hash sorted by keys.
         #
         data = {}
+
+        fail "Invalid data type when attempting normalize of hash: #{hash.class}" unless hash.is_a? Hash
+
         hash.keys.sort_by{|k|k.to_s}.each {|k|
           value = hash[k]
           data[k.to_s] = self.normalize_values(value)
@@ -383,6 +462,7 @@ This could be because some other process is modifying AWS at the same time."""
         # integers to integers, etc.  Array values are recursively normalized.
         # Hash values are normalized using the normalize_hash method.
         #
+        require 'pp'
         if value.is_a? String
           return true if value == 'true'
           return false if value == 'false'
@@ -402,13 +482,37 @@ This could be because some other process is modifying AWS at the same time."""
         elsif value.is_a? Hash
           return self.normalize_hash(value)
         elsif value.is_a? Array
+          value_class_list = value.map(&:class).uniq
+
+          return [] unless value.size > 0
+
+          if value_class_list.include? String
+            return value.sort
+          elsif value_class_list.include? Hash
+            value_list = value
+          else
+            value_list = value
+          end
+
           #return nil if value.size == 0
-          results = value.map {|v|
+          results = value_list.map {|v|
             self.normalize_values(v)
           }
-          class_list = results.map {|v| v.class}.uniq
-          if class_list.include? Hash
-            results = results.sort_by{|k| k.flatten}
+
+          results_class_list = results.map(&:class).uniq
+          if results_class_list.include? Hash
+            nested_results__value_class_list = results.collect {|i|
+              i.collect {|k,v|
+                v.class
+              }
+            }.flatten.uniq
+
+            # If we've got a nestd hash, this sorting will fail
+            unless nested_results__value_class_list.include? Hash
+              results = results.sort_by{|k|
+                k.flatten
+              }
+            end
           end
           return results
         else

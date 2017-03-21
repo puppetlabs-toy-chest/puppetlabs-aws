@@ -5,12 +5,6 @@ provider_class = Puppet::Type.type(:s3_bucket).provider(:v2)
 
 describe provider_class do
 
-  before do
-    ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-    ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-    ENV['AWS_REGION'] = 'us-west-2'
-  end
-
   context 'with the minimum params' do
     let(:resource) {
       Puppet::Type.type(:s3_bucket).new(

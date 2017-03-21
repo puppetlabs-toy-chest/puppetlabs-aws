@@ -1,46 +1,56 @@
---- 
-  http_interactions: 
-    - request: 
-        method: post
-        uri: "https://route53.amazonaws.com/2013-04-01/hostedzone"
-        body: 
-          encoding: UTF-8
-          string: "<CreateHostedZoneRequest xmlns=\x22https://route53.amazonaws.com/doc/2013-04-01/\x22>\n  <Name>devopscentral.com</Name>\n  <CallerReference>e1277a98454434fa3b1926676a89f73a</CallerReference>\n</CreateHostedZoneRequest>\n"
-        headers: 
-          Content-Type: 
-            - ""
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
-          Date: 
-            - "Tue, 07 Oct 2014 11:18:08 GMT"
-          X-Amzn-Authorization: 
-            - "AWS3-HTTPS AWSAccessKeyId=redacted,Algorithm=HmacSHA256,Signature=redacted"
-          Content-Length: 
-            - "210"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 201
-          message: Created
-        headers: 
-          X-Amzn-Requestid: 
-            - "9d3fda45-4e13-11e4-b329-1de520403147"
-          Location: 
-            - "https://route53.amazonaws.com/2013-04-01//hostedzone/Z1WG8P3OIYT9CD"
-          Content-Type: 
-            - text/xml
-          Content-Length: 
-            - "719"
-          Date: 
-            - "Tue, 07 Oct 2014 11:18:07 GMT"
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0"?>
-            <CreateHostedZoneResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><HostedZone><Id>/hostedzone/Z1WG8P3OIYT9CD</Id><Name>devopscentral.com.</Name><CallerReference>e1277a98454434fa3b1926676a89f73a</CallerReference><Config/><ResourceRecordSetCount>2</ResourceRecordSetCount></HostedZone><ChangeInfo><Id>/change/C373O1KYQE448G</Id><Status>PENDING</Status><SubmittedAt>2014-10-07T11:18:07.818Z</SubmittedAt></ChangeInfo><DelegationSet><NameServers><NameServer>ns-302.awsdns-37.com</NameServer><NameServer>ns-2003.awsdns-58.co.uk</NameServer><NameServer>ns-695.awsdns-22.net</NameServer><NameServer>ns-1045.awsdns-02.org</NameServer></NameServers></DelegationSet></CreateHostedZoneResponse>
-        http_version: 
-      recorded_at: "Tue, 07 Oct 2014 11:18:08 GMT"
-  recorded_with: "VCR 2.9.3"
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://route53.amazonaws.com/2013-04-01/hostedzone
+    body:
+      encoding: UTF-8
+      string: |
+        <CreateHostedZoneRequest xmlns="https://route53.amazonaws.com/doc/2013-04-01/">
+          <Name>devopscentral.com.</Name>
+          <CallerReference>513225554085e039e1670470be830f76</CallerReference>
+          <HostedZoneConfig>
+            <Comment></Comment>
+          </HostedZoneConfig>
+        </CreateHostedZoneRequest>
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.3 x86_64-darwin15
+      X-Amz-Date:
+      - 20170228T211309Z
+      X-Amz-Content-Sha256:
+      - 6f431940676ccbff5e8b9307a606e65cd77b8db6ce2acf5136bb05e579e59ec4
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170228/us-east-1/route53/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=ffdd04d87467fed66def140e2ef1e961e1c5f8f2cb0110d3c10aa018c42df7a1
+      Content-Length:
+      - '278'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      X-Amzn-Requestid:
+      - b493dfb7-fdfa-11e6-bd0d-9d511825b2e3
+      Location:
+      - https://route53.amazonaws.com/2013-04-01/hostedzone/Z1Y34IMK1IXRPL
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '759'
+      Date:
+      - Tue, 28 Feb 2017 21:13:09 GMT
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0"?>
+        <CreateHostedZoneResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><HostedZone><Id>/hostedzone/Z1Y34IMK1IXRPL</Id><Name>devopscentral.com.</Name><CallerReference>513225554085e039e1670470be830f76</CallerReference><Config><PrivateZone>false</PrivateZone></Config><ResourceRecordSetCount>2</ResourceRecordSetCount></HostedZone><ChangeInfo><Id>/change/C3EI17BP95EZVS</Id><Status>PENDING</Status><SubmittedAt>2017-02-28T21:13:09.561Z</SubmittedAt></ChangeInfo><DelegationSet><NameServers><NameServer>ns-235.awsdns-29.com</NameServer><NameServer>ns-2001.awsdns-58.co.uk</NameServer><NameServer>ns-953.awsdns-55.net</NameServer><NameServer>ns-1398.awsdns-46.org</NameServer></NameServers></DelegationSet></CreateHostedZoneResponse>
+    http_version: 
+  recorded_at: Tue, 28 Feb 2017 21:13:09 GMT
+recorded_with: VCR 3.0.3

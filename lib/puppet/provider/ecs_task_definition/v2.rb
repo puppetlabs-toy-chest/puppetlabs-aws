@@ -13,9 +13,22 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
 
   def self.instances
 
-    task_families = ecs_client.list_task_definition_families({status: 'ACTIVE'}).families
+    task_families_results = ecs_client.list_task_definition_families({status: 'ACTIVE'})
+    task_families = task_families_results.families
+    next_token = task_families_results.next_token
 
-    results = task_families.collect do |task_family|
+    while next_token
+      Puppet.debug('Results truncated, proceeding with discovery')
+      response = ecs_client.list_task_definition_families({
+        status: 'ACTIVE',
+        next_token: next_token
+      })
+
+      response.families.each {|f| task_families << f }
+      next_token = response.next_token
+    end
+
+    task_families.collect do |task_family|
 
       begin
         task = ecs_client.describe_task_definition({task_definition: task_family}).task_definition
@@ -25,17 +38,31 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
       end
 
       container_defs = deserialize_container_definitions(task.container_definitions)
+      if task.task_role_arn
+        task_role = /arn:aws:iam:.*:role\/(.*)/.match(task.task_role_arn)[1]
+      end
+
+      if task.volumes
+        task_volumes = task.volumes.collect do |v|
+          {
+            name: v.name,
+            host: {
+              source_path: v.host.source_path
+            }
+          }
+        end
+      end
 
       new({
         name: task.family,
         ensure: :present,
         arn: task.task_definition_arn,
         revision: task.revision,
-        volumes: task.volumes,
+        volumes: task_volumes,
         container_definitions: container_defs,
+        role: task_role
       })
-    end
-    results.flatten.select {|i| i }
+    end.compact
   end
 
   def self.prefetch(resources)
@@ -103,10 +130,20 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def create
-    ecs_client.register_task_definition({
+    task = {
       family: resource[:name],
       container_definitions: self.class.serialize_container_definitions(resource[:container_definitions]),
-    })
+    }
+
+    if resource[:role]
+      task[:task_role_arn] = resource[:role]
+    end
+
+    if resource[:volumes]
+      task[:volumes] = resource[:volumes]
+    end
+
+    ecs_client.register_task_definition(task)
     @property_hash[:ensure] = :present
   end
 
@@ -119,6 +156,14 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
 
   def container_definitions=(value)
     @property_flush[:container_definitions] = value
+  end
+
+  def role=(value)
+    @property_flush[:role] = value
+  end
+
+  def volumes=(value)
+    @property_flush[:volumes] = value
   end
 
   def flush
@@ -137,16 +182,28 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
       end
     end
 
-    if containers.size > 0
-      Puppet.debug("Registering new task definition for #{@property_hash[:name]}")
+    Puppet.debug("Registering new task definition for #{@property_hash[:name]}")
 
-      ecs_client.register_task_definition({
-        family: @property_hash[:name],
-        container_definitions: self.class.serialize_container_definitions(containers),
-      })
+    if containers.size > 0
+      container_definitions = containers
     else
-      Puppet.debug("No container modifications needed on ECS task #{@property_hash[:name]}")
+      container_definitions = @property_hash[:container_definitions]
     end
+
+    task = {
+      family: @property_hash[:name],
+      container_definitions: self.class.serialize_container_definitions(container_definitions),
+    }
+
+    if resource[:role]
+      task[:task_role_arn] = resource[:role]
+    end
+
+    if resource[:volumes]
+      task[:volumes] = resource[:volumes]
+    end
+
+    ecs_client.register_task_definition(task)
   end
 
   def rectify_container_delta(is_containers, should_containers)

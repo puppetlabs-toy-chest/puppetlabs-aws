@@ -34,6 +34,11 @@ describe "rds_instance" do
         :multi_az => false,
         :skip_final_snapshot => true,
         :backup_retention_period => 5,
+        :rds_tags => {
+          :department => 'engineering',
+          :project    => 'cloud',
+          :created_by => 'aws-acceptance'
+        },
       }
 
       @result = PuppetManifest.new(@template, @config).apply
@@ -56,6 +61,10 @@ describe "rds_instance" do
 
     it 'with the specified name' do
       expect(@rds_instance.db_instance_identifier).to eq(@config[:name])
+    end
+
+    it "with the specified tags" do
+      expect(@aws.tag_difference(@rds_instance, @config[:rds_tags])).to be_empty
     end
 
     it 'with the specified db_name' do

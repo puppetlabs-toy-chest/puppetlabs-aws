@@ -2,64 +2,78 @@ require 'spec_helper'
 
 provider_class = Puppet::Type.type(:route53_zone).provider(:v2)
 
-ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-ENV['AWS_REGION'] = 'sa-east-1'
-
 describe provider_class do
 
-  context 'with the minimum params' do
-    let(:resource) { Puppet::Type.type(:route53_zone).new(
-      name: 'devopscentral.com.',
-    )}
+  context 'with the minimum params for a public zone' do
+    let(:resource_hash) {
+      {
+        name: 'devopscentral.com.',
+      }
+    }
+
+    let(:resource) {
+      Puppet::Type.type(:route53_zone).new(resource_hash)
+    }
+
+    let(:resources) {
+      {
+        'devopscentral.com.' => resource,
+      }
+    }
 
     let(:provider) { resource.provider }
 
-    let(:instance) { provider.class.instances.first }
 
     it 'should be an instance of the ProviderV2' do
       expect(provider).to be_an_instance_of Puppet::Type::Route53_zone::ProviderV2
     end
 
     describe 'self.prefetch' do
-      it 'exists' do
-        VCR.use_cassette('zone-setup') do
-          provider.class.instances
-          provider.class.prefetch({})
-        end
-      end
-    end
-
-    describe 'exists?' do
-      it 'should correctly report non-existent zones' do
-        VCR.use_cassette('no-zone-named') do
-          expect(provider.exists?).to be_falsy
-        end
-      end
-
-      it 'should correctly find existing zones' do
-        VCR.use_cassette('zone-named') do
-          expect(instance.exists?).to be_truthy
+      it 'should find nothing to prefetch' do
+        VCR.use_cassette('init-zone') do
+          zones = provider.class.prefetch(resources)
+          expect(zones.empty?).to be_truthy
         end
       end
     end
 
     describe 'create' do
-      it 'should send a request to the EC2 API to create the zone' do
+      it 'should create the test zone' do
         VCR.use_cassette('create-zone') do
-          expect(provider.create).to be_truthy
+          provider.create
+          expect(provider.exists?).to be_truthy
+        end
+      end
+
+      it 'should find the test zone with the correct properties after it is created' do
+        VCR.use_cassette('zone-exists') do
+          zones = provider.class.prefetch(resources)
+          zone = zones.first
+          expect(zone.exists?).to be_truthy
+          expect(zone.name).to eq('devopscentral.com.')
+          expect(zone.is_private).to be_falsy
+          expect(zone.tags.empty?).to be_truthy
         end
       end
     end
 
-    describe 'destroy' do
-      it 'should send a request to the EC2 API to destroy the zone' do
-        VCR.use_cassette('destroy-zone') do
-          expect(provider.destroy).to be_truthy
+    describe 'destory' do
+      it 'should destory the test zone' do
+        VCR.use_cassette('destory-zone') do
+          zones = provider.class.prefetch(resources)
+          zone = zones.first
+          zone.destroy
+          expect(zone.exists?).to be_falsy
+        end
+      end
+
+      it 'should not find the test zone after it is destroyed' do
+        VCR.use_cassette('zone-gone') do
+          zones = provider.class.prefetch(resources)
+          expect(zones.empty?).to be_truthy
         end
       end
     end
-
   end
 
 end

@@ -16,6 +16,8 @@ describe type_class do
       :cidr_block,
       :dhcp_options,
       :region,
+      :enable_dns_support,
+      :enable_dns_hostnames,
       :instance_tenancy,
     ]
   end
@@ -57,7 +59,7 @@ describe type_class do
   it 'region should not contain spaces' do
     expect {
       type_class.new(:name => 'sample', :region => 'sa east 1')
-    }.to raise_error(Puppet::ResourceError, /region should not contain spaces/)
+    }.to raise_error(Puppet::ResourceError, /region should be a valid AWS region/)
   end
 
   it 'should order tags on output' do
@@ -72,6 +74,38 @@ describe type_class do
     it "should require #{property} to be a string" do
       expect(type_class).to require_string_for(property)
     end
+  end
+
+  it 'should default to dns support enabled' do
+    vpc = type_class.new({:name => 'sample'})
+    expect(vpc[:enable_dns_support]).to eq(:true)
+  end
+
+  it 'should default to dns hostnames enabled' do
+    vpc = type_class.new({:name => 'sample'})
+    expect(vpc[:enable_dns_hostnames]).to eq(:true)
+  end
+
+  it 'should not allow invalid values for dns support' do
+    expect {
+      type_class.new({:name => 'sample', :enable_dns_support => 'invalid'})
+    }.to raise_error(Puppet::Error)
+  end
+
+  it 'should not allow invalid values for dns hostnames' do
+    expect {
+      type_class.new({:name => 'sample', :enable_dns_hostnames => 'invalid'})
+    }.to raise_error(Puppet::Error)
+  end
+
+  it 'should allow valid values for dns support' do
+    vpc = type_class.new({:name => 'sample', :enable_dns_support => false})
+    expect(vpc[:enable_dns_support]).to eq(:false)
+  end
+
+  it 'should allow valid values for dns hostnames' do
+    vpc = type_class.new({:name => 'sample', :enable_dns_hostnames => false})
+    expect(vpc[:enable_dns_hostnames]).to eq(:false)
   end
 
   it "should require tags to be a hash" do

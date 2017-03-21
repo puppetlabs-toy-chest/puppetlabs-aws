@@ -45,29 +45,9 @@ to model the relationships between different components.
 
 ###Installing the aws module
 
-1. Install the retries gem and the Amazon AWS Ruby SDK gem.
+1. Install the retries gem and the Amazon AWS Ruby SDK gem, using the same Ruby used by Puppet. For Puppet 4.x and beyond, install the gems with this command:
 
-    * If you're using open source Puppet, the SDK gem should be installed into the same Ruby used by Puppet. Install the gems with these commands:
-
-      `gem install aws-sdk-core`
-
-      `gem install retries`
-
-  * If you're running Puppet Enterprise, install both the gems with this command:
-
-      `/opt/puppet/bin/gem install aws-sdk-core retries`
-
-  * If you're running Puppet Enterprise 2015.2.0 or newer, install both the gems with this command:
-
-      `/opt/puppetlabs/puppet/bin/gem install aws-sdk-core retries`
-
-  This allows the gems to be used by the Puppet Enterprise Ruby.
-
-  * If you're running [Puppet Server](https://github.com/puppetlabs/puppet-server), you need to make both gems available to JRuby with:
-
-      `/opt/puppet/bin/puppetserver gem install aws-sdk-core retries`
-
-  Once the gems are installed, restart Puppet Server.
+  `/opt/puppetlabs/puppet/bin/gem install aws-sdk-core retries`
 
 2. Set these environment variables for your AWS access credentials:
 
@@ -192,18 +172,29 @@ elb_loadbalancer { 'name-of-load-balancer':
   availability_zones      => ['us-east-1a', 'us-east-1b'],
   instances               => ['name-of-instance', 'another-instance'],
   security_groups         => ['name-of-security-group'],
-  listeners               => [{
-    protocol              => 'HTTP',
-    load_balancer_port    => 80,
-    instance_protocol     => 'HTTP',
-    instance_port         => 80,
-  },{
-    protocol              => 'HTTPS',
-    load_balancer_port    => 443,
-    instance_protocol     => 'HTTPS',
-    instance_port         => 8080,
-    ssl_certificate_id    => 'arn:aws:iam::123456789000:server-certificate/yourcert.com',
-  }],
+  listeners               => [
+    {
+      protocol              => 'HTTP',
+      load_balancer_port    => 80,
+      instance_protocol     => 'HTTP',
+      instance_port         => 80,
+    },{
+      protocol              => 'HTTPS',
+      load_balancer_port    => 443,
+      instance_protocol     => 'HTTPS',
+      instance_port         => 8080,
+      ssl_certificate_id    => 'arn:aws:iam::123456789000:server-certificate/yourcert.com',
+      policies              =>  [
+        {
+          'policy_type'       => 'SSLNegotiationPolicyType',
+          'policy_attributes' => {
+            'Protocol-TLSv1.1' => false,
+            'Protocol-TLSv1.2' => true,
+          }
+        }
+      ]
+    }
+  ],
   health_check            => {
     'healthy_threshold'   => '10',
     'interval'            => '30',
@@ -311,8 +302,11 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 
 ### Types
 
+* `cloudformation_stack`: Create, update, or destroy a CloudFormation Stack.
+* `cloudfront_distribution`: Sets up a CloudFront distribution.
 * `ec2_instance`: Sets up an EC2 instance.
 * `ec2_securitygroup`: Sets up an EC2 security group.
+* `ec2_volume`: Sets up an EC2 EBS volume.
 * `elb_loadbalancer`: Sets up an ELB load balancer.
 * `cloudwatch_alarm`: Sets up a Cloudwatch Alarm.
 * `ec2_autoscalinggroup`: Sets up an EC2 auto scaling group.
@@ -336,6 +330,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `iam_policy_attachment`: Manage an IAM 'managed' policy attachments.
 * `iam_role`: Manage an IAM role.
 * `iam_user`: Manage IAM users.
+* `kms`: Manage KMS keys and their policies.
 * `rds_db_parameter_group`: Allows read access to DB Parameter Groups.
 * `rds_db_securitygroup`: Sets up an RDS DB Security Group.
 * `rds_instance`: Sets up an RDS Database instance.
@@ -353,6 +348,149 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `sqs_queue`: Sets up an SQS queue.
 
 ###Parameters
+
+#### Type: cloudformation_stack
+
+##### `capabilities`
+*Optional* The list of stack capabilities, including CAPABILITY_IAM,
+CAPABILITY_NAMED_IAM, an empty list, or unspecified.
+
+##### `change_set_id`
+*Readonly* Unique identifier of the stack.
+
+##### `creation_time`
+*Readonly* The time at which the stack was created.
+
+##### `description`
+*Readonly* A user-defined description found in the cloudformation template associated with the stack.
+
+##### `disable_rollback`
+*Optional* Whether to disable rollback on stack creation failures.
+Valid values are `true`, `false`.
+
+##### `ensure`
+*Required* The ensure value for the stack.
+
+"present" will create the stack but not apply updates.
+
+"updated" will create or apply any updates to the stack.
+
+"absent" will delete the stack.
+
+Valid values are `present`, `updated`, `absent`.
+
+##### `id`
+*Readonly* The unique ID of the stack.
+
+##### `last_updated_time`
+*Readonly* The time the stack was last updated.
+
+##### `name`
+*Required* The name of the stack.
+
+##### `notification_arns`
+*Optional* List of SNS topic ARNs to which stack related events are published.
+
+##### `on_failure`
+*Optional* Determines what action will be taken if stack creation fails. This must
+be one of: "DO_NOTHING", "ROLLBACK", or "DELETE". You can specify either
+on_failure or disable_rollback, but not both.
+Valid values are `DO_NOTHING`, `ROLLBACK`, `DELETE`.
+
+##### `outputs`
+*Readonly* A hash of stack outputs.
+
+##### `parameters`
+*Optional* A hash of input parameters.
+
+##### `policy_body`
+*Optional* Structure containing the stack policy body. For more information, go to
+Prevent Updates to Stack Resources in the AWS CloudFormation User Guide.
+You can specify either the policy_body or the policy_url parameter, but
+not both.
+
+##### `policy_url`
+*Optional* Location of a file containing the stack policy. The URL must point to a
+policy (maximum size: 16 KB) located in an S3 bucket in the same region
+as the stack. You can specify either the policy_body or the policy_url
+parameter, but not both.
+
+##### `region`
+*Required* The region in which to launch the stack.
+
+##### `resource_types`
+*Optional* The list of resource types that you have permissions to work with for
+this stack.
+
+##### `role_arn`
+*Optional* The Amazon Resource Name (ARN) of an AWS Identity and Access Management
+(IAM) role that is associated with the stack.
+
+##### `status`
+*Readonly* The status of the stack.
+Valid values are `CREATE_IN_PROGRESS`, `CREATE_FAILED`,
+`CREATE_COMPLETE`, `ROLLBACK_IN_PROGRESS`, `ROLLBACK_FAILED`,
+`ROLLBACK_COMPLETE`, `DELETE_IN_PROGRESS`, `DELETE_FAILED`,
+`DELETE_COMPLETE`, `UPDATE_IN_PROGRESS`,
+`UPDATE_COMPLETE_CLEANUP_IN_PROGRESS`, `UPDATE_COMPLETE`,
+`UPDATE_ROLLBACK_IN_PROGRESS`, `UPDATE_ROLLBACK_FAILED`,
+`UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS`,
+`UPDATE_ROLLBACK_COMPLETE`, `REVIEW_IN_PROGRESS`.
+
+##### `tags`
+*Optional* The tags for the instance.
+
+##### `template_body`
+*Optional* Structure containing the template body with a minimum length of 1 byte
+and a maximum length of 51,200 bytes. For more information, go to
+Template Anatomy in the AWS CloudFormation User Guide.
+
+##### `template_url`
+*Optional* Location of file containing the template body. The URL must point to a
+template (max size: 460,800 bytes) that is located in an Amazon S3
+bucket. For more information, go to the Template Anatomy in the AWS
+CloudFormation User Guide.
+
+##### `timeout_in_minutes`
+*Optional* The amount of time within which stack creation should complete.
+
+#### Type: cloudfront_distribution
+
+##### `ensure`
+Specifies the basic state of the resource. Valid values are 'present', 'absent'.
+
+##### `arn`
+The AWS-generated ARN of the distribution. Read only.
+
+##### `id`
+The AWS-generated ID of the distribution. Read only.
+
+##### `status`
+The AWS-reported status of the distribution. Read only.
+
+##### `comment`
+*Optional* The comment on the distribution.
+
+##### `enabled`
+*Optional* Whether the distribution is enabled.
+
+##### `price_class`
+*Optional* The price class of the distribution. Takes one of 'all' (default), '100', '200'.
+
+##### `origins`
+*Required* An array of at least one origin. Each origin is a hash with the following keys:
+
+* `type` — *Required* The origin type. One of 'custom', 'S3' (not yet supported).
+* `id` — *Required* The origin ID. Must be unique within the distribution. Used to identify the origin for caching rules.
+* `domain_name` — *Required* The origin domain name.
+* `path` — *Optional* The origin path. Defaults to no path.
+* `http_port` — *Required for custom origins* The port the origin is listening on for HTTP connections.
+* `https_port` — *Required for custom origins* The port the origin is listening on for HTTPS connections.
+* `protocol_policy` — *Required for custom origins* Which protocols the origin accepts. One of 'http-only', 'https-only', 'match-viewer'.
+* `protocols` — *Required for custom origins* An array of SSL and TLS versions the origin accepts. At least one of 'SSLv3', 'TLSv1', 'TLSv1.1', 'TLSv1.2'.
+
+##### `tags`
+*Optional* The tags for the distribution. Accepts a 'key => value' hash of tags. Excludes 'Name' tag.
 
 ####Type: ec2_instance
 
@@ -408,13 +546,15 @@ The name of the key pair associated with this instance. This must be an existing
 *Optional* Whether the instance stops or terminates when you initiate shutdown from the instance. This parameter is set at creation only; it is not affected by updates. Valid values are 'stop', 'terminate'. Defaults to 'stop'.
 
 #####`block_devices`
-*Optional* A list of block devices to associate with the instance. This parameter is set at creation only; it is not affected by updates. Accepts an array of hashes with the device name and either the volume size or snapshot id specified:
+*Optional* A list of block devices to associate with the instance. This parameter is set at creation only; it is not affected by updates. Accepts an array of hashes with the device name, volume size, delete on termination flag, and volume type specified:
 
 ~~~
 block_devices => [
   {
-    device_name  => '/dev/sda1',
-    volume_size  => 8,
+    device_name           => '/dev/sda1',
+    volume_size           => 8,
+    delete_on_termination => 'true',
+    volume_type'          => 'gp2',
   }
 ]
 ~~~
@@ -527,6 +667,35 @@ back- end instances.  Accepts a hash with the following keys:
 
 #####`scheme`
 *Optional* Whether the load balancer is internal or public facing. This parameter is set at creation only; it is not affected by updates. Valid values are 'internal', 'internet-facing'. Default value is 'internet-facing' and makes the load balancer publicly available.
+
+#### Type: ec2_volume
+
+##### `name`
+*Required* The name of the volume
+
+##### `region`
+*Required* The region in which to create the volume. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
+
+##### `size`
+*Conditional* The size of the EBS volume in GB. if restoring from snapshot this parameter is not required.
+
+##### `iops`
+*Optional* Only valid for Provisioned IOPS SSD volumes. The number of I/O operations per second (IOPS) to provision for the volume, with a maximum ratio of 50 IOPS/GiB.
+
+##### `availability_zone`
+*Required* The availability zones in which to create the volume. Accepts an array of availability zone codes. For valid availability zone codes, see [AWS Regions and Availability Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html).
+
+##### `volume_type`
+*Required* The volume type. This can be gp2 for General Purpose SSD, io1 for Provisioned IOPS SSD, st1 for Throughput Optimized HDD, sc1 for Cold HDD, or standard for Magnetic volumes.
+
+##### `encrypted`
+*Optional* Specifies whether the volume should be encrypted. Encrypted Amazon EBS volumes may only be attached to instances that support Amazon EBS encryption. Volumes that are created from encrypted snapshots are automatically encrypted. There is no way to create an encrypted volume from an unencrypted snapshot or vice versa.
+
+##### `kms_key_id`
+*Optional* The full ARN of the AWS Key Management Service (AWS KMS) customer master key (CMK) to use when creating the encrypted volume. This parameter is only required if you want to use a non-default CMK; if this parameter is not specified, the default CMK for EBS is used.
+
+##### `snapshot_id`
+*Optional* The snapshot from which to create the volume.
 
 #### Type: cloudwatch_alarm
 
@@ -709,6 +878,12 @@ block_devices => [
 #####`instance_tenancy`
 *Optional* The supported tenancy options for instances in this VPC. This parameter is set at creation only; it is not affected by updates. Valid values are 'default', 'dedicated'. Defaults to 'default'.
 
+#####`enable_dns_support`
+*Optional* Whether or not DNS resolution is supported for the VPC. Valid values are 'true', 'false'. Defaults to 'true'.
+
+#####`enable_dns_hostnames`
+*Optional* Whether or not instances launched in the VPC get public DNS hostnames. Valid values are 'true', 'false'. Defaults to 'true'.
+
 #####`tags`
 *Optional* The tags to assign to the VPC. Accepts a 'key => value' hash of tags.
 
@@ -744,7 +919,7 @@ The type of customer gateway. The only currently supported value --- and the def
 *Optional* The region in which to assign the DHCP option set. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
 #####`domain_name`
-*Optional* The domain name for the DHCP options. This parameter is set at creation only; it is not affected by updates. Accepts any valid domain.
+*Optional* The domain name for the DHCP options. This parameter is set at creation only; it is not affected by updates. Accepts an array or a single valid domain. An array is converted to a space separated list, as Linux supports. Other OSes may not support more than one according to Amazon.
 
 #####`domain_name_servers`
 *Optional* A list of domain name servers to use for the DHCP options set. This parameter is set at creation only; it is not affected by updates. Accepts an array of domain server names.
@@ -1012,8 +1187,6 @@ In the case where a user wishes to remove an option from the container, one of t
 
 It's a small kludge, I know.
 
-
-
 ##### `container_definitions`
 An array of hashes representing the container definition.  See the example
 above.
@@ -1022,7 +1195,17 @@ above.
 *Required* The name of the task to manage.
 
 ##### `volumes`
-An array of hashes to handle for the task.
+An array of hashes to handle for the task.  The hashes representing a volume should be in the following form:
+
+```
+{
+  name => "StringNameForReference",
+  host => {
+    source_path => "/some/path",
+  },
+}
+
+```
 
 ##### `replace_image`
 A boolean to turn off the replacement of container images.  This enables Puppet
@@ -1031,6 +1214,10 @@ to create, but not modify the image of a container once created.
 This is useful in environments where external CI tooling is responsible for
 modifying the image of a container, allowing a dualistic approach for managing
 ECS.
+
+##### `role`
+A string of the short name or full ARN of the IAM role that containers in this task should assume.
+
 
 #### Type: iam_group
 
@@ -1153,7 +1340,7 @@ Role path (optional)
 
 #####`policy_document`
 A string containing the IAM policy in JSON format which controls which entities may assume this role, e.g. the default:
- 
+
 ```
 {
   "Version": "2012-10-17",
@@ -1185,6 +1372,23 @@ iam_user { 'bob':
   ensure => present,
 }
 ```
+
+#### Type: kms
+The `kms` type manages KMS key lifecycle and their policies.  The name of the
+resource is prefixed with `alias/` to set the alias of the KMS key, since keys
+themselves don't have any notion of name, outside of an attached alias.
+
+``` Puppet
+kms { 'somekey':
+  ensure => present,
+  policy => template('my/policy.json'),
+}
+```
+
+The above resource may be viewable elsewhere as `alias/somekey`.
+
+#####`policy`
+The JSON policy document to manage on the given KMS key.
 
 #### Type: rds_db_parameter_group
 
@@ -1315,7 +1519,7 @@ is deleted. Defaults to false.
 The name of an associated DB parameter group. Should be a string. This
 parameter is set at creation only; it is not affected by updates.
 
-#####`restore_snapshot
+#####`restore_snapshot`
 Specify the snapshot name to optionally trigger creating the RDS DB from a snapshot.
 
 #####`final_db_snapshot_identifier`
@@ -1324,6 +1528,9 @@ that skip_final_snapshot must be set to false.
 
 #####`backup_retention_period`
 The number of days to retain backups. Defaults to 30 days.
+
+#####`rds_tags`
+*Optional* The tags for the instance. Accepts a 'key => value' hash of tags.
 
 #### Type: route53
 
@@ -1377,7 +1584,38 @@ All Route53 record types use the same parameters:
 #### Type: route53_zone
 
 #####`name`
-*Required* The name of DNS zone group. This is the value of the AWS Name tag.
+*Required* The name of DNS zone. This is the value of the AWS Name tag.
+Trailing dot is optional.
+
+#####`id`
+*Readonly* The AWS-generated alphanumeric ID of the zone, excluding the leading
+"/hostedzone/".
+
+#####`is_private`
+*Optional* True if the zone is private. Private zones require at least one
+associated VPC. False if the zone is public (default). Set at creation and
+cannot be changed.
+
+#####`record_count`
+*Readonly* The AWS-reported number of records in the zone. Includes NS and SOA
+records, so new zones start with two records.
+
+#####`comment`
+*Optional* The comment on the zone.
+
+#####`tags`
+*Optional* The tags for the zone. Accepts a 'key => value' hash of tags.
+Excludes 'Name' tag.
+
+#####`vpcs`
+*Conditional* For private zones, an array of at least one VPC. Each VPC is a
+hash with the following keys:
+
+* `region` — *Required* Region the VPC is in.
+* `vpc` — *Required* Name of the VPC. Puppet will display the VPC ID if it has
+  no name, but cannot manage VPC associations by ID; they must be named.
+
+For public zones, validated but not used.
 
 #### Type: s3_bucket
 

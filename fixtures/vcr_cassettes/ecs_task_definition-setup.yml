@@ -1,0 +1,395 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"status":"ACTIVE"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListTaskDefinitionFamilies
+      X-Amz-Date:
+      - 20170111T232132Z
+      X-Amz-Content-Sha256:
+      - 264e28f424ac2f00738ee11c418ac9a1666d7f44940f512ab9a9e105711a2f39
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=e6fc3f2ca3d12cf9affa6da64fcc74a9cb3d2f11750a89ac4c58820a1bc62a3d
+      Content-Length:
+      - '19'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 23:21:33 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '54'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b06f5f7c-d854-11e6-b3b3-f758afa069bf
+    body:
+      encoding: UTF-8
+      string: '{"families":["netflix-ice","netflix-ice2","testtask"]}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 23:21:33 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":"netflix-ice"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeTaskDefinition
+      X-Amz-Date:
+      - 20170111T232133Z
+      X-Amz-Content-Sha256:
+      - 75840101855fab3849b65b3c028f259060cd7e7d9616c8a57ba19fda19df23ae
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=8aa83515074c7e6c4463958892642088563f972021d6c40194e76100834fbf8c
+      Content-Length:
+      - '32'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 23:21:33 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '473'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b085f3c1-d854-11e6-b3b3-f758afa069bf
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":{"containerDefinitions":[{"cpu":1024,"environment":[{"name":"two","value":"2"},{"name":"one","value":"one"}],"essential":true,"image":"debian:jessie17","memory":512,"mountPoints":[],"name":"zleslietesting","portMappings":[{"containerPort":8081,"hostPort":8082,"protocol":"tcp"}],"volumesFrom":[]}],"family":"netflix-ice","revision":52,"status":"ACTIVE","taskDefinitionArn":"arn:aws:ecs:us-west-2:123456789012:task-definition/netflix-ice:52","volumes":[]}}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 23:21:33 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":"netflix-ice2"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeTaskDefinition
+      X-Amz-Date:
+      - 20170111T232133Z
+      X-Amz-Content-Sha256:
+      - 7d85761083e15ebb6d4a5acd43a04c5df9b4ac443705060eac6a533421584ce1
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=821478d7343fb4ac882e12883a94b3371e6345f5262d3f7f397b069d52f745db
+      Content-Length:
+      - '33'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 23:21:33 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '473'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b099f1c9-d854-11e6-ba13-fd5817d08f74
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":{"containerDefinitions":[{"cpu":1023,"environment":[{"name":"two","value":"2"},{"name":"one","value":"one"}],"essential":true,"image":"debian:jessie19","memory":512,"mountPoints":[],"name":"zleslietesting","portMappings":[{"containerPort":8081,"hostPort":8082,"protocol":"tcp"}],"volumesFrom":[]}],"family":"netflix-ice2","revision":2,"status":"ACTIVE","taskDefinitionArn":"arn:aws:ecs:us-west-2:123456789012:task-definition/netflix-ice2:2","volumes":[]}}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 23:21:33 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":"testtask"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeTaskDefinition
+      X-Amz-Date:
+      - 20170111T232133Z
+      X-Amz-Content-Sha256:
+      - a4f77f09f82abaab5e573332bb562eb361aed53e1acb9bdc1da98fdad621e6a2
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=9d0ff1181197353d8b44eef36c23916e91037a21ea549c5df2ada57fc43e5c43
+      Content-Length:
+      - '29'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 23:21:33 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '764'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b0b011f0-d854-11e6-801c-6f2c8cddb4be
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":{"containerDefinitions":[{"cpu":1024,"environment":[{"name":"two","value":"2"},{"name":"one","value":"one"}],"essential":true,"image":"debian:jessie17","memory":512,"mountPoints":[],"name":"zleslietesting","portMappings":[{"containerPort":8081,"hostPort":8082,"protocol":"tcp"}],"volumesFrom":[]},{"cpu":1024,"environment":[{"name":"two","value":"2"},{"name":"one","value":"one"}],"essential":true,"image":"debian:jessie17","memory":512,"mountPoints":[],"name":"zleslietesting2","portMappings":[{"containerPort":8082,"hostPort":8083,"protocol":"tcp"}],"volumesFrom":[]}],"family":"testtask","placementConstraints":[],"revision":6,"status":"ACTIVE","taskDefinitionArn":"arn:aws:ecs:us-west-2:123456789012:task-definition/testtask:6","volumes":[]}}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 23:21:33 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"status":"ACTIVE"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.ListTaskDefinitionFamilies
+      X-Amz-Date:
+      - 20170111T232133Z
+      X-Amz-Content-Sha256:
+      - 264e28f424ac2f00738ee11c418ac9a1666d7f44940f512ab9a9e105711a2f39
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=e47d8accf0b0ac59f4806111f38df95c89eb44dc143d166fd390d7a90734304e
+      Content-Length:
+      - '19'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 23:21:33 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '54'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b0c63125-d854-11e6-bdc8-1dddb95ed95d
+    body:
+      encoding: UTF-8
+      string: '{"families":["netflix-ice","netflix-ice2","testtask"]}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 23:21:33 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":"netflix-ice"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeTaskDefinition
+      X-Amz-Date:
+      - 20170111T232133Z
+      X-Amz-Content-Sha256:
+      - 75840101855fab3849b65b3c028f259060cd7e7d9616c8a57ba19fda19df23ae
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=8aa83515074c7e6c4463958892642088563f972021d6c40194e76100834fbf8c
+      Content-Length:
+      - '32'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 23:21:33 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '473'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b0dc78d7-d854-11e6-b6b1-5304638d0773
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":{"containerDefinitions":[{"cpu":1024,"environment":[{"name":"two","value":"2"},{"name":"one","value":"one"}],"essential":true,"image":"debian:jessie17","memory":512,"mountPoints":[],"name":"zleslietesting","portMappings":[{"containerPort":8081,"hostPort":8082,"protocol":"tcp"}],"volumesFrom":[]}],"family":"netflix-ice","revision":52,"status":"ACTIVE","taskDefinitionArn":"arn:aws:ecs:us-west-2:123456789012:task-definition/netflix-ice:52","volumes":[]}}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 23:21:33 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":"netflix-ice2"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeTaskDefinition
+      X-Amz-Date:
+      - 20170111T232133Z
+      X-Amz-Content-Sha256:
+      - 7d85761083e15ebb6d4a5acd43a04c5df9b4ac443705060eac6a533421584ce1
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=821478d7343fb4ac882e12883a94b3371e6345f5262d3f7f397b069d52f745db
+      Content-Length:
+      - '33'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 23:21:34 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '473'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b10cd7ec-d854-11e6-ba13-fd5817d08f74
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":{"containerDefinitions":[{"cpu":1023,"environment":[{"name":"two","value":"2"},{"name":"one","value":"one"}],"essential":true,"image":"debian:jessie19","memory":512,"mountPoints":[],"name":"zleslietesting","portMappings":[{"containerPort":8081,"hostPort":8082,"protocol":"tcp"}],"volumesFrom":[]}],"family":"netflix-ice2","revision":2,"status":"ACTIVE","taskDefinitionArn":"arn:aws:ecs:us-west-2:123456789012:task-definition/netflix-ice2:2","volumes":[]}}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 23:21:34 GMT
+- request:
+    method: post
+    uri: https://ecs.us-west-2.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":"testtask"}'
+    headers:
+      Content-Type:
+      - application/x-amz-json-1.1
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Target:
+      - AmazonEC2ContainerServiceV20141113.DescribeTaskDefinition
+      X-Amz-Date:
+      - 20170111T232134Z
+      X-Amz-Content-Sha256:
+      - a4f77f09f82abaab5e573332bb562eb361aed53e1acb9bdc1da98fdad621e6a2
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-west-2/ecs/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-target,
+        Signature=5eb77096c050f67ce515fea9141ae88ae84ff0a62aff4130a27cb1da075e79e4
+      Content-Length:
+      - '29'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Server
+      Date:
+      - Wed, 11 Jan 2017 23:21:34 GMT
+      Content-Type:
+      - application/x-amz-json-1.1
+      Content-Length:
+      - '764'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - b121be9a-d854-11e6-801c-6f2c8cddb4be
+    body:
+      encoding: UTF-8
+      string: '{"taskDefinition":{"containerDefinitions":[{"cpu":1024,"environment":[{"name":"two","value":"2"},{"name":"one","value":"one"}],"essential":true,"image":"debian:jessie17","memory":512,"mountPoints":[],"name":"zleslietesting","portMappings":[{"containerPort":8081,"hostPort":8082,"protocol":"tcp"}],"volumesFrom":[]},{"cpu":1024,"environment":[{"name":"two","value":"2"},{"name":"one","value":"one"}],"essential":true,"image":"debian:jessie17","memory":512,"mountPoints":[],"name":"zleslietesting2","portMappings":[{"containerPort":8082,"hostPort":8083,"protocol":"tcp"}],"volumesFrom":[]}],"family":"testtask","placementConstraints":[],"revision":6,"status":"ACTIVE","taskDefinitionArn":"arn:aws:ecs:us-west-2:123456789012:task-definition/testtask:6","volumes":[]}}'
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 23:21:34 GMT
+recorded_with: VCR 3.0.3

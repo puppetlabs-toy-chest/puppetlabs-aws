@@ -65,7 +65,6 @@ Puppet::Type.type(:iam_user).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) d
 
       begin
         iam_client.list_access_keys({user_name: user.user_name}).access_key_metadata.each {|k|
-          pp k
           iam_client.delete_access_key({
             user_name: user.user_name,
             access_key_id: k['access_key_id'],

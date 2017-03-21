@@ -1,0 +1,774 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://elasticloadbalancing.sa-east-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DescribeLoadBalancerPolicyTypes&Version=2012-06-01
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170127T185336Z
+      X-Amz-Content-Sha256:
+      - cbc14f76b82758f16f8cd40ecf196ed1ad0a912e314aecb260063863f6c9b578
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170127/sa-east-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=2d9154f0c5a58aefaf07aec50110a1cafb825ba7f8216707088f33bc16cf507f
+      Content-Length:
+      - '57'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - eacaa9b2-e4c1-11e6-874e-41a12b67ae98
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '34444'
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Fri, 27 Jan 2017 18:53:39 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <DescribeLoadBalancerPolicyTypesResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+          <DescribeLoadBalancerPolicyTypesResult>
+            <PolicyTypeDescriptions>
+              <member>
+                <Description>Listener policy that defines the ciphers and protocols that will be accepted by the load balancer. This policy can be associated only with HTTPS/SSL listeners.</Description>
+                <PolicyTypeName>SSLNegotiationPolicyType</PolicyTypeName>
+                <PolicyAttributeTypeDescriptions>
+                  <member>
+                    <Description>A description for Protocol-TLSv1</Description>
+                    <AttributeName>Protocol-TLSv1</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for Protocol-SSLv3</Description>
+                    <AttributeName>Protocol-SSLv3</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for Protocol-TLSv1.1</Description>
+                    <AttributeName>Protocol-TLSv1.1</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for Protocol-TLSv1.2</Description>
+                    <AttributeName>Protocol-TLSv1.2</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>The value of this attribute is the name of our sample policy (referring to our sample policy)</Description>
+                    <AttributeName>Reference-Security-Policy</AttributeName>
+                    <AttributeType>String</AttributeType>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>The value true means the policy will follow the cipher order</Description>
+                    <AttributeName>Server-Defined-Cipher-Order</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-ECDSA-AES128-GCM-SHA256</Description>
+                    <AttributeName>ECDHE-ECDSA-AES128-GCM-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-RSA-AES128-GCM-SHA256</Description>
+                    <AttributeName>ECDHE-RSA-AES128-GCM-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-ECDSA-AES128-SHA256</Description>
+                    <AttributeName>ECDHE-ECDSA-AES128-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-RSA-AES128-SHA256</Description>
+                    <AttributeName>ECDHE-RSA-AES128-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-ECDSA-AES128-SHA</Description>
+                    <AttributeName>ECDHE-ECDSA-AES128-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-RSA-AES128-SHA</Description>
+                    <AttributeName>ECDHE-RSA-AES128-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-RSA-AES128-SHA</Description>
+                    <AttributeName>DHE-RSA-AES128-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-ECDSA-AES256-GCM-SHA384</Description>
+                    <AttributeName>ECDHE-ECDSA-AES256-GCM-SHA384</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-RSA-AES256-GCM-SHA384</Description>
+                    <AttributeName>ECDHE-RSA-AES256-GCM-SHA384</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-ECDSA-AES256-SHA384</Description>
+                    <AttributeName>ECDHE-ECDSA-AES256-SHA384</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-RSA-AES256-SHA384</Description>
+                    <AttributeName>ECDHE-RSA-AES256-SHA384</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-RSA-AES256-SHA</Description>
+                    <AttributeName>ECDHE-RSA-AES256-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-ECDSA-AES256-SHA</Description>
+                    <AttributeName>ECDHE-ECDSA-AES256-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for AES128-GCM-SHA256</Description>
+                    <AttributeName>AES128-GCM-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for AES128-SHA256</Description>
+                    <AttributeName>AES128-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for AES128-SHA</Description>
+                    <AttributeName>AES128-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for AES256-GCM-SHA384</Description>
+                    <AttributeName>AES256-GCM-SHA384</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for AES256-SHA256</Description>
+                    <AttributeName>AES256-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for AES256-SHA</Description>
+                    <AttributeName>AES256-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-DSS-AES128-SHA</Description>
+                    <AttributeName>DHE-DSS-AES128-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for CAMELLIA128-SHA</Description>
+                    <AttributeName>CAMELLIA128-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EDH-RSA-DES-CBC3-SHA</Description>
+                    <AttributeName>EDH-RSA-DES-CBC3-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DES-CBC3-SHA</Description>
+                    <AttributeName>DES-CBC3-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-RSA-RC4-SHA</Description>
+                    <AttributeName>ECDHE-RSA-RC4-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for RC4-SHA</Description>
+                    <AttributeName>RC4-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ECDHE-ECDSA-RC4-SHA</Description>
+                    <AttributeName>ECDHE-ECDSA-RC4-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-DSS-AES256-GCM-SHA384</Description>
+                    <AttributeName>DHE-DSS-AES256-GCM-SHA384</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-RSA-AES256-GCM-SHA384</Description>
+                    <AttributeName>DHE-RSA-AES256-GCM-SHA384</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-RSA-AES256-SHA256</Description>
+                    <AttributeName>DHE-RSA-AES256-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-DSS-AES256-SHA256</Description>
+                    <AttributeName>DHE-DSS-AES256-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-RSA-AES256-SHA</Description>
+                    <AttributeName>DHE-RSA-AES256-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-DSS-AES256-SHA</Description>
+                    <AttributeName>DHE-DSS-AES256-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-RSA-CAMELLIA256-SHA</Description>
+                    <AttributeName>DHE-RSA-CAMELLIA256-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-DSS-CAMELLIA256-SHA</Description>
+                    <AttributeName>DHE-DSS-CAMELLIA256-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for CAMELLIA256-SHA</Description>
+                    <AttributeName>CAMELLIA256-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EDH-DSS-DES-CBC3-SHA</Description>
+                    <AttributeName>EDH-DSS-DES-CBC3-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-DSS-AES128-GCM-SHA256</Description>
+                    <AttributeName>DHE-DSS-AES128-GCM-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-RSA-AES128-GCM-SHA256</Description>
+                    <AttributeName>DHE-RSA-AES128-GCM-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-RSA-AES128-SHA256</Description>
+                    <AttributeName>DHE-RSA-AES128-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-DSS-AES128-SHA256</Description>
+                    <AttributeName>DHE-DSS-AES128-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-RSA-CAMELLIA128-SHA</Description>
+                    <AttributeName>DHE-RSA-CAMELLIA128-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-DSS-CAMELLIA128-SHA</Description>
+                    <AttributeName>DHE-DSS-CAMELLIA128-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-AES128-GCM-SHA256</Description>
+                    <AttributeName>ADH-AES128-GCM-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-AES128-SHA</Description>
+                    <AttributeName>ADH-AES128-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-AES128-SHA256</Description>
+                    <AttributeName>ADH-AES128-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-AES256-GCM-SHA384</Description>
+                    <AttributeName>ADH-AES256-GCM-SHA384</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-AES256-SHA</Description>
+                    <AttributeName>ADH-AES256-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-AES256-SHA256</Description>
+                    <AttributeName>ADH-AES256-SHA256</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-CAMELLIA128-SHA</Description>
+                    <AttributeName>ADH-CAMELLIA128-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-CAMELLIA256-SHA</Description>
+                    <AttributeName>ADH-CAMELLIA256-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-DES-CBC3-SHA</Description>
+                    <AttributeName>ADH-DES-CBC3-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-DES-CBC-SHA</Description>
+                    <AttributeName>ADH-DES-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-RC4-MD5</Description>
+                    <AttributeName>ADH-RC4-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for ADH-SEED-SHA</Description>
+                    <AttributeName>ADH-SEED-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DES-CBC-SHA</Description>
+                    <AttributeName>DES-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-DSS-SEED-SHA</Description>
+                    <AttributeName>DHE-DSS-SEED-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DHE-RSA-SEED-SHA</Description>
+                    <AttributeName>DHE-RSA-SEED-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EDH-DSS-DES-CBC-SHA</Description>
+                    <AttributeName>EDH-DSS-DES-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EDH-RSA-DES-CBC-SHA</Description>
+                    <AttributeName>EDH-RSA-DES-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for IDEA-CBC-SHA</Description>
+                    <AttributeName>IDEA-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for RC4-MD5</Description>
+                    <AttributeName>RC4-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for SEED-SHA</Description>
+                    <AttributeName>SEED-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DES-CBC3-MD5</Description>
+                    <AttributeName>DES-CBC3-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for DES-CBC-MD5</Description>
+                    <AttributeName>DES-CBC-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for RC2-CBC-MD5</Description>
+                    <AttributeName>RC2-CBC-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for PSK-AES256-CBC-SHA</Description>
+                    <AttributeName>PSK-AES256-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for PSK-3DES-EDE-CBC-SHA</Description>
+                    <AttributeName>PSK-3DES-EDE-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for KRB5-DES-CBC3-SHA</Description>
+                    <AttributeName>KRB5-DES-CBC3-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for KRB5-DES-CBC3-MD5</Description>
+                    <AttributeName>KRB5-DES-CBC3-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for PSK-AES128-CBC-SHA</Description>
+                    <AttributeName>PSK-AES128-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for PSK-RC4-SHA</Description>
+                    <AttributeName>PSK-RC4-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for KRB5-RC4-SHA</Description>
+                    <AttributeName>KRB5-RC4-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for KRB5-RC4-MD5</Description>
+                    <AttributeName>KRB5-RC4-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for KRB5-DES-CBC-SHA</Description>
+                    <AttributeName>KRB5-DES-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for KRB5-DES-CBC-MD5</Description>
+                    <AttributeName>KRB5-DES-CBC-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-EDH-RSA-DES-CBC-SHA</Description>
+                    <AttributeName>EXP-EDH-RSA-DES-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-EDH-DSS-DES-CBC-SHA</Description>
+                    <AttributeName>EXP-EDH-DSS-DES-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-ADH-DES-CBC-SHA</Description>
+                    <AttributeName>EXP-ADH-DES-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-DES-CBC-SHA</Description>
+                    <AttributeName>EXP-DES-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-RC2-CBC-MD5</Description>
+                    <AttributeName>EXP-RC2-CBC-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-KRB5-RC2-CBC-SHA</Description>
+                    <AttributeName>EXP-KRB5-RC2-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-KRB5-DES-CBC-SHA</Description>
+                    <AttributeName>EXP-KRB5-DES-CBC-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-KRB5-RC2-CBC-MD5</Description>
+                    <AttributeName>EXP-KRB5-RC2-CBC-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-KRB5-DES-CBC-MD5</Description>
+                    <AttributeName>EXP-KRB5-DES-CBC-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-ADH-RC4-MD5</Description>
+                    <AttributeName>EXP-ADH-RC4-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-RC4-MD5</Description>
+                    <AttributeName>EXP-RC4-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-KRB5-RC4-SHA</Description>
+                    <AttributeName>EXP-KRB5-RC4-SHA</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                  <member>
+                    <Description>A description for EXP-KRB5-RC4-MD5</Description>
+                    <AttributeName>EXP-KRB5-RC4-MD5</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <DefaultValue>false</DefaultValue>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                </PolicyAttributeTypeDescriptions>
+              </member>
+              <member>
+                <Description>Stickiness policy with session lifetimes controlled by the browser (user-agent) or a specified expiration period. This policy can be associated only with HTTP/HTTPS listeners.</Description>
+                <PolicyTypeName>LBCookieStickinessPolicyType</PolicyTypeName>
+                <PolicyAttributeTypeDescriptions>
+                  <member>
+                    <AttributeName>CookieExpirationPeriod</AttributeName>
+                    <AttributeType>Long</AttributeType>
+                    <Cardinality>ZERO_OR_ONE</Cardinality>
+                  </member>
+                </PolicyAttributeTypeDescriptions>
+              </member>
+              <member>
+                <Description>Policy that controls authentication to back-end server(s) and contains one or more policies, such as an instance of a PublicKeyPolicyType. This policy can be associated only with back-end servers that are using HTTPS/SSL.</Description>
+                <PolicyTypeName>BackendServerAuthenticationPolicyType</PolicyTypeName>
+                <PolicyAttributeTypeDescriptions>
+                  <member>
+                    <AttributeName>PublicKeyPolicyName</AttributeName>
+                    <AttributeType>PolicyName</AttributeType>
+                    <Cardinality>ONE_OR_MORE</Cardinality>
+                  </member>
+                </PolicyAttributeTypeDescriptions>
+              </member>
+              <member>
+                <Description>Policy that controls whether to include the IP address and port of the originating request for TCP messages. This policy operates on TCP listeners only.</Description>
+                <PolicyTypeName>ProxyProtocolPolicyType</PolicyTypeName>
+                <PolicyAttributeTypeDescriptions>
+                  <member>
+                    <AttributeName>ProxyProtocol</AttributeName>
+                    <AttributeType>Boolean</AttributeType>
+                    <Cardinality>ONE</Cardinality>
+                  </member>
+                </PolicyAttributeTypeDescriptions>
+              </member>
+              <member>
+                <Description>Policy containing a list of public keys to accept when authenticating the back-end server(s). This policy cannot be applied directly to back-end servers or listeners but must be part of a BackendServerAuthenticationPolicyType.</Description>
+                <PolicyTypeName>PublicKeyPolicyType</PolicyTypeName>
+                <PolicyAttributeTypeDescriptions>
+                  <member>
+                    <AttributeName>PublicKey</AttributeName>
+                    <AttributeType>String</AttributeType>
+                    <Cardinality>ONE</Cardinality>
+                  </member>
+                </PolicyAttributeTypeDescriptions>
+              </member>
+              <member>
+                <Description>Stickiness policy with session lifetimes controlled by the lifetime of the application-generated cookie. This policy can be associated only with HTTP/HTTPS listeners.</Description>
+                <PolicyTypeName>AppCookieStickinessPolicyType</PolicyTypeName>
+                <PolicyAttributeTypeDescriptions>
+                  <member>
+                    <AttributeName>CookieName</AttributeName>
+                    <AttributeType>String</AttributeType>
+                    <Cardinality>ONE</Cardinality>
+                  </member>
+                </PolicyAttributeTypeDescriptions>
+              </member>
+            </PolicyTypeDescriptions>
+          </DescribeLoadBalancerPolicyTypesResult>
+          <ResponseMetadata>
+            <RequestId>eacaa9b2-e4c1-11e6-874e-41a12b67ae98</RequestId>
+          </ResponseMetadata>
+        </DescribeLoadBalancerPolicyTypesResponse>
+    http_version: 
+  recorded_at: Fri, 27 Jan 2017 18:53:45 GMT
+recorded_with: VCR 3.0.3
