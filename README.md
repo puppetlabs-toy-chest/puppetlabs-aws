@@ -308,6 +308,8 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `ec2_securitygroup`: Sets up an EC2 security group.
 * `ec2_volume`: Sets up an EC2 EBS volume.
 * `elb_loadbalancer`: Sets up an ELB load balancer.
+* `elbv2_loadbalancer`: Sets up an ELBv2 load balancer.
+* `elbv2_targetgroup`: Sets up a ELBv2 target group.
 * `cloudwatch_alarm`: Sets up a Cloudwatch Alarm.
 * `ec2_autoscalinggroup`: Sets up an EC2 auto scaling group.
 * `ec2_elastic_ip`: Sets up an Elastic IP and its association.
@@ -697,6 +699,83 @@ back- end instances.  Accepts a hash with the following keys:
 
 ##### `snapshot_id`
 *Optional* The snapshot from which to create the volume.
+
+#### Type: elbv2_loadbalancer
+
+#####`name`
+*Required* The name of the load balancer. This is the value of the AWS Name tag.
+
+#####`region`
+*Required* The region in which to launch the target group. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
+
+#####`listeners`
+
+#####`health_check`
+
+#####`subnets`
+
+#####`security_groups`
+
+#####`scheme`
+#####`instancs`
+#####`availability_zones`
+#####`dns_name`
+
+#####`tags`
+*Optional* The tags for the target group. This parameter is set at creation only; it is not affected by updates. Accepts a 'key => value' hash of tags.
+
+#### Type: elbv2_targetgroup
+
+#####`name`
+*Required* The name of the target group. This is the value of the AWS Name tag.
+
+#####`region`
+*Required* The region in which to launch the target group. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
+
+#####`protocol`
+*Required*
+
+#####`port`
+*Required*
+
+#####`vpc`
+*Required*
+
+#####`health_check_success_codes`
+*Optional*
+
+#####`health_check_path`
+*Optional*
+
+#####`health_check_port`
+*Optional*
+
+#####`health_check_protocol`
+*Optional*
+
+#####`health_check_interval`
+*Optional*
+
+#####`health_check_timeout`
+*Optional*
+
+#####`healthy_threshold`
+*Optional*
+
+#####`unhealthy_threshold`
+*Optional*
+
+#####`deregistration_delay`
+*Optional*
+
+#####`stickiness`
+*Optional*
+
+#####`stickiness_duration`
+*Optional*
+
+#####`tags`
+*Optional* The tags for the target group. This parameter is set at creation only; it is not affected by updates. Accepts a 'key => value' hash of tags.
 
 #### Type: cloudwatch_alarm
 
