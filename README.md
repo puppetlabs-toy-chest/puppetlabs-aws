@@ -3,7 +3,7 @@ Forge](http://img.shields.io/puppetforge/v/puppetlabs/aws.svg)](https://forge.pu
 [![Build
 Status](https://travis-ci.org/puppetlabs/puppetlabs-aws.svg?branch=master)](https://travis-ci.org/puppetlabs/puppetlabs-aws)
 
-####Table of Contents
+#### Table of Contents
 
 1. [Overview](#overview)
 2. [Description - What the module does and why it is useful](#description)
@@ -21,53 +21,53 @@ Status](https://travis-ci.org/puppetlabs/puppetlabs-aws.svg?branch=master)](http
   * [Parameters](#parameters)
 7. [Limitations - OS compatibility, etc.](#limitations)
 
-##Overview
+## Overview
 
 The aws module manages Amazon Web Services (AWS) resources to build out cloud infrastructure.
 
-##Description
+## Description
 
 Amazon Web Services exposes a powerful API for creating and managing its infrastructure as a service platform. The aws module allows you to drive that API using Puppet code. 
 
 In the simplest case, this allows you to create new EC2 instances from Puppet code. More importantly, it allows you to describe your entire AWS infrastructure and to model the relationships between different components.
 
-##Setup
+## Setup
 
-###Requirements
+### Requirements
 
 * Puppet 3.4 or greater
 * Ruby 1.9 or greater
 * Amazon AWS Ruby SDK (available as a gem)
 * Retries gem
 
-###Installing the aws module
+### Installing the aws module
 
 1. Install the retries gem and the Amazon AWS Ruby SDK gem, using the same Ruby used by Puppet. For Puppet 4.x and beyond, install the gems with this command:
 
- '/opt/puppetlabs/puppet/bin/gem install aws-sdk-core retries'
+  '/opt/puppetlabs/puppet/bin/gem install aws-sdk-core retries'
 
 2. Set these environment variables for your AWS access credentials:
 
-```bash
+  ```bash
   export AWS_ACCESS_KEY_ID=your_access_key_id
   export AWS_SECRET_ACCESS_KEY=your_secret_access_key
- ```
+  ```
 
   Alternatively, you can place the credentials in a file at '~/.aws/credentials' based on the following template:
 
-```bash
+  ```bash
  [default]
   aws_access_key_id = your_access_key_id
   aws_secret_access_key = your_secret_access_key
-```
+  ```
 
   If you have Puppet running on AWS, and you're running the module examples, you can instead use [IAM](http://aws.amazon.com/iam/). To do this, assign the correct role to the instance from which you're running the examples. For a sample profile with all the required permissions, see the [IAM profile example](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/iam-profile/).
 
 3. Finally, install the module with:
 
-```bash
+  ```bash
 puppet module install puppetlabs-aws
-```
+  ```
 
 #### A note on regions
 
@@ -94,7 +94,7 @@ The AWS region and HTTP proxy can be provided in a file called 'puppetlabs_aws_c
       region = us-east-1
       http_proxy = http://proxy.example.com:80
 ```
-##Getting Started with aws
+## Getting Started with aws
 
 The aws module allows you to manage AWS using the Puppet DSL. To stand up an instance with AWS, use the `ec2_instance` type. The following code sets up a very basic instance:
 
@@ -107,9 +107,9 @@ ec2_instance { 'instance-name':
 }
 ```
 
-##Usage
+## Usage
 
-###Creating resources
+### Creating resources
 
 You can also set up more complex EC2 instances with a variety of AWS features, as well as load balancers and security groups.
 
@@ -286,7 +286,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * [Create your own abstractions](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/create-your-own-abstractions/): Use Puppet's defined types to better model your own infrastructure.
 * [Distribute instances across availability zones](https://github.com/puppetlabs/puppetlabs-aws/tree/master/examples/distribute-across-az/): Use the future parser and stdlib functions to launch instances balanced across different availability zones.
 
-##Reference
+## Reference
 
 ### Types
 
@@ -336,7 +336,7 @@ You can use the aws module to audit AWS resources, launch autoscaling groups in 
 * `s3_bucket`: Sets up an S3 bucket.
 * `sqs_queue`: Sets up an SQS queue.
 
-###Parameters
+### Parameters
 
 #### Type: cloudformation_stack
 
@@ -350,19 +350,19 @@ Valid values are: 'CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM', an empty list, or un
 
 ##### `change_set_id`
 
-Readonly.
+Read-only.
 
 Unique identifier of the stack.
 
 ##### `creation_time`
 
-Readonly.
+Read-only.
 
 The time at which the stack was created.
 
 ##### `description`
 
-Readonly.
+Read-only.
 
 A user-defined description found in the cloud formation template associated with the stack.
 
@@ -390,12 +390,12 @@ Valid values are: 'present', 'updated', 'absent'.
 
 ##### `id`
 
-Readonly.
+Read-only.
 
 The unique ID of the stack.
 
 ##### `last_updated_time`
-Readonly.
+Read-only.
 
 The time the stack was last updated.
 
@@ -423,7 +423,7 @@ Valid values are: 'DO_NOTHING', 'ROLLBACK', 'DELETE'.
 
 ##### `outputs`
 
-Readonly.
+Read-only.
 
 A hash of stack outputs.
 
@@ -471,7 +471,7 @@ The Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) ro
 
 ##### `status`
 
-Readonly.
+Read-only.
 
 The status of the stack.
 
@@ -515,19 +515,19 @@ Valid values are: 'present', 'absent'.
 
 ##### `arn`
 
-Readonly.
+Read-only.
 
 The AWS-generated ARN of the distribution.
 
 ##### `id`
 
-Readonly.
+Read-only.
 
 The AWS-generated ID of the distribution.
 
 ##### `status`
 
-Readonly.
+Read-only.
 
 The AWS-reported status of the distribution.
 
@@ -628,21 +628,21 @@ Accepts a key => value hash of tags.
 
 Excludes 'Name' tag.
 
-####Type: ec2_instance
+#### Type: ec2_instance
 
-#####`ensure`
+##### `ensure`
 
 Specifies the basic state of the resource. 
 
 Valid values are: 'present', 'absent', 'running', 'stopped'.
 
-#####`name`
+##### `name`
 
 Required.
  
 The name of the instance. This is the value of the AWS Name tag.
 
-#####`security_groups`
+##### `security_groups`
 
 Optional. 
 
@@ -650,7 +650,7 @@ The security groups with which to associate the instance.
 
 Accepts an array of security group names.
 
-#####`tags`
+##### `tags`
 
 Optional. 
 
@@ -658,7 +658,7 @@ The tags for the instance.
 
 Accepts a key => value hash of tags.
 
-#####`user_data`
+##### `user_data`
 
 Optional. 
 
@@ -666,13 +666,13 @@ User data script to execute on new instance.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`key_name`
+##### `key_name`
 
 The name of the key pair associated with this instance. This must be an existing key pair already uploaded to the region in which you're launching the instance.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`monitoring`
+##### `monitoring`
 
 Optional. 
 
@@ -684,7 +684,7 @@ Valid values are: `true`, `false`.
 
 Default value: `false`.
 
-#####`region`
+##### `region`
 
 Required.
  
@@ -694,7 +694,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`image_id`
+##### `image_id`
 
 Required.
  
@@ -704,7 +704,7 @@ This parameter is set at creation only; it is not affected by updates.
 
 See [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html).
 
-#####`availability_zone`
+##### `availability_zone`
 
 Optional. 
 
@@ -716,7 +716,7 @@ Valid values are:
  
 See [AWS Regions and Availability Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html).
 
-#####`instance_type`
+##### `instance_type`
 
 Required.
  
@@ -726,7 +726,7 @@ This parameter is set at creation only; it is not affected by updates.
 
 See [Amazon EC2 Instances](http://aws.amazon.com/ec2/instance-types/) for available types.
 
-#####`tenancy`
+##### `tenancy`
 
 Optional. 
 
@@ -736,7 +736,7 @@ Valid values are: 'dedicated' and 'default'.
 
 Default value: 'default'.
 
-#####`private_ip_address`
+##### `private_ip_address`
 
 Optional. 
 
@@ -748,7 +748,7 @@ Valid values are:
 
 Valid IPv4 address.
 
-#####`associate_public_ip_address`
+##### `associate_public_ip_address`
 
 Optional. 
 
@@ -760,7 +760,7 @@ Valid values are: `true`, `false`.
 
 Default value: `false`.
 
-#####`subnet`
+##### `subnet`
 
 Optional. 
 
@@ -770,7 +770,7 @@ This parameter is set at creation only; it is not affected by updates.
 
 Accepts the name of the subnet; this is the value of the Name tag for the subnet. If you're describing the subnet in Puppet, then this value is the name of the resource.
 
-#####`ebs_optimized`
+##### `ebs_optimized`
 
 Optional. 
 
@@ -782,7 +782,7 @@ Valid values are: `true`, `false`.
 
 Default value: `false`.
 
-#####`instance_initiated_shutdown_behavior`
+##### `instance_initiated_shutdown_behavior`
 
 Optional. 
 
@@ -794,7 +794,7 @@ Valid values are: 'stop', 'terminate'.
 
 Default value: 'stop'.
 
-#####`block_devices`
+##### `block_devices`
 
 Optional. 
 
@@ -824,57 +824,57 @@ block_devices => [
 ]
 ```
 
-#####`instance_id`
+##### `instance_id`
 
 Read-only.
 
 The AWS generated id for the instance. 
 
-#####`hypervisor`
+##### `hypervisor`
 
 Read-only.
 
 The type of hypervisor running the instance.
 
-#####`virtualization_type`
+##### `virtualization_type`
 
 Read-only.
 
 The underlying virtualization of the instance.
 
-#####`public_ip_address`
+##### `public_ip_address`
 
 Read-only.
 
 The public IP address for the instance.
 
-#####`private_dns_name`
+##### `private_dns_name`
 
 Read-only.
 
 The internal DNS name for the instance.
 
-#####`public_dns_name`
+##### `public_dns_name`
 
 Read-only.
 
 The publicly available DNS name for the instance.
 
-#####`kernel_id`
+##### `kernel_id`
 
 Read-only.
 
 The ID of the kernel in use by the instance.
 
-#####`iam_instance_profile_name`
+##### `iam_instance_profile_name`
 
 The user provided name for the IAM profile to associate with the instance.
 
-#####`iam_instance_profile_arn`
+##### `iam_instance_profile_arn`
 
 The Amazon Resource Name for the associated IAM profile.
 
-#####`interfaces`
+##### `interfaces`
 
 Read-only.
 
@@ -940,13 +940,13 @@ Accepts the value of the Name tag for the VPC.
 
 #### Type: elb_loadbalancer
 
-#####`name`
+##### `name`
 
 Required.
  
 The name of the load balancer. This is the value of the AWS Name tag.
 
-#####`region`
+##### `region`
 
 Required.
  
@@ -956,7 +956,7 @@ Valid values are:
  
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`listeners`
+##### `listeners`
 
 Required.
  
@@ -971,7 +971,7 @@ Accepts an array of the following values:
   * ssl_certificate_id (required if protocol is HTTPS)
   * policy_names (optional array of policy name strings for HTTPS)
 
-#####`health_check`
+##### `health_check`
 
 The configuration for an ELB health check used to determine the health of the back- end instances.  
 
@@ -983,7 +983,7 @@ Accepts a hash with the following keys:
   * timeout
   * unhealthy_threshold
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -993,7 +993,7 @@ This parameter is set at creation only; it is not affected by updates.
 
 Accepts a key => value hash of tags.
 
-#####`subnets`
+##### `subnets`
 
 Optional.
 
@@ -1001,7 +1001,7 @@ The subnet in which the load balancer should be launched.
 
 Accepts an array of subnet names, i.e., the Name tags on the subnets. You can only set one of 'availability_zones' or 'subnets'.
 
-#####`security_groups`
+##### `security_groups`
 
 Optional.
 
@@ -1009,7 +1009,7 @@ The security groups to associate with the load balancer (VPC only).
 
 Accepts an array of security group names, i.e., the Name tag on the security groups.
 
-#####`availability_zones`
+##### `availability_zones`
 
 Optional.
 
@@ -1023,7 +1023,7 @@ Valid values are:
  
 See [AWS Regions and Availability Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html). You can only set one of 'availability_zones' or 'subnets'.
 
-#####`instances`
+##### `instances`
 
 Optional.
 
@@ -1033,7 +1033,7 @@ Valid values are:
 
 Accepts an array of names, i.e., the Name tag on the instances.
 
-#####`scheme`
+##### `scheme`
 
 Optional.
 
@@ -1256,7 +1256,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`launch_configuration`
+##### `launch_configuration`
 
 Required.
 
@@ -1302,7 +1302,7 @@ Valid values are:
 
 See [Controlling Which Instances Auto Scaling Terminates During Scale In](http://docs.aws.amazon.com/autoscaling/latest/userguide/as-instance-termination.html).
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -1312,13 +1312,13 @@ Accepts a key => value hash of tags. The tags are not propagated to launched ins
 
 #### Type: ec2_elastic_ip
 
-#####`ensure`
+##### `ensure`
 
 Specifies that basic state of the resource. 
 
 Valid values are: 'attached', 'detached'.
 
-#####`name`
+##### `name`
 
 Required.
 
@@ -1328,7 +1328,7 @@ Valid values are:
 
 A valid IPv4 address of an already existing elastic IP.
 
-#####`region`
+##### `region`
 
 Required.
 
@@ -1338,7 +1338,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`instance`
+##### `instance`
 
 Required.
 
@@ -1346,13 +1346,13 @@ The name of the instance associated with the Elastic IP. This is the value of th
 
 #### Type: ec2_launchconfiguration
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the launch configuration. This is the value of the AWS Name tag.
 
-#####`security_groups`
+##### `security_groups`
 
 Required.
 
@@ -1362,7 +1362,7 @@ This parameter is set at creation only; it is not affected by updates.
 
 Accepts an array of security group names, i.e., the Name tags on the security groups.
 
-#####`user_data`
+##### `user_data`
 
 Optional.
 
@@ -1370,7 +1370,7 @@ User data script to execute on new instances.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`key_name`
+##### `key_name`
 
 Optional.
 
@@ -1378,7 +1378,7 @@ The name of the key pair associated with this instance.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`region`
+##### `region`
 
 Required.
 
@@ -1388,7 +1388,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`instance_type`
+##### `instance_type`
 
 Required.
 
@@ -1398,7 +1398,7 @@ This parameter is set at creation only; it is not affected by updates.
 
 See [Amazon EC2 Instances](http://aws.amazon.com/ec2/instance-types/) for available types.
 
-#####`image_id`
+##### `image_id`
 
 Required.
 
@@ -1408,7 +1408,7 @@ This parameter is set at creation only; it is not affected by updates.
 
 See [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html).
 
-#####`block_device_mappings`
+##### `block_device_mappings`
 
 Optional.
 
@@ -1418,25 +1418,25 @@ This parameter is set at creation only; it is not affected by updates.
 
 Accepts an array of hashes with the device name and either the volume size or snapshot id specified:
 
-~~~
+```puppet
 block_devices => [
   {
     device_name  => '/dev/sda1',
     volume_size  => 8,
   }
 ]
-~~~
+```
 
-~~~
+```puppet
 block_devices => [
   {
     device_name  => '/dev/sda1',
     volume_type => 'gp2',
   }
 ]
-~~~
+```
 
-#####`vpc`
+##### `vpc`
 
 Optional.
 
@@ -1446,13 +1446,13 @@ This parameter is set at creation only; it is not affected by updates.
 
 #### Type: ec2_scalingpolicy
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the scaling policy. This is the value of the AWS Name tag.
 
-#####`scaling_adjustment`
+##### `scaling_adjustment`
 
 Required.
 
@@ -1464,7 +1464,7 @@ Dependent on `adjustment_type` chosen.
 
 See [AWS Dynamic Scaling](http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/as-scale-based-on-demand.html) documentation.
 
-#####`region`
+##### `region`
 
 Required.
 
@@ -1474,7 +1474,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`adjustment_type`
+##### `adjustment_type`
 
 Required.
 
@@ -1486,7 +1486,7 @@ Valid values are:
 
 See [Adjustment Type](http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_AdjustmentType.html) documentation.
 
-#####`auto_scaling_group`
+##### `auto_scaling_group`
 
 Required.
 
@@ -1496,13 +1496,13 @@ This parameter is set at creation only; it is not affected by updates.
 
 #### Type: ec2_vpc
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the VPC. This is the value of the AWS Name tag.
 
-#####`region`
+##### `region`
 
 Optional.
 
@@ -1512,7 +1512,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`cidr_block`
+##### `cidr_block`
 
 Optional.
 
@@ -1520,7 +1520,7 @@ The IP range for the VPC.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`dhcp_options`
+##### `dhcp_options`
 
 Optional.
 
@@ -1528,7 +1528,7 @@ The name of DHCP option set to use for this VPC.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`instance_tenancy`
+##### `instance_tenancy`
 
 Optional.
 
@@ -1540,7 +1540,7 @@ Valid values are: 'default', 'dedicated'.
 
 Default value: 'default'.
 
-#####`enable_dns_support`
+##### `enable_dns_support`
 
 Optional.
 
@@ -1550,7 +1550,7 @@ Valid values are: `true`, `false`.
 
 Default value: `true`.
 
-#####`enable_dns_hostnames`
+##### `enable_dns_hostnames`
 
 Optional.
 
@@ -1560,7 +1560,7 @@ Valid values are: `true`, `false`.
 
 Default value: `true`.
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -1570,13 +1570,13 @@ Accepts a key => value hash of tags.
 
 #### Type: ec2_vpc_customer_gateway
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the customer gateway. This is the value of the AWS Name tag.
 
-#####`ip_address`
+##### `ip_address`
 
 Required.
 
@@ -1588,7 +1588,7 @@ Valid values are:
 
 A valid IPv4 address.
 
-#####`bgp_asn`
+##### `bgp_asn`
 
 Required.
 
@@ -1596,7 +1596,7 @@ The Autonomous System Numbers for the customer gateway.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -1604,7 +1604,7 @@ The tags for the customer gateway.
 
 Accepts a key => value hash of tags.
 
-#####`region`
+##### `region`
 
 Optional.
 
@@ -1614,7 +1614,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`type`
+##### `type`
 
 The type of customer gateway. 'ipsec.1' is currently the only supported value.
 
@@ -1624,13 +1624,13 @@ Default value: 'ipsec.1'
 
 #### Type: ec2_vpc_dhcp_options
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the DHCP options set. This is the value of the AWS Name tag.
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -1638,7 +1638,7 @@ Tags for the DHCP option set.
 
 Accepts a key => value hash of tags.
 
-#####`region`
+##### `region`
 
 Optional.
 
@@ -1648,7 +1648,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`domain_name`
+##### `domain_name`
 
 Optional.
 
@@ -1660,7 +1660,7 @@ Valid values are:
 
 An array or a single valid domain. An array is converted to a space separated list, as Linux supports. Other OSes may not support more than one according to Amazon.
 
-#####`domain_name_servers`
+##### `domain_name_servers`
 
 Optional.
 
@@ -1670,7 +1670,7 @@ This parameter is set at creation only; it is not affected by updates.
 
 Accepts an array of domain server names.
 
-#####`ntp_servers`
+##### `ntp_servers`
 
 Optional.
 
@@ -1680,7 +1680,7 @@ This parameter is set at creation only; it is not affected by updates.
 
 Accepts an array of NTP server names.
 
-#####`netbios_name_servers`
+##### `netbios_name_servers`
 
 Optional.
 
@@ -1690,7 +1690,7 @@ This parameter is set at creation only; it is not affected by updates.
 
 Accepts an array.
 
-#####`netbios_node_type`
+##### `netbios_node_type`
 
 Optional.
 
@@ -1702,13 +1702,13 @@ Valid values are: 1, 2, 4, 8.
 
 #### Type: ec2_vpc_internet_gateway
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the internet gateway. This is the value of the AWS Name tag.
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -1716,7 +1716,7 @@ Tags to assign to the internet gateway.
 
 Accepts a key => value hash of tags.
 
-#####`region`
+##### `region`
 
 Optional.
 
@@ -1726,7 +1726,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`vpc`
+##### `vpc`
 
 Optional.
 
@@ -1736,13 +1736,13 @@ This parameter is set at creation only; it is not affected by updates.
 
 #### Type: ec2_vpc_routetable
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the route table. This is the value of the AWS Name tag.
 
-#####`vpc`
+##### `vpc`
 
 Optional.
 
@@ -1750,7 +1750,7 @@ VPC to assign the route table to.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`region`
+##### `region`
 
 Optional.
 
@@ -1760,7 +1760,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`routes`
+##### `routes`
 
 Optional.
 
@@ -1770,7 +1770,7 @@ This parameter is set at creation only; it is not affected by updates.
 
 Accepts an array of 'destination_cidr_block' and 'gateway' values:
 
-```
+```puppet
 routes => [
     {
       destination_cidr_block => '10.0.0.0/16',
@@ -1782,7 +1782,7 @@ routes => [
   ],
 ```
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -1792,13 +1792,13 @@ Accepts a key => value hash of tags.
 
 #### Type: ec2_vpc_subnet
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the subnet. This is the value of the AWS Name tag.
 
-#####`vpc`
+##### `vpc`
 
 Optional.
 
@@ -1806,7 +1806,7 @@ VPC to assign the subnet to.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`region`
+##### `region`
 
 Required.
 
@@ -1816,7 +1816,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`cidr_block`
+##### `cidr_block`
 
 Optional.
 
@@ -1824,7 +1824,7 @@ The IP address range for the subnet.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`availability_zone`
+##### `availability_zone`
 
 Optional.
 
@@ -1832,7 +1832,7 @@ The availability zone in which to launch the subnet.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -1840,13 +1840,13 @@ Tags to assign to the subnet.
 
 Accepts a key => value hash of tags.
 
-#####`route_table`
+##### `route_table`
 
 The route table to attach to the subnet. 
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`routes`
+##### `routes`
 
 Optional.
 
@@ -1856,7 +1856,7 @@ Accepts an array of 'destination_cidr_block' and 'gateway' values:
 
 ##### `id`
 
-Readonly.
+Read-only.
 
 Unique string enumerated from existing resources uniquely identifying the subnet.
 
@@ -1872,7 +1872,7 @@ routes => [
   ],
 ```
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -1882,13 +1882,13 @@ Accepts a key => value hash of tags.
 
 #### Type: ec2_vpc_vpn
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the VPN. This is the value of the AWS Name tag.
 
-#####`vpn_gateway`
+##### `vpn_gateway`
 
 Required.
 
@@ -1896,7 +1896,7 @@ The VPN gateway to attach to the VPN.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`customer_gateway`
+##### `customer_gateway`
 
 Required.
 
@@ -1904,7 +1904,7 @@ The customer gateway to attach to the VPN.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`type`
+##### `type`
 
 Optional.
 
@@ -1916,7 +1916,7 @@ Valid values are: 'ipsec.1'
 
 Default value: 'ipsec.1'
 
-#####`routes`
+##### `routes`
 
 Optional.
 
@@ -1928,7 +1928,7 @@ Valid values are:
 
 IP ranges like: 'routes           => ['0.0.0.0/0']'
 
-#####`static_routes`
+##### `static_routes`
 
 Optional.
  
@@ -1940,7 +1940,7 @@ Valid values are: `true`, `false`.
 
 Default value: `true`.
 
-#####`region`
+##### `region`
 
 Optional.
 
@@ -1950,7 +1950,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -1960,7 +1960,7 @@ Accepts a key => value hash of tags.
 
 #### Type: ec2_vpc_vpn_gateway
 
-#####`name`
+##### `name`
 
 Required.
 
@@ -1968,7 +1968,7 @@ The name of the VPN gateway.
 
 Accepts the value of the VPN gateway's Name tag.
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -1976,7 +1976,7 @@ The tags to assign to the VPN gateway.
 
 Accepts a key => value hash of tags.
 
-#####`vpc`
+##### `vpc`
 
 Required.
 
@@ -1984,7 +1984,7 @@ The VPN to attach the VPN gateway to.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`region`
+##### `region`
 
 Required.
 
@@ -1994,7 +1994,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`availability_zone`
+##### `availability_zone`
 
 Optional.
 
@@ -2002,7 +2002,7 @@ The availability zone in which to launch the VPN gateway.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`type`
+##### `type`
 
 Optional.
  
@@ -2118,7 +2118,7 @@ ecs_task_definition { 'dockerdocker':
 }
 ```
 
-Please note, it's important to take into consideration the behavior of the provider in the case of missing container options.
+It's important to consider the behavior of the provider in the case of missing container options.
 
 If the task for an 'ecs_task_definition' has been discovered to exist, then the discovered container options are merged with the requested options.  This results in the following behavior: *Container options not defined in the puppet resource, but are found to exist in the discovered running container are copied from the running container.*
 
@@ -2168,7 +2168,7 @@ iam_group { 'root':
 }
 ```
 
-#####`members`
+##### `members`
 
 Required.
 
@@ -2183,19 +2183,19 @@ iam_instance_profile { 'my_iam_role':
 }
 ```
 
-#####`ensure`
+##### `ensure`
 
 Specifies the basic state of the resource. 
 
 Valid values are: 'present', 'absent'.
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the IAM instance profile.
 
-#####`roles`
+##### `roles`
 
 Optional. 
 
@@ -2225,11 +2225,11 @@ iam_policy { 'root':
 
 It is worth noting here that the 'iam_policy' type will allow the creation of an IAM policy who's name is identical to the built-in policies.  In such a case when two policies exist with the same name, one built-in and one user-defined, the user-defined is selected for management.
 
-#####`document`
+##### `document`
 
 Required.
 
-Astring containing the IAM policy in JSON format.
+A string containing the IAM policy in JSON format.
 
 #### Type: iam_policy_attachment
 
@@ -2244,7 +2244,7 @@ iam_policy_attachment { 'root':
 }
 ```
 
-#####`groups`
+##### `groups`
 
 Optional.
 
@@ -2252,7 +2252,7 @@ An array of group names to attach to the policy.
 
 **If not mentioned in this array it will be detached from the policy.**
 
-#####`users`
+##### `users`
 
 Optional.
 
@@ -2260,7 +2260,7 @@ An array of user names to attach to the policy.
 
 **If not mentioned in this array it will be detached from the policy.**
 
-#####`roles`
+##### `roles`
 
 Optional.
 
@@ -2289,25 +2289,27 @@ iam_role { 'devtesting':
 
 All parameters are read-only once created.
 
-#####`ensure`
+##### `ensure`
 
 Specifies the basic state of the resource. 
 
 Valid values are: 'present', 'absent'.
 
-#####`name`
+##### `name`
 
 The name of the IAM role
 
-#####`path`
+##### `path`
 
 Optional.
 
 Role path
 
-#####`policy_document`
+##### `policy_document`
 
-A string containing the IAM policy in JSON format which controls which entities may assume this role, e.g. the default:
+A string containing the IAM policy in JSON format which controls which entities may assume this role.
+
+Default:
 
 ```json
 {
@@ -2324,7 +2326,7 @@ A string containing the IAM policy in JSON format which controls which entities 
 }
 ```
 
-#####`arn`
+##### `arn`
 
 The Amazon Resource Name for this IAM role.
 
@@ -2355,7 +2357,7 @@ kms { 'somekey':
 
 The above resource may be viewable elsewhere as 'alias/somekey'.
 
-#####`policy`
+##### `policy`
 
 The JSON policy document to manage on the given KMS key.
 
@@ -2363,11 +2365,11 @@ The JSON policy document to manage on the given KMS key.
 
 Note that currently, this type can only be listed via `puppet resource`, but cannot be created by Puppet.
 
-#####`name`
+##### `name`
 
 The name of the parameter group.
 
-#####`region`
+##### `region`
 
 The region in the parameter group is present. 
 
@@ -2375,25 +2377,25 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`description`
+##### `description`
 
 The description of the parameter group. 
 
 Valid values are: A string.
 
-#####`family`
+##### `family`
 
 The name of the database family with which the parameter group is compatible; for instance, 'mysql5.1'.
 
 #### Type: rds_db_securitygroup
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the RDS DB security group.
 
-#####`description`
+##### `description`
 
 A description of the RDS DB security group.
 
@@ -2401,7 +2403,7 @@ Valid values are: A string.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`region`
+##### `region`
 
 Required.
 
@@ -2411,54 +2413,54 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`owner_id`
+##### `owner_id`
 
-Readonly.
+Read-only.
 
 The internal AWS id of the owner of the security group.
 
-#####`security_groups`
+##### `security_groups`
 
-Readonly.
+Read-only.
 
 Details of any EC2 security groups attached to the RDS security group.
 
-#####`ip_ranges`
+##### `ip_ranges`
 
-Readonly.
+Read-only.
 
 Details of any ip_ranges attached to the RDS security group and their current state.
 
 #### Type: rds_db_subnet_group
 
-#####`name`
+##### `name`
 *Required* The name of the RDS DB subnet group.
 
-#####`description`
+##### `description`
 *Required* A description for the RDS DB subnet group.
 
-#####`region`
+##### `region`
 *Required* The region in which to create the subnet group. For valid values, see [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`vpc`
+##### `vpc`
 *Required* The name of the VPC to create the subnet group in. This parameter is set at group creation only. It is not affected by updates.
 
-#####`subnets`
+##### `subnets`
 *Required* A list of subnet names to include in the subnet group. AWS requires at least two subnets.
 
 #### Type: rds_instance
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the RDS Instance.
 
-#####`db_name`
+##### `db_name`
 
 Generally the name of database to be created. For Oracle this is the SID. Should not be set for MSSQL.
 
-#####`region`
+##### `region`
 
 Required.
 
@@ -2468,7 +2470,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`db_instance_class`
+##### `db_instance_class`
 
 Required.
 
@@ -2478,7 +2480,7 @@ Valid values are:
 
 See [the AWS documentation](http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html) for the list of sizes.
 
-#####`availability_zone`
+##### `availability_zone`
 
 Optional.
 
@@ -2488,7 +2490,7 @@ Valid values are:
 
 See [AWS Regions and Availability Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html).
 
-#####`engine`
+##### `engine`
 
 Required.
 
@@ -2496,13 +2498,13 @@ The type of database to use. Current options can be found using the 'rds-describ
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`engine_version`
+##### `engine_version`
 
 The version of the database to use. Current options can be found using the 'rds-describe-db-engine-versions' command from the AWS CLI. 
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`allocated_storage`
+##### `allocated_storage`
 
 Required.
 
@@ -2510,79 +2512,79 @@ The size of the database in gigabytes. Note that minimum size constraints exist,
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`license_model`
+##### `license_model`
 
 The nature of the license for commercial database products. Currently supported values are license-included, bring-your-own-license or general-public-license.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`storage_type`
+##### `storage_type`
 
 The type of storage to back the database with. Currently supported values are standard, gp2 or io1. 
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`iops`
+##### `iops`
 
 The number of provisioned IOPS (input/output operations per second) to be initially allocated for the instance.  
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`master_username`
+##### `master_username`
 
 The name of the master user for the database instance.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`master_user_password`
+##### `master_user_password`
 
 The password for the master user.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`multi_az`
+##### `multi_az`
 
 Boolean. Required if you intend to run the instance across multiple availability zones.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`db_subnet`
+##### `db_subnet`
 
 The name of an existing DB Subnet, for launching RDS instances in VPC.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`db_security_groups`
+##### `db_security_groups`
 
 Names of the database security groups to associate with the instance.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`vpc_security_groups`
+##### `vpc_security_groups`
 
 IDs of the database security groups within a VPC to associate the instance with.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`endpoint`
+##### `endpoint`
 
-Readonly.
+Read-only.
 
 The DNS address of the database.
 
-#####`port`
+##### `port`
 
-Readonly.
+Read-only.
 
 The port that the database is listening on.
 
-#####`skip_final_snapshot`
+##### `skip_final_snapshot`
 
 Determines whether a final DB snapshot is created before the DB instance is deleted. 
 
 Default value: `false`.
 
-#####`db_parameter_group`
+##### `db_parameter_group`
 
 The name of an associated DB parameter group. 
 
@@ -2590,21 +2592,21 @@ Valid values are: A string.
 
 This parameter is set at creation only; it is not affected by updates.
 
-#####`restore_snapshot`
+##### `restore_snapshot`
 
 Specify the snapshot name to optionally trigger creating the RDS DB from a snapshot.
 
-#####`final_db_snapshot_identifier`
+##### `final_db_snapshot_identifier`
 
 The name of the snapshot created when the instance is terminated. Note that `skip_final_snapshot` must be set to `false`.
 
-#####`backup_retention_period`
+##### `backup_retention_period`
 
 The number of days to retain backups. 
 
 Default value: '30 days'.
 
-#####`rds_tags`
+##### `rds_tags`
 
 Optional.
 
@@ -2638,19 +2640,19 @@ The route53 types set up various types of Route53 records:
 
 All Route53 record types use the same parameters:
 
-#####`zone`
+##### `zone`
 
 Required.
 
 The zone associated with this record.
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of DNS record.
 
-#####`ttl`
+##### `ttl`
 
 Optional.
 
@@ -2658,7 +2660,7 @@ The time to live for the record.
 
 Accepts an integer.
 
-#####`values`
+##### `values`
 
 Required.
 
@@ -2668,13 +2670,13 @@ Accepts an array.
 
 *Conflicts with alias_target*.
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of DNS zone group. This is the value of the AWS Name tag.
 
-#####`alias_target`
+##### `alias_target`
 
 Required.
 
@@ -2682,7 +2684,7 @@ When not using values the name of the alias resource to target.
 
 *Conflicts with values*.
 
-#####`alias_target_zone`
+##### `alias_target_zone`
 
 Required.
 
@@ -2690,37 +2692,37 @@ When using `alias_target` the ID of the zone in which the alias_target resides.
 
 #### Type: route53_zone
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of DNS zone. This is the value of the AWS Name tag. Trailing dot is optional.
 
-#####`id`
+##### `id`
 
-Readonly.
+Read-only.
 
 The AWS-generated alphanumeric ID of the zone, excluding the leading "/hostedzone/".
 
-#####`is_private`
+##### `is_private`
 
 Optional.
 
 True if the zone is private. Private zones require at least one associated VPC. `False` if the zone is public (default). Set at creation and cannot be changed.
 
-#####`record_count`
+##### `record_count`
 
-Readonly.
+Read-only.
 
 The AWS-reported number of records in the zone. Includes NS and SOA records, so new zones start with two records.
 
-#####`comment`
+##### `comment`
 
 Optional.
 
 The comment on the zone.
 
-#####`tags`
+##### `tags`
 
 Optional.
 
@@ -2728,7 +2730,7 @@ The tags for the zone.
 
 Accepts a key => value hash of tags. Excludes 'Name' tag.
 
-#####`vpcs`
+##### `vpcs`
 
 Conditional.
 
@@ -2741,25 +2743,25 @@ For public zones, validated but not used.
 
 #### Type: s3_bucket
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the bucket to managed.
 
-#####`policy`
+##### `policy`
 
 A JSON parsable string of the policy to apply to the bucket.
 
 #### Type: sqs_queue
 
-#####`name`
+##### `name`
 
 Required.
 
 The name of the SQS queue.
 
-#####`region`
+##### `region`
 
 Required.
 
@@ -2769,7 +2771,7 @@ Valid values are:
 
 See [AWS Regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
 
-#####`delay_seconds`
+##### `delay_seconds`
 
 Optional.
 
@@ -2777,7 +2779,7 @@ The time in seconds that the delivery of all messages in the queue will be delay
 
 Default value: 0.
 
-#####`message_retention_period`
+##### `message_retention_period`
 
 Optional.
 
@@ -2785,13 +2787,13 @@ The number of seconds Amazon SQS retains a message.
 
 Default value: 345600.
 
-#####`maximum_message_size`
+##### `maximum_message_size`
 
 Optional.
 
 The limit of how many bytes a message can contain before Amazon SQS rejects it.
 
-#####`visibility_timeout`
+##### `visibility_timeout`
 
 Optional.
 
@@ -2799,7 +2801,7 @@ The number of seconds during which Amazon SQS prevents other consuming component
 
 Default value: 30.
 
-##Limitations
+## Limitations
 
 This module requires Ruby 1.9 or later and is only tested on Puppet versions 3.4 and later.
 
