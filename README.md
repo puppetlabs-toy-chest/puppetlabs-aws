@@ -2562,9 +2562,8 @@ This parameter is set at creation only; it is not affected by updates.
 
 ##### `vpc_security_groups`
 
-IDs of the database security groups within a VPC to associate the instance with.
-
-This parameter is set at creation only; it is not affected by updates.
+Names of the VPC security groups to associate with the RDS instance. Also
+accepts security group IDs for backwards-compatibility.
 
 ##### `endpoint`
 

@@ -163,7 +163,10 @@ Not applicable. Must be null.'
   end
 
   newproperty(:vpc_security_groups, :array_matching => :all) do
-    desc 'An array of security group IDs within the VPC to assign to the instance.'
+    desc 'An array of security group names (or IDs) within the VPC to assign to the instance.'
+    munge do |value|
+      provider.vpc_security_group_munge(value)
+    end
   end
 
   newproperty(:endpoint) do

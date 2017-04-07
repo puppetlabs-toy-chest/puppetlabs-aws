@@ -358,12 +358,66 @@ This could be because some other process is modifying AWS at the same time."""
         @vpcs[region][vpc_id]
       end
 
-      def self.security_group_name_from_id(region, group_id)
-        @groups ||= name_cache_hash do |ec2, key|
-          response = ec2.describe_security_groups(group_ids: [key])
-          response.data.security_groups.first.group_name
+      # Set up @security_groups. Always call this method before using
+      # @security_groups. @security_groups[region] keeps track of security
+      # group IDs => names discovered per region, to prevent duplicate API
+      # calls.
+      def self.init_security_groups(region)
+        @security_groups ||= {}
+        @security_groups[region] ||= {}
+      end
+
+      def self.security_group_id_from_name(region, sg_name)
+        self.security_group_ids_from_names(region, [sg_name]).first
+      end
+
+      def self.security_group_ids_from_names(region, sg_names)
+        self.init_security_groups(region)
+
+        sg_names_to_discover = []
+        sg_names.each do |sg_name|
+          sg_names_to_discover << sg_name unless @security_groups[region].has_value?(sg_name)
         end
-        @groups[[region, group_id]]
+
+        unless sg_names_to_discover.empty?
+          sg_info = ec2_client(region).describe_security_groups(filters: [{
+            name: 'group-name',
+            values: sg_names_to_discover,
+          }])
+
+          sg_info.security_groups.each do |sg|
+            @security_groups[region][sg.group_id] = sg.group_name
+          end
+        end
+
+        sg_names.collect do |sg_name|
+          @security_groups[region].key(sg_name)
+        end.compact
+      end
+
+      def self.security_group_name_from_id(region, sg_id)
+        self.security_group_names_from_ids(region, [sg_id]).first
+      end
+
+      def self.security_group_names_from_ids(region, sg_ids)
+        self.init_security_groups(region)
+
+        sg_ids_to_discover = []
+        sg_ids.each do |sg_id|
+          sg_ids_to_discover << sg_id unless @security_groups[region].has_key?(sg_id)
+        end
+
+        unless sg_ids_to_discover.empty?
+          sg_info = ec2_client(region).describe_security_groups(group_ids: sg_ids_to_discover)
+
+          sg_info.security_groups.each do |sg|
+            @security_groups[region][sg.group_id] = sg.group_name
+          end
+        end
+
+        sg_ids.collect do |sg_id|
+          @security_groups[region][sg_id]
+        end.compact
       end
 
       def self.customer_gateway_name_from_id(region, gateway_id)
