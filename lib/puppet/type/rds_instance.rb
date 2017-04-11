@@ -237,4 +237,8 @@ Not applicable. Must be null.'
   newproperty(:rds_tags, :parent => PuppetX::Property::AwsTag) do
     desc 'The tags for the db instance.'
   end
+
+  newproperty(:copy_tags_to_snapshot) do
+    desc 'Copy all tags from the DB instance to snapshots of the DB instance.'
+  end
 end

@@ -72,6 +72,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       db_security_groups: instance.db_security_groups.collect(&:db_security_group_name),
       vpc_security_groups: vpc_security_groups,
       backup_retention_period: instance.backup_retention_period,
+      copy_tags_to_snapshot: instance.copy_tags_to_snapshot,
       availability_zone: instance.availability_zone,
       arn: instance.db_instance_arn
     }
@@ -185,6 +186,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       vpc_security_group_ids: vpc_sg_ids,
       option_group_name: resource[:db_option_group],
       backup_retention_period: resource[:backup_retention_period],
+      copy_tags_to_snapshot: resource[:copy_tags_to_snapshot],
       availability_zone: resource[:availability_zone],
       tags: tags,
     }
