@@ -215,7 +215,7 @@ Not applicable. Must be null.'
     end
   end
 
-  newproperty(:restore_snapshot) do
+  newparam(:restore_snapshot) do
     desc 'The database snapshot to restore as this RDS instance.'
     validate do |value|
       fail 'restore_snapshot should be a String' unless value.is_a?(String)
