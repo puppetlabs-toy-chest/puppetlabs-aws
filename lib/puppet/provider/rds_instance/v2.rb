@@ -253,7 +253,7 @@ Puppet::Type.type(:rds_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
           rds_instance_update[k] = v
         }
 
-        rds_client.modify_db_instance(rds_instance_update)
+        rds_client(@property_hash[:region]).modify_db_instance(rds_instance_update)
       end
     end
 
