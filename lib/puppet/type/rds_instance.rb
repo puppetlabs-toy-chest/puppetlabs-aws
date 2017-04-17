@@ -153,8 +153,8 @@ Not applicable. Must be null.'
   newproperty(:db_subnet) do
     desc 'The VPC DB subnet for this instance.'
     validate do |value|
-      fail 'subnet_group_name should be a String' unless value.is_a?(String)
-      fail 'subnet_group_name should not be blank' if value == ''
+      fail 'db_subnet_group_name should be a String' unless value.is_a?(String)
+      fail 'db_subnet_group_name should not be blank' if value == ''
     end
   end
 
