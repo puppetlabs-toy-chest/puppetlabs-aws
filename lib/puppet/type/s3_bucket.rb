@@ -30,5 +30,13 @@ Puppet::Type.newtype(:s3_bucket) do
     end
   end
 
+  newproperty(:region) do
+    desc 'The region in which to create the S3 bucket.'
+    validate do |value|
+      fail 'region should not contain spaces' if value =~ /\s/
+      fail 'region should be a String' unless value.is_a?(String)
+    end
+  end
+  
 end
 
