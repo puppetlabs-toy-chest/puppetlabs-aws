@@ -2,6 +2,9 @@ require 'spec_helper_acceptance'
 require 'securerandom'
 
 describe "route53_zone" do
+  before(:all) do
+    skip("Disabled pending fix for https://github.com/puppetlabs/puppetlabs-aws/issues/451")
+  end
 
   before(:all) do
     @default_region = 'sa-east-1'
