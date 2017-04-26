@@ -826,7 +826,7 @@ describe "The AWS module" do
       expect(result.stderr).not_to match(/error/i)
       # apply again looking for puppet error on attempted change
       result2 = PuppetManifest.new(@template, @negative_config).apply
-      regex = /Error: routes property is read-only once ec2_vpc_routetable created/
+      regex = /Warning: routes property is read-only once ec2_vpc_routetable created/
       expect(result2.stderr).to match(regex)
     end
   end

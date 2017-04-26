@@ -90,6 +90,11 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
     resources = route_response.data.route_tables.collect(&:route_table_id)
     resources << vpc_id
 
+    ec2.modify_vpc_attribute({vpc_id: vpc_id,
+                              enable_dns_support: {value: resource[:enable_dns_support] == :true}})
+    ec2.modify_vpc_attribute({vpc_id: vpc_id,
+                              enable_dns_hostnames: {value: resource[:enable_dns_hostnames] == :true}})
+
     with_retries(:max_tries => 5) do
       ec2.create_tags(
         resources: resources,
