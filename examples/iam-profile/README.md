@@ -28,6 +28,7 @@ add to this profile.
   "Statement": [
     {
       "Action": [
+        "ec2:DescribeAccountAttributes",
         "ec2:DescribeRegions",
         "ec2:DescribeInstances",
         "ec2:RunInstances",
