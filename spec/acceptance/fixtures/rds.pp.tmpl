@@ -13,4 +13,9 @@ rds_instance { '{{name}}':
   multi_az => '{{multi_az}}',
   skip_final_snapshot => '{{skip_final_snapshot}}',
   backup_retention_period => '{{backup_retention_period}}',
+  rds_tags => {
+    {{#rds_tags}}
+      {{k}} => '{{v}}',
+    {{/rds_tags}}
+  },
 }
