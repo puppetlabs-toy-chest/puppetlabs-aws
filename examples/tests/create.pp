@@ -48,11 +48,17 @@ ec2_securitygroup { 'db-sg':
   }],
 }
 
+#  In the "VPC dashboard", click "Subnets".
+#  Then, copy the "Subnet ID" of the subnet for the availability zone.
+#  Then, click where the Name/Tag for that subnet goes, which should be blank, and paste in the "Subnet ID" as the Name.
+#  Then, paste the Subnet ID/Name in the puppet code for the subnet.
+
 ec2_instance { ['web-1', 'web-2']:
   ensure          => present,
-  image_id        => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
+  image_id        => 'ami-af8b30cf', # EU 'ami-b8c41ccf',
+  subnet          => <YOUR_SUBNET_HERE>
   security_groups => ['web-sg'],
-  instance_type   => 't1.micro',
+  instance_type   => 't2.micro',
   tenancy         => 'default',
   tags            => {
     department => 'engineering',
@@ -63,9 +69,10 @@ ec2_instance { ['web-1', 'web-2']:
 
 ec2_instance { 'db-1':
   ensure          => present,
-  image_id        => 'ami-67a60d7a', # EU 'ami-b8c41ccf',
+  image_id        => 'ami-af8b30cf', # EU 'ami-b8c41ccf',
+  subnet          => <YOUR_SUBNET_HERE>
   security_groups => ['db-sg'],
-  instance_type   => 't1.micro',
+  instance_type   => 't2.micro',
   monitoring      => true,
   tenancy         => 'default',
   tags            => {
