@@ -516,7 +516,6 @@ This could be because some other process is modifying AWS at the same time."""
         # integers to integers, etc.  Array values are recursively normalized.
         # Hash values are normalized using the normalize_hash method.
         #
-        require 'pp'
         if value.is_a? String
           return true if value == 'true'
           return false if value == 'false'
