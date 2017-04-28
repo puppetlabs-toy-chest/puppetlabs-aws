@@ -358,6 +358,91 @@ This could be because some other process is modifying AWS at the same time."""
         @vpcs[region][vpc_id]
       end
 
+      # Set up the @ec2_instances.  Always call this method before using
+      # @security_groups. @security_groups[region] keeps track of security
+      # group IDs => names discovered per region, to prevent duplicate API
+      # calls.
+      def self.init_ec2_instances(region)
+        @ec2_instances ||= {}
+        @ec2_instances[region] ||= {}
+      end
+
+      def self.ec2_instance_id_from_name(region, instance_name)
+        self.ec2_instance_ids_from_names(region, [instance_name]).first
+      end
+
+      def self.ec2_instance_ids_from_names(region, instance_names)
+        self.init_ec2_instances(region)
+
+        instance_names_to_discover = []
+        instance_names.each do |instance_name|
+          next if @ec2_instances[region].has_value?(instance_name)
+          instance_names_to_discover << instance_name
+        end
+
+        unless instance_names_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve instances: #{instance_names_to_discover}")
+
+          instance_info = ec2_client(region).describe_isntances(filters: [{
+            name: 'tag:Name',
+            values: instance_names_to_discover,
+          }])
+
+          # TODO Check if we have next_token on the response
+
+          instance_info.each do |response|
+            response.data.reservations.each do |reservation|
+              reservation.instances.each do |instance|
+                instance_name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
+                if instance_name_tag
+                  @ec2_instances[region][instance.instance_id]= instance_name_tag.value
+                end
+              end
+            end
+          end
+        end
+
+        instance_names.collect do |instance_name|
+          @security_groups[region].key(instance_name)
+        end.compact
+      end
+
+      def self.ec2_instance_name_from_id(region, instance_id)
+        self.ec2_instance_names_from_ids(region, [instance_id]).first
+      end
+
+      def self.ec2_instance_names_from_ids(region, instance_ids)
+        self.init_ec2_instances(region)
+
+        instance_ids_to_discover = []
+        instance_ids.each do |instance_id|
+          next if @ec2_instances[region].has_key?(instance_id)
+          instance_ids_to_discover << instance_id
+        end
+
+        unless instance_ids_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve instances: #{instance_ids_to_discover}")
+          instance_info = ec2_client(region).describe_instances(instance_ids: instance_ids_to_discover)
+
+          # TODO Check if we have next_token on the response
+
+          instance_info.each do |response|
+            response.data.reservations.each do |reservation|
+              reservation.instances.each do |instance|
+                instance_name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
+                if instance_name_tag
+                  @ec2_instances[region][instance.instance_id]= instance_name_tag.value
+                end
+              end
+            end
+          end
+        end
+
+        instance_ids.collect do |instance_id|
+          @ec2_instances[region][instance_id]
+        end.compact
+      end
+
       # Set up @security_groups. Always call this method before using
       # @security_groups. @security_groups[region] keeps track of security
       # group IDs => names discovered per region, to prevent duplicate API
@@ -376,10 +461,12 @@ This could be because some other process is modifying AWS at the same time."""
 
         sg_names_to_discover = []
         sg_names.each do |sg_name|
-          sg_names_to_discover << sg_name unless @security_groups[region].has_value?(sg_name)
+          next if @security_groups[region].has_value?(sg_name)
+          sg_names_to_discover << sg_name
         end
 
         unless sg_names_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve security_groups: #{sg_names_to_discover}")
           sg_info = ec2_client(region).describe_security_groups(filters: [{
             name: 'group-name',
             values: sg_names_to_discover,
@@ -408,6 +495,7 @@ This could be because some other process is modifying AWS at the same time."""
         end
 
         unless sg_ids_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve security_groups: #{sg_ids_to_discover}")
           sg_info = ec2_client(region).describe_security_groups(group_ids: sg_ids_to_discover)
 
           sg_info.security_groups.each do |sg|
@@ -419,6 +507,82 @@ This could be because some other process is modifying AWS at the same time."""
           @security_groups[region][sg_id]
         end.compact
       end
+
+      # Set up @subnets. Always call this method before using @subnets.
+      # @subnets[region] keeps track of subnet IDs => names discovered per
+      # region, to prevent duplicate API calls.
+      def self.init_subnets(region)
+        @subnets ||= {}
+        @subnets[region] ||= {}
+      end
+
+      def self.subnet_id_from_name(region, subnet_name)
+        self.subnet_ids_from_names(region, [subnet_name]).first
+      end
+
+      def self.subnet_ids_from_names(region, subnet_names)
+        self.init_subnets(region)
+
+        subnet_names_to_discover = []
+        subnet_names.each do |subnet_name|
+          next if @subnets[region].has_value?(subnet_name)
+          subnet_names_to_discover << subnet_name
+        end
+
+        unless subnet_names_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve subnets: #{subnet_names_to_discover}")
+          subnet_info = ec2_client(region).describe_subnets(filters: [{
+            name: 'tag:Name',
+            value: subnet_names_to_discover
+          }])
+
+          subnet_info.subnets.each do |subnet|
+            subnet_name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
+            if subnet_name_tag
+              @subnets[region][subnet.subnet_id] = subnet_name_tag.value
+            end
+          end
+        end
+
+        subnet_names.collect do |subnet_name|
+          @security_groups[region].key(subnet_name)
+        end.compact
+      end
+
+      def self.subnet_name_from_id(region, subnet_id)
+        self.subnet_names_from_ids(region, [subnet_id]).first
+      end
+
+      def self.subnet_names_from_ids(region, subnet_ids)
+        self.init_subnets(region)
+
+        subnet_ids_to_discover = []
+        subnet_ids.each do |subnet_id|
+          next if @subnets[region].has_key?(subnet_id)
+          subnet_ids_to_discover << subnet_id
+        end
+
+        unless subnet_ids_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve subnets: #{subnet_ids_to_discover}")
+          subnet_info = ec2_client(region).describe_subnets(
+            subnet_ids: subnet_ids_to_discover
+          )
+
+          subnet_info.subnets.each do |subnet|
+            subnet_name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
+            if subnet_name_tag
+              @subnets[region][subnet.subnet_id] = subnet_name_tag.value
+            end
+          end
+        end
+
+        subnet_ids.collect do |subnet_id|
+          @subnets[region][subnet_id]
+        end.compact
+      end
+
+
+      ####
 
       def self.customer_gateway_name_from_id(region, gateway_id)
         @customer_gateways ||= name_cache_hash do |ec2, key|
@@ -516,7 +680,6 @@ This could be because some other process is modifying AWS at the same time."""
         # integers to integers, etc.  Array values are recursively normalized.
         # Hash values are normalized using the normalize_hash method.
         #
-        require 'pp'
         if value.is_a? String
           return true if value == 'true'
           return false if value == 'false'
