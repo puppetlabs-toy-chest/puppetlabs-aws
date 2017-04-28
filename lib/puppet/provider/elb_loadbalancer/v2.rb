@@ -161,24 +161,8 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         end
       end
 
-      if instances_to_resolve.size > 0
-        # We arrive here when the instances that we are looking to convert from
-        # ID to Name have not been found in the reference catalog.  As such,
-        # here we need to make the call to ec2_client to resolve the instances
-        # that are missing.
-        Puppet.debug("Calling ec2_client to resolve instances: #{instances_to_resolve}")
-        instances = ec2_client(region).describe_instances(instance_ids: instance_ids).collect do |response|
-          response.data.reservations.collect do |reservation|
-            reservation.instances.collect do |instance|
-              instance
-            end
-          end.flatten
-        end.flatten
-        instances.each do |instance|
-          name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
-          name = name_tag ? name_tag.value : nil
-          instance_names << name if name
-        end
+      unless instances_to_resolve.empty?
+        instance_names += ec2_instance_names_from_ids(region, instances_to_resolve)
       end
     end
     instance_names
@@ -207,18 +191,8 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         end
       end
 
-      if subnets_to_resolve.size > 0
-        # We arrive here when the subnet that we are looking to convert from ID
-        # to Name is not found in the catalog.  This requires us to make the
-        # call to ec2_client to get the subnet information we need.
-        Puppet.debug("Calling ec2_client to resolve subnets: #{subnets_to_resolve}")
-        subnent_response = ec2_client(region).describe_subnets(subnet_ids: load_balancer.subnets)
-        subnent_response.data.subnets.each do |subnet|
-          subnet_name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
-          if subnet_name_tag
-            subnet_names << subnet_name_tag.value
-          end
-        end
+      unless subnets_to_resolve.empty?
+        subnets_to_resolve += subnet_names_from_ids(region, subnets_to_resolve)
       end
     end
     subnet_names
@@ -247,16 +221,8 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         end
       end
 
-      if security_groups_to_resolve.size > 0
-        # We arrive here when the security groups that we are looking to
-        # convert from IDs to names have not been found in the catalog, in
-        # which case, we must make the call to AWS to get the security group
-        # information we need to make the translation.
-        Puppet.debug("Calling ec2_client to resolve security_groups: #{security_groups_to_resolve}")
-        group_response = ec2_client(region).describe_security_groups(group_ids: security_groups_to_resolve)
-        group_response.data.security_groups.collect(&:group_name).each do |sg_name|
-          security_group_names << sg_name
-        end
+      unless security_groups_to_resolve.empty?
+        security_group_names += security_group_names_from_ids(region, security_groups_to_resolve)
       end
     end
 
@@ -377,7 +343,6 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     unless value.empty?
       ids = security_group_ids_from_names(value)
 
-      Puppet.debug("Setting IDs #{ids}")
       elb_client(resource[:region]).apply_security_groups_to_load_balancer(
         load_balancer_name: name,
         security_groups: ids,
