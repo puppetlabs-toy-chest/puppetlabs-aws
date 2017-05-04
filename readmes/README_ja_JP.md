@@ -5,7 +5,7 @@ Status](https://travis-ci.org/puppetlabs/puppetlabs-aws.svg?branch=master)](http
 
 #### 目次
 
-1. [概要](#overview)
+1. [概要](#概要)
 2. [説明 - モジュールの機能とその有益性](#description)
 3. [セットアップ](#setup)
   * [要件](#requirements)
