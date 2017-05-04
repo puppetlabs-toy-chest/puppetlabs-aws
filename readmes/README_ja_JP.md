@@ -6,20 +6,20 @@ Status](https://travis-ci.org/puppetlabs/puppetlabs-aws.svg?branch=master)](http
 #### 目次
 
 1. [概要](#概要)
-2. [説明 - モジュールの機能とその有益性](#description)
-3. [セットアップ](#setup)
-  * [要件](#requirements)
-  * [awsモジュールのインストール](#installing-the-aws-module)
-4. [はじめに](#getting-started-with-aws)
-5. [使用方法 - 設定オプションとその他の機能](#usage)
-  * [リソースの作成](#creating-resources)
-  * [スタックの作成](#creating-a-stack)
-  * [コマンド行からのリソースの管理](#managing-resources-from-the-command-line)
-  * [AWSインフラストラクチャの管理](#managing-aws-infrastructure)
-6. [参考 - モジュールの機能と動作について](#reference)
-  * [タイプ](#types)
-  * [パラメータ](#parameters)
-7. [制約事項 - OSの互換性など](#limitations)
+2. [説明 - モジュールの機能とその有益性](#説明)
+3. [セットアップ](#セットアップ)
+  * [要件](#要件)
+  * [awsモジュールのインストール](#awsモジュールのインストール)
+4. [はじめに](#awsについて)
+5. [使用方法 - 設定オプションとその他の機能](#使用方法)
+  * [リソースの作成](#リソースの作成)
+  * [スタックの作成](#スタックの作成)
+  * [コマンド行からのリソースの管理](#コマンド行からのリソースの管理)
+  * [AWSインフラストラクチャの管理](#AWSインフラストラクチャの管理)
+6. [参考 - モジュールの機能と動作について](#参考)
+  * [タイプ](#タイプ)
+  * [パラメータ](#パラメータ)
+7. [制約事項 - OSの互換性など](#制約事項)
 
 ## 概要
 
@@ -2800,7 +2800,7 @@ Amazon SQSが他の電力消費コンポーネントのメッセージの受信�
 
 デフォルト値：30。
 
-## Limitations
+## 制約事項
 
 このモジュールにはRuby 1.9以降が必要であり、Puppetバージョン3.4以降でしかテストされません。
 
