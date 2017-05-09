@@ -14,7 +14,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
           retries = 0
           begin
             load_balancers << new(load_balancer_to_hash(region, lb, ref_catalog))
-          rescue Aws::EC2::Errors::RequestLimitExceeded => e
+          rescue Aws::EC2::Errors::RequestLimitExceeded, Aws::ElasticLoadBalancing::Errors::Throttling => e
             retries += 1
             if retries <= 8
               sleep_time = 2 ** retries
