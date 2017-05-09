@@ -192,7 +192,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       end
 
       unless subnets_to_resolve.empty?
-        subnets_to_resolve += subnet_names_from_ids(region, subnets_to_resolve)
+        subnet_names += subnet_names_from_ids(region, subnets_to_resolve)
       end
     end
     subnet_names
