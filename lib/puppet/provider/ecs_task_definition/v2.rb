@@ -167,7 +167,7 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def flush
-    Puppet.debug("Flushing ECS task definition for #{@property_hash[:name]}")
+    Puppet.debug("Flushing ECS task definition for #{resource[:name]}")
 
     containers = []
     if @property_hash[:container_definitions] and @property_flush[:container_definitions]
@@ -182,16 +182,18 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
       end
     end
 
-    Puppet.debug("Registering new task definition for #{@property_hash[:name]}")
+    Puppet.debug("Registering new task definition for #{resource[:name]}")
 
     if containers.size > 0
       container_definitions = containers
     else
-      container_definitions = @property_hash[:container_definitions]
+      container_definitions = resource[:container_definitions]
     end
 
+    Puppet.debug("#{container_definitions}")
+
     task = {
-      family: @property_hash[:name],
+      family: resource[:name],
       container_definitions: self.class.serialize_container_definitions(container_definitions),
     }
 
@@ -202,6 +204,8 @@ Puppet::Type.type(:ecs_task_definition).provide(:v2, :parent => PuppetX::Puppetl
     if resource[:volumes]
       task[:volumes] = resource[:volumes]
     end
+
+    Puppet.debug("#{task}")
 
     ecs_client.register_task_definition(task)
   end
