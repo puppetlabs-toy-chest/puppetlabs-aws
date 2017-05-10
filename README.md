@@ -34,7 +34,7 @@ In the simplest case, this allows you to create new EC2 instances from Puppet co
 
 ### Requirements
 
-* Puppet 4.2 or greater
+* Puppet 4.7 or greater
 * Ruby 1.9 or greater
 * Amazon AWS Ruby SDK (available as a gem)
 * Retries gem
