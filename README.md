@@ -10,16 +10,15 @@ Status](https://travis-ci.org/puppetlabs/puppetlabs-aws.svg?branch=master)](http
 3. [Setup](#setup)
   * [Requirements](#requirements)
   * [Installing the aws module](#installing-the-aws-module)
-4. [Getting Started with aws](#getting-started-with-aws)
-5. [Usage - Configuration options and additional functionality](#usage)
+4. [Usage - Configuration options and additional functionality](#usage)
   * [Creating resources](#creating-resources)
   * [Creating a stack](#creating-a-stack)
   * [Managing resources from the command line](#managing-resources-from-the-command-line)
   * [Managing AWS infrastructure](#managing-aws-infrastructure)
-6. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
   * [Types](#types)
   * [Parameters](#parameters)
-7. [Limitations - OS compatibility, etc.](#limitations)
+6. [Limitations - OS compatibility, etc.](#limitations)
 
 ## Overview
 
@@ -35,7 +34,7 @@ In the simplest case, this allows you to create new EC2 instances from Puppet co
 
 ### Requirements
 
-* Puppet 3.4 or greater
+* Puppet 4.7 or greater
 * Ruby 1.9 or greater
 * Amazon AWS Ruby SDK (available as a gem)
 * Retries gem
@@ -94,57 +93,54 @@ The AWS region and HTTP proxy can be provided in a file called 'puppetlabs_aws_c
       region = us-east-1
       http_proxy = http://proxy.example.com:80
 ```
-## Getting Started with aws
-
-The aws module allows you to manage AWS using the Puppet DSL. To stand up an instance with AWS, use the `ec2_instance` type. The following code sets up a very basic instance:
-
-``` puppet
-ec2_instance { 'instance-name':
-  ensure        => present,
-  region        => 'us-west-1',
-  image_id      => 'ami-123456', # you need to select your own AMI
-  instance_type => 't1.micro',
-}
-```
 
 ## Usage
 
 ### Creating resources
 
-You can also set up more complex EC2 instances with a variety of AWS features, as well as load balancers and security groups.
+You can set up EC2 instances with a variety of AWS features, as well as a VPC, security group, and load balancer.
 
-**Set up an instance:**
+**Setup a VPC:**
 
 ``` puppet
-ec2_instance { 'name-of-instance':
-  ensure            => present,
-  region            => 'us-east-1',
-  availability_zone => 'us-east-1a',
-  image_id          => 'ami-123456',
-  instance_type     => 't1.micro',
-  monitoring        => true,
-  key_name          => 'name-of-existing-key',
-  security_groups   => ['name-of-security-group'],
-  user_data         => template('module/file-path.sh.erb'),
-  tags              => {
+ec2_vpc { 'name-of-vpc':
+  ensure     => present,
+  region     => 'us-east-1',
+  cidr_block => '10.0.0.0/24',
+  tags       => {
     tag_name => 'value',
   },
 }
 ```
 
-**Set up a security group:**
+**Setup a subnet:**
 
 ``` puppet
-ec2_securitygroup { 'name-of-group':
+ec2_vpc_subnet { 'name-of-subnet':
+  ensure                  => present,
+  region                  => 'us-east-1',
+  cidr_block              => '10.0.0.0/24',
+  availability_zone       => 'us-east-1a',
+  map_public_ip_on_launch => true,
+  vpc                     => 'name-of-vpc,
+  tags                    => {
+    tag_name => 'value',
+  },
+}
+```
+
+**Setup a security group:**
+
+``` puppet
+ec2_securitygroup { 'name-of-security-group':
   ensure      => present,
   region      => 'us-east-1',
+  vpc         => 'name-of-vpc',
   description => 'a description of the group',
   ingress     => [{
     protocol  => 'tcp',
-    port      => 80,
+    port      => 22,
     cidr      => '0.0.0.0/0',
-  },{
-    security_group => 'other-security-group',
   }],
   tags        => {
     tag_name  => 'value',
@@ -152,7 +148,25 @@ ec2_securitygroup { 'name-of-group':
 }
 ```
 
-**Set up a load balancer:**
+**Setup an instance:**
+
+``` puppet
+ec2_instance { 'name-of-instance':
+  ensure            => running,
+  region            => 'us-east-1',
+  availability_zone => 'us-east-1a',
+  image_id          => 'ami-123456', # you need to select your own AMI
+  instance_type     => 't2.micro',
+  key_name          => 'name-of-existing-key',
+  subnet            => 'name-of-subnet',
+  security_groups   => ['name-of-security-group'],
+  tags              => {
+    tag_name => 'value',
+  },
+}
+```
+
+**Setup a load balancer:**
 
 ``` puppet
 elb_loadbalancer { 'name-of-load-balancer':
