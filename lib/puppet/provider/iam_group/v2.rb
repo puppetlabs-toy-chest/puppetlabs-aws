@@ -5,10 +5,27 @@ Puppet::Type.type(:iam_group).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) 
 
   mk_resource_methods
 
-  def self.instances
-    response = iam_client.list_groups()
-    response.groups.collect do |group|
+  def self.get_groups
+    group_results = iam_client.list_groups()
+    groups = group_results.groups
 
+    truncated = group_results.is_truncated
+    marker = group_results.marker
+
+    while truncated and marker
+      Puppet.debug('iam_group results truncated, proceeding with discovery')
+      response = iam_client.list_groups({marker: marker})
+      response.groups.each {|g| groups << g }
+      truncated = response.is_truncated
+      marker = response.marker
+    end
+
+    groups
+  end
+
+  def self.instances
+    groups = get_groups()
+    groups.collect do |group|
       group_data = iam_client.get_group({ group_name: group.group_name })
       member_names = group_data.users.map {|user| user.user_name }
 
