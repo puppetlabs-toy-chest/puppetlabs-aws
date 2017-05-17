@@ -7,19 +7,36 @@ Puppet::Type.type(:iam_role).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) d
 
   mk_resource_methods
 
+  def self.get_roles
+    role_results = iam_client.list_roles()
+    roles = role_results.roles
+
+    truncated = role_results.is_truncated
+    marker = role_results.marker
+
+    while truncated and marker
+      Puppet.debug('iam_role results truncated, proceeding with discovery')
+      response = iam_client.list_roles({marker: marker})
+      response.roles.each {|r| roles << r }
+      truncated = response.is_truncated
+      marker = response.marker
+    end
+
+    roles
+  end
+
   def self.instances
-    response = iam_client.list_roles()
-    response.roles.collect do |role|
+    roles = get_roles()
+    roles.collect do |role|
       policy_data = JSON.parse(URI.unescape(role.assume_role_policy_document))
       policy_document = JSON.pretty_generate(policy_data)
-
       new({
-              name: role.role_name,
-              ensure: :present,
-              path: role.path,
-              arn: role.arn,
-              policy_document: policy_document,
-          })
+        name: role.role_name,
+        ensure: :present,
+        path: role.path,
+        arn: role.arn,
+        policy_document: policy_document,
+      })
     end
   end
 
