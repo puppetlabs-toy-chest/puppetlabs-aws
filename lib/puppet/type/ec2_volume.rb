@@ -99,4 +99,5 @@ Puppet::Type.newtype(:ec2_volume) do
   newproperty(:encrypted, parent: Puppet::Property::Boolean) do
     desc 'Indicates whether newly created volume should be encrypted.'
   end
+
 end

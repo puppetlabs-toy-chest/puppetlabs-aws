@@ -34,6 +34,21 @@ Puppet::Type.newtype(:ec2_securitygroup) do
     end
   end
 
+  newproperty(:egress, :array_matching => :all) do
+    desc 'rules for egress traffic'
+    def insync?(is)
+      for_comparison = Marshal.load(Marshal.dump(should))
+      parser = PuppetX::Puppetlabs::AwsIngressRulesParser.new(for_comparison)
+      to_create = parser.rules_to_create(is)
+      to_delete = parser.rules_to_delete(is)
+      to_create.empty? && to_delete.empty?
+    end
+
+    validate do |value|
+      fail 'egress should be a Hash' unless value.is_a?(Hash)
+    end
+  end
+
   newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'the tags for the security group'
   end
