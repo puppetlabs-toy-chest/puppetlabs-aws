@@ -3,7 +3,7 @@ cloudwatch_alarm { '{{alarm_name}}':
   region => '{{region}}',
 } ~>
 
-ec2_scalingpolicy { '{{policy_name}}':
+ec2_scalingpolicy { [ '{{policy_name}}', '{{second_policy_name}}' ]:
   ensure             => {{ensure}},
   region             => '{{region}}',
   auto_scaling_group => '{{asg_name}}',

@@ -18,6 +18,7 @@ describe type_class do
       :ingress,
       :egress,
       :tags,
+      :id,
     ]
   end
 
@@ -42,7 +43,7 @@ describe type_class do
   it 'should require region to not contain spaces' do
     expect {
       type_class.new({name: 'name', region: 'invalid region'})
-    }.to raise_error(Puppet::Error, /region should not contain spaces/)
+    }.to raise_error(Puppet::Error, /region should be a valid AWS region/)
   end
 
   [

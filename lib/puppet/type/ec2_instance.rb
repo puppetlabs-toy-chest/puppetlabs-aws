@@ -1,4 +1,5 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
 
 Puppet::Type.newtype(:ec2_instance) do
   @doc = 'Type representing an EC2 instance.'
@@ -93,12 +94,8 @@ Puppet::Type.newtype(:ec2_instance) do
     end
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to launch the instance.'
-    validate do |value|
-      fail 'region should not contain spaces' if value =~ /\s/
-      fail 'region should be a String' unless value.is_a?(String)
-    end
   end
 
   newproperty(:image_id) do
@@ -126,6 +123,12 @@ Puppet::Type.newtype(:ec2_instance) do
       fail 'instance_type should not be blank' if value == ''
       fail 'instance_type should be a String' unless value.is_a?(String)
     end
+  end
+
+  newproperty(:tenancy) do
+    desc 'The instance tenancy: default or dedicated.'
+    defaultto :default
+    newvalues(:default, :dedicated)
   end
 
   newproperty(:instance_id) do
@@ -227,6 +230,10 @@ Puppet::Type.newtype(:ec2_instance) do
       specified_devices = should.collect { |device| device['device_name'] }
       existing_devices.to_set == specified_devices.to_set
     end
+  end
+
+  newproperty(:interfaces) do
+    desc 'A collected property of the interfaces attached to an instance'
   end
 
   autorequire(:ec2_securitygroup) do

@@ -1,0 +1,135 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://route53.amazonaws.com/2013-04-01/hostedzone
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.3 x86_64-darwin15
+      X-Amz-Date:
+      - 20170228T211702Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170228/us-east-1/route53/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=238ee4b75f016e3141991f35e39fd6a3475aa1413fcf16d3503213f607d090ec
+      Content-Length:
+      - '0'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 3f68cc2f-fdfb-11e6-85dc-efa28d9c095d
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '467'
+      Date:
+      - Tue, 28 Feb 2017 21:17:01 GMT
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0"?>
+        <ListHostedZonesResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><HostedZones><HostedZone><Id>/hostedzone/Z1Y34IMK1IXRPL</Id><Name>devopscentral.com.</Name><CallerReference>513225554085e039e1670470be830f76</CallerReference><Config><PrivateZone>false</PrivateZone></Config><ResourceRecordSetCount>2</ResourceRecordSetCount></HostedZone></HostedZones><IsTruncated>false</IsTruncated><MaxItems>100</MaxItems></ListHostedZonesResponse>
+    http_version: 
+  recorded_at: Tue, 28 Feb 2017 21:17:02 GMT
+- request:
+    method: get
+    uri: https://route53.amazonaws.com/2013-04-01/tags/hostedzone/Z1Y34IMK1IXRPL
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.3 x86_64-darwin15
+      X-Amz-Date:
+      - 20170228T211702Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170228/us-east-1/route53/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=8ad2784f970bac3b29931c9ff40f61cb98827621709f45d93714c0e6ab821165
+      Content-Length:
+      - '0'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 3fa20472-fdfb-11e6-9beb-f3d90ff717ab
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '253'
+      Date:
+      - Tue, 28 Feb 2017 21:17:02 GMT
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0"?>
+        <ListTagsForResourceResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><ResourceTagSet><ResourceType>hostedzone</ResourceType><ResourceId>Z1Y34IMK1IXRPL</ResourceId><Tags/></ResourceTagSet></ListTagsForResourceResponse>
+    http_version: 
+  recorded_at: Tue, 28 Feb 2017 21:17:02 GMT
+- request:
+    method: delete
+    uri: https://route53.amazonaws.com/2013-04-01/hostedzone/Z1Y34IMK1IXRPL
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.3 x86_64-darwin15
+      X-Amz-Date:
+      - 20170228T211702Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170228/us-east-1/route53/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=f04c5c2c717a77844e41aa44cb752130b99b7f7aac3762e2dff156893fa640a7
+      Content-Length:
+      - '0'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 3fd8cca3-fdfb-11e6-85dc-efa28d9c095d
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '260'
+      Date:
+      - Tue, 28 Feb 2017 21:17:02 GMT
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0"?>
+        <DeleteHostedZoneResponse xmlns="https://route53.amazonaws.com/doc/2013-04-01/"><ChangeInfo><Id>/change/C30W1N7MWPU6JQ</Id><Status>PENDING</Status><SubmittedAt>2017-02-28T21:17:03.158Z</SubmittedAt></ChangeInfo></DeleteHostedZoneResponse>
+    http_version: 
+  recorded_at: Tue, 28 Feb 2017 21:17:03 GMT
+recorded_with: VCR 3.0.3

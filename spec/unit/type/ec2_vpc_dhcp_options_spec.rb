@@ -44,12 +44,15 @@ describe type_class do
   it 'region should not contain spaces' do
     expect {
       type_class.new(:name => 'sample', :region => 'sa east 1')
-    }.to raise_error(Puppet::ResourceError, /region should not contain spaces/)
+    }.to raise_error(Puppet::ResourceError, /region should be a valid AWS region/)
   end
 
-  it 'should default node type to 2' do
-    srv = type_class.new(:name => 'sample')
-    expect(srv[:netbios_node_type]).to eq('2')
+  ['8.8.8.8','2.2.2.2'].each do |value|
+    it 'require netbios node type when netbios name server is used' do
+      expect{
+        type_class.new(:name => 'sample', :netbios_name_servers => value)
+      }.to raise_error(Puppet::ResourceError, /You must specify netbios node type, when using netbios name server.Recommended value is 2/)
+    end
   end
 
   it 'compare a list of domain names with an array correctly' do

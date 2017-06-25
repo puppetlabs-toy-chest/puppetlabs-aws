@@ -52,7 +52,7 @@ This could be because some other process is modifying AWS at the same time."""
       def self.read_only(*methods)
         methods.each do |method|
           define_method("#{method}=") do |v|
-            fail "#{method} property is read-only once #{resource.type} created."
+            Puppet.warning "#{method} property is read-only once #{resource.type} created."
           end
         end
       end
@@ -162,12 +162,28 @@ This could be because some other process is modifying AWS at the same time."""
         self.class.elb_client(region)
       end
 
+      def self.elbv2_client(region = default_region)
+        ::Aws::ElasticLoadBalancingV2::Client.new(client_config(region))
+      end
+
+      def elbv2_client(region = default_region)
+        self.class.elbv2_client(region)
+      end
+
       def self.autoscaling_client(region = default_region)
         ::Aws::AutoScaling::Client.new(client_config(region))
       end
 
       def autoscaling_client(region = default_region)
         self.class.autoscaling_client(region)
+      end
+
+      def self.cloudformation_client(region = default_region)
+        ::Aws::CloudFormation::Client.new(client_config(region))
+      end
+
+      def cloudformation_client(region = default_region)
+        self.class.cloudformation_client(region)
       end
 
       def self.cloudwatch_client(region = default_region)
@@ -191,7 +207,7 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def self.rds_client(region = default_region)
-        ::Aws::RDS::Client.new({region: region})
+        ::Aws::RDS::Client.new(client_config(region))
       end
 
       def sqs_client(region = default_region)
@@ -199,9 +215,48 @@ This could be because some other process is modifying AWS at the same time."""
       end
 
       def self.sqs_client(region = default_region)
-        ::Aws::SQS::Client.new({region: region})
+        ::Aws::SQS::Client.new(client_config(region))
       end
 
+      def self.iam_client(region = default_region)
+        ::Aws::IAM::Client.new(client_config(region))
+      end
+
+      def iam_client(region = default_region)
+        self.class.iam_client(region)
+      end
+
+      def self.kms_client(region = default_region)
+        ::Aws::KMS::Client.new(client_config(region))
+      end
+
+      def kms_client(region = default_region)
+        self.class.kms_client(region)
+      end
+
+      def self.s3_client(region = default_region)
+        ::Aws::S3::Client.new(client_config(region))
+      end
+
+      def s3_client(region = default_region)
+        self.class.s3_client(region)
+      end
+
+      def self.ecs_client(region = default_region)
+        ::Aws::ECS::Client.new(client_config(region))
+      end
+
+      def ecs_client(region = default_region)
+        self.class.ecs_client(region)
+      end
+
+      def self.cloudfront_client(region = default_region)
+        ::Aws::CloudFront::Client.new(client_config(region))
+      end
+
+      def cloudfront_client(region = default_region)
+        self.class.cloudfront_client(region)
+      end
 
       def tags_for_resource
         tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
@@ -235,29 +290,299 @@ This could be because some other process is modifying AWS at the same time."""
         ) unless missing_tags.empty?
       end
 
+      def rds_tags=(value)
+        Puppet.info("Updating RDS tags for #{name} in region #{target_region}")
+        rds = rds_client(target_region)
+        rds.add_tags_to_resource(
+          resource_name: @property_hash[:arn],
+          tags: value.collect { |k,v| { :key => k, :value => v } }
+        ) unless value.empty?
+        missing_tags = rds_tags.keys - value.keys
+        rds.remove_tags_from_resource(
+          resource_name: @property_hash[:arn],
+          tag_keys: missing_tags.collect { |k| { :key => k } }
+        ) unless missing_tags.empty?
+      end
+
       def self.has_name?(hash)
         !hash[:name].nil? && !hash[:name].empty?
       end
 
-      def self.vpc_name_from_id(region, vpc_id)
-        @vpcs ||= name_cache_hash do |ec2, key|
-          response = ec2.describe_vpcs(vpc_ids: [key])
-          if response.data.vpcs.first.to_hash.keys.include?(:group_name)
-            response.data.vpcs.first.group_name
-          elsif response.data.vpcs.first.to_hash.keys.include?(:tags)
-            name_from_tag(response.data.vpcs.first)
-          end
-        end
-        @vpcs[[region, vpc_id]]
+      # Set up @vpcs. Always call this method before using @vpcs. @vpcs[region]
+      # keeps track of VPC IDs => names discovered per region, to prevent
+      # duplicate API calls.
+      def self.init_vpcs(region)
+        @vpcs ||= {}
+        @vpcs[region] ||= {}
       end
 
-      def self.security_group_name_from_id(region, group_id)
-        @groups ||= name_cache_hash do |ec2, key|
-          response = ec2.describe_security_groups(group_ids: [key])
-          response.data.security_groups.first.group_name
+      def self.vpc_id_from_name(region, vpc_name)
+        self.init_vpcs(region)
+
+        unless @vpcs[region].key(vpc_name)
+          vpc_info = ec2_client(region).describe_vpcs(filters: [
+            {
+              name: 'tag-key',
+              values: ['Name'],
+            },
+            {
+              name: 'tag-value',
+              values: [vpc_name],
+            },
+          ])
+
+          return nil if vpc_info.vpcs.empty?
+
+          vpc_id = vpc_info.vpcs.first['vpc_id']
+          @vpcs[region][vpc_id] = vpc_name
         end
-        @groups[[region, group_id]]
+
+        @vpcs[region].key(vpc_name)
       end
+
+      def self.vpc_name_from_id(region, vpc_id)
+        self.init_vpcs(region)
+
+        # Duplicate API calls will be made for unnamed VPCs, since they are
+        # saved with the name nil.
+        unless @vpcs[region][vpc_id]
+          response = ec2_client(region).describe_vpcs(vpc_ids: [vpc_id])
+          @vpcs[region][vpc_id] =
+            if response.data.vpcs.first.to_hash.keys.include?(:group_name)
+              response.data.vpcs.first.group_name
+            elsif response.data.vpcs.first.to_hash.keys.include?(:tags)
+              name_from_tag(response.data.vpcs.first)
+            end
+        end
+
+        @vpcs[region][vpc_id]
+      end
+
+      # Set up the @ec2_instances.  Always call this method before using
+      # @security_groups. @security_groups[region] keeps track of security
+      # group IDs => names discovered per region, to prevent duplicate API
+      # calls.
+      def self.init_ec2_instances(region)
+        @ec2_instances ||= {}
+        @ec2_instances[region] ||= {}
+      end
+
+      def self.ec2_instance_id_from_name(region, instance_name)
+        self.ec2_instance_ids_from_names(region, [instance_name]).first
+      end
+
+      def self.ec2_instance_ids_from_names(region, instance_names)
+        self.init_ec2_instances(region)
+
+        instance_names_to_discover = []
+        instance_names.each do |instance_name|
+          next if @ec2_instances[region].has_value?(instance_name)
+          instance_names_to_discover << instance_name
+        end
+
+        unless instance_names_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve instances: #{instance_names_to_discover}")
+
+          instance_info = ec2_client(region).describe_isntances(filters: [{
+            name: 'tag:Name',
+            values: instance_names_to_discover,
+          }])
+
+          # TODO Check if we have next_token on the response
+
+          instance_info.each do |response|
+            response.data.reservations.each do |reservation|
+              reservation.instances.each do |instance|
+                instance_name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
+                if instance_name_tag
+                  @ec2_instances[region][instance.instance_id]= instance_name_tag.value
+                end
+              end
+            end
+          end
+        end
+
+        instance_names.collect do |instance_name|
+          @security_groups[region].key(instance_name)
+        end.compact
+      end
+
+      def self.ec2_instance_name_from_id(region, instance_id)
+        self.ec2_instance_names_from_ids(region, [instance_id]).first
+      end
+
+      def self.ec2_instance_names_from_ids(region, instance_ids)
+        self.init_ec2_instances(region)
+
+        instance_ids_to_discover = []
+        instance_ids.each do |instance_id|
+          next if @ec2_instances[region].has_key?(instance_id)
+          instance_ids_to_discover << instance_id
+        end
+
+        unless instance_ids_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve instances: #{instance_ids_to_discover}")
+          instance_info = ec2_client(region).describe_instances(instance_ids: instance_ids_to_discover)
+
+          # TODO Check if we have next_token on the response
+
+          instance_info.each do |response|
+            response.data.reservations.each do |reservation|
+              reservation.instances.each do |instance|
+                instance_name_tag = instance.tags.detect { |tag| tag.key == 'Name' }
+                if instance_name_tag
+                  @ec2_instances[region][instance.instance_id]= instance_name_tag.value
+                end
+              end
+            end
+          end
+        end
+
+        instance_ids.collect do |instance_id|
+          @ec2_instances[region][instance_id]
+        end.compact
+      end
+
+      # Set up @security_groups. Always call this method before using
+      # @security_groups. @security_groups[region] keeps track of security
+      # group IDs => names discovered per region, to prevent duplicate API
+      # calls.
+      def self.init_security_groups(region)
+        @security_groups ||= {}
+        @security_groups[region] ||= {}
+      end
+
+      def self.security_group_id_from_name(region, sg_name)
+        self.security_group_ids_from_names(region, [sg_name]).first
+      end
+
+      def self.security_group_ids_from_names(region, sg_names)
+        self.init_security_groups(region)
+
+        sg_names_to_discover = []
+        sg_names.each do |sg_name|
+          next if @security_groups[region].has_value?(sg_name)
+          sg_names_to_discover << sg_name
+        end
+
+        unless sg_names_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve security_groups: #{sg_names_to_discover}")
+          sg_info = ec2_client(region).describe_security_groups(filters: [{
+            name: 'group-name',
+            values: sg_names_to_discover,
+          }])
+
+          sg_info.security_groups.each do |sg|
+            @security_groups[region][sg.group_id] = sg.group_name
+          end
+        end
+
+        sg_names.collect do |sg_name|
+          @security_groups[region].key(sg_name)
+        end.compact
+      end
+
+      def self.security_group_name_from_id(region, sg_id)
+        self.security_group_names_from_ids(region, [sg_id]).first
+      end
+
+      def self.security_group_names_from_ids(region, sg_ids)
+        self.init_security_groups(region)
+
+        sg_ids_to_discover = []
+        sg_ids.each do |sg_id|
+          sg_ids_to_discover << sg_id unless @security_groups[region].has_key?(sg_id)
+        end
+
+        unless sg_ids_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve security_groups: #{sg_ids_to_discover}")
+          sg_info = ec2_client(region).describe_security_groups(group_ids: sg_ids_to_discover)
+
+          sg_info.security_groups.each do |sg|
+            @security_groups[region][sg.group_id] = sg.group_name
+          end
+        end
+
+        sg_ids.collect do |sg_id|
+          @security_groups[region][sg_id]
+        end.compact
+      end
+
+      # Set up @subnets. Always call this method before using @subnets.
+      # @subnets[region] keeps track of subnet IDs => names discovered per
+      # region, to prevent duplicate API calls.
+      def self.init_subnets(region)
+        @subnets ||= {}
+        @subnets[region] ||= {}
+      end
+
+      def self.subnet_id_from_name(region, subnet_name)
+        self.subnet_ids_from_names(region, [subnet_name]).first
+      end
+
+      def self.subnet_ids_from_names(region, subnet_names)
+        self.init_subnets(region)
+
+        subnet_names_to_discover = []
+        subnet_names.each do |subnet_name|
+          next if @subnets[region].has_value?(subnet_name)
+          subnet_names_to_discover << subnet_name
+        end
+
+        unless subnet_names_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve subnets: #{subnet_names_to_discover}")
+          subnet_info = ec2_client(region).describe_subnets(filters: [{
+            name: 'tag:Name',
+            value: subnet_names_to_discover
+          }])
+
+          subnet_info.subnets.each do |subnet|
+            subnet_name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
+            if subnet_name_tag
+              @subnets[region][subnet.subnet_id] = subnet_name_tag.value
+            end
+          end
+        end
+
+        subnet_names.collect do |subnet_name|
+          @security_groups[region].key(subnet_name)
+        end.compact
+      end
+
+      def self.subnet_name_from_id(region, subnet_id)
+        self.subnet_names_from_ids(region, [subnet_id]).first
+      end
+
+      def self.subnet_names_from_ids(region, subnet_ids)
+        self.init_subnets(region)
+
+        subnet_ids_to_discover = []
+        subnet_ids.each do |subnet_id|
+          next if @subnets[region].has_key?(subnet_id)
+          subnet_ids_to_discover << subnet_id
+        end
+
+        unless subnet_ids_to_discover.empty?
+          Puppet.debug("Calling ec2_client to resolve subnets: #{subnet_ids_to_discover}")
+          subnet_info = ec2_client(region).describe_subnets(
+            subnet_ids: subnet_ids_to_discover
+          )
+
+          subnet_info.subnets.each do |subnet|
+            subnet_name_tag = subnet.tags.detect { |tag| tag.key == 'Name' }
+            if subnet_name_tag
+              @subnets[region][subnet.subnet_id] = subnet_name_tag.value
+            end
+          end
+        end
+
+        subnet_ids.collect do |subnet_id|
+          @subnets[region][subnet_id]
+        end.compact
+      end
+
+
+      ####
 
       def self.customer_gateway_name_from_id(region, gateway_id)
         @customer_gateways ||= name_cache_hash do |ec2, key|
@@ -296,7 +621,7 @@ This could be because some other process is modifying AWS at the same time."""
         end
       end
 
-      def queue_url_from_name (queue_name )
+      def queue_url_from_name(queue_name )
         sqs = sqs_client(target_region)
         response = sqs.get_queue_url ({queue_name: name})
         response.data.queue_url
@@ -324,6 +649,92 @@ This could be because some other process is modifying AWS at the same time."""
           end
         end
         @gateways[gateway_id]
+      end
+
+      def self.normalize_hash(hash)
+        # Sort and format the received hash for simpler comparison.
+        #
+        # Symbolized keys are converted to string'd keys.  Values are sent to the
+        # normalize_values method for processing.  Returns a hash sorted by keys.
+        #
+        data = {}
+
+        fail "Invalid data type when attempting normalize of hash: #{hash.class}" unless hash.is_a? Hash
+
+        hash.keys.sort_by{|k|k.to_s}.each {|k|
+          value = hash[k]
+          data[k.to_s] = self.normalize_values(value)
+        }
+        sorted_hash = {}
+        data.keys.sort.each {|k|
+          sorted_hash[k] = data[k]
+        }
+        sorted_hash
+      end
+
+      def self.normalize_values(value)
+        # Convert the received value data into a standard format for simpler
+        # comparison.
+        #
+        # This results in the conversion of boolean strings to booleans, string
+        # integers to integers, etc.  Array values are recursively normalized.
+        # Hash values are normalized using the normalize_hash method.
+        #
+        if value.is_a? String
+          return true if value == 'true'
+          return false if value == 'false'
+
+          begin
+            return Integer(value)
+          rescue ArgumentError
+            return value
+          end
+
+        elsif value.is_a? true.class or value.is_a? false.class
+          return value
+        elsif value.is_a? Numeric
+          return value
+        elsif value.is_a? Symbol
+          return value.to_s
+        elsif value.is_a? Hash
+          return self.normalize_hash(value)
+        elsif value.is_a? Array
+          value_class_list = value.map(&:class).uniq
+
+          return [] unless value.size > 0
+
+          if value_class_list.include? String
+            return value.sort
+          elsif value_class_list.include? Hash
+            value_list = value
+          else
+            value_list = value
+          end
+
+          #return nil if value.size == 0
+          results = value_list.map {|v|
+            self.normalize_values(v)
+          }
+
+          results_class_list = results.map(&:class).uniq
+          if results_class_list.include? Hash
+            nested_results__value_class_list = results.collect {|i|
+              i.collect {|k,v|
+                v.class
+              }
+            }.flatten.uniq
+
+            # If we've got a nestd hash, this sorting will fail
+            unless nested_results__value_class_list.include? Hash
+              results = results.sort_by{|k|
+                k.flatten
+              }
+            end
+          end
+          return results
+        else
+          Puppet.debug("Value class #{value.class} not handled")
+        end
       end
 
     end

@@ -1,3 +1,5 @@
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
+
 Puppet::Type.newtype(:ec2_elastic_ip) do
   @doc = "Type representing an Elastic IP and it's association."
 
@@ -19,12 +21,8 @@ Puppet::Type.newtype(:ec2_elastic_ip) do
     end
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The name of the region in which the Elastic IP is found.'
-    validate do |value|
-      fail 'region should be a String' unless value.is_a?(String)
-      fail 'You must provide a region for Elastic IPs.' if value.nil? || value.empty?
-    end
   end
 
   newproperty(:instance) do

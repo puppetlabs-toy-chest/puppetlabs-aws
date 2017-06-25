@@ -22,10 +22,12 @@ describe type_class do
       :region,
       :availability_zone,
       :monitoring,
+      :tenancy,
       :key_name,
       :subnet,
       :ebs_optimized,
       :iam_instance_profile_arn,
+      :interfaces,
     ]
   end
 

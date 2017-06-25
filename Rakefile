@@ -1,5 +1,4 @@
 require 'puppetlabs_spec_helper/rake_tasks'
-require 'puppet/vendor/semantic/lib/semantic'
 
 begin
   require 'puppet_blacksmith/rake_tasks'
@@ -28,7 +27,7 @@ end
 PuppetSyntax.exclude_paths = ignore_paths
 
 desc "Run acceptance tests"
-RSpec::Core::RakeTask.new(:acceptance) do |t|
+RSpec::Core::RakeTask.new(:acceptance => :spec_prep) do |t|
     t.pattern = 'spec/acceptance'
 end
 

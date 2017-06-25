@@ -1,4 +1,5 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
 
 Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
   @doc = 'Type representing a DHCP option set for AWS VPC.'
@@ -17,12 +18,8 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
     desc 'Tags for the DHCP option set.'
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to assign the DHCP option set.'
-    validate do |value|
-      fail 'region should not contain spaces' if value =~ /\s/
-      fail 'region should be a String' unless value.is_a?(String)
-    end
   end
 
   newproperty(:domain_name, :array_matching => :all) do
@@ -68,8 +65,7 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
   end
 
   newproperty(:netbios_node_type) do
-    desc 'The netbios node type, defaults to 2.'
-    defaultto '2'
+    desc 'The netbios node type, the recommended value is 2 (Point-to-Point). Required if Netbios name server is used.'
     munge do |value|
       value.to_s
     end
@@ -78,5 +74,9 @@ Puppet::Type.newtype(:ec2_vpc_dhcp_options) do
         fail "'%s' is not a valid netbios_node_type, can be [1248]" % value
       end
     end
+  end
+
+  validate do
+    fail ('You must specify netbios node type, when using netbios name server.Recommended value is 2') if !self[:netbios_name_servers].nil? && self[:netbios_node_type].nil?
   end
 end

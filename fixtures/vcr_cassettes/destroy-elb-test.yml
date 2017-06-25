@@ -1,46 +1,51 @@
---- 
-  http_interactions: 
-    - request: 
-        method: post
-        uri: "https://elasticloadbalancing.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DeleteLoadBalancer&LoadBalancerName=lb-1&Version=2012-06-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.1 ruby/2.1.1 x86_64-darwin13.0"
-          X-Amz-Date: 
-            - "20141003T115254Z"
-          Host: 
-            - elasticloadbalancing.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - b2d7e898602a78800eef4240a0beedc4091cbc0d42a162fa31fb1b2a296b25cd
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20141003/sa-east-1/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=redacted"
-          Content-Length: 
-            - "66"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          X-Amzn-Requestid: 
-            - cff4c24a-4af3-11e4-b2a1-31f021862379
-          Content-Type: 
-            - text/xml
-          Content-Length: 
-            - "262"
-          Date: 
-            - "Fri, 03 Oct 2014 11:52:54 GMT"
-        body: 
-          encoding: UTF-8
-          string: "<DeleteLoadBalancerResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <DeleteLoadBalancerResult/>\n  <ResponseMetadata>\n    <RequestId>cff4c24a-4af3-11e4-b2a1-31f021862379</RequestId>\n  </ResponseMetadata>\n</DeleteLoadBalancerResponse>\n"
-        http_version: 
-      recorded_at: "Fri, 03 Oct 2014 11:52:55 GMT"
-  recorded_with: "VCR 2.9.3"
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://elasticloadbalancing.sa-east-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DeleteLoadBalancer&LoadBalancerName=lb-1&Version=2012-06-01
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170112T183721Z
+      X-Amz-Content-Sha256:
+      - b2d7e898602a78800eef4240a0beedc4091cbc0d42a162fa31fb1b2a296b25cd
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170112/sa-east-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=928ca13d4a33ad60cbde0acb753f626b6e613ba6bea44455aa85c60fab35fc34
+      Content-Length:
+      - '66'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 279d3fac-d8f6-11e6-b029-fb770eddb995
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '262'
+      Date:
+      - Thu, 12 Jan 2017 18:37:22 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <DeleteLoadBalancerResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+          <DeleteLoadBalancerResult/>
+          <ResponseMetadata>
+            <RequestId>279d3fac-d8f6-11e6-b029-fb770eddb995</RequestId>
+          </ResponseMetadata>
+        </DeleteLoadBalancerResponse>
+    http_version: 
+  recorded_at: Thu, 12 Jan 2017 18:37:22 GMT
+recorded_with: VCR 3.0.3

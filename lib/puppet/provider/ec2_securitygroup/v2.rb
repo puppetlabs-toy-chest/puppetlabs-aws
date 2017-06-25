@@ -97,7 +97,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
   end
 
   def exists?
-    Puppet.info("Checking if security group #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if security group #{name} exists in region #{target_region}")
     @property_hash[:ensure] == :present
   end
 
@@ -172,22 +172,25 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
         group_response = ec2.describe_security_groups(filters: filters)
         match_count = group_response.data.security_groups.count
-        msg = "No groups found called #{source_group_name}"
-        msg = msg + " in #{@property_hash[:vpc]}"
-        fail(msg) if match_count == 0
-        source_group_id = group_response.data.security_groups.first.group_id
-        Puppet.warning "#{match_count} groups found called #{source_group_name}, using #{source_group_id}" if match_count > 1
+        if match_count == 0
+          Puppet.warning("No groups found called #{source_group_name} in #{@property_hash[:vpc]}; skipping rule")
+        else
+          source_group_id = group_response.data.security_groups.first.group_id
+          Puppet.warning "#{match_count} groups found called #{source_group_name}, using #{source_group_id}" if match_count > 1
 
-        permission[:user_id_group_pairs] = [{
-          group_id: source_group_id
-        }]
+          permission[:user_id_group_pairs] = [{
+            group_id: source_group_id
+          }]
+        end
       elsif rule.key? 'cidr'
         permission[:ip_ranges] = [{cidr_ip: rule['cidr']}]
       end
-      rule_hash[:ip_permissions] << permission
+
+      # Skip the permission if it has no peer.
+      rule_hash[:ip_permissions] << permission unless (permission.keys & [:user_id_group_pairs, :ip_ranges]).empty?
     end
 
-    rule_hash
+    rule_hash[:ip_permissions].any? ? rule_hash : nil
   end
 
   def authorize_rules(new_rules, direction, existing_rules=[])
@@ -198,7 +201,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
     to_create = parser.rules_to_create(existing_rules)
     to_delete = parser.rules_to_delete(existing_rules)
 
-    to_delete.reject(&:nil?).each do |rule|
+    to_delete.compact.reject(&:nil?).each do |rule|
       if direction == :ingress
         ec2.revoke_security_group_ingress(prepare_rule_for_api(rule))
       elsif direction == :egress
@@ -212,6 +215,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
       elsif direction == :egress
         ec2.authorize_security_group_egress(prepare_rule_for_api(rule))
       end
+
     end
   end
 

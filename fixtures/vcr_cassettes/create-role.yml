@@ -1,0 +1,123 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListRoles&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170119T190642Z
+      X-Amz-Content-Sha256:
+      - 8e689dc6b69b17003f0460011582254d8643f0dfb48ac46e093a24df58170b3f
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170119/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=f172283564fbd0dce039e6bb7b86f52d178d0f3eed91ef539c27bb2859c93026
+      Content-Length:
+      - '35'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 6a32f6d4-de7a-11e6-98c2-d336c3453283
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '853'
+      Date:
+      - Thu, 19 Jan 2017 19:06:42 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListRolesResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListRolesResult>
+            <IsTruncated>false</IsTruncated>
+            <Roles>
+              <member>
+                <Path>/</Path>
+                <AssumeRolePolicyDocument>%7B%22Version%22%3A%222008-10-17%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22ec2.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D</AssumeRolePolicyDocument>
+                <RoleId>AROAJTEW6IGCXX4HNR5T2</RoleId>
+                <RoleName>ecsInstanceRole</RoleName>
+                <Arn>arn:aws:iam::123456789012:role/ecsInstanceRole</Arn>
+                <CreateDate>2017-01-11T21:32:55Z</CreateDate>
+              </member>
+            </Roles>
+          </ListRolesResult>
+          <ResponseMetadata>
+            <RequestId>6a32f6d4-de7a-11e6-98c2-d336c3453283</RequestId>
+          </ResponseMetadata>
+        </ListRolesResponse>
+    http_version: 
+  recorded_at: Thu, 19 Jan 2017 19:06:43 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListRoles&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170119T190643Z
+      X-Amz-Content-Sha256:
+      - 8e689dc6b69b17003f0460011582254d8643f0dfb48ac46e093a24df58170b3f
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170119/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=eb671afb53c5ecb8336a3fa22e7e05e7b2604c0af0782eb298a29e310b6c2344
+      Content-Length:
+      - '35'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 6a6355b9-de7a-11e6-b721-7d7493774d49
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '853'
+      Date:
+      - Thu, 19 Jan 2017 19:06:42 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListRolesResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListRolesResult>
+            <IsTruncated>false</IsTruncated>
+            <Roles>
+              <member>
+                <Path>/</Path>
+                <AssumeRolePolicyDocument>%7B%22Version%22%3A%222008-10-17%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22ec2.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D</AssumeRolePolicyDocument>
+                <RoleId>AROAJTEW6IGCXX4HNR5T2</RoleId>
+                <RoleName>ecsInstanceRole</RoleName>
+                <Arn>arn:aws:iam::123456789012:role/ecsInstanceRole</Arn>
+                <CreateDate>2017-01-11T21:32:55Z</CreateDate>
+              </member>
+            </Roles>
+          </ListRolesResult>
+          <ResponseMetadata>
+            <RequestId>6a6355b9-de7a-11e6-b721-7d7493774d49</RequestId>
+          </ResponseMetadata>
+        </ListRolesResponse>
+    http_version: 
+  recorded_at: Thu, 19 Jan 2017 19:06:43 GMT
+recorded_with: VCR 3.0.3

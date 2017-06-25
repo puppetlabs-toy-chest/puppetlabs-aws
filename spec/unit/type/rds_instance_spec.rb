@@ -10,6 +10,7 @@ describe type_class do
       :master_user_password,
       :skip_final_snapshot,
       :final_db_snapshot_identifier,
+      :restore_snapshot,
     ]
   end
 
@@ -29,6 +30,7 @@ describe type_class do
       :master_username,
       :multi_az,
       :db_security_groups,
+      :vpc_security_groups,
       :endpoint,
       :port,
       :db_parameter_group,
@@ -58,7 +60,7 @@ describe type_class do
   it 'region should not contain spaces' do
     expect {
       type_class.new(:name => 'sample', :region => 'sa east 1')
-    }.to raise_error(Puppet::ResourceError, /region should not contain spaces/)
+    }.to raise_error(Puppet::ResourceError, /region should be a valid AWS region/)
   end
 
   it 'IOPS must be an integer' do

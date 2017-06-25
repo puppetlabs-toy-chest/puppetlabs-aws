@@ -8,6 +8,11 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   mk_resource_methods
   remove_method :tags=
 
+  def initialize(value={})
+    super(value)
+    @property_flush = {}
+  end
+
   def self.instances
     regions.collect do |region|
       begin
@@ -37,9 +42,9 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     end.flatten
   end
 
-  read_only(:instance_id, :instance_type, :region, :user_data, :key_name,
-            :availability_zones, :security_groups, :monitoring, :subnet,
-            :ebs_optimized, :block_devices, :private_ip_address,
+  read_only(:instance_id, :instance_type, :image_id, :region, :user_data,
+            :key_name, :availability_zones, :monitoring, :interfaces,
+            :subnet, :ebs_optimized, :block_devices, :private_ip_address,
             :iam_instance_profile_arn, :iam_instance_profile_name)
 
   def self.prefetch(resources)
@@ -70,6 +75,21 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       }
     end
 
+
+    # We capture the instance data about its interfaces to support lookup later
+    # in flush so we know which interface ID to modify the security groups on.
+    interface_hash = {}
+    instance.network_interfaces.each do |interface|
+      interface_hash[interface.network_interface_id] = {
+        security_groups: interface.groups.collect do |group|
+          {
+            group_name: group.group_name,
+            group_id: group.group_id,
+          }
+        end
+      }
+    end
+
     config = {
       name: name,
       instance_type: instance.instance_type,
@@ -82,6 +102,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       ensure: instance.state.name.to_sym,
       tags: tags,
       region: region,
+      tenancy: instance.placement.tenancy,
       hypervisor: instance.hypervisor,
       iam_instance_profile_arn: instance.iam_instance_profile ? instance.iam_instance_profile.arn : nil,
       virtualization_type: instance.virtualization_type,
@@ -89,7 +110,9 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       subnet: subnet_name,
       ebs_optimized: instance.ebs_optimized,
       kernel_id: instance.kernel_id,
+      interfaces: interface_hash,
     }
+
     if instance.state.name == 'running'
       config[:public_dns_name] = instance.public_dns_name
       config[:private_dns_name] = instance.private_dns_name
@@ -101,17 +124,17 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def exists?
-    Puppet.info("Checking if instance #{name} exists in region #{target_region}")
+    Puppet.debug("Checking if instance #{name} exists in region #{target_region}")
     running? || stopped?
   end
 
   def running?
-    Puppet.info("Checking if instance #{name} is running in region #{target_region}")
+    Puppet.debug("Checking if instance #{name} is running in region #{target_region}")
     [:present, :pending, :running].include? @property_hash[:ensure]
   end
 
   def stopped?
-    Puppet.info("Checking if instance #{name} is stopped in region #{target_region}")
+    Puppet.debug("Checking if instance #{name} is stopped in region #{target_region}")
     [:stopping, :stopped].include? @property_hash[:ensure]
   end
 
@@ -222,7 +245,7 @@ Found #{matching_groups.length}:
           volume_size: device['volume_size'],
           snapshot_id: device['snapshot_id'],
           delete_on_termination: device['delete_on_termination'] || true,
-          volume_type: device['volume_type'] || 'standard',
+          volume_type: device['volume_type'] || 'gp2',
           iops: device['iops'],
           encrypted: device['encrypted'] ? true : nil
         },
@@ -238,12 +261,7 @@ Found #{matching_groups.length}:
     config
   end
 
-  def config_with_private_ip(config)
-    config['private_ip_address'] = resource['private_ip_address'] if resource['private_ip_address'] && using_vpc?
-    config
-  end
-
-  def config_with_public_interface(config)
+  def config_with_ip(config)
     if resource[:associate_public_ip_address] == :true
       config[:network_interfaces] = [{
         device_index: 0,
@@ -251,9 +269,18 @@ Found #{matching_groups.length}:
         groups: config[:security_group_ids],
         associate_public_ip_address: true,
       }]
+      # If both public and private ip specified, then the private_ip_address must be within the network_interfaces structure
+      #  Module currently only supports a single network interface, therefore attatch any specified private ip address
+      #  to the first network interface.
+      if resource['private_ip_address'] && using_vpc?
+        config[:network_interfaces].first[:private_ip_address] = resource['private_ip_address']
+      end
       config[:subnet_id] = nil
       config[:security_group_ids] = nil
+    elsif resource['private_ip_address'] && using_vpc?
+      config['private_ip_address'] = resource['private_ip_address']
     end
+
     config
   end
 
@@ -278,7 +305,8 @@ Found #{matching_groups.length}:
           Hash['arn' => resource[:iam_instance_profile_arn]] :
           Hash['name' => resource[:iam_instance_profile_name]],
         placement: {
-          availability_zone: resource[:availability_zone]
+          availability_zone: resource[:availability_zone],
+          tenancy: resource[:tenancy],
         },
         monitoring: {
           enabled: resource[:monitoring].to_s,
@@ -288,8 +316,7 @@ Found #{matching_groups.length}:
       config = config_with_key_details(config)
       config = config_with_devices(config)
       config = config_with_network_details(config)
-      config = config_with_private_ip(config)
-      config = config_with_public_interface(config)
+      config = config_with_ip(config)
 
       response = ec2.run_instances(config)
 
@@ -326,11 +353,44 @@ Found #{matching_groups.length}:
     @property_hash[:ensure] = :stopped
   end
 
+  def security_groups=(value)
+    @property_flush[:security_groups] = value
+  end
+
   def destroy
     Puppet.info("Deleting instance #{name} in region #{target_region}")
     ec2 = ec2_client(target_region)
     ec2.terminate_instances(instance_ids: [instance_id])
     ec2.wait_until(:instance_terminated, instance_ids: [instance_id])
     @property_hash[:ensure] = :absent
+  end
+
+  def flush
+    if @property_hash[:ensure] != :absent
+      Puppet.debug("Flushing EC2 instance #{@property_hash[:name]}")
+      ec2 = ec2_client(resource[:region])
+
+      # Check if we need to modify the security groups for an interface
+      if @property_flush.keys.include? :security_groups
+        if @property_hash[:interfaces].size != 1
+          Puppet.warning('Handling security group changes on instances with
+                         multiple interfaces is not implemented')
+        else
+          interface_id = @property_hash[:interfaces].keys[0]
+          group_ids = ec2.describe_security_groups({
+            filters: [
+              {name: 'group-name', values: @property_flush[:security_groups]},
+            ]
+          }).security_groups.map(&:group_id)
+
+          Puppet.debug("Calling for security group modification #{group_ids}")
+          ec2.modify_network_interface_attribute({
+            groups: group_ids,
+            network_interface_id: interface_id
+          })
+        end
+
+      end
+    end
   end
 end

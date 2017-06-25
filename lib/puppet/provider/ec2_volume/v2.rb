@@ -81,12 +81,12 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
 
   def create
     Puppet.info("Creating Volume #{name} in region #{target_region}")
-    #ec2 = ec2_client(resource[:region])
     config = {
       size: resource[:size],
       availability_zone: resource[:availability_zone],
       volume_type: resource[:volume_type],
-      iops: resource[:iops]
+      encrypted: resource[:encrypted],
+      kms_key_id: resource[:kms_key_id],
     }
 
     config = create_from_snapshot(config)

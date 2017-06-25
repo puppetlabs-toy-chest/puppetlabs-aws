@@ -1,3 +1,41 @@
+## Supported Version 2.0.0
+
+This release includes:
+- Drop support for Puppet 3
+- RDS extensions including snapshot restore and VPC support
+- Support for managing EC2 volumes
+- Support for SSD-based EBS volumes and made these the default for storage
+- Early IAM (role, group, instance profile) and KMS support
+- S3 bucket support with policy management
+- ECS (service, task, role) support
+- Support for CloudFormation
+
+As well as following fixes and improvements:
+- Initial internationalization support, including a Japanese README
+- Acceptance test fixes and updates
+- Public DNS resolution and hostname properties for VPC
+- Support for private Route53 zones
+- Remove securitygroup autorequire to allow circular dependencies
+- Allow security group mutual peering
+- Initial support for CloudFront
+- Filter sensitive data during VCR recording
+- Initial support for elbv2 load balancers
+- Support for ELB listener modification
+- Allow security group changes for ec2_instance
+- Improve ELB enumeration performance
+- Add visibility_timeout property to sqs_queue
+- Launch configuration/block device mappings
+- Health check management and insync property for ELB
+- Replace read-only failures with warning
+- Add alias_target property for Route53
+- Retry for ELB request limits
+- Add dns_name property to elb_loadbalancer
+- Add block_device_mappings for launch_config type
+- associate_public_ip_address for ec2 instances
+- Dedicated tenancy for ec2 instances
+- Tags support and additional properties for ec2_autoscalinggroup
+- Remove default netbios_node_type value for ec2_vpc_dhcp_options
+
 ## Supported Version 1.4.0
 
 This release includes:

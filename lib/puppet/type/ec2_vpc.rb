@@ -1,4 +1,5 @@
 require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
 
 Puppet::Type.newtype(:ec2_vpc) do
   @doc = 'A type representing an AWS VPC.'
@@ -13,12 +14,8 @@ Puppet::Type.newtype(:ec2_vpc) do
     end
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to launch the VPC.'
-    validate do |value|
-      fail 'region should not contain spaces' if value =~ /\s/
-      fail 'region should be a String' unless value.is_a?(String)
-    end
   end
 
   newproperty(:cidr_block) do
@@ -29,6 +26,24 @@ Puppet::Type.newtype(:ec2_vpc) do
     desc 'The DHCP option set to use for this VPC.'
     validate do |value|
       fail 'dhcp_options should be a String' unless value.is_a?(String)
+    end
+  end
+
+  newproperty(:enable_dns_support) do
+    desc 'Enable DNS support for this VPC.'
+    defaultto :true
+    newvalues(:true, :false)
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
+  newproperty(:enable_dns_hostnames) do
+    desc 'Enable DNS hostnames for this VPC.'
+    defaultto :true
+    newvalues(:true, :false)
+    def insync?(is)
+      is.to_s == should.to_s
     end
   end
 

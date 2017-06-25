@@ -1,0 +1,153 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListUsers&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172013Z
+      X-Amz-Content-Sha256:
+      - b6359072c78d70ebee1e81adcbab4f01bf2c23245fa365ef83fe8f1f955085e2
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=51d6c9682d53349f0b9160ab22e611a6a5545ef3e6689f792efecab5bc305aea
+      Content-Length:
+      - '35'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 3667aa8d-d822-11e6-940d-b79303d6a8dd
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1187'
+      Date:
+      - Wed, 11 Jan 2017 17:20:13 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListUsersResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListUsersResult>
+            <IsTruncated>false</IsTruncated>
+            <Users>
+              <member>
+                <Path>/</Path>
+                <PasswordLastUsed>2017-01-11T16:16:54Z</PasswordLastUsed>
+                <UserName>ishearin</UserName>
+                <Arn>arn:aws:iam::123456789012:user/ishearin</Arn>
+                <UserId>AIDAJD5YADU67WPGYXKYK</UserId>
+                <CreateDate>2016-06-16T20:28:41Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <PasswordLastUsed>2017-01-10T19:07:58Z</PasswordLastUsed>
+                <UserName>zleslie</UserName>
+                <Arn>arn:aws:iam::123456789012:user/zleslie</Arn>
+                <UserId>AIDAJEOSIABK4O2G5JGRQ</UserId>
+                <CreateDate>2016-05-20T20:58:02Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <UserName>zleslie2</UserName>
+                <Arn>arn:aws:iam::123456789012:user/zleslie2</Arn>
+                <UserId>AIDAJXLSYDKUU7Q6G7F5S</UserId>
+                <CreateDate>2016-06-16T20:28:40Z</CreateDate>
+              </member>
+            </Users>
+          </ListUsersResult>
+          <ResponseMetadata>
+            <RequestId>3667aa8d-d822-11e6-940d-b79303d6a8dd</RequestId>
+          </ResponseMetadata>
+        </ListUsersResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:13 GMT
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListUsers&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170111T172013Z
+      X-Amz-Content-Sha256:
+      - b6359072c78d70ebee1e81adcbab4f01bf2c23245fa365ef83fe8f1f955085e2
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170111/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=51d6c9682d53349f0b9160ab22e611a6a5545ef3e6689f792efecab5bc305aea
+      Content-Length:
+      - '35'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 370cc43b-d822-11e6-ab10-214f93a0c1e1
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1187'
+      Date:
+      - Wed, 11 Jan 2017 17:20:14 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListUsersResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListUsersResult>
+            <IsTruncated>false</IsTruncated>
+            <Users>
+              <member>
+                <Path>/</Path>
+                <PasswordLastUsed>2017-01-11T16:16:54Z</PasswordLastUsed>
+                <UserName>ishearin</UserName>
+                <Arn>arn:aws:iam::123456789012:user/ishearin</Arn>
+                <UserId>AIDAJD5YADU67WPGYXKYK</UserId>
+                <CreateDate>2016-06-16T20:28:41Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <PasswordLastUsed>2017-01-10T19:07:58Z</PasswordLastUsed>
+                <UserName>zleslie</UserName>
+                <Arn>arn:aws:iam::123456789012:user/zleslie</Arn>
+                <UserId>AIDAJEOSIABK4O2G5JGRQ</UserId>
+                <CreateDate>2016-05-20T20:58:02Z</CreateDate>
+              </member>
+              <member>
+                <Path>/</Path>
+                <UserName>zleslie2</UserName>
+                <Arn>arn:aws:iam::123456789012:user/zleslie2</Arn>
+                <UserId>AIDAJXLSYDKUU7Q6G7F5S</UserId>
+                <CreateDate>2016-06-16T20:28:40Z</CreateDate>
+              </member>
+            </Users>
+          </ListUsersResult>
+          <ResponseMetadata>
+            <RequestId>370cc43b-d822-11e6-ab10-214f93a0c1e1</RequestId>
+          </ResponseMetadata>
+        </ListUsersResponse>
+    http_version: 
+  recorded_at: Wed, 11 Jan 2017 17:20:14 GMT
+recorded_with: VCR 3.0.3

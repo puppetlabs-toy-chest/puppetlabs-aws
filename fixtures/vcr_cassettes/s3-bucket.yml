@@ -1,0 +1,199 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://s3-sa-east-1.amazonaws.com/
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170112T185742Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170112/sa-east-1/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=3dc0788593a1cb7a8e9a4f78afc7cce7f726398b528e69a14ec4a440be56b737
+      Content-Length:
+      - '0'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amz-Id-2:
+      - tFb0nwYvFnKIb5mFvYfK5ljGv3qNxYzXNrCNFS9Q9zSAJjWPzEonZE7I0FcMnL8YfWIVRl6vn9Y=
+      X-Amz-Request-Id:
+      - 7685AA828436692F
+      Date:
+      - Thu, 12 Jan 2017 18:57:43 GMT
+      Content-Type:
+      - application/xml
+      Transfer-Encoding:
+      - chunked
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>577c9c2d571b1e27f12e417c5835e62c7e8c062a9290027c399719177d9631f4</ID><DisplayName>zleslie</DisplayName></Owner><Buckets><Bucket><Name>womply-ishearin</Name><CreationDate>2017-01-03T20:39:18.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>
+    http_version: 
+  recorded_at: Thu, 12 Jan 2017 18:57:43 GMT
+- request:
+    method: get
+    uri: https://womply-ishearin.s3-sa-east-1.amazonaws.com/?policy
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170112T185743Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170112/sa-east-1/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=2e2f30a6c4a3746659fbfb8bec549e1658870f7627e8a82c1ded7d39b3c4d626
+      Content-Length:
+      - '0'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      X-Amz-Bucket-Region:
+      - us-west-2
+      X-Amz-Request-Id:
+      - E940B1E21A5CF4CA
+      X-Amz-Id-2:
+      - y86zCjWdZxjEKGGX7KH15shnli4pZmN+QDlhQdj7ESYQTKFXlN2dR6gCF7agiKtY0BGpfzLxnpM=
+      Content-Type:
+      - application/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 12 Jan 2017 18:57:43 GMT
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Error><Code>PermanentRedirect</Code><Message>The bucket you are attempting to access must be addressed using the specified endpoint. Please send all future requests to this endpoint.</Message><Bucket>womply-ishearin</Bucket><Endpoint>womply-ishearin.s3-us-west-2.amazonaws.com</Endpoint><RequestId>E940B1E21A5CF4CA</RequestId><HostId>y86zCjWdZxjEKGGX7KH15shnli4pZmN+QDlhQdj7ESYQTKFXlN2dR6gCF7agiKtY0BGpfzLxnpM=</HostId></Error>
+    http_version: 
+  recorded_at: Thu, 12 Jan 2017 18:57:44 GMT
+- request:
+    method: get
+    uri: https://s3-sa-east-1.amazonaws.com/
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170112T185744Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170112/sa-east-1/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=529441c552678e88eb62ae3f721de09f7de8c05368d67e0117a6a7fde4e771e4
+      Content-Length:
+      - '0'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amz-Id-2:
+      - IOS5I1VM76Ao6duX1+/LfjIOS616ywkmSd40U7Bdpig8C+mnbB2GeYpgcNBhsJoLxAWdmhg89Mc=
+      X-Amz-Request-Id:
+      - 3FE52B8192093C82
+      Date:
+      - Thu, 12 Jan 2017 18:57:46 GMT
+      Content-Type:
+      - application/xml
+      Transfer-Encoding:
+      - chunked
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>577c9c2d571b1e27f12e417c5835e62c7e8c062a9290027c399719177d9631f4</ID><DisplayName>zleslie</DisplayName></Owner><Buckets><Bucket><Name>womply-ishearin</Name><CreationDate>2017-01-03T20:39:18.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>
+    http_version: 
+  recorded_at: Thu, 12 Jan 2017 18:57:45 GMT
+- request:
+    method: get
+    uri: https://womply-ishearin.s3-sa-east-1.amazonaws.com/?policy
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    headers:
+      Content-Type:
+      - ''
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170112T185745Z
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170112/sa-east-1/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=cd887d3c964356b3a88740f0fb21002858a0bc36341eeb8d2f0149ddee1c1db3
+      Content-Length:
+      - '0'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      X-Amz-Bucket-Region:
+      - us-west-2
+      X-Amz-Request-Id:
+      - 047794514329C006
+      X-Amz-Id-2:
+      - swY/n/s1/KxkprrdyNnJpMV/SmBS4sAVlR2I8ZGdd+bVz74aO3ybW2ueYQBYoBxU4kdiXAt3qGA=
+      Content-Type:
+      - application/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Thu, 12 Jan 2017 18:57:45 GMT
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Error><Code>PermanentRedirect</Code><Message>The bucket you are attempting to access must be addressed using the specified endpoint. Please send all future requests to this endpoint.</Message><Bucket>womply-ishearin</Bucket><Endpoint>womply-ishearin.s3-us-west-2.amazonaws.com</Endpoint><RequestId>047794514329C006</RequestId><HostId>swY/n/s1/KxkprrdyNnJpMV/SmBS4sAVlR2I8ZGdd+bVz74aO3ybW2ueYQBYoBxU4kdiXAt3qGA=</HostId></Error>
+    http_version: 
+  recorded_at: Thu, 12 Jan 2017 18:57:46 GMT
+recorded_with: VCR 3.0.3

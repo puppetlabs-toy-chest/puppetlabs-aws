@@ -1,0 +1,72 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://iam.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=ListInstanceProfiles&Version=2010-05-08
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170119T190811Z
+      X-Amz-Content-Sha256:
+      - 44d83e3a0f5f6915cab0b95802111050b054a3353097341089af8a6c2ee48399
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170119/us-east-1/iam/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=7d207e4ede3bc52749f7e597c9dac19b459956db2898af2ae2e7e04b26b5a6ca
+      Content-Length:
+      - '46'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - 9ef56f49-de7a-11e6-b536-978c45088619
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '1306'
+      Date:
+      - Thu, 19 Jan 2017 19:08:11 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <ListInstanceProfilesResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+          <ListInstanceProfilesResult>
+            <IsTruncated>false</IsTruncated>
+            <InstanceProfiles>
+              <member>
+                <Path>/</Path>
+                <InstanceProfileName>ecsInstanceRole</InstanceProfileName>
+                <Roles>
+                  <member>
+                    <Path>/</Path>
+                    <AssumeRolePolicyDocument>%7B%22Version%22%3A%222008-10-17%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22ec2.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D</AssumeRolePolicyDocument>
+                    <RoleId>AROAJTEW6IGCXX4HNR5T2</RoleId>
+                    <RoleName>ecsInstanceRole</RoleName>
+                    <Arn>arn:aws:iam::123456789012:role/ecsInstanceRole</Arn>
+                    <CreateDate>2017-01-11T21:32:55Z</CreateDate>
+                  </member>
+                </Roles>
+                <Arn>arn:aws:iam::123456789012:instance-profile/ecsInstanceRole</Arn>
+                <InstanceProfileId>AIPAJFXZIVRDCVKHVT75G</InstanceProfileId>
+                <CreateDate>2017-01-11T21:32:55Z</CreateDate>
+              </member>
+            </InstanceProfiles>
+          </ListInstanceProfilesResult>
+          <ResponseMetadata>
+            <RequestId>9ef56f49-de7a-11e6-b536-978c45088619</RequestId>
+          </ResponseMetadata>
+        </ListInstanceProfilesResponse>
+    http_version: 
+  recorded_at: Thu, 19 Jan 2017 19:08:11 GMT
+recorded_with: VCR 3.0.3

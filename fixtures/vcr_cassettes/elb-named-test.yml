@@ -1,332 +1,1138 @@
---- 
-  http_interactions: 
-    - request: 
-        method: post
-        uri: "https://elasticloadbalancing.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeLoadBalancers&Version=2012-06-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150219T131206Z"
-          Host: 
-            - elasticloadbalancing.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "236069f72bf74f0c7ddff0a34b0defa8a21d1d6a897e588764e1b2ff6319f94a"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150219/sa-east-1/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=4c018c71334fdb88837e509396dbe0ef1be90a923ddac266fd22fce1a9814713"
-          Content-Length: 
-            - "47"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          X-Amzn-Requestid: 
-            - e820084b-b838-11e4-a812-754bf84275e1
-          Content-Type: 
-            - text/xml
-          Content-Length: 
-            - "5690"
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Thu, 19 Feb 2015 13:12:08 GMT"
-        body: 
-          encoding: UTF-8
-          string: "<DescribeLoadBalancersResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <DescribeLoadBalancersResult>\n    <LoadBalancerDescriptions>\n      <member>\n        <SecurityGroups/>\n        <LoadBalancerName>garethrProed3b61536416444c8b742</LoadBalancerName>\n        <CreatedTime>2015-02-19T11:44:43.210Z</CreatedTime>\n        <HealthCheck>\n          <Interval>30</Interval>\n          <Target>TCP:80</Target>\n          <HealthyThreshold>10</HealthyThreshold>\n          <Timeout>5</Timeout>\n          <UnhealthyThreshold>2</UnhealthyThreshold>\n        </HealthCheck>\n        <ListenerDescriptions>\n          <member>\n            <PolicyNames/>\n            <Listener>\n              <Protocol>TCP</Protocol>\n              <LoadBalancerPort>80</LoadBalancerPort>\n              <InstanceProtocol>TCP</InstanceProtocol>\n              <InstancePort>80</InstancePort>\n            </Listener>\n          </member>\n        </ListenerDescriptions>\n        <Instances>\n          <member>\n            <InstanceId>i-e06944f5</InstanceId>\n          </member>\n        </Instances>\n        <Policies>\n          <AppCookieStickinessPolicies/>\n          <OtherPolicies/>\n          <LBCookieStickinessPolicies/>\n        </Policies>\n        <AvailabilityZones>\n          <member>sa-east-1a</member>\n          <member>sa-east-1b</member>\n        </AvailabilityZones>\n        <CanonicalHostedZoneNameID>Z2ES78Y61JGQKS</CanonicalHostedZoneNameID>\n        <CanonicalHostedZoneName>garethrProed3b61536416444c8b742-886078075.sa-east-1.elb.amazonaws.com</CanonicalHostedZoneName>\n        <Scheme>internet-facing</Scheme>\n        <SourceSecurityGroup>\n          <OwnerAlias>amazon-elb</OwnerAlias>\n          <GroupName>amazon-elb-sg</GroupName>\n        </SourceSecurityGroup>\n        <DNSName>garethrProed3b61536416444c8b742-886078075.sa-east-1.elb.amazonaws.com</DNSName>\n        <BackendServerDescriptions/>\n        <Subnets/>\n      </member>\n      <member>\n        <SecurityGroups/>\n        <LoadBalancerName>garethrPro09dbc77f59cd476a82a44</LoadBalancerName>\n        <CreatedTime>2015-02-19T11:47:35.120Z</CreatedTime>\n        <HealthCheck>\n          <Interval>30</Interval>\n          <Target>TCP:80</Target>\n          <HealthyThreshold>10</HealthyThreshold>\n          <Timeout>5</Timeout>\n          <UnhealthyThreshold>2</UnhealthyThreshold>\n        </HealthCheck>\n        <ListenerDescriptions>\n          <member>\n            <PolicyNames/>\n            <Listener>\n              <Protocol>TCP</Protocol>\n              <LoadBalancerPort>80</LoadBalancerPort>\n              <InstanceProtocol>TCP</InstanceProtocol>\n              <InstancePort>80</InstancePort>\n            </Listener>\n          </member>\n        </ListenerDescriptions>\n        <Instances>\n          <member>\n            <InstanceId>i-2c684539</InstanceId>\n          </member>\n        </Instances>\n        <Policies>\n          <AppCookieStickinessPolicies/>\n          <OtherPolicies/>\n          <LBCookieStickinessPolicies/>\n        </Policies>\n        <AvailabilityZones>\n          <member>sa-east-1a</member>\n          <member>sa-east-1b</member>\n        </AvailabilityZones>\n        <CanonicalHostedZoneNameID>Z2ES78Y61JGQKS</CanonicalHostedZoneNameID>\n        <CanonicalHostedZoneName>garethrPro09dbc77f59cd476a82a44-667909254.sa-east-1.elb.amazonaws.com</CanonicalHostedZoneName>\n        <Scheme>internet-facing</Scheme>\n        <SourceSecurityGroup>\n          <OwnerAlias>amazon-elb</OwnerAlias>\n          <GroupName>amazon-elb-sg</GroupName>\n        </SourceSecurityGroup>\n        <DNSName>garethrPro09dbc77f59cd476a82a44-667909254.sa-east-1.elb.amazonaws.com</DNSName>\n        <BackendServerDescriptions/>\n        <Subnets/>\n      </member>\n      <member>\n        <SecurityGroups/>\n        <LoadBalancerName>garethrProb4c4e3bed64f4af7909b1</LoadBalancerName>\n        <CreatedTime>2015-02-19T11:48:11.620Z</CreatedTime>\n        <HealthCheck>\n          <Interval>30</Interval>\n          <Target>TCP:80</Target>\n          <HealthyThreshold>10</HealthyThreshold>\n          <Timeout>5</Timeout>\n          <UnhealthyThreshold>2</UnhealthyThreshold>\n        </HealthCheck>\n        <ListenerDescriptions>\n          <member>\n            <PolicyNames/>\n            <Listener>\n              <Protocol>TCP</Protocol>\n              <LoadBalancerPort>80</LoadBalancerPort>\n              <InstanceProtocol>TCP</InstanceProtocol>\n              <InstancePort>80</InstancePort>\n            </Listener>\n          </member>\n        </ListenerDescriptions>\n        <Instances>\n          <member>\n            <InstanceId>i-53684546</InstanceId>\n          </member>\n        </Instances>\n        <Policies>\n          <AppCookieStickinessPolicies/>\n          <OtherPolicies/>\n          <LBCookieStickinessPolicies/>\n        </Policies>\n        <AvailabilityZones>\n          <member>sa-east-1a</member>\n          <member>sa-east-1b</member>\n        </AvailabilityZones>\n        <CanonicalHostedZoneNameID>Z2ES78Y61JGQKS</CanonicalHostedZoneNameID>\n        <CanonicalHostedZoneName>garethrProb4c4e3bed64f4af7909b1-1293617159.sa-east-1.elb.amazonaws.com</CanonicalHostedZoneName>\n        <Scheme>internet-facing</Scheme>\n        <SourceSecurityGroup>\n          <OwnerAlias>amazon-elb</OwnerAlias>\n          <GroupName>amazon-elb-sg</GroupName>\n        </SourceSecurityGroup>\n        <DNSName>garethrProb4c4e3bed64f4af7909b1-1293617159.sa-east-1.elb.amazonaws.com</DNSName>\n        <BackendServerDescriptions/>\n        <Subnets/>\n      </member>\n    </LoadBalancerDescriptions>\n  </DescribeLoadBalancersResult>\n  <ResponseMetadata>\n    <RequestId>e820084b-b838-11e4-a812-754bf84275e1</RequestId>\n  </ResponseMetadata>\n</DescribeLoadBalancersResponse>\n"
-        http_version: 
-      recorded_at: "Thu, 19 Feb 2015 13:12:08 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeInstances&InstanceId.1=i-e06944f5&Version=2014-09-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150219T131208Z"
-          Host: 
-            - ec2.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "9475874c018c2c03c4a93de1947197037608ff464c6bd1a44e059d5f664f8964"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150219/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=5e8d5434bc31aa6af0c78aab473f581324b77eed840b8ba88b3e103567d2a2b1"
-          Content-Length: 
-            - "67"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Thu, 19 Feb 2015 13:12:09 GMT"
-          Cneonction: 
-            - close
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>7a5c5359-3bfc-4952-a485-99fb4134d421</requestId>
-                <reservationSet>
-                </reservationSet>
-            </DescribeInstancesResponse>
-        http_version: 
-      recorded_at: "Thu, 19 Feb 2015 13:12:09 GMT"
-    - request: 
-        method: post
-        uri: "https://elasticloadbalancing.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeTags&LoadBalancerNames.member.1=garethrProed3b61536416444c8b742&Version=2012-06-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150219T131209Z"
-          Host: 
-            - elasticloadbalancing.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "4f92033359cb32556b7e192a5e17070c1be1d17d0ce9485b4770551f4781de74"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150219/sa-east-1/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=ab735996612eb0b5ffd51258d970a056e936df822782c9521292a48a1df70d8e"
-          Content-Length: 
-            - "97"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          X-Amzn-Requestid: 
-            - ea6b30ac-b838-11e4-8230-09161d0c23f4
-          Content-Type: 
-            - text/xml
-          Content-Length: 
-            - "1007"
-          Date: 
-            - "Thu, 19 Feb 2015 13:12:11 GMT"
-        body: 
-          encoding: UTF-8
-          string: "<DescribeTagsResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <DescribeTagsResult>\n    <TagDescriptions>\n      <member>\n        <Tags>\n          <member>\n            <Value>aws-acceptance</Value>\n            <Key>created_by</Key>\n          </member>\n          <member>\n            <Value>garethrProed3b61536416444c8b742</Value>\n            <Key>Name</Key>\n          </member>\n          <member>\n            <Value>cloud</Value>\n            <Key>project</Key>\n          </member>\n          <member>\n            <Value>engineering</Value>\n            <Key>department</Key>\n          </member>\n          <member>\n            <Value>polo</Value>\n            <Key>marco</Key>\n          </member>\n        </Tags>\n        <LoadBalancerName>garethrProed3b61536416444c8b742</LoadBalancerName>\n      </member>\n    </TagDescriptions>\n  </DescribeTagsResult>\n  <ResponseMetadata>\n    <RequestId>ea6b30ac-b838-11e4-8230-09161d0c23f4</RequestId>\n  </ResponseMetadata>\n</DescribeTagsResponse>\n"
-        http_version: 
-      recorded_at: "Thu, 19 Feb 2015 13:12:12 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeInstances&InstanceId.1=i-2c684539&Version=2014-09-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150219T131212Z"
-          Host: 
-            - ec2.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "5ef3e4edda454587cdf5a141350023404341b8452538a311a4f929e6dc56707f"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150219/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=d3624740b27b42689f20e961bcd8225827a9e25ccf9a782eabf130e39eb920c1"
-          Content-Length: 
-            - "67"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Thu, 19 Feb 2015 13:12:13 GMT"
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>5e0393a0-6116-4c21-881a-6c1393209591</requestId>
-                <reservationSet>
-                </reservationSet>
-            </DescribeInstancesResponse>
-        http_version: 
-      recorded_at: "Thu, 19 Feb 2015 13:12:14 GMT"
-    - request: 
-        method: post
-        uri: "https://elasticloadbalancing.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeTags&LoadBalancerNames.member.1=garethrPro09dbc77f59cd476a82a44&Version=2012-06-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150219T131214Z"
-          Host: 
-            - elasticloadbalancing.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - b16991e74dd9da116372d8bce1a3c700be58482c772d933f528aa53d0b8e562f
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150219/sa-east-1/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=c5b24e6d7443f9b98019314eda811bf3c8a6d5c0fc53b970f3169d92ab2e7127"
-          Content-Length: 
-            - "97"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          X-Amzn-Requestid: 
-            - ece9282d-b838-11e4-a812-754bf84275e1
-          Content-Type: 
-            - text/xml
-          Content-Length: 
-            - "1007"
-          Date: 
-            - "Thu, 19 Feb 2015 13:12:16 GMT"
-        body: 
-          encoding: UTF-8
-          string: "<DescribeTagsResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <DescribeTagsResult>\n    <TagDescriptions>\n      <member>\n        <Tags>\n          <member>\n            <Value>aws-acceptance</Value>\n            <Key>created_by</Key>\n          </member>\n          <member>\n            <Value>garethrPro09dbc77f59cd476a82a44</Value>\n            <Key>Name</Key>\n          </member>\n          <member>\n            <Value>cloud</Value>\n            <Key>project</Key>\n          </member>\n          <member>\n            <Value>engineering</Value>\n            <Key>department</Key>\n          </member>\n          <member>\n            <Value>polo</Value>\n            <Key>marco</Key>\n          </member>\n        </Tags>\n        <LoadBalancerName>garethrPro09dbc77f59cd476a82a44</LoadBalancerName>\n      </member>\n    </TagDescriptions>\n  </DescribeTagsResult>\n  <ResponseMetadata>\n    <RequestId>ece9282d-b838-11e4-a812-754bf84275e1</RequestId>\n  </ResponseMetadata>\n</DescribeTagsResponse>\n"
-        http_version: 
-      recorded_at: "Thu, 19 Feb 2015 13:12:16 GMT"
-    - request: 
-        method: post
-        uri: "https://ec2.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeInstances&InstanceId.1=i-53684546&Version=2014-09-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150219T131216Z"
-          Host: 
-            - ec2.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - "7bf65415c8e3eeeede1f1b2cecc497b02fd1ad49fc3242250c1f338d511aea12"
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150219/sa-east-1/ec2/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=fef0daaf7cf2ed3bc62162fa306c4695a297efae3d14f544c2c909a4ef958660"
-          Content-Length: 
-            - "67"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          Content-Type: 
-            - "text/xml;charset=UTF-8"
-          Transfer-Encoding: 
-            - chunked
-          Vary: 
-            - Accept-Encoding
-          Date: 
-            - "Thu, 19 Feb 2015 13:12:17 GMT"
-          Server: 
-            - AmazonEC2
-        body: 
-          encoding: UTF-8
-          string: |-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2014-09-01/">
-                <requestId>81b25460-c925-472f-bc05-82b13d3e7d98</requestId>
-                <reservationSet>
-                </reservationSet>
-            </DescribeInstancesResponse>
-        http_version: 
-      recorded_at: "Thu, 19 Feb 2015 13:12:18 GMT"
-    - request: 
-        method: post
-        uri: "https://elasticloadbalancing.sa-east-1.amazonaws.com/"
-        body: 
-          encoding: UTF-8
-          string: "Action=DescribeTags&LoadBalancerNames.member.1=garethrProb4c4e3bed64f4af7909b1&Version=2012-06-01"
-        headers: 
-          Content-Type: 
-            - "application/x-www-form-urlencoded; charset=utf-8"
-          Accept-Encoding: 
-            - ""
-          User-Agent: 
-            - "aws-sdk-ruby2/2.0.5 ruby/2.0.0 universal.x86_64-darwin14"
-          X-Amz-Date: 
-            - "20150219T131218Z"
-          Host: 
-            - elasticloadbalancing.sa-east-1.amazonaws.com
-          X-Amz-Content-Sha256: 
-            - f28e20c0f1b2b406fbcbfefdb0b8def2add22310f4b8c1a849eff4f875cdf685
-          Authorization: 
-            - "AWS4-HMAC-SHA256 Credential=redacted/20150219/sa-east-1/elasticloadbalancing/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date, Signature=7811a8acea0e862aed76e3343879861972303bad2a41063c857e1991a9992aeb"
-          Content-Length: 
-            - "97"
-          Accept: 
-            - "*/*"
-      response: 
-        status: 
-          code: 200
-          message: OK
-        headers: 
-          X-Amzn-Requestid: 
-            - ef253591-b838-11e4-bcb5-3bc0afa91bd3
-          Content-Type: 
-            - text/xml
-          Content-Length: 
-            - "1007"
-          Date: 
-            - "Thu, 19 Feb 2015 13:12:19 GMT"
-        body: 
-          encoding: UTF-8
-          string: "<DescribeTagsResponse xmlns=\x22http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/\x22>\n  <DescribeTagsResult>\n    <TagDescriptions>\n      <member>\n        <Tags>\n          <member>\n            <Value>aws-acceptance</Value>\n            <Key>created_by</Key>\n          </member>\n          <member>\n            <Value>garethrProb4c4e3bed64f4af7909b1</Value>\n            <Key>Name</Key>\n          </member>\n          <member>\n            <Value>cloud</Value>\n            <Key>project</Key>\n          </member>\n          <member>\n            <Value>engineering</Value>\n            <Key>department</Key>\n          </member>\n          <member>\n            <Value>polo</Value>\n            <Key>marco</Key>\n          </member>\n        </Tags>\n        <LoadBalancerName>garethrProb4c4e3bed64f4af7909b1</LoadBalancerName>\n      </member>\n    </TagDescriptions>\n  </DescribeTagsResult>\n  <ResponseMetadata>\n    <RequestId>ef253591-b838-11e4-bcb5-3bc0afa91bd3</RequestId>\n  </ResponseMetadata>\n</DescribeTagsResponse>\n"
-        http_version: 
-      recorded_at: "Thu, 19 Feb 2015 13:12:19 GMT"
-  recorded_with: "VCR 2.9.3"
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://elasticloadbalancing.sa-east-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DescribeLoadBalancers&Version=2012-06-01
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170118T000509Z
+      X-Amz-Content-Sha256:
+      - 236069f72bf74f0c7ddff0a34b0defa8a21d1d6a897e588764e1b2ff6319f94a
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170118/sa-east-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=6fa8742a238766a1dc81e3cd44873ab2ed9e944e7b111f3654019cec3f749549
+      Content-Length:
+      - '47'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - c73f36b9-dd11-11e6-846d-71c7730df7c3
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '2800'
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Wed, 18 Jan 2017 00:05:10 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <DescribeLoadBalancersResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+          <DescribeLoadBalancersResult>
+            <LoadBalancerDescriptions>
+              <member>
+                <CanonicalHostedZoneNameID>Z2P70J7HTTTPLU</CanonicalHostedZoneNameID>
+                <VPCId>vpc-8f0019ea</VPCId>
+                <Scheme>internet-facing</Scheme>
+                <Instances/>
+                <Policies>
+                  <AppCookieStickinessPolicies/>
+                  <LBCookieStickinessPolicies/>
+                  <OtherPolicies>
+                    <member>AWSConsole-SSLNegotiationPolicy-lb-1-1484696260015</member>
+                    <member>ELBSecurityPolicy-2016-08</member>
+                  </OtherPolicies>
+                </Policies>
+                <AvailabilityZones>
+                  <member>sa-east-1a</member>
+                </AvailabilityZones>
+                <DNSName>lb-1-22921474.sa-east-1.elb.amazonaws.com</DNSName>
+                <BackendServerDescriptions/>
+                <SourceSecurityGroup>
+                  <OwnerAlias>123456789012</OwnerAlias>
+                  <GroupName>default_elb_623306e1-2dd9-3d43-b10d-da5d3df14af2</GroupName>
+                </SourceSecurityGroup>
+                <LoadBalancerName>lb-1</LoadBalancerName>
+                <ListenerDescriptions>
+                  <member>
+                    <Listener>
+                      <InstancePort>80</InstancePort>
+                      <InstanceProtocol>TCP</InstanceProtocol>
+                      <Protocol>TCP</Protocol>
+                      <LoadBalancerPort>80</LoadBalancerPort>
+                    </Listener>
+                    <PolicyNames/>
+                  </member>
+                  <member>
+                    <Listener>
+                      <InstancePort>443</InstancePort>
+                      <SSLCertificateId>arn:aws:iam::123456789012:server-certificate/zleslie-2016</SSLCertificateId>
+                      <InstanceProtocol>HTTP</InstanceProtocol>
+                      <Protocol>HTTPS</Protocol>
+                      <LoadBalancerPort>443</LoadBalancerPort>
+                    </Listener>
+                    <PolicyNames>
+                      <member>AWSConsole-SSLNegotiationPolicy-lb-1-1484696260015</member>
+                    </PolicyNames>
+                  </member>
+                </ListenerDescriptions>
+                <HealthCheck>
+                  <UnhealthyThreshold>2</UnhealthyThreshold>
+                  <Interval>30</Interval>
+                  <HealthyThreshold>10</HealthyThreshold>
+                  <Timeout>5</Timeout>
+                  <Target>TCP:80</Target>
+                </HealthCheck>
+                <CreatedTime>2017-01-12T21:54:33.700Z</CreatedTime>
+                <Subnets>
+                  <member>subnet-0af6436e</member>
+                </Subnets>
+                <SecurityGroups>
+                  <member>sg-0ce2ad68</member>
+                </SecurityGroups>
+                <CanonicalHostedZoneName>lb-1-22921474.sa-east-1.elb.amazonaws.com</CanonicalHostedZoneName>
+              </member>
+            </LoadBalancerDescriptions>
+          </DescribeLoadBalancersResult>
+          <ResponseMetadata>
+            <RequestId>c73f36b9-dd11-11e6-846d-71c7730df7c3</RequestId>
+          </ResponseMetadata>
+        </DescribeLoadBalancersResponse>
+    http_version: 
+  recorded_at: Wed, 18 Jan 2017 00:05:10 GMT
+- request:
+    method: post
+    uri: https://elasticloadbalancing.sa-east-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DescribeLoadBalancerPolicies&LoadBalancerName=lb-1&Version=2012-06-01
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170118T000510Z
+      X-Amz-Content-Sha256:
+      - 2e001c9ec5bb4d2bd96c10f335b63c15c06b3d5c3c4d7e52e8324663d01b13f5
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170118/sa-east-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=2561d53a8ee0159d0e1b10126c75cf1f0a8a21df96418d396b285d8a493183c5
+      Content-Length:
+      - '76'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - c7cd4614-dd11-11e6-8071-ed1c1bc4d23b
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '29253'
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Wed, 18 Jan 2017 00:05:11 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <DescribeLoadBalancerPoliciesResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+          <DescribeLoadBalancerPoliciesResult>
+            <PolicyDescriptions>
+              <member>
+                <PolicyTypeName>SSLNegotiationPolicyType</PolicyTypeName>
+                <PolicyAttributeDescriptions>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>Protocol-TLSv1</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>Protocol-SSLv3</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>Protocol-TLSv1.1</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>Protocol-TLSv1.2</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>Server-Defined-Cipher-Order</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES256-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES256-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES256-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>CAMELLIA128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EDH-RSA-DES-CBC3-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DES-CBC3-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ECDHE-RSA-RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES256-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES256-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-CAMELLIA256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-CAMELLIA256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>CAMELLIA256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EDH-DSS-DES-CBC3-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-CAMELLIA128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-CAMELLIA128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES256-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-CAMELLIA128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-CAMELLIA256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-DES-CBC3-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-RC4-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-SEED-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-SEED-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-SEED-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EDH-DSS-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EDH-RSA-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>IDEA-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>RC4-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>SEED-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DES-CBC3-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DES-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>RC2-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>PSK-AES256-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>PSK-3DES-EDE-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-DES-CBC3-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-DES-CBC3-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>PSK-AES128-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>PSK-RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-RC4-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-DES-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-EDH-RSA-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-EDH-DSS-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-ADH-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-RC2-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-RC2-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-RC2-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-DES-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-ADH-RC4-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-RC4-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-RC4-MD5</AttributeName>
+                  </member>
+                </PolicyAttributeDescriptions>
+                <PolicyName>AWSConsole-SSLNegotiationPolicy-lb-1-1484696260015</PolicyName>
+              </member>
+              <member>
+                <PolicyTypeName>SSLNegotiationPolicyType</PolicyTypeName>
+                <PolicyAttributeDescriptions>
+                  <member>
+                    <AttributeValue>ELBSecurityPolicy-2016-08</AttributeValue>
+                    <AttributeName>Reference-Security-Policy</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>Protocol-TLSv1</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>Protocol-SSLv3</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>Protocol-TLSv1.1</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>Protocol-TLSv1.2</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>Server-Defined-Cipher-Order</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES256-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES256-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-RSA-AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES256-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>true</AttributeValue>
+                    <AttributeName>AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>CAMELLIA128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EDH-RSA-DES-CBC3-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DES-CBC3-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ECDHE-RSA-RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ECDHE-ECDSA-RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES256-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES256-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-CAMELLIA256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-CAMELLIA256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>CAMELLIA256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EDH-DSS-DES-CBC3-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-CAMELLIA128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-CAMELLIA128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES128-GCM-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES128-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES256-GCM-SHA384</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-AES256-SHA256</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-CAMELLIA128-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-CAMELLIA256-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-DES-CBC3-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-RC4-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>ADH-SEED-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-DSS-SEED-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DHE-RSA-SEED-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EDH-DSS-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EDH-RSA-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>IDEA-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>RC4-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>SEED-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DES-CBC3-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>DES-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>RC2-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>PSK-AES256-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>PSK-3DES-EDE-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-DES-CBC3-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-DES-CBC3-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>PSK-AES128-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>PSK-RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-RC4-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>KRB5-DES-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-EDH-RSA-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-EDH-DSS-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-ADH-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-RC2-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-RC2-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-DES-CBC-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-RC2-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-DES-CBC-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-ADH-RC4-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-RC4-MD5</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-RC4-SHA</AttributeName>
+                  </member>
+                  <member>
+                    <AttributeValue>false</AttributeValue>
+                    <AttributeName>EXP-KRB5-RC4-MD5</AttributeName>
+                  </member>
+                </PolicyAttributeDescriptions>
+                <PolicyName>ELBSecurityPolicy-2016-08</PolicyName>
+              </member>
+            </PolicyDescriptions>
+          </DescribeLoadBalancerPoliciesResult>
+          <ResponseMetadata>
+            <RequestId>c7cd4614-dd11-11e6-8071-ed1c1bc4d23b</RequestId>
+          </ResponseMetadata>
+        </DescribeLoadBalancerPoliciesResponse>
+    http_version: 
+  recorded_at: Wed, 18 Jan 2017 00:05:12 GMT
+- request:
+    method: post
+    uri: https://elasticloadbalancing.sa-east-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DescribeTags&LoadBalancerNames.member.1=lb-1&Version=2012-06-01
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170118T000512Z
+      X-Amz-Content-Sha256:
+      - 667b7cad12519b7eb3be43722330c19a8cc170d896753a4bebaab30d44d93801
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170118/sa-east-1/elasticloadbalancing/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=ae0b751350df26ae3fe7062074125919faa63610fe8340f0cd3d2d9b6ae4a644
+      Content-Length:
+      - '70'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amzn-Requestid:
+      - c8932e30-dd11-11e6-8071-ed1c1bc4d23b
+      Content-Type:
+      - text/xml
+      Content-Length:
+      - '523'
+      Date:
+      - Wed, 18 Jan 2017 00:05:13 GMT
+    body:
+      encoding: UTF-8
+      string: |
+        <DescribeTagsResponse xmlns="http://elasticloadbalancing.amazonaws.com/doc/2012-06-01/">
+          <DescribeTagsResult>
+            <TagDescriptions>
+              <member>
+                <LoadBalancerName>lb-1</LoadBalancerName>
+                <Tags>
+                  <member>
+                    <Value>lb-1</Value>
+                    <Key>Name</Key>
+                  </member>
+                </Tags>
+              </member>
+            </TagDescriptions>
+          </DescribeTagsResult>
+          <ResponseMetadata>
+            <RequestId>c8932e30-dd11-11e6-8071-ed1c1bc4d23b</RequestId>
+          </ResponseMetadata>
+        </DescribeTagsResponse>
+    http_version: 
+  recorded_at: Wed, 18 Jan 2017 00:05:13 GMT
+- request:
+    method: post
+    uri: https://ec2.sa-east-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DescribeSubnets&SubnetId.1=subnet-0af6436e&Version=2016-11-15
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170118T000513Z
+      X-Amz-Content-Sha256:
+      - 2b7e0c9eaa89b98b70b3784bc41b7b21bda0b808db0c80cc18e8000626e0d142
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170118/sa-east-1/ec2/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=75a9ce7c3da280aa2584e730d34857cce3ef74cac1b4eb522770d4929585e23b
+      Content-Length:
+      - '68'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Wed, 18 Jan 2017 00:05:14 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeSubnetsResponse xmlns="http://ec2.amazonaws.com/doc/2016-11-15/">
+            <requestId>deee1825-8669-4653-86a3-784347040adf</requestId>
+            <subnetSet>
+                <item>
+                    <subnetId>subnet-0af6436e</subnetId>
+                    <state>available</state>
+                    <vpcId>vpc-8f0019ea</vpcId>
+                    <cidrBlock>172.31.0.0/20</cidrBlock>
+                    <ipv6CidrBlockAssociationSet/>
+                    <availableIpAddressCount>4090</availableIpAddressCount>
+                    <availabilityZone>sa-east-1a</availabilityZone>
+                    <defaultForAz>true</defaultForAz>
+                    <mapPublicIpOnLaunch>true</mapPublicIpOnLaunch>
+                    <assignIpv6AddressOnCreation>false</assignIpv6AddressOnCreation>
+                </item>
+            </subnetSet>
+        </DescribeSubnetsResponse>
+    http_version: 
+  recorded_at: Wed, 18 Jan 2017 00:05:14 GMT
+- request:
+    method: post
+    uri: https://ec2.sa-east-1.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: Action=DescribeSecurityGroups&GroupId.1=sg-0ce2ad68&Version=2016-11-15
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=utf-8
+      Accept-Encoding:
+      - ''
+      User-Agent:
+      - aws-sdk-ruby2/2.6.38 ruby/2.3.1 x86_64-darwin15
+      X-Amz-Date:
+      - 20170118T000514Z
+      X-Amz-Content-Sha256:
+      - a598e638d441e5df353a1e19707221b07f439cbff6de6518dd3fe84683252b33
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=111111111111/20170118/sa-east-1/ec2/aws4_request,
+        SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=444101097fe6eaf731a920f0b2181914b30f44fa9aa37d0c68c852231ebccf17
+      Content-Length:
+      - '70'
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Wed, 18 Jan 2017 00:05:15 GMT
+      Server:
+      - AmazonEC2
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2016-11-15/">
+            <requestId>8e780456-9563-4278-b824-0c022c6f17a3</requestId>
+            <securityGroupInfo>
+                <item>
+                    <ownerId>123456789012</ownerId>
+                    <groupId>sg-0ce2ad68</groupId>
+                    <groupName>default_elb_623306e1-2dd9-3d43-b10d-da5d3df14af2</groupName>
+                    <groupDescription>ELB created security group used when no security group is specified during ELB creation - modifications could impact traffic to future ELBs</groupDescription>
+                    <vpcId>vpc-8f0019ea</vpcId>
+                    <ipPermissions>
+                        <item>
+                            <ipProtocol>tcp</ipProtocol>
+                            <fromPort>80</fromPort>
+                            <toPort>80</toPort>
+                            <groups/>
+                            <ipRanges>
+                                <item>
+                                    <cidrIp>0.0.0.0/0</cidrIp>
+                                </item>
+                            </ipRanges>
+                            <ipv6Ranges/>
+                            <prefixListIds/>
+                        </item>
+                    </ipPermissions>
+                    <ipPermissionsEgress>
+                        <item>
+                            <ipProtocol>-1</ipProtocol>
+                            <groups/>
+                            <ipRanges>
+                                <item>
+                                    <cidrIp>0.0.0.0/0</cidrIp>
+                                </item>
+                            </ipRanges>
+                            <ipv6Ranges/>
+                            <prefixListIds/>
+                        </item>
+                    </ipPermissionsEgress>
+                </item>
+            </securityGroupInfo>
+        </DescribeSecurityGroupsResponse>
+    http_version: 
+  recorded_at: Wed, 18 Jan 2017 00:05:15 GMT
+recorded_with: VCR 3.0.3

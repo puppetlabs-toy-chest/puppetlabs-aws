@@ -2,9 +2,6 @@ require 'spec_helper'
 
 provider_class = Puppet::Type.type(:rds_instance).provider(:v2)
 
-ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-ENV['AWS_REGION'] = 'sa-east-1'
 
 describe provider_class do
 
@@ -12,7 +9,7 @@ describe provider_class do
     Puppet::Type.type(:rds_instance).new(
       ensure: 'present',
       name: 'awesome-db-5',
-      region: 'us-west-1',
+      region: 'sa-east-1',
       db_name:  'mysqldbname3',
       engine: 'mysql',
       engine_version: '5.6.19a',
@@ -24,6 +21,7 @@ describe provider_class do
       master_username: 'awsusername',
       master_user_password: 'the-master-password',
       multi_az: false,
+      restore_snapshot: 'some-snapshot-name',
     )
   }
 

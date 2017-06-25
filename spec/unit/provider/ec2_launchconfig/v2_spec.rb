@@ -2,9 +2,6 @@ require 'spec_helper'
 
 provider_class = Puppet::Type.type(:ec2_launchconfiguration).provider(:v2)
 
-ENV['AWS_ACCESS_KEY_ID'] = 'redacted'
-ENV['AWS_SECRET_ACCESS_KEY'] = 'redacted'
-ENV['AWS_REGION'] = 'sa-east-1'
 
 describe provider_class do
 
@@ -15,6 +12,20 @@ describe provider_class do
       instance_type: 't1.micro',
       region: 'sa-east-1',
       security_groups: ['test-sg'],
+    )
+  }
+
+  let(:resource_with_block_devices) {
+    Puppet::Type.type(:ec2_launchconfiguration).new(
+      name: 'test-lc',
+      image_id: 'ami-67a60d7a',
+      instance_type: 't1.micro',
+      region: 'sa-east-1',
+      security_groups: ['test-sg'],
+      block_device_mappings: [
+        { 'device_name' => '/dev/sda1', 'volume_size' => 8 },
+        { 'device_name' => '/dev/sdb', 'volume_size' => 50 },
+      ]
     )
   }
 

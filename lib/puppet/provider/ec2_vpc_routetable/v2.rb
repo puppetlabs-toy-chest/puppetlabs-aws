@@ -60,7 +60,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
   end
 
   def exists?
-    Puppet.info("Checking if Route table #{name} exists in #{target_region}")
+    Puppet.debug("Checking if Route table #{name} exists in #{target_region}")
     @property_hash[:ensure] == :present
   end
 

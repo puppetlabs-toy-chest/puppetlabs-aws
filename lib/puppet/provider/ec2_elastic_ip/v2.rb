@@ -48,7 +48,7 @@ Puppet::Type.type(:ec2_elastic_ip).provide(:v2, :parent => PuppetX::Puppetlabs::
   end
 
   def exists?
-    Puppet.info("Checking if Elastic IP #{name} is associated")
+    Puppet.debug("Checking if Elastic IP #{name} is associated")
     @property_hash[:ensure] == :attached
   end
 

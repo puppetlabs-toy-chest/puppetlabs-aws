@@ -26,11 +26,12 @@ end
 
 class PuppetManifest < Mustache
 
-  attr_accessor :optional_tags
+  attr_accessor :optional_tags, :optional_load_balancers
 
   def initialize(file, config)
     @template_file = File.join(Dir.getwd, 'spec', 'acceptance', 'fixtures', file)
     @optional_tags = config[:tags].is_a?(Hash) and !config[:tags].empty?
+    @optional_load_balancers = config[:load_balancers].is_a?(Array) and !config[:load_balancers].empty?
     config.each do |key, value|
       config_value = self.class.to_generalized_data(value)
       instance_variable_set("@#{key}".to_sym, config_value)
@@ -105,6 +106,7 @@ class AwsHelper
     @route53_client = ::Aws::Route53::Client.new({region: region})
     @rds_client = ::Aws::RDS::Client.new({region: region})
     @sqs_client = ::Aws::SQS::Client.new({region: region})
+    @iam_client = ::Aws::IAM::Client.new({region: region})
   end
 
 
@@ -136,6 +138,13 @@ class AwsHelper
       db_security_group_name: name
     )
     response.data.db_security_groups
+  end
+
+  def get_db_subnet_groups(name)
+    response = @rds_client.describe_db_subnet_groups(
+      db_subnet_group_name: name
+    )
+    response.data.db_subnet_groups
   end
 
   def get_instances(name)
@@ -228,7 +237,14 @@ class AwsHelper
 
   def tag_difference(item, tags)
     item_tags = {}
-    item.tags.each { |s| item_tags[s.key.to_sym] = s.value if s.key != 'Name' }
+    if item.is_a?(Aws::RDS::Types::DBInstance)
+      tag_list = @rds_client.list_tags_for_resource({resource_name: item.db_instance_arn}).tag_list
+      tag_list.each do |tag|
+        item_tags[tag.key.to_sym] = tag.value unless tag.key == 'Name'
+      end
+    else
+      item.tags.each { |s| item_tags[s.key.to_sym] = s.value if s.key != 'Name' }
+    end
     tags.to_set ^ item_tags.to_set
   end
 
@@ -272,6 +288,26 @@ class AwsHelper
     records.data.resource_record_sets.select { |r| r.type == type && r.name == name}
   end
 
+  def get_iam_users(name)
+    @iam_client.list_users.users.select { |user| user.user_name == name }
+  end
+
+  def get_iam_roles(name)
+    @iam_client.list_roles.roles.select { |role| role.role_name == name }
+  end
+
+  def get_iam_instance_profiles(name)
+    @iam_client.list_instance_profiles.instance_profiles.select { |instance_profile|
+      instance_profile.instance_profile_name == name
+    }
+  end
+
+  def get_iam_instance_profiles_for_role(name)
+    response = @iam_client.list_instance_profiles_for_role(
+        role_name: [name]
+    )
+    response.data.instance_profiles
+  end
 end
 
 class TestExecutor
@@ -313,7 +349,7 @@ class PuppetRunProxy
   def apply(manifest)
     case @mode
     when :local
-      cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest.gsub("\n", '')}\" --modulepath ../ --libdir lib --debug --trace"
+      cmd = "bundle exec puppet apply --detailed-exitcodes -e \"#{manifest.gsub("\n", '')}\" --modulepath spec/fixtures/modules/ --libdir lib --debug --trace"
       use_local_shell(cmd)
     else
       # acceptable_exit_codes and expect_changes are passed because we want detailed-exit-codes but want to

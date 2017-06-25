@@ -1,3 +1,6 @@
+require_relative '../../puppet_x/puppetlabs/property/region.rb'
+require_relative '../../puppet_x/puppetlabs/property/tag.rb'
+
 Puppet::Type.newtype(:rds_instance) do
   @doc = 'Type representing an RDS instance.'
 
@@ -49,12 +52,8 @@ SQL Server
 Not applicable. Must be null.'
   end
 
-  newproperty(:region) do
+  newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
     desc 'The region in which to launch the instance.'
-    validate do |value|
-      fail 'region should be a String' unless value.is_a?(String)
-      fail 'region should not contain spaces' if value =~ /\s/
-    end
   end
 
   newproperty(:db_instance_class) do
@@ -163,6 +162,13 @@ Not applicable. Must be null.'
     desc 'The DB security groups to assign to this RDS instance.'
   end
 
+  newproperty(:vpc_security_groups, :array_matching => :all) do
+    desc 'An array of security group names (or IDs) within the VPC to assign to the instance.'
+    munge do |value|
+      provider.vpc_security_group_munge(value)
+    end
+  end
+
   newproperty(:endpoint) do
     desc 'The connection endpoint for the database.'
     validate do |value|
@@ -209,9 +215,19 @@ Not applicable. Must be null.'
     end
   end
 
+  newparam(:restore_snapshot) do
+    desc 'The database snapshot to restore as this RDS instance.'
+    validate do |value|
+      fail 'restore_snapshot should be a String' unless value.is_a?(String)
+    end
+  end
+
   autorequire(:rds_db_securitygroup) do
     groups = self[:db_security_groups]
     groups.is_a?(Array) ? groups : [groups]
   end
 
+  newproperty(:rds_tags, :parent => PuppetX::Property::AwsTag) do
+    desc 'The tags for the db instance.'
+  end
 end
