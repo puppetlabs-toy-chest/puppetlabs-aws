@@ -1179,7 +1179,7 @@ The operator to use to test the metric.
 
 Required.
 
-The region in which to launch the instances.
+The region in which to configure the alarm.
 
 Valid values are:
 

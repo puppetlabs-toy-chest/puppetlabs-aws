@@ -76,7 +76,7 @@ Puppet::Type.newtype(:cloudwatch_alarm) do
   end
 
   newproperty(:region, :parent => PuppetX::Property::AwsRegion) do
-    desc 'The region in which to launch the instances.'
+    desc 'The region in which to configure the alarm.'
   end
 
   newproperty(:dimensions, :array_matching => :all) do
