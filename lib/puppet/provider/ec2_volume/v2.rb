@@ -36,6 +36,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
       {
         instance_id: att.instance_id,
         device: att.device,
+        delete_on_termination: att.delete_on_termination
       }
     end
     config = {
@@ -77,6 +78,13 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
     Puppet.info("Attaching Volume #{volume_id} to ec2 instance #{config[:instance_id]}")
     ec2.wait_until(:volume_available, volume_ids: [volume_id])
     ec2.attach_volume(config)
+    if (resource[:attach].has_key?("delete_on_termination") ? resource[:attach]["delete_on_termination"] : false) then
+      Puppet.info("Modifying instance attribute delete_on_termination=#{resource[:attach]["delete_on_termination"]} for #{resource[:attach]["device"]} on ec2 instance #{config[:instance_id]}")
+      config = {}
+      config[:instance_id] = resource[:attach]["instance_id"]
+      config[:block_device_mappings] = [{ :device_name=> resource[:attach]["device"], :ebs=> { :delete_on_termination=> true } }]
+      ec2.modify_instance_attribute(config)
+    end
   end
 
   def create
