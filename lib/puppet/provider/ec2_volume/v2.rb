@@ -47,11 +47,20 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
       volume_type: volume.volume_type,
       availability_zone: volume.availability_zone,
       snapshot_id: volume.snapshot_id,
-      ensure: :present,
+      ensure: volume_ensure(volume),
+      state: volume.state,
       region: region,
     }
     config[:attach] = attachments unless attachments.empty?
     config
+  end
+
+  def self.volume_ensure(volume)
+    if (volume.state=="available")
+      :absent
+    else
+      :present
+    end
   end
 
   def exists?
@@ -97,19 +106,21 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
       encrypted: resource[:encrypted],
       kms_key_id: resource[:kms_key_id],
     }
+    if @property_hash.has_key?(:volume_id)
+      attach_instance(volume_id)
+    else
+      config = create_from_snapshot(config)
+      response = ec2.create_volume(config)
 
-    config = create_from_snapshot(config)
-    response = ec2.create_volume(config)
-
-    ec2.create_tags(
-      resources: [response.volume_id],
-      tags: tags_for_resource
-    ) if resource[:tags]
-
-    attach_instance(response.volume_id) if resource[:attach]
-
-    @property_hash[:id] = response.volume_id
-    @property_hash[:ensure] = :present
+      ec2.create_tags(
+        resources: [response.volume_id],
+        tags: tags_for_resource
+      ) if resource[:tags]
+      puts resource
+      attach_instance(response.volume_id) if resource[:attach]
+      @property_hash[:id] = response.volume_id
+      @property_hash[:ensure] = :present
+    end
   end
 
   def destroy
