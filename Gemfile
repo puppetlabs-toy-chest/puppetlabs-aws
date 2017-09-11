@@ -35,7 +35,8 @@ gem 'retries'
 
 group :development do
   gem 'puppet-lint',                        :require => false
-  gem 'metadata-json-lint',                 :require => false
+  gem 'metadata-json-lint', '< 1.2.0',      :require => false if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.0.0')
+  gem 'metadata-json-lint',                 :require => false if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.0.0')
   gem 'puppet_facts',                       :require => false
   gem 'puppet-blacksmith', '>= 3.4.0',      :require => false, :platforms => 'ruby'
   gem 'puppetlabs_spec_helper', '>= 1.2.1', :require => false
