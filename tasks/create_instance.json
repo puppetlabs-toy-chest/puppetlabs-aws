@@ -1,0 +1,39 @@
+{
+  "description": "Because sometimes you just want a quick way to get an AWS EC2 instance",
+  "supports_noop": false,
+  "input_method": "environment",
+  "parameters": {
+    "name": {
+      "description": "Provide the Name tag",
+      "type": "String[1]"
+    },
+    "region": {
+      "description": "The region (us-west-2, etc)",
+      "type": "String[1]"
+    },
+    "key_name": {
+      "description": "Ssh Public Key to add to access the instance",
+      "type": "String[1]"
+    },
+    "instance_type": {
+      "description": "Instance Type (t2.micro, etc)",
+      "type": "String[1]"
+    },
+    "security_groups": {
+      "description": "Security Groups (csv: agents,puppet)",
+      "type": "String[1]"
+    },
+    "image_id": {
+      "description": "AMI ID to use (eg: ami-e689729e)",
+      "type": "String[1]"
+    },
+    "subnet": {
+      "description": "Subnet to deploy into (uses default if none selected)",
+      "type": "Optional[String[1]]"
+    },
+    "ensure": {
+      "description": "Ensure Running or Absent",
+      "type": "Optional[String[1]]"
+    }
+  }
+}

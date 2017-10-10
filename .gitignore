@@ -50,3 +50,5 @@ Gemfile.local
 /graphs
 
 .vagrant
+
+.DS_store
