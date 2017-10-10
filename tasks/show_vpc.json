@@ -1,0 +1,15 @@
+{
+  "description": "Shows VPCs in the provided region",
+  "supports_noop": false,
+  "input_method": "environment",
+  "parameters": {
+    "name": {
+      "description": "The name of the specific resource to introspect, if none is provided, will show all",
+      "type": "Optional[String[1]]"
+    },
+    "region": {
+      "description": "The region (us-west-2, etc)",
+      "type": "String[1]"
+    }
+  }
+}

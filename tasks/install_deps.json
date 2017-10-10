@@ -1,0 +1,6 @@
+{
+  "description": "Installs the needed gem dependencies for the AWS module",
+  "supports_noop": false,
+  "input_method": "environment"
+  }
+}

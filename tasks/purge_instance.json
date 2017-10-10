@@ -1,0 +1,11 @@
+{
+  "description": "Give it an Instance-ID, it will clean the associated cert and purge it",
+  "supports_noop": false,
+  "input_method": "environment",
+  "parameters": {
+    "instance": {
+      "description": "AWS Instance ID",
+      "type": "String[1]"
+    }
+  }
+}

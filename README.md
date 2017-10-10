@@ -30,6 +30,8 @@ Amazon Web Services exposes a powerful API for creating and managing its infrast
 
 In the simplest case, this allows you to create new EC2 instances from Puppet code. More importantly, it allows you to describe your entire AWS infrastructure and to model the relationships between different components.
 
+This module now includes tasks which will facilitate in installing the module dependencies, listing a few 
+
 ## Setup
 
 ### Requirements
