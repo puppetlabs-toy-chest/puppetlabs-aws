@@ -6,6 +6,8 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
 
   mk_resource_methods
 
+  @RETRIES = 10
+
   def self.instances
     regions.collect do |region|
       ec2 = ec2_client(region)
@@ -24,7 +26,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
   end
 
   def self.prefetch(resources)
-    with_retries(:max_tries => 10) do
+    with_retries(:max_tries => @RETRIES) do
       instances.each do |prov|
         if resource = resources[prov.name] # rubocop:disable Lint/AssignmentInCondition
           resource.provider = prov if resource[:region] == prov.region
@@ -72,20 +74,20 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
   end
 
   def create_from_snapshot(config)
-    with_retries(:max_tries => 10) do
-      snapshot = resource[:snapshot_id] ? resource[:snapshot_id] : false
-      config['snapshot_id'] = snapshot if snapshot
-      config
-    end
+    snapshot = resource[:snapshot_id] ? resource[:snapshot_id] : false
+    config['snapshot_id'] = snapshot if snapshot
+    config
   end
 
   def ec2
-    ec2 = ec2_client(target_region)
-    ec2
+    with_retries(:max_tries => @RETRIES) do
+      ec2 = ec2_client(target_region)
+      ec2
+    end
   end
 
   def attach_instance(volume_id)  
-    with_retries(:max_tries => 10) do
+    with_retries(:max_tries => @RETRIES) do
       config = {}
       config[:instance_id] = resource[:attach]["instance_id"]
       config[:volume_id] = volume_id
@@ -104,7 +106,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
   end
 
   def create
-    with_retries(:max_tries => 10) do
+    with_retries(:max_tries => @RETRIES) do
       Puppet.info("Creating Volume #{name} in region #{target_region}")
       config = {
         size: resource[:size],
@@ -133,7 +135,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
   end
 
   def destroy
-    with_retries(:max_tries => 10) do
+    with_retries(:max_tries => @RETRIES) do
       Puppet.info("Deleting Volume #{name} in region #{target_region}")
       # Detach if in use first
       config = {
