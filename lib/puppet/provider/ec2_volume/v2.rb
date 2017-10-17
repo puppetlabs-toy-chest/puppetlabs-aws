@@ -2,6 +2,7 @@ require_relative '../../../puppet_x/puppetlabs/aws'
 
 Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
+  confine feature: :retries
 
   mk_resource_methods
 
@@ -23,22 +24,24 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
   end
 
   def self.prefetch(resources)
-    instances.each do |prov|
-      if resource = resources[prov.name] # rubocop:disable Lint/AssignmentInCondition
-        resource.provider = prov if resource[:region] == prov.region
+    with_retries(:max_tries => 10) do
+      instances.each do |prov|
+        if resource = resources[prov.name] # rubocop:disable Lint/AssignmentInCondition
+          resource.provider = prov if resource[:region] == prov.region
+        end
       end
     end
   end
 
   def self.volume_to_hash(region, volume)
-    name = name_from_tag(volume)
-    attachments = volume.attachments.collect do |att|
-      {
-        instance_id: att.instance_id,
-        device: att.device,
-        delete_on_termination: att.delete_on_termination
-      }
-    end
+      name = name_from_tag(volume)
+      attachments = volume.attachments.collect do |att|
+        {
+          instance_id: att.instance_id,
+          device: att.device,
+          delete_on_termination: att.delete_on_termination
+        }
+      end
     config = {
       name: name,
       volume_id: volume.volume_id,
@@ -69,9 +72,11 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
   end
 
   def create_from_snapshot(config)
-    snapshot = resource[:snapshot_id] ? resource[:snapshot_id] : false
-    config['snapshot_id'] = snapshot if snapshot
-    config
+    with_retries(:max_tries => 10) do
+      snapshot = resource[:snapshot_id] ? resource[:snapshot_id] : false
+      config['snapshot_id'] = snapshot if snapshot
+      config
+    end
   end
 
   def ec2
@@ -79,60 +84,66 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
     ec2
   end
 
-  def attach_instance(volume_id)
-    config = {}
-    config[:instance_id] = resource[:attach]["instance_id"]
-    config[:volume_id] = volume_id
-    config[:device] = resource[:attach]["device"]
-    Puppet.info("Attaching Volume #{volume_id} to ec2 instance #{config[:instance_id]}")
-    ec2.wait_until(:volume_available, volume_ids: [volume_id])
-    ec2.attach_volume(config)
-    if (resource[:attach].has_key?("delete_on_termination") ? resource[:attach]["delete_on_termination"] : false) then
-      Puppet.info("Modifying instance attribute delete_on_termination=#{resource[:attach]["delete_on_termination"]} for #{resource[:attach]["device"]} on ec2 instance #{config[:instance_id]}")
+  def attach_instance(volume_id)  
+    with_retries(:max_tries => 10) do
       config = {}
       config[:instance_id] = resource[:attach]["instance_id"]
-      config[:block_device_mappings] = [{ :device_name=> resource[:attach]["device"], :ebs=> { :delete_on_termination=> true } }]
-      ec2.modify_instance_attribute(config)
+      config[:volume_id] = volume_id
+      config[:device] = resource[:attach]["device"]
+      Puppet.info("Attaching Volume #{volume_id} to ec2 instance #{config[:instance_id]}")
+      ec2.wait_until(:volume_available, volume_ids: [volume_id])
+        ec2.attach_volume(config)
+      if (resource[:attach].has_key?("delete_on_termination") ? resource[:attach]["delete_on_termination"] : false) then
+        Puppet.info("Modifying instance attribute delete_on_termination=#{resource[:attach]["delete_on_termination"]} for #{resource[:attach]["device"]} on ec2 instance #{config[:instance_id]}")
+        config = {}
+        config[:instance_id] = resource[:attach]["instance_id"]
+        config[:block_device_mappings] = [{ :device_name=> resource[:attach]["device"], :ebs=> { :delete_on_termination=> true } }]
+        ec2.modify_instance_attribute(config)
+      end
     end
   end
 
   def create
-    Puppet.info("Creating Volume #{name} in region #{target_region}")
-    config = {
-      size: resource[:size],
-      availability_zone: resource[:availability_zone],
-      volume_type: resource[:volume_type],
-      iops: resource[:iops],
-      encrypted: resource[:encrypted],
-      kms_key_id: resource[:kms_key_id],
-    }
-    if @property_hash.has_key?(:volume_id)
-      attach_instance(volume_id)
-    else
-      config = create_from_snapshot(config)
-      response = ec2.create_volume(config)
+    with_retries(:max_tries => 10) do
+      Puppet.info("Creating Volume #{name} in region #{target_region}")
+      config = {
+        size: resource[:size],
+        availability_zone: resource[:availability_zone],
+        volume_type: resource[:volume_type],
+        iops: resource[:iops],
+        encrypted: resource[:encrypted],
+        kms_key_id: resource[:kms_key_id],
+      }
+      if @property_hash.has_key?(:volume_id)
+        attach_instance(volume_id)
+      else
+        config = create_from_snapshot(config)
+        response = ec2.create_volume(config)
 
-      ec2.create_tags(
-        resources: [response.volume_id],
-        tags: tags_for_resource
-      ) if resource[:tags]
-      puts resource
-      attach_instance(response.volume_id) if resource[:attach]
-      @property_hash[:id] = response.volume_id
-      @property_hash[:ensure] = :present
+        ec2.create_tags(
+          resources: [response.volume_id],
+          tags: tags_for_resource
+        ) if resource[:tags]
+        puts resource
+        attach_instance(response.volume_id) if resource[:attach]
+        @property_hash[:id] = response.volume_id
+        @property_hash[:ensure] = :present
+      end
     end
   end
 
   def destroy
-    Puppet.info("Deleting Volume #{name} in region #{target_region}")
-    # Detach if in use first
-    config = {
-      volume_id: volume_id,
-      force: true
-    }
-    ec2.detach_volume(config) unless @property_hash[:attach] == nil
-    ec2.wait_until(:volume_available, volume_ids: [volume_id])
-    ec2.delete_volume(volume_id: volume_id)
-    @property_hash[:ensure] = :absent
+    with_retries(:max_tries => 10) do
+      Puppet.info("Deleting Volume #{name} in region #{target_region}")
+      # Detach if in use first
+      config = {
+        volume_id: volume_id,
+        force: true
+      }
+      ec2.detach_volume(config) unless @property_hash[:attach] == nil
+      ec2.wait_until(:volume_available, volume_ids: [volume_id])
+      ec2.delete_volume(volume_id: volume_id)
+      @property_hash[:ensure] = :absent
+    end
   end
 end
