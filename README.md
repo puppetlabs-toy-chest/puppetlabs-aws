@@ -1460,6 +1460,12 @@ A hint to specify the VPC. This is useful when detecting ambiguously named secur
 
 This parameter is set at creation only; it is not affected by updates.
 
+##### `iam_instance_profile`
+
+Optional.
+
+The name or the Amazon Resource Name (ARN) of the instance profile associated with the IAM role for the instance.
+
 #### Type: ec2_scalingpolicy
 
 ##### `name`

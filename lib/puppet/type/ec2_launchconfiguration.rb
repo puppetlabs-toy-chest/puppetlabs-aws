@@ -98,6 +98,15 @@ Puppet::Type.newtype(:ec2_launchconfiguration) do
     end
   end
 
+  newproperty(:iam_instance_profile) do
+    desc 'The name or the Amazon Resource Name (ARN) of the instance profile associated with the IAM role for the instance.'
+    validate do |value|
+      fail 'instance_type should not contains spaces' if value =~ /\s/
+      fail 'instance_type should not be blank' if value == ''
+      fail 'instance_type should be a String' unless value.is_a?(String)
+    end
+  end
+
   autorequire(:ec2_securitygroup) do
     groups = self[:security_groups]
     groups.is_a?(Array) ? groups : [groups]
