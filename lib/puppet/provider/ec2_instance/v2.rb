@@ -14,32 +14,49 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def self.instances
-    regions.collect do |region|
-      begin
-        instances = []
-        subnets = Hash.new()
+    mutex = Mutex.new
+    results = []
+    threads = []
+    ex = nil
 
-        subnets_response = ec2_client(region).describe_subnets()
-        subnets_response.data.subnets.each do |subnet|
-          subnet_name = name_from_tag(subnet)
-          subnets[subnet.subnet_id] = subnet_name if subnet_name
-        end
-
-        ec2_client(region).describe_instances(filters: [
-          {name: 'instance-state-name', values: ['pending', 'running', 'stopping', 'stopped']}
-        ]).each do |response|
-          response.data.reservations.each do |reservation|
-            reservation.instances.each do |instance|
-              hash = instance_to_hash(region, instance, subnets)
-              instances << new(hash) if has_name?(hash)
-            end
+    regions.each do |region|
+      threads << Thread.new(region, results) do |region, results|
+        begin
+          instances = []
+          subnets = Hash.new()
+          subnets_response = ec2_client(region).describe_subnets()
+          subnets_response.data.subnets.each do |subnet|
+            subnet_name = name_from_tag(subnet)
+            subnets[subnet.subnet_id] = subnet_name if subnet_name
           end
+          ec2_client(region).describe_instances(filters: [
+            {name: 'instance-state-name', values: ['pending', 'running', 'stopping', 'stopped']}
+          ]).each do |response|
+            response.data.reservations.each do |reservation|
+              reservation.instances.each do |instance|
+                hash = instance_to_hash(region, instance, subnets)
+                instances << new(hash) if has_name?(hash)
+              end
+            end
+            mutex.synchronize { results << instances }
+          end
+        rescue Timeout::Error, StandardError => e
+          err =  PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
+          mutex.synchronize {
+            if !ex
+              ex = err
+            end
+          }
         end
-        instances
-      rescue Timeout::Error, StandardError => e
-        raise PuppetX::Puppetlabs::FetchingAWSDataError.new(region, self.resource_type.name.to_s, e.message)
       end
-    end.flatten
+    end
+
+    if ex
+      raise ex
+    end
+
+    threads.each(&:join)
+    results.flatten
   end
 
   read_only(:instance_id, :instance_type, :image_id, :region, :user_data,
