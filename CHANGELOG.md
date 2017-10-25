@@ -1,3 +1,8 @@
+## Version 2.0.1
+
+This release includes:
+- Delete on termination capability for ec2_volume attachments
+
 ## Supported Version 2.0.0
 
 This release includes:
