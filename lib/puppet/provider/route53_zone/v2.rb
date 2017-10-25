@@ -63,7 +63,7 @@ Puppet::Type.type(:route53_zone).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
       end
 
       break unless response.is_truncated
-      list_ops[:marker] = response.next_marker
+      list_opts[:marker] = response.next_marker
     end
 
     zones
