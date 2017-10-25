@@ -10,7 +10,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
     regions.collect do |region|
         load_balancers = []
-        elbs do |lb|
+        elbs(region) do |lb|
           retries = 0
           begin
             load_balancers << new(load_balancer_to_hash(region, lb, ref_catalog))
@@ -33,10 +33,12 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     end.flatten
   end
 
-  def self.elbs
+  def self.elbs(region = nil)
     # Make the calls to elb_client for each of the regions to fetch the ELB
     # resource information, yielding the individual ELB objects.
-    regions.collect do |region|
+    r = region == nil ? regions : [region]
+
+    r.collect do |region|
 
       region_client = elb_client(region)
       Puppet.debug("Calling for ELB descriptions in #{region}")
@@ -93,7 +95,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
 
       if policy_names
         result['policy_names'] = policy_names
-        result['policies'] = load_balancer_policies(load_balancer.load_balancer_name, policy_names)
+        result['policies'] = load_balancer_policies(load_balancer.load_balancer_name, policy_names, region)
       end
 
       result
@@ -229,8 +231,8 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
     security_group_names
   end
 
-  def self.load_balancer_policies(load_balancer_name, policy_names)
-    results = elb_client.describe_load_balancer_policies(
+  def self.load_balancer_policies(load_balancer_name, policy_names, region)
+    results = elb_client(region).describe_load_balancer_policies(
       load_balancer_name: load_balancer_name,
       policy_names: policy_names
     )
