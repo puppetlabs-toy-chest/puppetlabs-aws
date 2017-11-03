@@ -36,7 +36,7 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
 
   def self.gateway_to_hash(region, gateway)
     {
-      :name       => name_from_tag(gateway),
+      :name       => extract_name_from_tag(gateway),
       :id         => gateway.customer_gateway_id,
       :bgp_asn    => gateway.bgp_asn,
       :state      => gateway.state,
@@ -44,7 +44,7 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
       :region     => region,
       :ip_address => gateway.ip_address,
       :ensure     => :present,
-      :tags       => tags_for(gateway),
+      :tags       => remove_name_from_tags(gateway),
     }
   end
 
@@ -66,7 +66,7 @@ Puppet::Type.type(:ec2_vpc_customer_gateway).provide(:v2, :parent => PuppetX::Pu
     with_retries(:max_tries => 5) do
       ec2.create_tags(
         resources: [response.data.customer_gateway.customer_gateway_id],
-        tags: tags_for_resource
+        tags: extract_resource_name_from_tag
       )
     end
 

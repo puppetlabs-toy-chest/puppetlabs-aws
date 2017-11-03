@@ -1,6 +1,8 @@
-require 'aws-sdk-core'
+require 'aws-sdk'
 require 'mustache'
 require 'open3'
+
+Dir["./spec/acceptance/support/*.rb"].sort.each { |f| require f }
 
 if ENV['PUPPET_AWS_USE_BEAKER'] and ENV['PUPPET_AWS_USE_BEAKER'] == 'yes'
   require 'beaker-rspec'

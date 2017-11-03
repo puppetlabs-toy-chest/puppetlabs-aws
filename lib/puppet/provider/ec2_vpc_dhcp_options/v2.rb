@@ -42,7 +42,7 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
     domain_name = config.keys.include?('domain-name') ? config['domain-name'].first.split(' ') : nil
     node_type = config.keys.include?('netbios-node-type') ? config['netbios-node-type'].first : nil
     {
-      name: name_from_tag(option),
+      name: extract_name_from_tag(option),
       id: option.dhcp_options_id,
       region: region,
       ensure: :present,
@@ -51,7 +51,7 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
       domain_name_servers: config['domain-name-servers'],
       netbios_name_servers: config['netbios-name-servers'],
       netbios_node_type: node_type,
-      tags: tags_for(option),
+      tags: remove_name_from_tags(option),
     }
   end
 
@@ -78,7 +78,7 @@ Puppet::Type.type(:ec2_vpc_dhcp_options).provide(:v2, :parent => PuppetX::Puppet
     with_retries(:max_tries => 5) do
       ec2.create_tags(
         resources: [response.data.dhcp_options.dhcp_options_id],
-        tags: tags_for_resource
+        tags: extract_resource_name_from_tag
       )
     end
 

@@ -34,7 +34,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
   end
 
   def self.gateway_to_hash(region, gateway)
-    assigned_name = name_from_tag(gateway)
+    assigned_name = extract_name_from_tag(gateway)
     return {} unless assigned_name
     vpc_name = nil
     vpc_id = nil
@@ -55,7 +55,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
       id: gateway.internet_gateway_id,
       ensure: :present,
       region: region,
-      tags: tags_for(gateway),
+      tags: remove_name_from_tags(gateway),
     }
   end
 
@@ -82,7 +82,7 @@ Puppet::Type.type(:ec2_vpc_internet_gateway).provide(:v2, :parent => PuppetX::Pu
     with_retries(:max_tries => 5) do
       ec2.create_tags(
         resources: [id],
-        tags: tags_for_resource,
+        tags: extract_resource_name_from_tag,
       )
     end
   end

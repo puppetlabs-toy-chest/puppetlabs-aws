@@ -1,0 +1,28 @@
+
+
+ec2_vpc { '{{name}}-vpc':
+  ensure => {{ensure}},
+  region => '{{region}}'
+} ~>
+ec2_vpc_dhcp_options { '{{name}}-options':
+  ensure => {{ensure}},
+  region => '{{region}}'
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

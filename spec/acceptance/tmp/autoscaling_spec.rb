@@ -4,10 +4,7 @@ require 'securerandom'
 describe "ec2_autoscalinggroup" do
 
   before(:all) do
-    @default_region = 'us-east-1'
-    @default_ami = 'ami-2121764b'
-    @default_instance_size = 't1.micro'
-    @name = "cc-test"
+    @default_region = 'sa-east-1'
     @default_availability_zone = "#{@default_region}a"
     @aws = AwsHelper.new(@default_region)
   end
@@ -36,11 +33,10 @@ describe "ec2_autoscalinggroup" do
     alarm.first
   end
 
-  include_context 'cleanse AWS resources for the test'  
-
   describe 'autoscaling_group and related types' do
 
     before(:all) do
+      name = "#{PuppetManifest.env_id}-#{SecureRandom.uuid}"
       @asg_template = 'autoscaling_configurable.pp.tmpl'
       @asg_template_delete = 'autoscaling_configurable_delete.pp.tmpl'
       @lb_template = 'autoscaling_configurable_lbs.pp.tmpl'
@@ -48,7 +44,8 @@ describe "ec2_autoscalinggroup" do
       @duplicate_asg_template = 'autoscaling_duplicate.pp.tmpl'
       @dup_template_delete = 'autoscaling_duplicate_delete.pp.tmpl'
       @sg_delete = 'sg_delete.pp.tmpl'
-      @lb_name = "#{name}-lb"
+
+      @lb_name = "#{name}-lb".gsub(/[^a-zA-Z0-9]/, '')[0...31] # adhere to the LB's naming restrictions
 
       # launch asg and related resources
       @asg_config = {
@@ -159,6 +156,7 @@ describe "ec2_autoscalinggroup" do
       result = PuppetManifest.new(@asg_template, @asg_config).apply
       expect(result.exit_code).to eq(0)
     end
+
     context 'should create' do
 
       context 'an auto scaling group' do
@@ -171,7 +169,7 @@ describe "ec2_autoscalinggroup" do
           expect(@group.min_size).to eq(@asg_config[:min_size])
           expect(@group.max_size).to eq(@asg_config[:max_size])
           expect(@group.launch_configuration_name).to eq(@asg_config[:lc_setting])
-          expect(@group.availability_zones).to contain_exactly('us-east-1a', 'us-east-1c')
+          expect(@group.availability_zones).to contain_exactly('sa-east-1a', 'sa-east-1c')
           expect(@group.tags).to have_attributes(size: 4)
 
           custom_name_tag = @group.tags.select { |t| t.key == 'custom_name' }
@@ -184,13 +182,14 @@ describe "ec2_autoscalinggroup" do
       end
 
       context 'a launch configuration' do
+
         before(:all) do
           @lc = find_launch_config(@asg_config[:lc_name])
         end
 
         it 'with the correct properties' do
-          expect(@lc.image_id).to eq(@default_ami)
-          expect(@lc.instance_type).to eq(@default_instance_size)
+          expect(@lc.image_id).to eq('ami-67a60d7a')
+          expect(@lc.instance_type).to eq('t1.micro')
         end
 
       end
@@ -649,5 +648,4 @@ describe "ec2_autoscalinggroup" do
     end
   end
 
-  include_context 'cleanse AWS resources for the test'
 end

@@ -669,7 +669,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       security_groups: security_groups,
       subnets: subnets,
       scheme: resource['scheme'],
-      tags: tags_for_resource,
+      tags: extract_resource_name_from_tag,
     )
 
     instances = resource[:instances]

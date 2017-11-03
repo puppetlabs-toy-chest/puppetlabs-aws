@@ -37,7 +37,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
   end
 
   def self.gateway_to_hash(region, gateway)
-    name = name_from_tag(gateway)
+    name = extract_name_from_tag(gateway)
     return {} unless name
     attached = gateway.vpc_attachments.detect { |vpc| vpc.state == 'attached' }
     vpc_name = nil
@@ -55,7 +55,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
       :ensure => :present,
       :region => region,
       :type   => gateway.type,
-      :tags   =>  tags_for(gateway),
+      :tags   =>  remove_name_from_tags(gateway),
     }
   end
 
@@ -84,7 +84,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
     with_retries(:max_tries => 5) do
       ec2.create_tags(
         resources: [gateway_id],
-        tags: tags_for_resource,
+        tags: extract_resource_name_from_tag,
       )
     end
 
@@ -120,6 +120,7 @@ Puppet::Type.type(:ec2_vpc_vpn_gateway).provide(:v2, :parent => PuppetX::Puppetl
       vpc_id: vpc_id,
     ) if vpc_id
     wait_until(:detached)
+    Puppet.info("Detached successfully the VPN gateway #{name} in #{target_region}")
     with_retries(:max_tries => 10,
                  :rescue => Aws::EC2::Errors::IncorrectState,
                  :base_sleep_seconds => 10,

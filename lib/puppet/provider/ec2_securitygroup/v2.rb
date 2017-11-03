@@ -13,14 +13,14 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
         vpc_names = {}
         vpc_response = ec2_client(region).describe_vpcs()
         vpc_response.data.vpcs.each do |vpc|
-          vpc_name = name_from_tag(vpc)
+          vpc_name = extract_name_from_tag(vpc)
           vpc_names[vpc.vpc_id] = vpc_name if vpc_name
         end
 
         group_names = {}
         groups = ec2_client(region).describe_security_groups.collect do |response|
           response.data.security_groups.collect do |group|
-            group_names[group.group_id] = group.group_name || name_from_tag(group)
+            group_names[group.group_id] = group.group_name || extract_name_from_tag(group)
             group
           end
         end.flatten
@@ -86,7 +86,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
       vpc: vpcs[group.vpc_id],
       vpc_id: group.vpc_id,
       region: region,
-      tags: tags_for(group),
+      tags: remove_name_from_tags(group),
     }
   end
 
@@ -123,7 +123,7 @@ Puppet::Type.type(:ec2_securitygroup).provide(:v2, :parent => PuppetX::Puppetlab
 
     ec2.create_tags(
       resources: [response.group_id],
-      tags: tags_for_resource
+      tags: extract_resource_name_from_tag
     ) if resource[:tags]
 
     @property_hash[:id] = response.group_id

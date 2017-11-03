@@ -34,14 +34,14 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
   end
 
   def self.subnet_to_hash(region, subnet)
-    name = name_from_tag(subnet)
+    name = extract_name_from_tag(subnet)
     return {} unless name
     ec2 = ec2_client(region)
     table_response = ec2.describe_route_tables(filters: [
       {name: 'association.subnet-id', values: [subnet.subnet_id]},
       {name: 'vpc-id', values: [subnet.vpc_id]},
     ])
-    table_name = table_response.data.route_tables.empty? ? nil : name_from_tag(table_response.data.route_tables.first)
+    table_name = table_response.data.route_tables.empty? ? nil : extract_name_from_tag(table_response.data.route_tables.first)
 
     {
       name: name,
@@ -53,7 +53,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
       ensure: :present,
       region: region,
       map_public_ip_on_launch: subnet.map_public_ip_on_launch,
-      tags: tags_for(subnet),
+      tags: remove_name_from_tags(subnet),
     }
   end
 
@@ -79,7 +79,7 @@ Puppet::Type.type(:ec2_vpc_subnet).provide(:v2, :parent => PuppetX::Puppetlabs::
     with_retries(:max_tries => 5) do
       ec2.create_tags(
         resources: [subnet_id],
-        tags: tags_for_resource,
+        tags: extract_resource_name_from_tag,
       )
     end
     if resource[:map_public_ip_on_launch] == :true

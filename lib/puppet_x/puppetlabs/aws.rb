@@ -149,7 +149,6 @@ This could be because some other process is modifying AWS at the same time."""
         response = ec2_client.describe_account_attributes(
           attribute_names: ['supported-platforms']
         )
-
         account_types = response.account_attributes.map(&:attribute_values).flatten.map(&:attribute_value)
         account_types == ['VPC']
       end
@@ -258,17 +257,20 @@ This could be because some other process is modifying AWS at the same time."""
         self.class.cloudfront_client(region)
       end
 
-      def tags_for_resource
+      # builds the Name key tag 
+      def extract_resource_name_from_tag
         tags = resource[:tags] ? resource[:tags].map { |k,v| {key: k, value: v} } : []
         tags << {key: 'Name', value: name}
       end
 
-      def self.name_from_tag(item)
+      # finds the Name tag we use for matching.
+      def self.extract_name_from_tag(item)
         name_tag = item.tags.detect { |tag| tag.key == 'Name' }
         name_tag ? name_tag.value : nil
       end
 
-      def self.tags_for(item)
+      # Removes Name tag we use for matching.
+      def self.remove_name_from_tags(item)
         tags = {}
         item.tags.each do |tag|
           tags[tag.key] = tag.value unless tag.key == 'Name'
@@ -351,7 +353,7 @@ This could be because some other process is modifying AWS at the same time."""
             if response.data.vpcs.first.to_hash.keys.include?(:group_name)
               response.data.vpcs.first.group_name
             elsif response.data.vpcs.first.to_hash.keys.include?(:tags)
-              name_from_tag(response.data.vpcs.first)
+              extract_name_from_tag(response.data.vpcs.first)
             end
         end
 
@@ -587,7 +589,7 @@ This could be because some other process is modifying AWS at the same time."""
       def self.customer_gateway_name_from_id(region, gateway_id)
         @customer_gateways ||= name_cache_hash do |ec2, key|
           response = ec2.describe_customer_gateways(customer_gateway_ids: [key])
-          name_from_tag(response.data.customer_gateways.first)
+          extract_name_from_tag(response.data.customer_gateways.first)
         end
 
         @customer_gateways[[region, gateway_id]]
@@ -596,7 +598,7 @@ This could be because some other process is modifying AWS at the same time."""
       def self.vpn_gateway_name_from_id(region, gateway_id)
         @vpn_gateways ||= name_cache_hash do |ec2, key|
           response = ec2.describe_vpn_gateways(vpn_gateway_ids: [key])
-          name_from_tag(response.data.vpn_gateways.first)
+          extract_name_from_tag(response.data.vpn_gateways.first)
         end
         @vpn_gateways[[region, gateway_id]]
       end
@@ -604,7 +606,7 @@ This could be because some other process is modifying AWS at the same time."""
       def self.options_name_from_id(region, options_id)
         @dhcp_options ||= name_cache_hash do |ec2, key|
           response = ec2.describe_dhcp_options(dhcp_options_ids: [key])
-          name_from_tag(response.dhcp_options.first)
+          extract_name_from_tag(response.dhcp_options.first)
         end
 
         @dhcp_options[[region, options_id]]
@@ -635,11 +637,11 @@ This could be because some other process is modifying AWS at the same time."""
           elsif key
             begin
               igw_response = ec2.describe_internet_gateways(internet_gateway_ids: [key])
-              name_from_tag(igw_response.data.internet_gateways.first)
+              extract_name_from_tag(igw_response.data.internet_gateways.first)
             rescue ::Aws::EC2::Errors::InvalidInternetGatewayIDNotFound
               begin
                 vgw_response = ec2.describe_vpn_gateways(vpn_gateway_ids: [key])
-                name_from_tag(vgw_response.data.vpn_gateways.first)
+                extract_name_from_tag(vgw_response.data.vpn_gateways.first)
               rescue ::Aws::EC2::Errors::InvalidVpnGatewayIDNotFound
                 nil
               end

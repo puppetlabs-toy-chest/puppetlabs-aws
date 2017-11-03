@@ -31,7 +31,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
   end
 
   def self.volume_to_hash(region, volume)
-    name = name_from_tag(volume)
+    name = extract_name_from_tag(volume)
     attachments = volume.attachments.collect do |att|
       {
         instance_id: att.instance_id,
@@ -95,7 +95,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
 
     ec2.create_tags(
       resources: [response.volume_id],
-      tags: tags_for_resource
+      tags: extract_resource_name_from_tag
     ) if resource[:tags]
 
     attach_instance(response.volume_id) if resource[:attach]

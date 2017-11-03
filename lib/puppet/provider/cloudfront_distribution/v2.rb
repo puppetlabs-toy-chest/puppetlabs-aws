@@ -106,7 +106,7 @@ Puppet::Type.type(:cloudfront_distribution).provide(:v2, :parent => PuppetX::Pup
       distribution_config_with_tags: {
         distribution_config: hash_to_distribution_config(resource),
         tags: {
-          items: tags_for_resource
+          items: extract_resource_name_from_tag
         },
       },
     })

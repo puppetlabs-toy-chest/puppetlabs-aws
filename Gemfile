@@ -30,7 +30,7 @@ end
 # Used for gem conditionals
 supports_windows = false
 
-gem 'aws-sdk'
+gem 'aws-sdk', '~> 3'
 gem 'retries'
 
 group :development do
@@ -40,7 +40,7 @@ group :development do
   gem 'puppet_facts',                       :require => false
   gem 'puppet-blacksmith', '>= 3.4.0',      :require => false, :platforms => 'ruby'
   gem 'puppetlabs_spec_helper', '>= 1.2.1', :require => false
-  gem 'rspec-puppet', '>= 2.3.2',           :require => false
+  gem 'rspec-puppet', '>= 2.3.2',           :require => false 
   gem 'rspec-puppet-facts',                 :require => false
   gem 'mocha', '< 1.2.0',                   :require => false
   gem 'simplecov',                          :require => false

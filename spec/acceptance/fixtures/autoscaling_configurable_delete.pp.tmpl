@@ -11,7 +11,7 @@ ec2_scalingpolicy { [ '{{policy_name}}', '{{second_policy_name}}' ]:
 
 ec2_autoscalinggroup { '{{asg_name}}':
   ensure => {{ensure}},
-  region => 'sa-east-1',
+  region => 'us-east-1',
 } ~>
 
 ec2_launchconfiguration { '{{lc_name}}':
