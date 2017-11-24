@@ -34,7 +34,7 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   end
 
   def self.vpc_to_hash(region, vpc)
-    name = name_from_tag(vpc)
+    name = extract_name_from_tag(vpc)
     return {} unless name
     ec2 = ec2_client(region)
     {
@@ -46,7 +46,7 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
       region: region,
       enable_dns_support: ec2.describe_vpc_attribute({vpc_id: vpc.vpc_id, attribute: "enableDnsSupport"}).enable_dns_support.value,
       enable_dns_hostnames: ec2.describe_vpc_attribute({vpc_id: vpc.vpc_id, attribute: "enableDnsHostnames"}).enable_dns_hostnames.value,
-      tags: tags_for(vpc),
+      tags: remove_name_from_tags(vpc),
       dhcp_options: options_name_from_id(region, vpc.dhcp_options_id),
     }
   end
@@ -98,13 +98,14 @@ Puppet::Type.type(:ec2_vpc).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
     with_retries(:max_tries => 5) do
       ec2.create_tags(
         resources: resources,
-        tags: tags_for_resource
+        tags: extract_resource_name_from_tag
       )
     end
   end
 
   def destroy
     Puppet.info("Deleting VPC #{name} in #{target_region}")
+    
     ec2_client(target_region).delete_vpc(
       vpc_id: @property_hash[:id]
     )

@@ -26,9 +26,20 @@ end
 
 PuppetSyntax.exclude_paths = ignore_paths
 
-desc "Run acceptance tests"
-RSpec::Core::RakeTask.new(:acceptance => :spec_prep) do |t|
-    t.pattern = 'spec/acceptance'
+
+jenkins_tests = [
+  'spec/*/vpc_spec.rb',
+  'spec/*/negative_vpc_spec.rb'
+]
+
+desc "Run jenkins tests"
+RSpec::Core::RakeTask.new(:jenkins => [:spec_prep]) do |t|
+  t.pattern = jenkins_tests
+end
+
+desc "Run full acceptance tests"
+RSpec::Core::RakeTask.new(:full => [:spec_prep]) do |t|
+  t.pattern = 'spec/acceptance'
 end
 
 task :metadata do

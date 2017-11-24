@@ -117,7 +117,7 @@ ec2_vpc_vpn_gateway { '{{name}}-vgw':
 ec2_instance { '{{name}}-instance':
   ensure                      => {{ensure}},
   region                      => '{{region}}',
-  image_id                    => 'ami-67a60d7a',
+  image_id                    => 'ami-2121764b',
   subnet                      => '{{name}}-subnet',
   associate_public_ip_address => {{associate_public_ip_address}},
   instance_type               => 't1.micro',

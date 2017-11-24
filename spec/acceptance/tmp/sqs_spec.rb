@@ -10,7 +10,7 @@ describe "sqs_queue" do
   describe "should create new sqs queue" do
     before (:all) do
       @config = {
-          :name => "ccsqstest#{rand(9999)}",
+          :name => SecureRandom.hex(10),
           :ensure => 'present',
           :region => 'us-west-1',
           :delay_seconds => 100,

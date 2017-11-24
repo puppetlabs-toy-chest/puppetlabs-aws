@@ -4,7 +4,8 @@ require 'securerandom'
 describe "rds_db_securitygroup" do
 
   before(:all) do
-    @default_region = 'sa-east-1'
+    @default_region = 'us-east-1'
+    @name = 'cc-test'
     @aws = AwsHelper.new(@default_region)
     @template = 'rds_db_securitygroup.pp.tmpl'
   end
@@ -16,10 +17,9 @@ describe "rds_db_securitygroup" do
   end
 
   describe 'should create a new group' do
-
     before(:all) do
       @config = {
-        :name   => "#{PuppetManifest.rds_id}-#{SecureRandom.hex}",
+        :name   => @name,
         :ensure => 'present',
         :region => @default_region,
         :description => 'Acceptance test',

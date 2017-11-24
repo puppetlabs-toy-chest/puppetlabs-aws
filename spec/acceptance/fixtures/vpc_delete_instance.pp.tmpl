@@ -1,0 +1,16 @@
+
+ec2_instance { '{{name}}-instance':
+  ensure        => {{ensure}},
+  region        => '{{region}}',
+  subnet        => '{{name}}-subnet',
+  instance_type => 't1.micro'
+}
+
+
+
+
+
+
+
+
+

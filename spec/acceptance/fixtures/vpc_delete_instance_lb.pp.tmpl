@@ -1,0 +1,23 @@
+
+elb_loadbalancer { '{{lb_name}}':
+  ensure    => {{ensure}},
+  region    => '{{region}}',
+  subnets   => '{{name}}-subnet',
+  instances => '{{name}}-instance'
+}
+
+ec2_instance { '{{name}}-instance':
+  ensure        => {{ensure}},
+  region        => '{{region}}',
+  subnet        => '{{name}}-subnet',
+  instance_type => 't1.micro'
+}
+
+
+
+
+
+
+
+
+

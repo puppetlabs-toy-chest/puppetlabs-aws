@@ -1,5 +1,6 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 require 'base64'
+require 'pry'
 
 Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
@@ -21,7 +22,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
         subnets_response = ec2_client(region).describe_subnets()
         subnets_response.data.subnets.each do |subnet|
-          subnet_name = name_from_tag(subnet)
+          subnet_name = extract_name_from_tag(subnet)
           subnets[subnet.subnet_id] = subnet_name if subnet_name
         end
 
@@ -56,7 +57,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
   end
 
   def self.instance_to_hash(region, instance, subnets)
-    name = name_from_tag(instance)
+    name = extract_name_from_tag(instance)
     return {} unless name
     tags = {}
     subnet_name = nil
@@ -144,6 +145,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
 
   def determine_subnet(vpc_ids)
     ec2 = ec2_client(resource[:region])
+
     # filter by VPC, since describe_subnets doesn't work on empty tag:Name
     subnet_response = ec2.describe_subnets(filters: [
       {name: "vpc-id", values: vpc_ids}])
@@ -157,6 +159,7 @@ Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aw
     # then find the name in the VPC subnets that we have
     subnets = subnet_response.data.subnets.select do |s|
       if subnet_name.nil? || subnet_name.empty?
+        puts ! s.tags.any? { |t| t.key == 'Name' }
         ! s.tags.any? { |t| t.key == 'Name' }
       else
         s.tags.any? { |t| t.key == 'Name' && t.value == subnet_name }
@@ -325,7 +328,7 @@ Found #{matching_groups.length}:
       with_retries(:max_tries => 5) do
         ec2.create_tags(
           resources: instance_ids,
-          tags: tags_for_resource
+          tags: extract_resource_name_from_tag
         )
       end
 

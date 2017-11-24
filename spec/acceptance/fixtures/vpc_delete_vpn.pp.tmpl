@@ -1,0 +1,17 @@
+ec2_vpc_vpn { '{{name}}-vpn':
+  ensure           => {{ensure}},
+  region           => '{{region}}',
+  vpn_gateway      => '{{name}}-vgw',
+  customer_gateway => '{{name}}-cgw'
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -37,7 +37,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
   end
 
   def self.connection_to_hash(region, connection)
-    name = name_from_tag(connection)
+    name = extract_name_from_tag(connection)
     return {} unless name
 
     customer_gateway_name = customer_gateway_name_from_id(region, connection.customer_gateway_id)
@@ -56,7 +56,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
       :vpn_gateway      => vpn_gateway_name,
       :routes           => routes,
       :static_routes    => static_routes,
-      :tags             => tags_for(connection),
+      :tags             => remove_name_from_tags(connection),
     }
   end
 
@@ -95,7 +95,7 @@ Puppet::Type.type(:ec2_vpc_vpn).provide(:v2, :parent => PuppetX::Puppetlabs::Aws
     with_retries(:max_tries => 5) do
       ec2.create_tags(
         resources: [vpn_connection_id],
-        tags: tags_for_resource,
+        tags: extract_resource_name_from_tag,
       )
     end
 

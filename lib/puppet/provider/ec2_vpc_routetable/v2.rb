@@ -43,7 +43,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
   end
 
   def self.route_table_to_hash(region, table)
-    name = name_from_tag(table)
+    name = extract_name_from_tag(table)
     return {} unless name
     routes = table.routes.collect do |route|
       route_to_hash(region, route)
@@ -55,7 +55,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
       ensure: :present,
       routes: routes,
       region: region,
-      tags: tags_for(table),
+      tags: remove_name_from_tags(table),
     }
   end
 
@@ -84,7 +84,7 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
     with_retries(:max_tries => 5) do
       ec2.create_tags(
         resources: [id],
-        tags: tags_for_resource,
+        tags: extract_resource_name_from_tag,
       )
     end
     routes.each do |route|

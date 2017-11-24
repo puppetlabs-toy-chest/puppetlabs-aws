@@ -1,15 +1,9 @@
 HOSTS:
-  centos-7-x86_86-master:
+  centos-7:
     roles:
       - master
       - dashboard
       - database
-      - agent
-    platform: el-7-x86_64
-    template: Delivery/Quality Assurance/Templates/vCloud/centos-7-x86_64
-    hypervisor: vcloud
-  centos-7-x86_86-agent:
-    roles:
       - agent
       - default
     platform: el-7-x86_64
