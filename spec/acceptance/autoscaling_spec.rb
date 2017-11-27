@@ -48,16 +48,16 @@ describe "ec2_autoscalinggroup" do
       @duplicate_asg_template = 'autoscaling_duplicate.pp.tmpl'
       @dup_template_delete = 'autoscaling_duplicate_delete.pp.tmpl'
       @sg_delete = 'sg_delete.pp.tmpl'
-      @lb_name = "#{name}-lb"
+      @lb_name = "#{@name}-lb"
 
       # launch asg and related resources
       @asg_config = {
         :ensure               => 'present',
         :region               => @default_region,
-        :sg_name              => "#{name}-sg",
-        :lc_name              => "#{name}-lc",
-        :sg_setting           => "#{name}-sg",
-        :asg_name             => "#{name}-asg",
+        :sg_name              => "#{@name}-sg",
+        :lc_name              => "#{@name}-lc",
+        :sg_setting           => "#{@name}-sg",
+        :asg_name             => "#{@name}-asg",
         :min_size             => 2,
         :max_size             => 6,
         :desired_capacity     => 3,
@@ -65,24 +65,24 @@ describe "ec2_autoscalinggroup" do
         :health_check_type    => 'EC2',
         :health_check_grace_period => 100,
         :new_instances_protected_from_scale_in => false,
-        :lc_setting           => "#{name}-lc",
+        :lc_setting           => "#{@name}-lc",
         :availability_zones   => ["#{@default_region}a", "#{@default_region}c"],
-        :policy_name          => "#{name}-policy",
-        :second_policy_name   => "#{name}-second_policy",
+        :policy_name          => "#{@name}-policy",
+        :second_policy_name   => "#{@name}-second_policy",
         :scaling_adjustment   => 30,
         :adjustment_type      => 'PercentChangeInCapacity',
-        :alarm_name           => "#{name}-cw_alarm",
+        :alarm_name           => "#{@name}-cw_alarm",
         :metric               => 'CPUUtilization',
         :namespace            => 'AWS/EC2',
         :statistic            => 'Average',
         :period               => 120,
         :threshold            => 70,
         :comparison_operator  => 'GreaterThanOrEqualToThreshold',
-        :asg_setting          => "#{name}-asg",
+        :asg_setting          => "#{@name}-asg",
         :evaluation_periods   => 2,
-        :alarm_actions        => "#{name}-policy",
+        :alarm_actions        => "#{@name}-policy",
         :tags                 => {
-          :custom_name => "#{name}-asg",
+          :custom_name => "#{@name}-asg",
           :department  => 'engineering',
           :project     => 'cloud',
           :created_by  => 'aws-acceptance'
@@ -110,8 +110,8 @@ describe "ec2_autoscalinggroup" do
       }
       @duplicate_asg_config = {
         :region       => @default_region,
-        :sg2_name      => "#{name}-sg2",
-        :lc2_name      => "#{name}-lc2",
+        :sg2_name      => "#{@name}-sg2",
+        :lc2_name      => "#{@name}-lc2",
       }
       # Mustache doesn't do nested data very well, so this creates a separate template renders for the main config and load balancers.
       # This is primarily to keep the templates and config similar to the elb_loadbalancer tests, and not have to rename everything from there.
@@ -368,7 +368,7 @@ describe "ec2_autoscalinggroup" do
           response = @aws.ec2_client.describe_security_groups(group_ids: @lc.security_groups)
           names = response.data.security_groups.collect(&:group_name)
           names.each do |name|
-            expect(@result.stdout).to match(/#{name}/)
+            expect(@result.stdout).to match(/#{@name}/)
           end
         end
 
@@ -648,6 +648,4 @@ describe "ec2_autoscalinggroup" do
       end
     end
   end
-
-  include_context 'cleanse AWS resources for the test'
 end
