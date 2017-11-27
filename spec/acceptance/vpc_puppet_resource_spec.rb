@@ -153,7 +153,7 @@ describe "The AWS module" do
       options = {:name => instance_name, :region => @default_region, :ensure => 'absent'}
       result = TestExecutor.puppet_resource('ec2_instance', options, '--modulepath spec/fixtures/modules/')
       expect(result.stderr).not_to match(/Error/), error_message
-      expect(@aws.send('get_instances', instance_name).first.state.name).to eq('terminated')
+      expect(@aws.send('get_terminated_instances', instance_name).first.state.name).to eq('terminated')
       # igw
       igw_name = "#{@delete_me[:name]}-igw"
       options = {:name => igw_name, :region => @default_region, :ensure => 'absent'}

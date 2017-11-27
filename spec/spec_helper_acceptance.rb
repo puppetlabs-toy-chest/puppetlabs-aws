@@ -149,15 +149,31 @@ class AwsHelper
     response.data.db_subnet_groups
   end
 
+
+  def get_terminated_instances(name)
+    response = @ec2_client.describe_instances(filters: [
+      {name: 'tag:Name', values: [name]},
+    ])
+    instances = []
+    response.data.reservations.each do |reservation|
+      reservation.instances.each do |instance|
+        instances.push(instance) if instance.state.name == 'terminated'
+      end
+    end
+    instances
+  end
+  
   def get_instances(name)
     response = @ec2_client.describe_instances(filters: [
       {name: 'tag:Name', values: [name]},
     ])
-    response.data.reservations.collect do |reservation|
-      reservation.instances.collect do |instance|
-        instance
+    instances = []
+    response.data.reservations.each do |reservation|
+      reservation.instances.each do |instance|
+        instances.push(instance) unless instance.state.name == 'terminated' || instance.state.name == 'shutting-down'
       end
-    end.flatten
+    end
+    instances
   end
 
   def get_groups(name)

@@ -539,7 +539,5 @@ describe "ec2_instance" do
         expect(@instance.iam_instance_profile).to be_nil
       end
     end
-  end
-  include_context 'cleanse AWS resources for the test'  
-  
+  end  
 end
