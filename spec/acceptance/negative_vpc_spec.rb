@@ -1,6 +1,5 @@
 require 'spec_helper_acceptance'
 require 'securerandom'
-require 'Resolv'
 require 'retries'
 
 describe "The AWS module" do
