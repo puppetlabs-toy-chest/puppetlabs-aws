@@ -1,12 +1,6 @@
 require_relative '../../../puppet_x/puppetlabs/aws.rb'
 require 'base64'
 
-begin
-  require 'pry'
-rescue Gem::LoadError
-  # not installed
-end
-
 Puppet::Type.type(:ec2_instance).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) do
   confine feature: :aws
   confine feature: :retries
