@@ -26,7 +26,11 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
   end
 
   def self.prefetch(resources)
-    with_retries(max_tries: @RETRIES) do
+    with_retries(:max_tries => @RETRIES,
+                 :rescue => Aws::EC2::Errors::RequestLimitExceeded,
+                 :base_sleep_seconds => 30,
+                 :max_sleep_seconds => 60) do |attempt|
+      Puppet.notice("Attempt #{attempt} of prefetch ebs volume")
       instances.each do |prov|
         if resource = resources[prov.name] # rubocop:disable Lint/AssignmentInCondition
           resource.provider = prov if resource[:region] == prov.region
@@ -80,14 +84,22 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
   end
 
   def ec2
-    with_retries(max_tries: @RETRIES) do
+    with_retries(:max_tries => @RETRIES,
+                 :rescue => Aws::EC2::Errors::RequestLimitExceeded,
+                 :base_sleep_seconds => 30,
+                 :max_sleep_seconds => 60) do |attempt|
+      Puppet.notice("Attempt #{attempt} of getting the instance id for ebs volume")
       ec2 = ec2_client(target_region)
       ec2
     end
   end
 
   def attach_instance(volume_id)
-    with_retries(max_tries: @RETRIES) do
+    with_retries(:max_tries => @RETRIES,
+                 :rescue => Aws::EC2::Errors::RequestLimitExceeded,
+                 :base_sleep_seconds => 30,
+                 :max_sleep_seconds => 60) do |attempt|
+      Puppet.notice("Attempt #{attempt} of attaching ebs volume")
       config = {}
       config[:instance_id] = resource[:attach]['instance_id']
       config[:volume_id] = volume_id
@@ -106,7 +118,11 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
   end
 
   def create
-    with_retries(max_tries: @RETRIES) do
+    with_retries(:max_tries => @RETRIES,
+                 :rescue => Aws::EC2::Errors::RequestLimitExceeded,
+                 :base_sleep_seconds => 30,
+                 :max_sleep_seconds => 60) do |attempt|
+      Puppet.notice("Attempt #{attempt} of creating ebs volume")
       Puppet.info("Creating Volume #{name} in region #{target_region}")
       config = {
         size: resource[:size],
@@ -137,7 +153,11 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
   end
 
   def destroy
-    with_retries(max_tries: @RETRIES) do
+    with_retries(:max_tries => @RETRIES,
+                 :rescue => Aws::EC2::Errors::RequestLimitExceeded,
+                 :base_sleep_seconds => 30,
+                 :max_sleep_seconds => 60) do |attempt|
+      Puppet.notice("Attempt #{attempt} of destroying ebs volume")
       Puppet.info("Deleting Volume #{name} in region #{target_region}")
       # Detach if in use first
       config = {
