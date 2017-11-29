@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-aws",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": "puppetlabs",
   "summary": "This module provides the ability to manage AWS resources",
   "license": "Apache-2.0",
@@ -10,7 +10,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.7.0 < 5.0.0"
+      "version_requirement": ">= 4.7.0 < 6.0.0"
     }
   ],
   "operatingsystem_support": [
