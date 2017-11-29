@@ -71,7 +71,7 @@ describe "The AWS module" do
     subnet=0
     while subnet < 256 do
       begin
-        Resolv.new.getname(ip)
+        Resolv::DNS.new.getname(ip)
         break
       rescue Exception => e
         puts "DNS name resolution failed on ip [#{ip}] #{e}"

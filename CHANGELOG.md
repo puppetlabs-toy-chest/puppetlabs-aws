@@ -1,3 +1,12 @@
+## Supported Version 2.1.0
+
+This release includes:
+- Japanese language support added.
+- Puppet Tasks are supported.
+- Support for the AWS SDK v3.
+- Region support for GovCloud merged.
+- Loadbalancers are now region specific.
+
 ## Supported Version 2.0.0
 
 This release includes:
