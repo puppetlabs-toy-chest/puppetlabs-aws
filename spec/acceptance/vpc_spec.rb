@@ -1,6 +1,5 @@
 require 'spec_helper_acceptance'
 require 'securerandom'
-require 'Resolv'
 
 describe "The AWS module" do
   before(:all) do
