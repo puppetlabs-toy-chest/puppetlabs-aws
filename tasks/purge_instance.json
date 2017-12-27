@@ -5,7 +5,7 @@
   "parameters": {
     "instance": {
       "description": "AWS Instance ID",
-      "type": "String[1]"
+      "type": "Pattern[/i?-[a-z0-9]+/]"
     }
   }
 }
