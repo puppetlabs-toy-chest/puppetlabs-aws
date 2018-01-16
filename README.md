@@ -54,7 +54,7 @@ This module now includes tasks which will facilitate in installing the module de
   export AWS_SECRET_ACCESS_KEY=your_secret_access_key
   ```
 
-  Alternatively, you can place the credentials in a file at '~/.aws/credentials' or 'puppetlabs_aws_configuration.ini' in the Puppet confdir ('$settings::confdir') based on the following template:
+  Alternatively, you can place the credentials in a file at `~/.aws/credentials` or `puppetlabs_aws_configuration.ini` in the Puppet confdir ('$settings::confdir') based on the following template:
 
   ```bash
  [default]
