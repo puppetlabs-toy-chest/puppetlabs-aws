@@ -215,52 +215,6 @@ elb_loadbalancer { 'name-of-load-balancer':
 
 To destroy any of these resources, set `ensure => absent`.
 
-### Creating a stack
-
-Let's create a simple stack, with a load balancer, instances, and security groups.
-
-```
-                          WWW
-                           +
-                           |
-          +----------------|-----------------+
-          |     +----------v-----------+     |
-    lb-sg |     |         lb-1         |     |
-          |     +----+------------+----+     |
-          +----------|------------|----------+
-          +----------|------------|----------+
-          |     +----v----+  +----v----+     |
-          |     |         |  |         |     |
-   web-sg |     |  web-1  |  |  web-2  |     |
-          |     |         |  |         |     |
-          |     +----+----+  +----+----+     |
-          +----------|------------|----------+
-          +----------|------------|----------+
-          |     +----v----+       |          |
-          |     |         |       |          |
-    db-sg |     |  db-1   <-------+          |
-          |     |         |                  |
-          |     +---------+                  |
-          +----------------------------------+
-```
-
-We've supplied code for the creation of this stack in this module's tests directory. To run this code with Puppet apply, run:
-
-``` bash
-puppet apply tests/create.pp --test
-```
-
-If you want to try this out from this directory without installing the module, run the following:
-
-```bash
-puppet apply tests/create.pp --modulepath ../ --test
-```
-
-To destroy the resources created by the above, run the following:
-
-```bash
-puppet apply tests/destroy.pp --test
-```
 
 ### Managing resources from the command line
 
