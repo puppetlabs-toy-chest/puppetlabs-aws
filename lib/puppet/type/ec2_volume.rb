@@ -71,6 +71,13 @@ Puppet::Type.newtype(:ec2_volume) do
     end
   end
 
+  newproperty(:snapshot_label) do
+    desc 'Label of the snapshot that this volume should be created from'
+    validate do |value|
+      fail 'snapshot_label should be an string' unless value.is_a?(String)
+    end
+  end
+
   newproperty(:attach) do
     desc 'The ec2 instance that this volume should attach to'
     validate do |value|

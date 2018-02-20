@@ -78,9 +78,28 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
   end
 
   def create_from_snapshot(config)
-    snapshot = resource[:snapshot_id] ? resource[:snapshot_id] : false
+    snapshot = resource[:snapshot_id] ? latest_snapshot : false
     config['snapshot_id'] = snapshot if snapshot
     config
+  end
+
+  def latest_snapshot
+    return resource[:snapshot_id] unless resource[:snapshot_id] == '@latest'
+    latest = find_snapshots.first
+    Puppet.notice("Restoring volume from snapshot #{latest.snapshot_id}" \
+      "taken #{latest.start_time}")
+    latest
+  end
+
+  def find_snapshots
+    filters = [{
+      name: 'description',
+      values: [snapshot_label]
+    }, {
+      name: 'status',
+      values: ['completed']
+    }]
+    ec2.describe_snapshots(filters: filters).snapshots
   end
 
   def ec2
