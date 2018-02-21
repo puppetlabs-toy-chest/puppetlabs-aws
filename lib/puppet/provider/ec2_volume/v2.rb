@@ -89,7 +89,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
     latest = find_snapshots.first
     Puppet.notice("Restoring volume from snapshot #{latest.snapshot_id}" \
       "taken #{latest.start_time}")
-    latest
+    latest.snapshot_id
   end
 
   def find_snapshots
