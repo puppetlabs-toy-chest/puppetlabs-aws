@@ -86,6 +86,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
   def latest_snapshot
     return resource[:snapshot_id] if resource[:snapshot_id]
     return false unless resource[:snapshot_label]
+    Puppet.notice("Attempting to fetch snapshot ID")
     latest = find_snapshots.first
     Puppet.notice("Restoring volume from snapshot #{latest.snapshot_id}" \
       "taken #{latest.start_time}")
@@ -95,7 +96,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
   def find_snapshots
     filters = [{
       name: 'description',
-      values: [snapshot_label]
+      values: [resource[:snapshot_label]]
     }, {
       name: 'status',
       values: ['completed']
