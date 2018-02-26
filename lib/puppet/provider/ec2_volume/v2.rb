@@ -6,6 +6,8 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
 
   mk_resource_methods
 
+  @@RETRIES = 10
+
   def self.instances
     regions.collect do |region|
       ec2 = ec2_client(region)
@@ -24,7 +26,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
   end
 
   def self.prefetch(resources)
-    with_retries(:max_tries => 10,
+    with_retries(:max_tries => @@RETRIES,
                  :rescue => Aws::EC2::Errors::RequestLimitExceeded,
                  :base_sleep_seconds => 30,
                  :max_sleep_seconds => 60) do |attempt|
@@ -88,7 +90,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
   end
 
   def attach_instance(volume_id)
-    with_retries(:max_tries => 10,
+    with_retries(:max_tries => @@RETRIES,
                  :rescue => Aws::EC2::Errors::RequestLimitExceeded,
                  :base_sleep_seconds => 30,
                  :max_sleep_seconds => 60) do |attempt|
@@ -111,7 +113,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
   end
 
   def create
-    with_retries(:max_tries => 10,
+    with_retries(:max_tries => @@RETRIES,
                  :rescue => Aws::EC2::Errors::RequestLimitExceeded,
                  :base_sleep_seconds => 30,
                  :max_sleep_seconds => 60) do |attempt|
@@ -146,7 +148,7 @@ Puppet::Type.type(:ec2_volume).provide(:v2, parent: PuppetX::Puppetlabs::Aws) do
   end
 
   def destroy
-    with_retries(:max_tries => 10,
+    with_retries(:max_tries => @@RETRIES,
                  :rescue => Aws::EC2::Errors::RequestLimitExceeded,
                  :base_sleep_seconds => 30,
                  :max_sleep_seconds => 60) do |attempt|
