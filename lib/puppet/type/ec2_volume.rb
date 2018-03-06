@@ -67,7 +67,14 @@ Puppet::Type.newtype(:ec2_volume) do
   newproperty(:snapshot_id) do
     desc 'The snapshot that this volume should be created from'
     validate do |value|
-      fail 'snapshot_id should be an string' unless value.is_a?(String)
+      fail 'snapshot_id should be a string' unless value.is_a?(String)
+    end
+  end
+
+  newproperty(:snapshot_label) do
+    desc 'Label of the snapshot that this volume should be created from'
+    validate do |value|
+      fail 'snapshot_label should be a string' unless value.is_a?(String)
     end
   end
 
@@ -92,7 +99,7 @@ Puppet::Type.newtype(:ec2_volume) do
   newproperty(:kms_key_id) do
     desc 'The full ARN of the AWS Key Management Service (AWS KMS) customer master key (CMK) to use when creating the encrypted volume.'
     validate do |value|
-      fail 'kms_key_id should be an string' unless value.is_a?(String)
+      fail 'kms_key_id should be a string' unless value.is_a?(String)
     end
   end
 
