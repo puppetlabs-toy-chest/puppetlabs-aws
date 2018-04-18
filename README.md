@@ -162,6 +162,7 @@ ec2_instance { 'name-of-instance':
   key_name          => 'name-of-existing-key',
   subnet            => 'name-of-subnet',
   security_groups   => ['name-of-security-group'],
+  block_devices       => [ {"delete_on_termination"=>"true", "device_name"=>"/dev/sdc", "volume_size"=>100, "encrypted"=>"Yes",}, {"delete_on_termination"=>"true", "device_name"=>"/dev/sde", "volume_size"=>1000, "encrypted"=>"Yes",}, ],
   tags              => {
     tag_name => 'value',
   },
