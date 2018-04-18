@@ -24,7 +24,7 @@ This creates the security group. We can see that by running:
 Which should return:
 
 ~~~puppet
-c2_securitygroup { 'test-sg':
+ec2_securitygroup { 'test-sg':
   ensure      => 'present',
   description => 'Security group for audit',
   ingress     => [{'security_group' => 'test-sg'}],
