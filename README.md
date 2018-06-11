@@ -719,6 +719,8 @@ Valid values are:
 
 Valid IPv4 address.
 
+If `private_ip_address` is set to `auto`, it is ignored (instead auto-assignment will be used).
+
 ##### `associate_public_ip_address`
 
 Optional.
