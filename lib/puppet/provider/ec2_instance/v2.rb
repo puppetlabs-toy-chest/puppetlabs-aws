@@ -274,12 +274,12 @@ Found #{matching_groups.length}:
       # If both public and private ip specified, then the private_ip_address must be within the network_interfaces structure
       #  Module currently only supports a single network interface, therefore attatch any specified private ip address
       #  to the first network interface.
-      if resource['private_ip_address'] && using_vpc?
+      if resource['private_ip_address'] && resource['private_ip_address'] != "auto" && using_vpc?
         config[:network_interfaces].first[:private_ip_address] = resource['private_ip_address']
       end
       config[:subnet_id] = nil
       config[:security_group_ids] = nil
-    elsif resource['private_ip_address'] && using_vpc?
+    elsif resource['private_ip_address'] && resource['private_ip_address'] != "auto" && using_vpc?
       config['private_ip_address'] = resource['private_ip_address']
     end
 
