@@ -155,9 +155,7 @@ Puppet::Type.newtype(:ec2_instance) do
   newproperty(:private_ip_address) do
     desc 'The private IP address for the instance.'
     validate do |value|
-      if value != "auto" {
-        fail 'private ip address must be a valid ipv4 address' unless value =~ Resolv::IPv4::Regex
-        }
+        fail 'private ip address must be a valid ipv4 address' unless (value =~ Resolv::IPv4::Regex || value == 'auto')
     end
   end
 
