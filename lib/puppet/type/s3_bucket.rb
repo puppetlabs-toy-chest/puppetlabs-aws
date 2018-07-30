@@ -4,7 +4,7 @@ Puppet::Type.newtype(:s3_bucket) do
   ensurable
 
   newparam(:name, namevar: true) do
-    desc 'The name of the user to manage.'
+    desc 'The name of the bucket to manage.'
     validate do |value|
       fail Puppet::Error, 'Empty bucket names are not allowed' if value == ''
     end
