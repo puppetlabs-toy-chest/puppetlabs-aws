@@ -49,12 +49,6 @@ describe type_class do
     }.to raise_error(Puppet::ResourceError, /routes must include a destination_cidr_block/)
   end
 
-  it 'routes should contain a gateway' do
-    expect {
-      type_class.new(:name => 'sample', :routes => [{'destination_cidr_block' => '10.0.0.0/16' }])
-    }.to raise_error(Puppet::ResourceError, /routes must include a gateway/)
-  end
-
   [
     'name',
     'vpc',

@@ -653,6 +653,23 @@ This could be because some other process is modifying AWS at the same time."""
         @gateways[gateway_id]
       end
 
+      def self.peering_name_from_id(region, peering_id)
+        ec2 = ec2_client(region)
+        @peering ||= Hash.new do |h, key|
+          if key
+            begin
+              pcx_response = ec2.describe_vpc_peering_connections(vpc_peering_connection_ids: [key])
+              extract_name_from_tag(pcx_response.data.vpc_peering_connections.first)
+            rescue ::Aws::EC2::Errors::InvalidVpcPeeringConnectionIDNotFound
+              nil
+            end
+          else
+            nil
+          end
+        end
+        @peering[peering_id]
+      end
+
       def self.normalize_hash(hash)
         # Sort and format the received hash for simpler comparison.
         #

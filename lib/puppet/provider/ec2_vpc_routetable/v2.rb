@@ -34,12 +34,21 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
   end
 
   def self.route_to_hash(region, route)
-    gateway_name = route.state == 'active' ? gateway_name_from_id(region, route.gateway_id) : nil
-    hash = {
-      'destination_cidr_block' => route.destination_cidr_block,
-      'gateway' => gateway_name,
-    }
-    gateway_name.nil? ? nil : hash
+    if route.gateway_id
+      gateway_name = route.state == 'active' ? gateway_name_from_id(region, route.gateway_id) : nil
+      hash = {
+        'destination_cidr_block' => route.destination_cidr_block,
+        'gateway' => gateway_name,
+      }
+      gateway_name.nil? ? nil : hash
+    elsif route.vpc_peering_connection_id
+      peering_name = route.state == 'active' ? peering_name_from_id(region, route.vpc_peering_connection_id) : nil
+      hash = {
+        'destination_cidr_block' => route.destination_cidr_block,
+        'peering_connection' => peering_name,
+      }
+      peering_name.nil? ? nil : hash
+    end
   end
 
   def self.route_table_to_hash(region, table)
@@ -88,31 +97,45 @@ Puppet::Type.type(:ec2_vpc_routetable).provide(:v2, :parent => PuppetX::Puppetla
       )
     end
     routes.each do |route|
-      internet_gateway_response = ec2.describe_internet_gateways(filters: [
-        {name: 'tag:Name', values: [route['gateway']]},
-      ])
-      found_internet_gateway = !internet_gateway_response.data.internet_gateways.empty?
-
-      unless found_internet_gateway
-        vpn_gateway_response = ec2.describe_vpn_gateways(filters: [
-          {name: 'tag:Name', values: [route['gateway']]},
-        ])
-        found_vpn_gateway = !vpn_gateway_response.data.vpn_gateways.empty?
-      end
-
-      gateway_id = if found_internet_gateway
-                     internet_gateway_response.data.internet_gateways.first.internet_gateway_id
-                   elsif found_vpn_gateway
-                     vpn_gateway_response.data.vpn_gateways.first.vpn_gateway_id
-                   else
-                     nil
-                   end
-
-      ec2.create_route(
+      route_config = {
         route_table_id: id,
         destination_cidr_block: route['destination_cidr_block'],
-        gateway_id: gateway_id,
-      ) if gateway_id
+      }
+
+      if !route['gateway'].nil?
+        internet_gateway_response = ec2.describe_internet_gateways(filters: [
+          {name: 'tag:Name', values: [route['gateway']]},
+        ])
+        found_internet_gateway = !internet_gateway_response.data.internet_gateways.empty?
+
+        unless found_internet_gateway
+          vpn_gateway_response = ec2.describe_vpn_gateways(filters: [
+            {name: 'tag:Name', values: [route['gateway']]},
+          ])
+          found_vpn_gateway = !vpn_gateway_response.data.vpn_gateways.empty?
+        end
+
+        route_config[:gateway_id] = if found_internet_gateway
+            internet_gateway_response.data.internet_gateways.first.internet_gateway_id
+          elsif found_vpn_gateway
+            vpn_gateway_response.data.vpn_gateways.first.vpn_gateway_id
+          else
+            nil
+          end
+
+      elsif !route['peering_connection'].nil?
+          vpc_peering_connection_response = ec2.describe_vpc_peering_connections(filters: [
+            {name: 'tag:Name', values: [route['peering_connection']]},
+          ])
+          found_peering_connection = !vpc_peering_connection_response.data.vpc_peering_connections.empty?
+
+        route_config[:vpc_peering_connection_id] = if found_peering_connection
+            vpc_peering_connection_response.data.vpc_peering_connections.first.vpc_peering_connection_id
+          else
+            nil
+          end
+      end
+      ec2.create_route(route_config) if route_config[:gateway_id] or route_config[:vpc_peering_connection_id]
     end
     @property_hash[:ensure] = :present
   end
