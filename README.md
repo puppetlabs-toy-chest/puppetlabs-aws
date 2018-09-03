@@ -879,6 +879,11 @@ Rules for ingress traffic.
 
 Accepts an array.
 
+##### `egress`
+Optional.
+
+Rules for egress traffic. Accepts an array. If no egress rules are specified, the security group will default to ALL outbound traffic allowed.
+
 ##### `id`
 
 Read-only.
