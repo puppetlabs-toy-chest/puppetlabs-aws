@@ -26,14 +26,10 @@ Puppet::Type.type(:iam_group).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) 
   def self.instances
     groups = get_groups()
     groups.collect do |group|
-      group_data = iam_client.get_group({ group_name: group.group_name })
-      member_names = group_data.users.map {|user| user.user_name }
-
       new({
         name: group.group_name,
         ensure: :present,
         path: group.path,
-        members: member_names,
       })
     end
   end
@@ -99,6 +95,11 @@ Puppet::Type.type(:iam_group).provide(:v2, :parent => PuppetX::Puppetlabs::Aws) 
       iam_client.delete_group({group_name: group.group_name})
     end
     @property_hash[:ensure] = :absent
+  end
+
+  def members
+    group_data = iam_client.get_group({ group_name: name })
+    @property_hash[:members] = group_data.users.map {|user| user.user_name }
   end
 
   def members=(value)

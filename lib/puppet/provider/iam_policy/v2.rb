@@ -10,27 +10,12 @@ Puppet::Type.type(:iam_policy).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
   def self.instances
     policies = PuppetX::Puppetlabs::Iam_policy.get_policies
     policies.collect do |policy|
-
-      policy_document_versions = iam_client.list_policy_versions({
-        policy_arn: policy.arn,
-        max_items: 1
-      })
-
-      policy_version_data = iam_client.get_policy_version({
-        policy_arn: policy.arn,
-        version_id: policy_document_versions.versions[0].version_id
-      })
-
-      policy_data = JSON.parse(URI.unescape(policy_version_data.policy_version.document))
-      policy_document = JSON.pretty_generate(policy_data)
-
       new({
         name: policy.policy_name,
         ensure: :present,
         path: policy.path,
         description: policy.description,
         arn: policy.arn,
-        document: policy_document,
       })
     end
   end
@@ -84,6 +69,21 @@ Puppet::Type.type(:iam_policy).provide(:v2, :parent => PuppetX::Puppetlabs::Aws)
     iam_client.delete_policy({policy_arn: @property_hash[:arn]})
 
     @property_hash[:ensure] = :absent
+  end
+
+  def document
+    policy_document_versions = iam_client.list_policy_versions({
+      policy_arn: arn,
+      max_items: 1
+    })
+
+    policy_version_data = iam_client.get_policy_version({
+      policy_arn: arn,
+      version_id: policy_document_versions.versions[0].version_id
+    })
+
+    policy_data = JSON.parse(URI.unescape(policy_version_data.policy_version.document))
+    @property_hash[:document] = JSON.pretty_generate(policy_data)
   end
 
   def document=(value)
