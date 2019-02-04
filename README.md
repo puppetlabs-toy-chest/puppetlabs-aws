@@ -20,6 +20,14 @@ Status](https://travis-ci.org/puppetlabs/puppetlabs-aws.svg?branch=master)](http
   * [Parameters](#parameters)
 6. [Limitations - OS compatibility, etc.](#limitations)
 
+## Future
+
+The [Amazon AWS](https://forge.puppet.com/puppetlabs/amazon_aws) module, which supersedes this module, supports over 2600 tasks, types, providers, and the Resource API.
+
+To try it out, visit the [Puppet Forge](https://forge.puppet.com/puppetlabs/amazon_aws) or view the [Github repo](https://github.com/puppetlabs/puppetlabs-amazon_aws).
+
+This [AWS module](https://github.com/puppetlabs/puppetlabs-aws) will eventually deprecate in the future.
+
 ## Overview
 
 The aws module manages Amazon Web Services (AWS) resources to build out cloud infrastructure.
