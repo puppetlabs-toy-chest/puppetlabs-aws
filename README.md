@@ -2579,6 +2579,11 @@ This parameter is set at creation only; it is not affected by updates.
 
 ##### `restore_snapshot`
 
+#####`db_option_group`
+The name of an associated DB option group. Should be a string. This
+parameter is set at creation only; it is not affected by updates.
+
+#####`restore_snapshot
 Specify the snapshot name to optionally trigger creating the RDS DB from a snapshot.
 
 ##### `final_db_snapshot_identifier`
