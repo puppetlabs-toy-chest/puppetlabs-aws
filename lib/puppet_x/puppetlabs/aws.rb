@@ -24,13 +24,24 @@ This could be because some other process is modifying AWS at the same time."""
 
     class Aws < Puppet::Provider
       def self.regions
+        #Remove the new AWS Regions which are disabled by default.
+        disabled_regions = [ "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "ap-northeast-2", "ap-east1", "ap-south-1"]
+
         if ENV['AWS_REGION'] and not ENV['AWS_REGION'].empty?
           [ENV['AWS_REGION']]
         elsif global_configuration and global_configuration['default'] and global_configuration['default']['region']
           [global_configuration['default']['region']]
         else
-          ec2_client(default_region).describe_regions.data.regions.map(&:region_name)
+          regions = ec2_client(default_region).describe_regions.data.regions.map(&:region_name)
+          
+          #Remove the new AWS Regions which are disabled by default.
+          disabled_regions.collect do |disabled_region|
+            regions.delete_if { |x| x == disabled_region }
+          end
+          
+          regions
         end
+        
       end
 
       def regions
