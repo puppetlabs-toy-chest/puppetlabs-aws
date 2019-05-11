@@ -5,15 +5,15 @@ AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:?"Need to set AWS_SECRET_ACCESS_KE
 
 case "$1" in
 
-apply) puppet apply "$2" --modulepath ../ --test
+apply) puppet apply "$2" --/etc/puppet/modules/AWS-Instance ../ --test
   ;;
 graph) if [ ! -e "graphs" ];
        then
          mkdir "graphs"
        fi
-       puppet apply "$2" --modulepath ../ --noop --graph --graphdir graphs
+       puppet apply "$2" --/etc/puppet/modules/AWS-Instance ../ --noop --graph --graphdir graphs
   ;;
-list)  puppet resource "${@:2}" --modulepath ../
+list)  puppet resource "${@:2}" --/etc/puppet/modules/AWS-Instance ../
   ;;
 *)     echo "Usage : puppet cloud graph|list|apply ARGS"
        exit
