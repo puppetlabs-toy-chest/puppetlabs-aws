@@ -39,20 +39,9 @@ Puppet::Type.type(:iam_policy_attachment).provide(:v2, :parent => PuppetX::Puppe
         end
       end
 
-      response = iam_client.list_entities_for_policy({
-        policy_arn: policy.arn,
-      })
-
-      user_names = response.policy_users.collect {|user| user.user_name }
-      group_names = response.policy_groups.collect {|group| group.group_name }
-      role_names = response.policy_roles.collect {|role| role.role_name }
-
       new({
         name: policy.policy_name,
-        users: user_names,
-        groups: group_names,
-        roles: role_names,
-        arn: policy.arn,
+        arn: policy.arn
       })
     end
   end
@@ -65,6 +54,21 @@ Puppet::Type.type(:iam_policy_attachment).provide(:v2, :parent => PuppetX::Puppe
         resource.provider = prov
       end
     end
+  end
+
+  def users
+    return [] unless @property_hash[:name]
+    @property_hash[:users] = list_entities_for_policy.policy_users.collect {|user| user.user_name }
+  end
+
+  def groups
+    return [] unless @property_hash[:name]
+    @property_hash[:groups] = list_entities_for_policy.policy_groups.collect {|group| group.group_name }
+  end
+
+  def roles
+    return [] unless @property_hash[:name]
+    @property_hash[:roles] = list_entities_for_policy.policy_roles.collect {|role| role.role_name }
   end
 
   def users=(value)
@@ -131,6 +135,12 @@ Puppet::Type.type(:iam_policy_attachment).provide(:v2, :parent => PuppetX::Puppe
         })
       end
     }
+  end
+
+  private
+
+  def list_entities_for_policy
+    @entities_for_policy ||= iam_client.list_entities_for_policy({ policy_arn: arn })
   end
 
 end
