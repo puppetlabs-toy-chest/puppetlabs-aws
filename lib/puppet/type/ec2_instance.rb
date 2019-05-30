@@ -196,6 +196,15 @@ Puppet::Type.newtype(:ec2_instance) do
     end
   end
 
+  newproperty(:termination_protection) do
+    desc 'Whether or not tom enable termination protection for this instance.'
+    defaultto :false
+    newvalues(:true, :'false')
+    def insync?(is)
+      is.to_s == should.to_s
+    end
+  end
+
   newparam(:instance_initiated_shutdown_behavior) do
     desc 'Whether the instance stops or terminates when you initiate shutdown from the instance.'
     defaultto :stop
