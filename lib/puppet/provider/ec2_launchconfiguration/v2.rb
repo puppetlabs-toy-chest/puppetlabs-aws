@@ -31,7 +31,7 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
     end
   end
 
-  read_only(:region, :image_id, :instance_type, :key_name, :security_groups)
+  read_only(:region, :image_id, :instance_type, :key_name, :security_groups, :iam_instance_profile)
 
   def self.config_to_hash(region, config)
     # It appears possible to get launch configurations manually to a state where
@@ -61,6 +61,7 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
       region: region,
       spot_price: config.spot_price,
       ebs_optimized: config.ebs_optimized,
+      iam_instance_profile: config.iam_instance_profile,
     }
     if devices.empty?
       config[:block_device_mappings] = [ ]
@@ -105,6 +106,7 @@ Puppet::Type.type(:ec2_launchconfiguration).provide(:v2, :parent => PuppetX::Pup
       security_groups: group_ids,
       instance_type: resource[:instance_type],
       user_data: data,
+      iam_instance_profile: resource[:iam_instance_profile],
     }
 
     key = resource[:key_name] ? resource[:key_name] : false
