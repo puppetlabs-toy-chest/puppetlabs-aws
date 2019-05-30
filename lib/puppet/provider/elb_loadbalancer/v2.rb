@@ -655,7 +655,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       result = {
         protocol: listener['protocol'],
         load_balancer_port: listener['load_balancer_port'],
-        instance_protocol: listener['instanceprotocol'],
+        instance_protocol: listener['instance_protocol'],
         instance_port: listener['instance_port'],
       }
       result[:ssl_certificate_id] = listener['ssl_certificate_id'] if listener.has_key?('ssl_certificate_id') and !listener['ssl_certificate_id'].nil?
