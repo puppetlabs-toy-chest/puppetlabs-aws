@@ -15,7 +15,17 @@ describe type_class do
       :ensure,
       :creation_date,
       :policy,
+      :lifecycle_configuration,
     ]
+  end
+
+  let :valid_attributes do
+    {
+      name: 'name',
+      policy: '{}',
+      encryption_configuration: '{}',
+      lifecycle_configuration: '{}'
+    }
   end
 
   it 'should have expected properties' do
@@ -42,9 +52,32 @@ describe type_class do
     }.to raise_error(Puppet::Error, /Empty bucket names are not allowed/)
   end
 
-  context 'with a valid name' do
+  context 'with a valid parameters' do
     it 'should create a valid instance' do
-      type_class.new({ name: 'name' })
+      type_class.new(valid_attributes)
+    end
+
+    [:policy, :encryption_configuration, :lifecycle_configuration].each do |param|
+      it "should create a valid instance without optional :#{param}" do
+        type_class.new(valid_attributes.reject! { |k, _v| k == param })
+      end
+
+      it "should require non-blank #{param}" do
+        expect {
+          type_class.new(valid_attributes.merge({ param => '' }))
+        }.to raise_error(Puppet::Error)
+      end
+
+      it "should fail if string is not a valid JSON #{param}" do
+        expect {
+          type_class.new(valid_attributes.merge({ param => '<xml>Hi</xml>' }))
+        }.to raise_error(Puppet::Error)
+      end
+
+      it "should accept any valid JSON #{param}" do
+          type_class.new(valid_attributes.merge({ param => '{ "hello": "world!" }' }))
+      end
+
     end
   end
 

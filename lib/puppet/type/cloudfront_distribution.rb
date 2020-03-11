@@ -56,9 +56,7 @@ Puppet::Type.newtype(:cloudfront_distribution) do
           fail 'Invalid HTTPS port number' unless value['https_port'].to_i > 0
         end
         if value['protocol_policy'] then
-          fail 'Invalid protocol policy' unless value['protocol_policy'].all? do |policy|
-            ['match-viewer', 'http-only', 'https-only'].include? policy.downcase
-          end
+          fail 'Invalid protocol policy' unless ['match-viewer', 'http-only', 'https-only'].include? value['protocol_policy'].downcase
         end
         if value['protocols'] then
           fail 'Invalid protocol set' unless value['protocols'].all? do |proto|

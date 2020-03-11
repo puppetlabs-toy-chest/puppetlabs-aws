@@ -2743,6 +2743,16 @@ The name of the bucket to managed.
 
 A JSON parsable string of the policy to apply to the bucket.
 
+##### `lifecycle_configuration`
+
+A JSON parsable string of the lifecycle configuration to apply to the bucket.
+More https://docs.amazonaws.cn/sdk-for-ruby/v3/api/Aws/S3/Client.html#put_bucket_lifecycle_configuration-instance_method
+
+##### `encryption_configuration`
+
+A JSON parsable string of the encryption configuration to apply to the bucket.
+More https://docs.amazonaws.cn/sdk-for-ruby/v3/api/Aws/S3/Client.html#put_bucket_encryption-instance_method
+
 #### Type: sqs_queue
 
 ##### `name`
